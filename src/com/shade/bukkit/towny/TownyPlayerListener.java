@@ -63,7 +63,7 @@ public class TownyPlayerListener extends PlayerListener {
     	if (split.length == 0) {
     		try {
 	    		Resident resident = plugin.getTownyUniverse().getResident(player.getName());
-	    		plugin.getTownyUniverse().sendMessage(player, resident.getStatus());
+	    		plugin.getTownyUniverse().sendMessage(player, plugin.getTownyUniverse().getStatus(resident));
     		} catch (NotRegisteredException x) {
     			plugin.sendErrorMsg(player, "You are not registered");
     		}
@@ -73,25 +73,7 @@ public class TownyPlayerListener extends PlayerListener {
 	        }
     	}
     }
-
-    public void parseTownCommand(Player player, String[] split) {
-    	if (split.length == 0) {
-    		try {
-	    		Resident resident = plugin.getTownyUniverse().getResident(player.getName());
-	    		Town town = resident.getTown();
-	    		plugin.getTownyUniverse().sendMessage(player, town.getStatus());
-    		} catch (NotRegisteredException x) {
-    			plugin.sendErrorMsg(player, "You are not registered");
-    		} catch (TownyException x) {
-    			plugin.sendErrorMsg(player, x.getError());
-    		}
-    	} else {
-	    	if (split[0].equalsIgnoreCase("list")) {
-	    		listTowns(player);
-	        }
-    	}
-    }
-    
+ 
     public void listResidents(Player player) {
     	player.sendMessage(ChatTools.formatTitle("Residents"));
 		String colour;
@@ -107,6 +89,24 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 		for (String line : ChatTools.list(formatedList.toArray()))
 			player.sendMessage(line);
+    }
+    
+    public void parseTownCommand(Player player, String[] split) {
+    	if (split.length == 0) {
+    		try {
+	    		Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+	    		Town town = resident.getTown();
+	    		plugin.getTownyUniverse().sendMessage(player, plugin.getTownyUniverse().getStatus(town));
+    		} catch (NotRegisteredException x) {
+    			plugin.sendErrorMsg(player, "You are not registered");
+    		} catch (TownyException x) {
+    			plugin.sendErrorMsg(player, x.getError());
+    		}
+    	} else {
+	    	if (split[0].equalsIgnoreCase("list")) {
+	    		listTowns(player);
+	        }
+    	}
     }
     
     public void listTowns(Player player) {

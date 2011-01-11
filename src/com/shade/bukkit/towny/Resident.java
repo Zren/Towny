@@ -8,31 +8,11 @@ public class Resident extends TownyObject {
 	private Town town;
 	private long lastOnline;
 	
-	public List<String> getStatus() {
-        List<String> out = new ArrayList<String>();
-        
-        // ___[ King Harlus ]___
-        out.add(ChatTools.formatTitle(toString()));
-        
-        // Last Online: March 7
-        out.add(Colors.Green + "Last Online: " + Colors.LightGreen + getLastOnline());
-        
-        // Town: Camelot
-        String line = Colors.Green + "Town: " + Colors.LightGreen;
-        if (town == null) {
-            line += "None";
-        } else {
-            line += town;
-        }
-        out.add(line);
-		
-		// Friends [12]:
-        // James, Carry, Mason
-        out.add(Colors.Green + "Friends " + Colors.LightGreen + "[" + friends.size() + "]" + Colors.Green + ":");
-        out.addAll(ChatTools.list(friends.toArray()));
-        
-        return out;
-    }
+	public Resident(String name) {
+		setName(name);
+	}
+	
+	
 
 	public void setLastOnline(long lastOnline) {
 		this.lastOnline = lastOnline;
@@ -43,14 +23,11 @@ public class Resident extends TownyObject {
 	}
 
 	public boolean isKing() {
-		return (hasNation() ? town.nation.isKing(this) : false);
+		return (hasNation() ? town.getNation().isKing(this) : false);
 	}
 
 	public boolean isMayor() {
-		if (town == null)
-			return false;
-		else
-			return town.isMayor(this);
+		return (hasTown() ? town.isMayor(this) : false);
 	}
 	
 	public boolean hasTown() {
@@ -66,5 +43,21 @@ public class Resident extends TownyObject {
 			return town;
 		else
 			throw new TownyException("Resident doesn't belong to any town");
+	}
+	
+	public void setTown(Town town) {
+		this.town = town;
+	}
+
+
+
+	public void setFriends(List<Resident> friends) {
+		this.friends = friends;
+	}
+
+
+
+	public List<Resident> getFriends() {
+		return friends;
 	}
 }

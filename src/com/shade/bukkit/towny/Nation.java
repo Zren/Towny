@@ -27,4 +27,8 @@ public class Nation extends TownyObject {
 		else
 			return assistants.contains(resident);
 	}
+	
+	public boolean isCapital(Town town) {
+		return (town == capital);
+	}
 }

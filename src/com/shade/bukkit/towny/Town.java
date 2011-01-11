@@ -4,46 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Town extends TownyObject {
-	List<Resident> residents = new ArrayList<Resident>();
-	List<Resident> assistants = new ArrayList<Resident>();
-	Resident mayor;
-	Nation nation;
-	boolean isPVP, hasMobs;
-	String townBoard;
+	private List<Resident> residents = new ArrayList<Resident>();
+	private List<Resident> assistants = new ArrayList<Resident>();
+	private Resident mayor;
+	private int bonusBlocks;
+	private Nation nation;
+	private boolean isPVP, hasMobs;
+	private String townBoard;
+	private TownyPermission permissions = new TownyPermission();
 	
-	public List<String> getStatus() {
-        List<String> out = new ArrayList<String>();
-        
-     // ___[ Racoon City (PvP) ]___
-        out.add(ChatTools.formatTitle(toString() + (isPVP ? Colors.Red+" (PvP)" : "")));
-        
-        // Lord: Mayor Quimby
-        // Board: Get your fried chicken
-        if (townBoard != null)
-            out.add(Colors.Green + "Board: " + Colors.LightGreen + townBoard);
-        
-		// Town Size: 0 / 16 [Bonus: 0]
-		//TODO:out.add(Colors.Green + "Town Size: " + Colors.LightGreen + TownyWorld.getInstance().countTownBlocks(this) + " / " + getMaxTownBlocks() + Colors.LightBlue + " [Bonus: "+bonusBlocks+"]");
-		
-		//if (mayor != null)
-            out.add(Colors.Green + "Lord: " + Colors.LightGreen + mayor);
-        // Assistants:
-		// Sammy, Ginger
-        if (assistants.size() > 0) {
-			out.add(Colors.Green + "Assistants:");
-			out.addAll(ChatTools.list(assistants.toArray()));
-		}
-        // Nation: Azur Empire
-        if (nation != null)
-            out.add(Colors.Green + "Nation: " + Colors.LightGreen + nation);
-        
-        // Residents [12]:
-        // James, Carry, Mason
-        out.add(Colors.Green + "Residents " + Colors.LightGreen + "[" + getNumResidents() + "]" + Colors.Green + ":");
-        out.addAll(ChatTools.list(residents.toArray()));
-        
-        return out;
-    }
+	public Resident getMayor() {
+		return mayor;
+	}
+
+	public void setMayor(Resident mayor) {
+		this.mayor = mayor;
+	}
+
+	public Nation getNation() {
+		return nation;
+	}
+
+	public void setNation(Nation nation) {
+		this.nation = nation;
+	}
+
+	public List<Resident> getResidents() {
+		return residents;
+	}
+
+	public List<Resident> getAssistants() {
+		return assistants;
+	}	
 	
 	public boolean hasResident(String name) {
 		for (Resident resident : residents)
@@ -64,10 +56,20 @@ public class Town extends TownyObject {
 	}
 	
 	public void addResident(Resident resident) throws AlreadyRegisteredException {
-		if (hasResident(resident))
+		if (hasResident(resident)) {
 			throw new AlreadyRegisteredException();
-		else
+		} else {
 			residents.add(resident);
+			resident.setTown(this);
+		}
+	}
+	
+	public void addAssistant(Resident resident) throws AlreadyRegisteredException {
+		if (hasAssistant(resident)) {
+			throw new AlreadyRegisteredException();
+		} else {
+			assistants.add(resident);
+		}
 	}
 	
 	public boolean isMayor(Resident resident) {
@@ -80,5 +82,33 @@ public class Town extends TownyObject {
 	
 	public int getNumResidents() {
 		return residents.size();
+	}
+	
+	public boolean isCapital() {
+		return (hasNation() ? nation.isCapital(this) : false);
+	}
+
+	public void setHasMobs(boolean hasMobs) {
+		this.hasMobs = hasMobs;
+	}
+
+	public boolean hasMobs() {
+		return hasMobs;
+	}
+
+	public void setPVP(boolean isPVP) {
+		this.isPVP = isPVP;
+	}
+
+	public boolean isPVP() {
+		return isPVP;
+	}
+
+	public void setTownBoard(String townBoard) {
+		this.townBoard = townBoard;
+	}
+
+	public String getTownBoard() {
+		return townBoard;
 	}
 }

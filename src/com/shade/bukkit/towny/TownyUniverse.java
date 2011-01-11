@@ -11,9 +11,13 @@ import org.bukkit.Player;
 public class TownyUniverse extends TownyObject {
 	private Towny plugin;
 	private HashMap<String,Resident> residents = new HashMap<String,Resident>();
+	private HashMap<String,Town> towns = new HashMap<String,Town>();
+	private HashMap<String,Nation> nations = new HashMap<String,Nation>();
 	private HashMap<String,TownyWorld> worlds = new HashMap<String,TownyWorld>();
 	//private List<Election> elections;
 	private TownySettings settings = new TownySettings();
+	private TownyFormatter formatter = new TownyFormatter(settings);
+	private TownyDataSource dataSource;
 	
 	
 	public TownyUniverse(Towny plugin) {
@@ -21,25 +25,47 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public void onLogin(Player player) throws AlreadyRegisteredException, NotRegisteredException {
+		Resident resident;
 		if (!isRegisteredResident(player.getName())) {
-			registerResident(player.getName());
+			newResident(player.getName());
+			resident = getResident(player.getName());
+			if (settings.getDefaultTown() != null)
+				settings.getDefaultTown().addResident(resident);
 			sendMessage(player, settings.getRegistrationMsg());
 			if (settings.getDefaultTown() != null)
 				sendMessage(player, settings.getRegistrationMsg());
 				
+		} else {
+			resident = getResident(player.getName());
 		}
+		
+		resident.setLastOnline(System.currentTimeMillis());
+		dataSource.saveResident(resident);
 	}
 	
 	public void onLogout(Player player) {
 		
 	}
 	
-	public void registerResident(String name) throws AlreadyRegisteredException, NotRegisteredException {
+	public void newResident(String name) throws AlreadyRegisteredException, NotRegisteredException {
 		if (residents.containsKey(name.toLowerCase()))
 			throw new AlreadyRegisteredException();
-		Resident resident = getResident(name);
-		if (settings.getDefaultTown() != null)
-			settings.getDefaultTown().addResident(resident);
+		
+		residents.put(name.toLowerCase(), new Resident(name));
+	}
+	
+	public void newTown(String name) throws AlreadyRegisteredException, NotRegisteredException {
+		if (residents.containsKey(name.toLowerCase()))
+			throw new AlreadyRegisteredException();
+		
+		residents.put(name.toLowerCase(), new Resident(name));
+	}
+	
+	public void newNation(String name) throws AlreadyRegisteredException, NotRegisteredException {
+		if (residents.containsKey(name.toLowerCase()))
+			throw new AlreadyRegisteredException();
+		
+		residents.put(name.toLowerCase(), new Resident(name));
 	}
 	
 	public boolean isRegisteredResident(String name) {
@@ -110,11 +136,15 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public Collection<Town> getTowns() {
-		List<Town> towns = new ArrayList<Town>();
-		for (TownyWorld world : worlds.values()) {
-			towns.addAll(world.getTowns());
-		}
-		return towns;
+		return towns.values();
+	}
+	
+	public Collection<Nation> getNations() {
+		return nations.values();
+	}
+	
+	public Collection<TownyWorld> getWorlds() {
+		return worlds.values();
 	}
 	
 	public Collection<Resident> getActiveResidents() {
@@ -128,5 +158,31 @@ public class TownyUniverse extends TownyObject {
 	
 	public boolean isActiveResident(Resident resident) {
 		return (System.currentTimeMillis() - resident.getLastOnline() < settings.getInactiveAfter());
+	}
+	
+	public TownySettings getSettings() {
+		return settings;
+	}
+	
+	public List<String> getStatus(Resident resident) {
+		return formatter.getStatus(resident);
+	}
+	
+	public List<String> getStatus(Town town) {
+		return formatter.getStatus(town);
+	}
+
+	public Town getTown(String name) throws NotRegisteredException {
+		Town town = towns.get(name.toLowerCase());
+		if (town == null)
+			throw new NotRegisteredException();
+		return town;
+	}
+	
+	public Nation getNation(String name) throws NotRegisteredException {
+		Nation nation = nations.get(name.toLowerCase());
+		if (nation == null)
+			throw new NotRegisteredException();
+		return nation;
 	}
 }

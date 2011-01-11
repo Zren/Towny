@@ -18,4 +18,24 @@ public class TownySettings {
 	public int getInactiveAfter() {
 		return 24*60*60*1000;
 	}
+	
+	public String getKingPrefix() {
+		return "King ";
+	}
+	
+	public String getMayorPrefix() {
+		return "Mayor ";
+	}
+	
+	public String getCapitalPostfix() {
+		return " Capital City";
+	}
+	
+	public String getTownPostfix() {
+		return " Town";
+	}
+
+	public String getFlatFileFolder() {
+		return "towny";
+	}
 }
