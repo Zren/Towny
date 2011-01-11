@@ -45,6 +45,11 @@ public class TownyPlayerListener extends PlayerListener {
         	System.arraycopy(split, 1, newSplit, 0, split.length-1);
         	parseResidentCommand(player, newSplit);
         	event.setCancelled(true);
+        } else if (split[0].equalsIgnoreCase("/town")) {
+        	String[] newSplit = new String[0];
+        	System.arraycopy(split, 1, newSplit, 0, split.length-1);
+        	parseTownCommand(player, newSplit);
+        	event.setCancelled(true);
         }
     }
 
@@ -61,10 +66,11 @@ public class TownyPlayerListener extends PlayerListener {
     		} catch (NotRegisteredException x) {
     			plugin.sendErrorMsg(player, "You are not registered");
     		}
+    	} else {
+	    	if (split[0].equalsIgnoreCase("list")) {
+	    		listResidents(player);
+	        }
     	}
-    	if (split[0].equalsIgnoreCase("list")) {
-    		listResidents(player);
-        }
     }
 
     public void parseTownCommand(Player player, String[] split) {
@@ -78,10 +84,11 @@ public class TownyPlayerListener extends PlayerListener {
     		} catch (TownyException x) {
     			plugin.sendErrorMsg(player, x.getError());
     		}
+    	} else {
+	    	if (split[0].equalsIgnoreCase("list")) {
+	    		listTowns(player);
+	        }
     	}
-    	if (split[0].equalsIgnoreCase("list")) {
-    		listResidents(player);
-        }
     }
     
     public void listResidents(Player player) {
