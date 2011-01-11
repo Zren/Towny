@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Town extends TownyObject {
-	List<Resident> residents, assistants;
+	List<Resident> residents = new ArrayList<Resident>();
+	List<Resident> assistants = new ArrayList<Resident>();
 	Resident mayor;
 	Nation nation;
 	boolean isPVP, hasMobs;

@@ -5,8 +5,8 @@ import java.util.HashMap;
 //import java.util.List;
 
 public class TownyWorld extends TownyObject {
-	private HashMap<String,Town> towns;
-	private HashMap<String,Nation> nations;
+	private HashMap<String,Town> towns = new HashMap<String,Town>();
+	private HashMap<String,Nation> nations = new HashMap<String,Nation>();
 	
 	//private List<TownBlock> townBlocks;
 	

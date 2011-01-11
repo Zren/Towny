@@ -40,14 +40,15 @@ public class TownyPlayerListener extends PlayerListener {
         
         String[] split = event.getMessage().split(" ");
         Player player = event.getPlayer();
+        
+        String[] newSplit = new String[split.length-1];
+    	System.arraycopy(split, 1, newSplit, 0, split.length-1);
+    	
+        
         if (split[0].equalsIgnoreCase("/resident") || split[0].equalsIgnoreCase("/player")) {
-        	String[] newSplit = new String[0];
-        	System.arraycopy(split, 1, newSplit, 0, split.length-1);
         	parseResidentCommand(player, newSplit);
         	event.setCancelled(true);
         } else if (split[0].equalsIgnoreCase("/town")) {
-        	String[] newSplit = new String[0];
-        	System.arraycopy(split, 1, newSplit, 0, split.length-1);
         	parseTownCommand(player, newSplit);
         	event.setCancelled(true);
         }

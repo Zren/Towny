@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Resident extends TownyObject {
-	private List<Resident> friends;
+	private List<Resident> friends = new ArrayList<Resident>();
 	private Town town;
 	private long lastOnline;
 	

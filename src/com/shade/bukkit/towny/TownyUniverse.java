@@ -10,8 +10,8 @@ import org.bukkit.Player;
 
 public class TownyUniverse extends TownyObject {
 	private Towny plugin;
-	private HashMap<String,Resident> residents;
-	private HashMap<String,TownyWorld> worlds;
+	private HashMap<String,Resident> residents = new HashMap<String,Resident>();
+	private HashMap<String,TownyWorld> worlds = new HashMap<String,TownyWorld>();
 	//private List<Election> elections;
 	private TownySettings settings = new TownySettings();
 	

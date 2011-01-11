@@ -1,10 +1,11 @@
 package com.shade.bukkit.towny;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Nation extends TownyObject {
-	private List<Resident> assistants;
-	private List<Town> towns;
+	private List<Resident> assistants = new ArrayList<Resident>();
+	private List<Town> towns = new ArrayList<Town>();
 	//private List<Nation> allies, enemies;
 	private Town capital;
 	
