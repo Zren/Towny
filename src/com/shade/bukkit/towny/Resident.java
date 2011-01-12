@@ -60,4 +60,20 @@ public class Resident extends TownyObject {
 	public List<Resident> getFriends() {
 		return friends;
 	}
+	
+	public boolean removeFriend(Resident resident) {
+		return friends.remove(resident);
+	}
+	
+	public boolean hasFriend(Resident resident) {
+		return friends.contains(resident);
+	}
+	
+	public void addFriend(Resident resident) throws AlreadyRegisteredException {
+		if (hasFriend(resident)) {
+			throw new AlreadyRegisteredException();
+		} else {
+			friends.add(resident);
+		}
+	}
 }

@@ -6,13 +6,19 @@ import java.util.List;
 public class Town extends TownyObject {
 	private List<Resident> residents = new ArrayList<Resident>();
 	private List<Resident> assistants = new ArrayList<Resident>();
+	private List<TownBlock> townblocks = new ArrayList<TownBlock>();
 	private Resident mayor;
 	private int bonusBlocks;
 	private Nation nation;
 	private boolean isPVP, hasMobs;
 	private String townBoard;
+	private TownBlock homeBlock;
 	private TownyPermission permissions = new TownyPermission();
 	
+	public Town(String name) {
+		setName(name);
+	}
+
 	public Resident getMayor() {
 		return mayor;
 	}
@@ -49,10 +55,7 @@ public class Town extends TownyObject {
 	}
 	
 	public boolean hasAssistant(Resident resident) {
-		if (resident == null)
-			return false;
-		else
-			return assistants.contains(resident);
+		return assistants.contains(resident);
 	}
 	
 	public void addResident(Resident resident) throws AlreadyRegisteredException {
@@ -110,5 +113,38 @@ public class Town extends TownyObject {
 
 	public String getTownBoard() {
 		return townBoard;
+	}
+
+	public void setPermissions(String line) {
+		permissions.reset();
+		permissions.load(line);
+	}
+	
+	public TownyPermission getPermissions() {
+		return permissions;
+	}
+
+	public void setBonusBlocks(int bonusBlocks) {
+		this.bonusBlocks = bonusBlocks;
+	}
+
+	public int getBonusBlocks() {
+		return bonusBlocks;
+	}
+
+	public void setTownblocks(List<TownBlock> townblocks) {
+		this.townblocks = townblocks;
+	}
+
+	public List<TownBlock> getTownblocks() {
+		return townblocks;
+	}
+
+	public void setHomeBlock(TownBlock homeBlock) {
+		this.homeBlock = homeBlock;
+	}
+
+	public TownBlock getHomeBlock() {
+		return homeBlock;
 	}
 }

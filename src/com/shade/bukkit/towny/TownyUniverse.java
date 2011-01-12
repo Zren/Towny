@@ -55,17 +55,24 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public void newTown(String name) throws AlreadyRegisteredException, NotRegisteredException {
-		if (residents.containsKey(name.toLowerCase()))
+		if (towns.containsKey(name.toLowerCase()))
 			throw new AlreadyRegisteredException();
 		
-		residents.put(name.toLowerCase(), new Resident(name));
+		towns.put(name.toLowerCase(), new Town(name));
 	}
 	
 	public void newNation(String name) throws AlreadyRegisteredException, NotRegisteredException {
-		if (residents.containsKey(name.toLowerCase()))
+		if (nations.containsKey(name.toLowerCase()))
 			throw new AlreadyRegisteredException();
 		
-		residents.put(name.toLowerCase(), new Resident(name));
+		nations.put(name.toLowerCase(), new Nation(name));
+	}
+	
+	public void newWorld(String name) throws AlreadyRegisteredException {
+		if (worlds.containsKey(name.toLowerCase()))
+			throw new AlreadyRegisteredException();
+		
+		worlds.put(name.toLowerCase(), new TownyWorld(name));
 	}
 	
 	public boolean isRegisteredResident(String name) {
