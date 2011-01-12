@@ -34,7 +34,7 @@ public class TownyUniverse extends TownyObject {
 			sendMessage(player, settings.getRegistrationMsg());
 			if (settings.getDefaultTown() != null)
 				sendMessage(player, settings.getRegistrationMsg());
-				
+			dataSource.saveResidentList();
 		} else {
 			resident = getResident(player.getName());
 		}
@@ -206,6 +206,7 @@ public class TownyUniverse extends TownyObject {
 			return false;
 		
 		dataSource.initialize(plugin, this,	settings);
+		dataSource.loadAll();
 		return true;
 	}
 }

@@ -81,7 +81,7 @@ public class Town extends TownyObject {
 	}
 	
 	public boolean hasNation() {
-		return !(nation == null);
+		return nation != null;
 	}
 	
 	public int getNumResidents() {
@@ -155,5 +155,9 @@ public class Town extends TownyObject {
 
 	public TownyWorld getWorld() {
 		return world;
+	}
+
+	public boolean hasMayor() {
+		return mayor != null;
 	}
 }

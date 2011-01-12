@@ -32,7 +32,10 @@ public class Towny extends JavaPlugin {
     	registerEvents();
     	townyUniverse = new TownyUniverse(this);
     	townyUniverse.loadSettings();
-    	townyUniverse.loadDatabase();
+    	if (townyUniverse.loadDatabase())
+    		System.out.println("[Towny] Loaded database");
+    	else
+    		System.out.println("[Towny] Failed to load database");
     	
         System.out.println("[Towny] Mod Enabled");
     }
