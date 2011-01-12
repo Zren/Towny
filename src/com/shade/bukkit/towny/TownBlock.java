@@ -5,7 +5,7 @@ public class TownBlock {
 	private Town town;
 	private Resident resident;
 	private int x, z;
-	private boolean hasLockedDoors, isForSale;
+	private boolean isForSale = false;
 	
 	public TownBlock(int x, int z) {
 		this.x = x;
@@ -18,17 +18,17 @@ public class TownBlock {
 	public Town getTown() {
 		return town;
 	}
+	public boolean hasTown() {
+		return town != null;
+	}
 	public void setResident(Resident resident) {
 		this.resident = resident;
 	}
 	public Resident getResident() {
 		return resident;
 	}
-	public void setHasLockedDoors(boolean hasLockedDoors) {
-		this.hasLockedDoors = hasLockedDoors;
-	}
-	public boolean isHasLockedDoors() {
-		return hasLockedDoors;
+	public boolean hasResident() {
+		return resident != null;
 	}
 	public void setForSale(boolean isForSale) {
 		this.isForSale = isForSale;

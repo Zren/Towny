@@ -18,32 +18,32 @@ public class Nation extends TownyObject {
 		if (hasAlly(nation)) {
 			throw new AlreadyRegisteredException();
 		} else {
-			allies.add(nation);
+			getAllies().add(nation);
 		}
 	}
 	
 	public boolean removeAlly(Nation nation) {
-		return allies.remove(nation);
+		return getAllies().remove(nation);
 	}
 	
 	public boolean hasAlly(Nation nation) {
-		return allies.contains(nation);
+		return getAllies().contains(nation);
 	}
 	
 	public void addEnemy(Nation nation) throws AlreadyRegisteredException {
 		if (hasEnemy(nation)) {
 			throw new AlreadyRegisteredException();
 		} else {
-			enemies.add(nation);
+			getEnemies().add(nation);
 		}
 	}
 	
 	public boolean removeEnemy(Nation nation) {
-		return enemies.remove(nation);
+		return getEnemies().remove(nation);
 	}
 	
 	public boolean hasEnemy(Nation nation) {
-		return enemies.contains(nation);
+		return getEnemies().contains(nation);
 	}
 	
 	public List<Town> getTowns() {
@@ -59,7 +59,7 @@ public class Nation extends TownyObject {
 	}
 	
 	public boolean hasAssistant(Resident resident) {
-		return assistants.contains(resident);
+		return getAssistants().contains(resident);
 	}
 	
 	public boolean isCapital(Town town) {
@@ -90,7 +90,7 @@ public class Nation extends TownyObject {
 		if (hasAssistant(resident)) {
 			throw new AlreadyRegisteredException();
 		} else {
-			assistants.add(resident);
+			getAssistants().add(resident);
 		}
 	}
 
@@ -126,4 +126,28 @@ public class Nation extends TownyObject {
         
         return false;
     }
+
+	public void setAssistants(List<Resident> assistants) {
+		this.assistants = assistants;
+	}
+
+	public List<Resident> getAssistants() {
+		return assistants;
+	}
+
+	public void setEnemies(List<Nation> enemies) {
+		this.enemies = enemies;
+	}
+
+	public List<Nation> getEnemies() {
+		return enemies;
+	}
+
+	public void setAllies(List<Nation> allies) {
+		this.allies = allies;
+	}
+
+	public List<Nation> getAllies() {
+		return allies;
+	}
 }

@@ -1,6 +1,7 @@
 package com.shade.bukkit.towny;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,6 +16,26 @@ public class TownyWorld extends TownyObject {
 
 	public List<Town> getTowns() {
 		return towns;
+	}
+	
+	public boolean hasTown(String name) {
+		for (Town town : towns)
+			if (town.getName().equalsIgnoreCase(name))
+				return true;
+		return false;
+	}
+	
+	public boolean hasTown(Town town) {
+		return towns.contains(town);
+	}
+	
+	public void addTown(Town town) throws AlreadyRegisteredException {
+		if (hasTown(town)) {
+			throw new AlreadyRegisteredException();
+		} else {
+			towns.add(town);
+			town.setWorld(this);
+		}
 	}
 	
 	public TownBlock getTownBlock(Coord coord) throws NotRegisteredException {
@@ -34,5 +55,9 @@ public class TownyWorld extends TownyObject {
 	
 	public TownBlock getTownBlock(int x, int z) throws NotRegisteredException {
 		return getTownBlock(new Coord(x, z));
+	}
+
+	public Collection<TownBlock> getTownBlocks() {
+		return townBlocks.values();
 	}
 }

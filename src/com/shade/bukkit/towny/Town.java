@@ -13,6 +13,7 @@ public class Town extends TownyObject {
 	private boolean isPVP, hasMobs;
 	private String townBoard;
 	private TownBlock homeBlock;
+	private TownyWorld world;
 	private TownyPermission permissions = new TownyPermission();
 	
 	public Town(String name) {
@@ -146,5 +147,13 @@ public class Town extends TownyObject {
 
 	public TownBlock getHomeBlock() {
 		return homeBlock;
+	}
+
+	public void setWorld(TownyWorld world) {
+		this.world = world;
+	}
+
+	public TownyWorld getWorld() {
+		return world;
 	}
 }
