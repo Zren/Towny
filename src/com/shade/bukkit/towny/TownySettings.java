@@ -38,4 +38,16 @@ public class TownySettings {
 	public String getFlatFileFolder() {
 		return "towny";
 	}
+	
+	public String getLoadDatabase() {
+		return "flatfile";
+	}
+	
+	public String getSaveDatabase() {
+		return "flatfile";
+	}
+
+	public boolean isFirstRun() {
+		return false;
+	}
 }

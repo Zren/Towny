@@ -192,4 +192,20 @@ public class TownyUniverse extends TownyObject {
 			throw new NotRegisteredException();
 		return nation;
 	}
+
+	public boolean loadSettings() {
+		// TODO Load settings from file
+		
+		return true;
+	}
+	
+	public boolean loadDatabase() {
+		if (settings.getLoadDatabase().equalsIgnoreCase("flatfile"))
+			dataSource = new TownyFlatFileSource(); 
+		else
+			return false;
+		
+		dataSource.initialize(plugin, this,	settings);
+		return true;
+	}
 }

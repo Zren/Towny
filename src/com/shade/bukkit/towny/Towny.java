@@ -26,17 +26,19 @@ public class Towny extends JavaPlugin {
     
     public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File plugin, ClassLoader cLoader) {
         super(pluginLoader, instance, desc, plugin, cLoader);
-        
-        registerEvents();
-        townyUniverse = new TownyUniverse(this);
+    }
+    
+    public void onEnable() {
+    	registerEvents();
+    	townyUniverse = new TownyUniverse(this);
+    	townyUniverse.loadSettings();
+    	townyUniverse.loadDatabase();
+    	
+        System.out.println("[Towny] Mod Enabled");
     }
 
     public void onDisable() {
         System.out.println("[Towny] Mod Disabled");
-    }
-
-    public void onEnable() {
-        System.out.println("[Towny] Mod Enabled");
     }
 
     private void registerEvents() {
