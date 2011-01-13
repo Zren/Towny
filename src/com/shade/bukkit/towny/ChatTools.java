@@ -72,8 +72,19 @@ public class ChatTools {
     }
     
     public static String formatTitle(String title) {
-        return Colors.Gold + "_____[ " + Colors.Yellow + title + Colors.Gold + " ]_____";
-        
+        return Colors.Gold + "_____[ " + Colors.Yellow + title + Colors.Gold + " ]_____";  
+    }
+    
+    public static String formatCommand(String requirement, String command, String subCommand, String help) {
+    	String out = "  ";
+    	if (requirement.length() > 0)
+    		out += Colors.Rose + requirement + ": ";
+    	out += Colors.Blue + command + " ";
+    	if (subCommand.length() > 0)
+    		out += Colors.LightBlue + subCommand + " ";
+    	if (help.length() > 0)
+    		out += Colors.LightGray + " : " + help;
+    	return out;  
     }
     
     public static void main(String[] args) {

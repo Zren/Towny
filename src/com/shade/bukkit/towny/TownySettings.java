@@ -66,4 +66,8 @@ public class TownySettings {
 	public boolean getFriendlyFire() {
 		return false;
 	}
+
+	public boolean isTownCreationAdminOnly() {
+		return false;
+	}
 }
