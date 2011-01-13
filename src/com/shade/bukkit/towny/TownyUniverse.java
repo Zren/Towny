@@ -213,4 +213,26 @@ public class TownyUniverse extends TownyObject {
 		dataSource.loadAll();
 		return true;
 	}
+	
+	public TownyWorld getWorld(String name) throws NotRegisteredException {
+		TownyWorld world = worlds.get(name.toLowerCase());
+		if (world == null)
+			throw new NotRegisteredException();
+		return world;
+	}
+	
+	public boolean isAlly(String a, String b) {
+		try {
+			Resident residentA = getResident(a);
+			Resident residentB = getResident(b);
+			if (residentA.getTown() == residentB.getTown()) return true;
+			if (residentA.getTown().getNation() == residentB.getTown().getNation()) return true;
+			if (residentA.getTown().getNation().hasAlly(residentB.getTown().getNation())) return true;
+		} catch (NotRegisteredException e) {
+			return false;
+		} catch (TownyException e) {
+			return false;
+		}
+		return false;
+	}
 }

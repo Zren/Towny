@@ -22,6 +22,8 @@ import com.shade.bukkit.towny.TownyUniverse;
  */
 public class Towny extends JavaPlugin {
     private final TownyPlayerListener playerListener = new TownyPlayerListener(this);
+    private final TownyBlockListener blockListener = new TownyBlockListener(this);
+    private final TownyEntityListener entityListener = new TownyEntityListener(this);
     private TownyUniverse townyUniverse;
     
     public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File plugin, ClassLoader cLoader) {
@@ -49,6 +51,10 @@ public class Towny extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
+        
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_CANBUILD, blockListener, Priority.Normal, this);
+        
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
     }
     
     public TownyUniverse getTownyUniverse() {

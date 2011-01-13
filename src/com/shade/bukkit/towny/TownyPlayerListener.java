@@ -51,6 +51,9 @@ public class TownyPlayerListener extends PlayerListener {
         } else if (split[0].equalsIgnoreCase("/town")) {
         	parseTownCommand(player, newSplit);
         	event.setCancelled(true);
+        } else if (split[0].equalsIgnoreCase("/nation")) {
+        	parseNationCommand(player, newSplit);
+        	event.setCancelled(true);
         }
     }
 
@@ -60,6 +63,14 @@ public class TownyPlayerListener extends PlayerListener {
     }
     
     public void parseResidentCommand(Player player, String[] split) {
+    	/*
+    	 * /resident
+    	 *TODO: /resident ?
+    	 *TODO: /resident [resident]
+    	 * /resident list
+    	 *TODO: /resident delete [resident] *Admin
+    	 */
+    	
     	if (split.length == 0) {
     		try {
 	    		Resident resident = plugin.getTownyUniverse().getResident(player.getName());
@@ -74,6 +85,12 @@ public class TownyPlayerListener extends PlayerListener {
     	}
     }
  
+    /**
+     * Send a list of all active residents in the universe to player
+     * Command: /resident list
+     * @param player
+     */
+    
     public void listResidents(Player player) {
     	player.sendMessage(ChatTools.formatTitle("Residents"));
 		String colour;
@@ -92,6 +109,23 @@ public class TownyPlayerListener extends PlayerListener {
     }
     
     public void parseTownCommand(Player player, String[] split) {
+    	/*
+    	 * /town
+		 *TODO: /town ?
+		 * /town list
+		 *TODO: /town leave
+		 *TODO: /town new [town] [mayor] *Admin
+		 *TODO: /town givebonus [town] [bonus] *Admin
+		 *TODO: /town delete [town] *Admin
+		 *TODO: /town add [resident] *Mayor
+		 *TODO: /town kick [resident] *Mayor
+		 *TODO: /town wall
+		 *TODO: /town setboard [message]
+		 *TODO: /town setlord [town] [lord]
+		 *TODO: /town sethome
+		 *TODO: /town protect [on/off/buildonly]
+		 *TODO: /town pvp [on/off]
+    	 */
     	if (split.length == 0) {
     		try {
 	    		Resident resident = plugin.getTownyUniverse().getResident(player.getName());
@@ -105,9 +139,17 @@ public class TownyPlayerListener extends PlayerListener {
     	} else {
 	    	if (split[0].equalsIgnoreCase("list")) {
 	    		listTowns(player);
+	        } else if (split[0].equalsIgnoreCase("new")) {
+	        	
 	        }
     	}
     }
+    
+    /**
+     * Send a list of all towns in the universe to player
+     * Command: /town list
+     * @param player
+     */
     
     public void listTowns(Player player) {
     	player.sendMessage(ChatTools.formatTitle("Towns"));
@@ -119,6 +161,16 @@ public class TownyPlayerListener extends PlayerListener {
     }
     
     public void parseNationCommand(Player player, String[] split) {
+    	/*
+    	 * /nation
+    	 * /nation list
+    	 *TODO: /nation leave *Mayor
+    	 *TODO: /nation new [nation] [capital] *Admin
+    	 *TODO: /nation delete [nation] *Admin
+    	 *TODO: /nation add [town] *King
+    	 *TODO: /nation kick [town] *King
+    	 */
+    	
     	if (split.length == 0) {
     		try {
 	    		Resident resident = plugin.getTownyUniverse().getResident(player.getName());
@@ -132,8 +184,23 @@ public class TownyPlayerListener extends PlayerListener {
     		}
     	} else {
 	    	if (split[0].equalsIgnoreCase("list")) {
-	    		listTowns(player);
+	    		listNations(player);
 	        }
     	}
+    }
+    
+    /**
+     * Send a list of all nations in the universe to player
+     * Command: /nation list
+     * @param player
+     */
+    
+    public void listNations(Player player) {
+    	player.sendMessage(ChatTools.formatTitle("Nations"));
+		ArrayList<String> formatedList = new ArrayList<String>();
+		for (Nation nation : plugin.getTownyUniverse().getNations())
+			formatedList.add(Colors.LightBlue + nation.getName() + Colors.Blue + " [" + nation.getNumTowns() + "]" + Colors.White);
+		for (String line : ChatTools.list(formatedList.toArray()))
+			player.sendMessage(line);
     }
 }

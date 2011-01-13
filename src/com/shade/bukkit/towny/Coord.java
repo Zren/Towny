@@ -25,4 +25,10 @@ public class Coord {
 		return this.x == o.x
 			&& this.z == o.z;
 	}
+	
+	public static Coord parseCoord(TownySettings settings, int x, int z) {
+		return new Coord(
+				x / settings.getTownBlockSize() - (x < 0 ? 1 : 0),
+				z / settings.getTownBlockSize() - (z < 0 ? 1 : 0));
+	}
 }

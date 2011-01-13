@@ -58,4 +58,12 @@ public class TownySettings {
 	public int getMaxTownBlocks(Town town) {
 		return 16;
 	}
+
+	public int getTownBlockSize() {
+		return 16;
+	}
+	
+	public boolean getFriendlyFire() {
+		return false;
+	}
 }
