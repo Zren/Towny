@@ -117,4 +117,23 @@ public class TownyPlayerListener extends PlayerListener {
 		for (String line : ChatTools.list(formatedList.toArray()))
 			player.sendMessage(line);
     }
+    
+    public void parseNationCommand(Player player, String[] split) {
+    	if (split.length == 0) {
+    		try {
+	    		Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+	    		Town town = resident.getTown();
+	    		Nation nation = town.getNation();
+	    		plugin.getTownyUniverse().sendMessage(player, plugin.getTownyUniverse().getStatus(nation));
+    		} catch (NotRegisteredException x) {
+    			plugin.sendErrorMsg(player, "You are not registered");
+    		} catch (TownyException x) {
+    			plugin.sendErrorMsg(player, x.getError());
+    		}
+    	} else {
+	    	if (split[0].equalsIgnoreCase("list")) {
+	    		listTowns(player);
+	        }
+    	}
+    }
 }

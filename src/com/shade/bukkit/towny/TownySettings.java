@@ -50,4 +50,12 @@ public class TownySettings {
 	public boolean isFirstRun() {
 		return false;
 	}
+
+	public String getNationPostfix() {
+		return " Nation";
+	}
+
+	public int getMaxTownBlocks(Town town) {
+		return 16;
+	}
 }

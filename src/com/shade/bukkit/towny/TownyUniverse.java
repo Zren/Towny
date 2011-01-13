@@ -178,6 +178,10 @@ public class TownyUniverse extends TownyObject {
 	public List<String> getStatus(Town town) {
 		return formatter.getStatus(town);
 	}
+	
+	public List<String> getStatus(Nation nation) {
+		return formatter.getStatus(nation);
+	}
 
 	public Town getTown(String name) throws NotRegisteredException {
 		Town town = towns.get(name.toLowerCase());

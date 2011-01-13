@@ -150,4 +150,8 @@ public class Nation extends TownyObject {
 	public List<Nation> getAllies() {
 		return allies;
 	}
+	
+	public int getNumTowns() {
+		return towns.size();
+	}
 }
