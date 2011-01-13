@@ -3,8 +3,24 @@ package com.shade.bukkit.towny;
 public class TownySettings {
 	private Town defaultTown;
 	
+	public String[] parseString(String str) {
+		return str.replaceAll("&", "\u00A7").split("@");
+	}
+	
 	public String[] getRegistrationMsg() {
-		return new String[]{"Welcome this is your first login.", "You've successfully registered!"};
+		return parseString("Welcome this is your first login.@You've successfully registered!");
+	}
+	
+	public String[] getNewTownMsg(String who, String town) {
+		return parseString(String.format("%s created a new town called %s", who, town));
+	}
+	
+	public String[] getJoinTownMsg(String who) {
+		return parseString(String.format("%s joined town!", who));
+	}
+	
+	public String[] getNewMayorMsg(String who) {
+		return parseString(String.format("%s is now the mayor!", who));
 	}
 
 	public void setDefaultTown(Town defaultTown) {

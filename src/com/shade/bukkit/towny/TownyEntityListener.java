@@ -31,12 +31,9 @@ public class TownyEntityListener extends PlayerListener  {
 		TownySettings settings = universe.getSettings(); 
 		
 		// Check Town PvP status
-		Coord key = Coord.parseCoord(
-				settings,
-				a.getLocation().getBlockX(),
-				a.getLocation().getBlockZ());
 		try {
 			TownyWorld world = universe.getWorld(a.getWorld().getName());
+			Coord key = Coord.parseCoord(settings, a);
 			TownBlock townblock = world.getTownBlock(key);
 			
 			if (!townblock.getTown().isPVP())

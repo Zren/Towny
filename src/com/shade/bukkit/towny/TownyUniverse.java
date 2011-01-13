@@ -34,13 +34,13 @@ public class TownyUniverse extends TownyObject {
 			sendMessage(player, settings.getRegistrationMsg());
 			if (settings.getDefaultTown() != null)
 				sendMessage(player, settings.getRegistrationMsg());
-			dataSource.saveResidentList();
+			getDataSource().saveResidentList();
 		} else {
 			resident = getResident(player.getName());
 		}
 		
 		resident.setLastOnline(System.currentTimeMillis());
-		dataSource.saveResident(resident);
+		getDataSource().saveResident(resident);
 	}
 	
 	public void onLogout(Player player) {
@@ -98,6 +98,10 @@ public class TownyUniverse extends TownyObject {
 		sendNationMessage(nation, lines.toArray(new String[0]));
 	}
 	
+	public void sendGlobalMessage(List<String> lines) {
+		sendGlobalMessage(lines.toArray(new String[0]));
+	}
+	
 	public void sendMessage(Player player, String[] lines) {
 		for (String line : lines)
 			player.sendMessage(line);
@@ -111,6 +115,12 @@ public class TownyUniverse extends TownyObject {
 	
 	public void sendNationMessage(Nation nation, String[] lines) {
 		for (Player player : getOnlinePlayers(nation))
+			for (String line : lines)
+				player.sendMessage(line);
+	}
+	
+	public void sendGlobalMessage(String[] lines) {
+		for (Player player : getOnlinePlayers())
 			for (String line : lines)
 				player.sendMessage(line);
 	}
@@ -205,12 +215,12 @@ public class TownyUniverse extends TownyObject {
 	
 	public boolean loadDatabase() {
 		if (settings.getLoadDatabase().equalsIgnoreCase("flatfile"))
-			dataSource = new TownyFlatFileSource(); 
+			setDataSource(new TownyFlatFileSource()); 
 		else
 			return false;
 		
-		dataSource.initialize(plugin, this,	settings);
-		dataSource.loadAll();
+		getDataSource().initialize(plugin, this,	settings);
+		getDataSource().loadAll();
 		return true;
 	}
 	
@@ -234,5 +244,13 @@ public class TownyUniverse extends TownyObject {
 			return false;
 		}
 		return false;
+	}
+
+	public void setDataSource(TownyDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public TownyDataSource getDataSource() {
+		return dataSource;
 	}
 }

@@ -47,10 +47,18 @@ public class TownyWorld extends TownyObject {
 	}
 	
 	public void newTownBlock(int x, int z) throws AlreadyRegisteredException {
-		if (townBlocks.containsKey(new Coord(x, z)))
+		newTownBlock(new Coord(x, z));
+	}
+	
+	public void newTownBlock(Coord key) throws AlreadyRegisteredException {
+		if (hasTownBlock(key))
 			throw new AlreadyRegisteredException();
 		
-		townBlocks.put(new Coord(x, z), new TownBlock(x, z));
+		townBlocks.put(key, new TownBlock(key.getX(), key.getZ()));
+	}
+	
+	public boolean hasTownBlock(Coord key) {
+		return townBlocks.containsKey(key);
 	}
 	
 	public TownBlock getTownBlock(int x, int z) throws NotRegisteredException {

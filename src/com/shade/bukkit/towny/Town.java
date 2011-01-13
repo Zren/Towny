@@ -24,7 +24,9 @@ public class Town extends TownyObject {
 		return mayor;
 	}
 
-	public void setMayor(Resident mayor) {
+	public void setMayor(Resident mayor) throws TownyException {
+		if (!hasResident(mayor))
+			throw new TownyException("Mayor doesn't belong to town.");
 		this.mayor = mayor;
 	}
 

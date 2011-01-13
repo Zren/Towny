@@ -158,12 +158,18 @@ public class TownyPlayerListener extends PlayerListener {
 	        } else if (split[0].equalsIgnoreCase("list")) {
 	    		listTowns(player);
 	        } else if (split[0].equalsIgnoreCase("new")) {
-	        	
+	        	if (split.length == 1) {
+	        		plugin.sendErrorMsg(player, "Specify town name");
+	        	} else if (split.length == 2) {
+	        		newTown(player, split[1], player.getName());
+	        	} else {
+	        		newTown(player, split[1], split[2]);
+	        	}
 	        }
     	}
     }
-    
-    /**
+
+	/**
      * Send a list of all town commands to player
      * Command: /town ?
      * @param player
@@ -178,7 +184,7 @@ public class TownyPlayerListener extends PlayerListener {
     	//TODO: player.sendMessage(ChatTools.formatCommand("", "/town", "here", "Shortcut to the town's status of your location."));
     	player.sendMessage(ChatTools.formatCommand("", "/town", "list", ""));
     	//TODO: player.sendMessage(ChatTools.formatCommand("", "/town", "leave", ""));
-    	//TODO: player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] [mayor]", ""));
+    	player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
     	//TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add [resident]", ""));
     	//TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick [resident]", ""));
     	//TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "setboard [message]", ""));
@@ -205,6 +211,46 @@ public class TownyPlayerListener extends PlayerListener {
 			formatedList.add(Colors.LightBlue + town.getName() + Colors.Blue + " [" + town.getNumResidents() + "]" + Colors.White);
 		for (String line : ChatTools.list(formatedList.toArray()))
 			player.sendMessage(line);
+    }
+    
+    /**
+     * Create a new town.
+     * Command: /town new [town] *[mayor]
+     * @param player
+     */
+    
+    public void newTown(Player player, String name, String mayorName) {
+    	TownyUniverse universe = plugin.getTownyUniverse();
+    	TownySettings settings = universe.getSettings();
+		try {
+    		Resident resident = universe.getResident(mayorName);
+    		if (resident.hasTown())
+    			throw new TownyException("Target already belongs to a town.");
+    		
+    		TownyWorld world = universe.getWorld(player.getWorld().getName());
+    		Coord key = Coord.parseCoord(settings, player);
+    		if (world.hasTownBlock(key))
+    			throw new TownyException("This area already belongs to someone.");
+    		
+    		
+    		world.newTownBlock(key);
+    		universe.newTown(name);
+			Town town = universe.getTown(name);
+			town.addResident(resident);
+			town.setMayor(resident);
+			TownBlock townblock = world.getTownBlock(key);
+			town.setHomeBlock(townblock);
+			world.addTown(town);
+			
+			universe.getDataSource().saveResident(resident);
+			universe.getDataSource().saveTown(town);
+			universe.getDataSource().saveWorld(world);
+			
+			universe.sendGlobalMessage(settings.getNewTownMsg(player.getName(), town.getName()));
+		} catch (TownyException x) {
+			plugin.sendErrorMsg(player, x.getError());
+			//TODO: delete town data that might have been done
+		}
     }
     
     public void parseNationCommand(Player player, String[] split) {
@@ -265,5 +311,34 @@ public class TownyPlayerListener extends PlayerListener {
 			formatedList.add(Colors.LightBlue + nation.getName() + Colors.Blue + " [" + nation.getNumTowns() + "]" + Colors.White);
 		for (String line : ChatTools.list(formatedList.toArray()))
 			player.sendMessage(line);
+    }
+    
+    /**
+     * Create a new nation.
+     * Command: /nation new [nation] *[capital]
+     * @param player
+     */
+    
+    public void newNation(Player player, String name, String capitalName) {
+    	TownyUniverse universe = plugin.getTownyUniverse();
+    	TownySettings settings = universe.getSettings();
+		try {
+    		Town town = universe.getTown(capitalName);
+    		if (town.hasNation())
+    			throw new TownyException("Target already belongs to a nation.");
+    		
+    		universe.newNation(name);
+			Nation nation = universe.getNation(name);
+			nation.addTown(town);
+			nation.setCapital(town);
+			
+			universe.getDataSource().saveTown(town);
+			universe.getDataSource().saveNation(nation);
+			
+			universe.sendGlobalMessage(settings.getNewTownMsg(player.getName(), town.getName()));
+		} catch (TownyException x) {
+			plugin.sendErrorMsg(player, x.getError());
+			//TODO: delete town data that might have been done
+		}
     }
 }
