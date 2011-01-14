@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
+
 /**
  * Handle events for all Player related events
  * @author Shade
@@ -130,7 +131,7 @@ public class TownyPlayerListener extends PlayerListener {
 		 *TODO: /town ?
 		 * /town list
 		 *TODO: /town leave
-		 *TODO: /town new [town] [mayor] *Admin
+		 * /town new [town] [mayor] *Admin
 		 *TODO: /town givebonus [town] [bonus] *Admin
 		 *TODO: /town delete [town] *Admin
 		 *TODO: /town add [resident] *Mayor
@@ -258,7 +259,7 @@ public class TownyPlayerListener extends PlayerListener {
     	 * /nation
     	 * /nation list
     	 *TODO: /nation leave *Mayor
-    	 *TODO: /nation new [nation] [capital] *Admin
+    	 * /nation new [nation] [capital] *Admin
     	 *TODO: /nation delete [nation] *Admin
     	 *TODO: /nation add [town] *King
     	 *TODO: /nation kick [town] *King
@@ -280,6 +281,20 @@ public class TownyPlayerListener extends PlayerListener {
     			showNationHelp(player);
 	        } else if (split[0].equalsIgnoreCase("list")) {
 	    		listNations(player);
+	        } else if (split[0].equalsIgnoreCase("new")) {
+	        	//TODO: Make an overloaded function newNation(Player,String,Town) 
+	        	if (split.length == 1) {
+	        		plugin.sendErrorMsg(player, "Specify nation name");
+	        	} else if (split.length == 2) {
+	        		try { //TODO: Make sure of the error catching
+	        			Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+	        			newNation(player, split[1], resident.getTown().getName());
+	        		} catch (TownyException x) {
+	         			plugin.sendErrorMsg(player, x.getError());
+	         		}
+	        	} else {
+	        		newNation(player, split[1], split[2]);
+	        	}
 	        }
     	}
     }
