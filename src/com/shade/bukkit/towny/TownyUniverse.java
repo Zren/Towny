@@ -219,7 +219,7 @@ public class TownyUniverse extends TownyObject {
 		else
 			return false;
 		
-		getDataSource().initialize(plugin, this,	settings);
+		getDataSource().initialize(plugin, this, settings);
 		getDataSource().loadAll();
 		return true;
 	}

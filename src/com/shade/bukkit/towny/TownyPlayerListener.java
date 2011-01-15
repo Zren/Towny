@@ -249,6 +249,7 @@ public class TownyPlayerListener extends PlayerListener {
 			universe.getDataSource().saveResident(resident);
 			universe.getDataSource().saveTown(town);
 			universe.getDataSource().saveWorld(world);
+			universe.getDataSource().saveTownList();
 			
 			universe.sendGlobalMessage(settings.getNewTownMsg(player.getName(), town.getName()));
 		} catch (TownyException x) {
@@ -354,6 +355,7 @@ public class TownyPlayerListener extends PlayerListener {
 			
 			universe.getDataSource().saveTown(town);
 			universe.getDataSource().saveNation(nation);
+			universe.getDataSource().saveNationList();
 			
 			universe.sendGlobalMessage(settings.getNewTownMsg(player.getName(), town.getName()));
 		} catch (TownyException x) {
