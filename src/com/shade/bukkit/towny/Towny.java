@@ -21,6 +21,8 @@ import com.shade.bukkit.towny.TownyUniverse;
  * @author Shade
  */
 public class Towny extends JavaPlugin {
+	private String version = "2.0.0";
+	
     private final TownyPlayerListener playerListener = new TownyPlayerListener(this);
     private final TownyBlockListener blockListener = new TownyBlockListener(this);
     private final TownyEntityListener entityListener = new TownyEntityListener(this);
@@ -68,4 +70,8 @@ public class Towny extends JavaPlugin {
     	player.sendMessage("[Towny] " + msg);
     	System.out.println("[Towny] " + msg);
     }
+
+	public String getVersion() {
+		return version;
+	}
 }

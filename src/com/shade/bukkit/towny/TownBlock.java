@@ -15,7 +15,9 @@ public class TownBlock {
 	public void setTown(Town town) {
 		this.town = town;
 	}
-	public Town getTown() {
+	public Town getTown() throws NotRegisteredException {
+		if (hasTown())
+			throw new NotRegisteredException();
 		return town;
 	}
 	public boolean hasTown() {

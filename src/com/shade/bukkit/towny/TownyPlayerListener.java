@@ -55,6 +55,9 @@ public class TownyPlayerListener extends PlayerListener {
         } else if (split[0].equalsIgnoreCase("/nation")) {
         	parseNationCommand(player, newSplit);
         	event.setCancelled(true);
+        } else if (split[0].equalsIgnoreCase("/towny")) {
+        	parseTownyCommand(player, newSplit);
+        	event.setCancelled(true);
         }
     }
 
@@ -367,5 +370,197 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.sendErrorMsg(player, x.getError());
 			//TODO: delete town data that might have been done
 		}
+    }
+    
+    public void parseTownyCommand(Player player, String[] split) {
+    	/*
+    	 * /towny
+    	 * /towny ?
+    	 * /towny map
+    	 * /towny version
+    	 * /towny universe
+    	 */
+    	
+    	if (split.length == 0) {
+    		showHelp(player);
+    	} else {
+    		if (split[0].equalsIgnoreCase("?")) {
+    			showResidentHelp(player);
+	        } else if (split[0].equalsIgnoreCase("map")) {
+	        	showTownyVersion(player);
+	        } else if (split[0].equalsIgnoreCase("version")) {
+	        	showTownyVersion(player);
+	        } else if (split[0].equalsIgnoreCase("universe")) {
+	        	showUniverseStats(player);
+	        }
+    	}
+    }
+    
+    /**
+     * Show a general help and list other help commands to player
+     * Command: /towny
+     * @param player
+     */
+    
+    public void showHelp(Player player) {
+    	player.sendMessage(ChatTools.formatTitle("General Towny Help"));
+    	player.sendMessage("Try the following commands to learn more about towny.");
+    	player.sendMessage(ChatTools.formatCommand("", "/resident", "?", ""));
+    	player.sendMessage(ChatTools.formatCommand("", "/town", "?", ""));
+    	player.sendMessage(ChatTools.formatCommand("", "/nation", "?", ""));
+    	player.sendMessage(ChatTools.formatCommand("", "/towny", "?", ""));
+    }
+    
+    /**
+     * Send a list of all towny commands to player
+     * Command: /towny ?
+     * @param player
+     */
+    
+    public void showTownyHelp(Player player) {
+    	player.sendMessage(ChatTools.formatTitle("/towny"));
+    	player.sendMessage(ChatTools.formatCommand("", "/towny", "", "General help for Towny"));
+    	player.sendMessage(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
+    	player.sendMessage(ChatTools.formatCommand("", "/towny", "universe", "Displays stats"));
+    }
+    
+    /**
+     * Send a map of the nearby townblocks status to player
+     * Command: /towny map
+     * @param player
+     */
+    
+    public void showMap(Player player) {
+    	TownyUniverse universe = plugin.getTownyUniverse();
+    	TownySettings settings = universe.getSettings();
+    	boolean hasTown = false;
+    	Resident resident;
+    	int lineCount = 0;
+    	
+    	try {
+    		resident = universe.getResident(player.getName());
+    		if (resident.hasTown())
+    			hasTown = true;
+		} catch (TownyException x) {
+			plugin.sendErrorMsg(player, x.getError());
+			return;
+		}
+		
+		TownyWorld world;
+		try {
+			world = universe.getWorld(player.getWorld().getName());
+		} catch (NotRegisteredException e1) {
+			plugin.sendErrorMsg(player, "You are not in a registered world.");
+			return;
+		}
+		Coord pos = Coord.parseCoord(settings, player);
+		
+		player.sendMessage(ChatTools.formatTitle("Towny Map"));
+		
+		String[][] townyMap = new String[31][7];
+		int x, y = 0;
+		for (int tby = pos.getZ()-15; tby <= pos.getZ()+15; tby++) {
+			x = 0;
+			for (int tbx = pos.getX()-3; tbx <= pos.getX()+3; tbx++) {
+				try {
+					TownBlock townblock = world.getTownBlock(tbx, tby);
+					if (!townblock.hasTown())
+						throw new TownyException();
+					
+					if (x == 3 && y == 15) { //Center of map is player's location
+						townyMap[y][x] = Colors.Gold;
+					} else if (hasTown) {
+						if (resident.getTown() == townblock.getTown()) { //Player's own town
+							townyMap[y][x] = Colors.LightGreen;
+						} else {
+							if (resident.hasNation()) {
+								if (resident.getTown().getNation().hasTown(townblock.getTown())) { //Allied towns
+									townyMap[y][x] = Colors.Green;
+								} else {
+									if (townblock.getTown().hasNation()) {
+										Nation nation = resident.getTown().getNation();
+										if (nation.hasAlly(townblock.getTown().getNation())) { //Allied towns
+											townyMap[y][x] = Colors.Green;
+										} else if (nation.hasEnemy(townblock.getTown().getNation())) { //Enemy towns
+											townyMap[y][x] = Colors.Red;
+										} else {
+											townyMap[y][x] = Colors.White;
+										}
+									} else {
+										townyMap[y][x] = Colors.White;
+									}
+								}//
+							} else {
+								townyMap[y][x] = Colors.White;
+							}
+						}
+					} else {
+						townyMap[y][x] = Colors.White;
+					}
+					
+					//Registered town block
+					townyMap[y][x] += "+";
+				} catch(TownyException e) {
+					if (x == 3 && y == 15) {
+						townyMap[y][x] = Colors.Gold;
+					} else {
+						townyMap[y][x] = Colors.Gray;
+					}
+					
+					// Unregistered town block
+					townyMap[y][x] += "-";
+				}
+				x++;
+			}
+			y++;
+		}
+		
+		String[] compass = {
+			Colors.Black + "  -----  ",
+			Colors.Black + "  --" + Colors.White + "N" + Colors.Black + "--  ",
+			Colors.Black + "  -" + Colors.White + "W+E" + Colors.Black + "-  ",
+			Colors.Black + "  --" + Colors.White + "S" + Colors.Black + "--  "
+		};
+		
+		String line;
+		//Variables have been rotated to fit N/S/E/W properly
+		for (int my = 0; my < 7; my++) {
+			line = compass[0];
+			if (lineCount < compass.length)
+				line = compass[lineCount];
+		
+				
+			for (int mx = 30; mx >= 0; mx--) {
+				line += townyMap[mx][my];
+			}
+			player.sendMessage(line);
+			lineCount++;
+		}
+    }
+    
+    /**
+     * Send the version of towny to player
+     * Command: /towny version
+     * @param player
+     */
+    
+    public void showTownyVersion(Player player) {
+    	player.sendMessage("Towny version: " + plugin.getVersion());
+    }
+    
+    /**
+     * Send some stats about the towny universe to the player
+     * Command: /towny universe
+     * @param player
+     */
+    
+    public void showUniverseStats(Player player) {
+    	player.sendMessage("§0-§4###§0---§4###§0-");
+		player.sendMessage("§4#§c###§4#§0-§4#§c###§4#§0   §6[§eTowny "+plugin.getVersion()+"§6]");
+		player.sendMessage("§4#§c####§4#§c####§4#   §3By: §bChris H (Shade)");
+		player.sendMessage("§0-§4#§c#######§4#§0-");
+		player.sendMessage("§0--§4##§c###§4##§0-- §3Residents: §b" + Integer.toString(plugin.getTownyUniverse().getResidents().size()));
+		player.sendMessage("§0----§4#§c#§4#§0---- §3Towns: §b" + Integer.toString(plugin.getTownyUniverse().getTowns().size()));
+		player.sendMessage("§0-----§4#§0----- §3Nations: §b" + Integer.toString(plugin.getTownyUniverse().getNations().size()));
     }
 }
