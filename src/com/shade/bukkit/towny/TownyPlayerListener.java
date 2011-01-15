@@ -233,6 +233,8 @@ public class TownyPlayerListener extends PlayerListener {
     		if (world.hasTownBlock(key))
     			throw new TownyException("This area already belongs to someone.");
     		
+    		if (resident.pay(settings.getNewTownPrice()))
+    			throw new TownyException("You can't afford to settle a new town here.");
     		
     		world.newTownBlock(key);
     		universe.newTown(name);

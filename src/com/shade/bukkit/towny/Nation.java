@@ -3,12 +3,13 @@ package com.shade.bukkit.towny;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Nation extends TownyObject {
+public class Nation extends TownyIConomyObject {
 	private List<Resident> assistants = new ArrayList<Resident>();
 	private List<Town> towns = new ArrayList<Town>();
 	private List<Nation> allies  = new ArrayList<Nation>();
 	private List<Nation> enemies  = new ArrayList<Nation>();
 	private Town capital;
+	private int taxes;
 	
 	public Nation(String name) {
 		setName(name);

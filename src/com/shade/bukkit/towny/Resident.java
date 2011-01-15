@@ -3,7 +3,7 @@ package com.shade.bukkit.towny;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Resident extends TownyObject {
+public class Resident extends TownyIConomyObject {
 	private List<Resident> friends = new ArrayList<Resident>();
 	private Town town;
 	private long lastOnline;

@@ -26,8 +26,8 @@ public class Towny extends JavaPlugin {
     private final TownyEntityListener entityListener = new TownyEntityListener(this);
     private TownyUniverse townyUniverse;
     
-    public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File plugin, ClassLoader cLoader) {
-        super(pluginLoader, instance, desc, plugin, cLoader);
+    public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
+        super(pluginLoader, instance, desc, folder, plugin, cLoader);
     }
     
     public void onEnable() {

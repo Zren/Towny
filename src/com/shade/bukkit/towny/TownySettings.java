@@ -86,4 +86,12 @@ public class TownySettings {
 	public boolean isTownCreationAdminOnly() {
 		return false;
 	}
+
+	public boolean isUsingIConomy() {
+		return false;
+	}
+
+	public int getNewTownPrice() {
+		return 100;
+	}
 }

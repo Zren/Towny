@@ -3,12 +3,12 @@ package com.shade.bukkit.towny;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Town extends TownyObject {
+public class Town extends TownyIConomyObject {
 	private List<Resident> residents = new ArrayList<Resident>();
 	private List<Resident> assistants = new ArrayList<Resident>();
 	private List<TownBlock> townblocks = new ArrayList<TownBlock>();
 	private Resident mayor;
-	private int bonusBlocks;
+	private int bonusBlocks, taxes;
 	private Nation nation;
 	private boolean isPVP, hasMobs;
 	private String townBoard;
@@ -161,5 +161,40 @@ public class Town extends TownyObject {
 
 	public boolean hasMayor() {
 		return mayor != null;
+	}
+
+	public void setTaxes(int taxes) {
+		this.taxes = taxes;
+	}
+
+	public int getTaxes() {
+		return taxes;
+	}
+	
+	public void removeResident(Resident resident) throws NotRegisteredException {
+		if (!hasResident(resident)) {
+			throw new NotRegisteredException();
+		} else {
+			//TODO: Remove all plots of land owned in town.
+			residents.remove(resident);
+		}
+	}
+	
+	public void collectTaxes() throws TownyException {
+		for (Resident resident : residents) {
+			// Mayor and his assistants don't have to pay.
+			if (!hasAssistant(resident) || !isMayor(resident)) {
+				if (resident.pay(getTaxes(), this)) {
+					
+				} else {
+					//TODO: Make a message that tells the player they ran out of money to live in the town.
+					try {
+						removeResident(resident);
+					} catch (NotRegisteredException e) {
+						//TODO: Possibly format a list of residents who refused to leave?
+					}
+				}
+			}
+		}
 	}
 }
