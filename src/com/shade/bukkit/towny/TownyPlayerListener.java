@@ -233,8 +233,9 @@ public class TownyPlayerListener extends PlayerListener {
     		if (world.hasTownBlock(key))
     			throw new TownyException("This area already belongs to someone.");
     		
-    		if (resident.pay(settings.getNewTownPrice()))
+    		if (settings.isUsingIConomy() && resident.pay(settings.getNewTownPrice()))
     			throw new TownyException("You can't afford to settle a new town here.");
+    		
     		
     		world.newTownBlock(key);
     		universe.newTown(name);
@@ -253,6 +254,8 @@ public class TownyPlayerListener extends PlayerListener {
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 			//TODO: delete town data that might have been done
+		} catch (IConomyException x) {
+			plugin.sendErrorMsg(player, x.getError());
 		}
     }
     

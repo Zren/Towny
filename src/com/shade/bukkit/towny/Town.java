@@ -180,7 +180,7 @@ public class Town extends TownyIConomyObject {
 		}
 	}
 	
-	public void collectTaxes() throws TownyException {
+	public void collectTaxes() throws IConomyException {
 		for (Resident resident : residents) {
 			// Mayor and his assistants don't have to pay.
 			if (!hasAssistant(resident) || !isMayor(resident)) {

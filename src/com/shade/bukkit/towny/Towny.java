@@ -39,6 +39,9 @@ public class Towny extends JavaPlugin {
     	else
     		System.out.println("[Towny] Failed to load database");
     	
+    	TownyIConomyObject.setSettings(townyUniverse.getSettings());
+    	TownyIConomyObject.setPlugin(this);
+    	
         System.out.println("[Towny] Mod Enabled");
     }
 
