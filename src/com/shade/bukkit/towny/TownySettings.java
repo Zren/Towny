@@ -15,12 +15,24 @@ public class TownySettings {
 		return parseString(String.format("%s created a new town called %s", who, town));
 	}
 	
+	public String[] getNewNationMsg(String who, String nation) {
+		return parseString(String.format("%s created a new nation called %s", who, nation));
+	}
+	
 	public String[] getJoinTownMsg(String who) {
 		return parseString(String.format("%s joined town!", who));
 	}
 	
+	public String[] getJoinNationMsg(String who) {
+		return parseString(String.format("%s joined the nation!", who));
+	}
+	
 	public String[] getNewMayorMsg(String who) {
 		return parseString(String.format("%s is now the mayor!", who));
+	}
+	
+	public String[] getNewKingMsg(String who) {
+		return parseString(String.format("%s is now the king!", who));
 	}
 
 	public void setDefaultTown(Town defaultTown) {

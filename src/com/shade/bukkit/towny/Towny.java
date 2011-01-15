@@ -66,6 +66,6 @@ public class Towny extends JavaPlugin {
     
     public void sendErrorMsg(Player player, String msg) {
     	player.sendMessage("[Towny] " + msg);
-    	System.out.print("[Towny] " + msg);
+    	System.out.println("[Towny] " + msg);
     }
 }

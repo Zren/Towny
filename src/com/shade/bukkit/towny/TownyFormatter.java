@@ -1,5 +1,6 @@
 package com.shade.bukkit.towny;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,8 @@ public class TownyFormatter {
         out.add(ChatTools.formatTitle(getFormattedName(resident)));
         
         // Last Online: March 7
-        out.add(Colors.Green + "Last Online: " + Colors.LightGreen + resident.getLastOnline());
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd '@' HH:mm");
+        out.add(Colors.Green + "Last Online: " + Colors.LightGreen + sdf.format(resident.getLastOnline()));
         
         // Town: Camelot
         String line = Colors.Green + "Town: " + Colors.LightGreen;
@@ -45,7 +47,7 @@ public class TownyFormatter {
 	public List<String> getStatus(Town town) {
         List<String> out = new ArrayList<String>();
         
-     // ___[ Racoon City (PvP) ]___
+        // ___[ Racoon City (PvP) ]___
         out.add(ChatTools.formatTitle(getFormattedName(town) + (town.isPVP() ? Colors.Red+" (PvP)" : "")));
         
         // Lord: Mayor Quimby
@@ -59,7 +61,7 @@ public class TownyFormatter {
 		out.add(Colors.Green + "Town Size: " + Colors.LightGreen + town.getTownblocks().size() + " / " + settings.getMaxTownBlocks(town) + Colors.LightBlue + " [Bonus: "+town.getBonusBlocks()+"]");
 		
 		//if (mayor != null)
-            out.add(Colors.Green + "Lord: " + Colors.LightGreen + town.getMayor());
+            out.add(Colors.Green + "Lord: " + Colors.LightGreen + getFormattedName(town.getMayor()));
         // Assistants:
 		// Sammy, Ginger
         if (town.getAssistants().size() > 0) {
@@ -68,7 +70,7 @@ public class TownyFormatter {
 		}
         // Nation: Azur Empire
         if (town.hasNation())
-            out.add(Colors.Green + "Nation: " + Colors.LightGreen + town.getNation());
+            out.add(Colors.Green + "Nation: " + Colors.LightGreen + getFormattedName(town.getNation()));
         
         // Residents [12]:
         // James, Carry, Mason

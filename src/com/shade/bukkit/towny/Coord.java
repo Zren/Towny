@@ -53,4 +53,8 @@ public class Coord {
 	public static Coord parseCoord(TownySettings settings, Player player) {
 		return parseCoord(settings, player.getLocation().getBlockX(), player.getLocation().getBlockZ());
 	}
+	
+	public String toString() {
+		return getX() + "," + getZ();
+	}
 }

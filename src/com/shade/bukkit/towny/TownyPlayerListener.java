@@ -164,6 +164,7 @@ public class TownyPlayerListener extends PlayerListener {
 	        	} else if (split.length == 2) {
 	        		newTown(player, split[1], player.getName());
 	        	} else {
+	        		//TODO: Check if player is an admin
 	        		newTown(player, split[1], split[2]);
 	        	}
 	        }
@@ -226,12 +227,12 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
     		Resident resident = universe.getResident(mayorName);
     		if (resident.hasTown())
-    			throw new TownyException("Target already belongs to a town.");
+    			throw new TownyException(resident + " already belongs to a town.");
     		
     		TownyWorld world = universe.getWorld(player.getWorld().getName());
     		Coord key = Coord.parseCoord(settings, player);
     		if (world.hasTownBlock(key))
-    			throw new TownyException("This area already belongs to someone.");
+    			throw new TownyException("This area ("+key+") already belongs to someone.");
     		
     		if (settings.isUsingIConomy() && resident.pay(settings.getNewTownPrice()))
     			throw new TownyException("You can't afford to settle a new town here.");
@@ -299,6 +300,7 @@ public class TownyPlayerListener extends PlayerListener {
 	         			plugin.sendErrorMsg(player, x.getError());
 	         		}
 	        	} else {
+	        		//TODO: Check if player is an admin
 	        		newNation(player, split[1], split[2]);
 	        	}
 	        }
@@ -312,11 +314,14 @@ public class TownyPlayerListener extends PlayerListener {
      */
     
     public void showNationHelp(Player player) {
+    	String newTownReq = plugin.getTownyUniverse().getSettings().isTownCreationAdminOnly() ? "Admin" : "";
+    	
     	player.sendMessage(ChatTools.formatTitle("/nation"));
     	player.sendMessage(ChatTools.formatCommand("", "/nation", "", "Your nation's status"));
     	//TODO: player.sendMessage(ChatTools.formatCommand("", "/nation", "[nation]", "Target nation's status"));
     	player.sendMessage(ChatTools.formatCommand("", "/nation", "list", "List all nations"));
     	//TODO: player.sendMessage(ChatTools.formatCommand("", "/nation", "delete [nation]", ""));
+    	player.sendMessage(ChatTools.formatCommand(newTownReq, "/nation", "new [nation] *[capital]", "Create a new nation"));
     }
     
     /**
@@ -357,7 +362,7 @@ public class TownyPlayerListener extends PlayerListener {
 			universe.getDataSource().saveNation(nation);
 			universe.getDataSource().saveNationList();
 			
-			universe.sendGlobalMessage(settings.getNewTownMsg(player.getName(), town.getName()));
+			universe.sendGlobalMessage(settings.getNewNationMsg(player.getName(), nation.getName()));
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 			//TODO: delete town data that might have been done
