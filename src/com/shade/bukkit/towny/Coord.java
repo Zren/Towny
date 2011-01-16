@@ -1,8 +1,8 @@
 package com.shade.bukkit.towny;
 
-import org.bukkit.Block;
 import org.bukkit.Location;
-import org.bukkit.Player;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class Coord {
 	private static int townBlockSize = 16;

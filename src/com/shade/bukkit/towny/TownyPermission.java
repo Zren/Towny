@@ -8,31 +8,37 @@ public class TownyPermission {
 	}
 	
 	public void reset() {
-		residentBuild = false;
-		residentDestroy = false;
-		outsiderBuild = false;
-		outsiderDestroy = false;
-		outsiderSwitches = false;
-		allies = false;
-		
+		setAll(false);
+	}
+	
+	public void setAll(boolean b) {
+		residentBuild = b;
+		residentDestroy = b;
+		outsiderBuild = b;
+		outsiderDestroy = b;
+		outsiderSwitches = b;
+		allies = b;	
+	}
+	
+	public void set(String s, boolean b) {
+		if (s.equalsIgnoreCase("residentBuild"))
+			residentBuild = b;
+		else if (s.equalsIgnoreCase("residentDestroy"))
+			residentDestroy = b;
+		else if (s.equalsIgnoreCase("outsiderBuild"))
+			outsiderBuild = b;
+		else if (s.equalsIgnoreCase("outsiderDestroy"))
+			outsiderDestroy = b;
+		else if (s.equalsIgnoreCase("outsiderSwitches"))
+			outsiderSwitches = b;
+		else if (s.equalsIgnoreCase("allies"))
+			allies = b;
 	}
 	
 	public void load(String s) {
 		String[] tokens = s.split(",");
 		for (String token : tokens) {
-			if (token.equalsIgnoreCase("residentBuild"))
-				residentBuild = true;
-			else if (token.equalsIgnoreCase("residentDestroy"))
-				residentDestroy = true;
-			else if (token.equalsIgnoreCase("outsiderBuild"))
-				outsiderBuild = true;
-			else if (token.equalsIgnoreCase("outsiderDestroy"))
-				outsiderDestroy = true;
-			else if (token.equalsIgnoreCase("outsiderSwitches"))
-				outsiderSwitches = true;
-			else if (token.equalsIgnoreCase("allies"))
-				allies = true;
-			
+			set(token, true);
 		}
 	}
 	

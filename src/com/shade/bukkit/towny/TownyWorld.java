@@ -68,4 +68,40 @@ public class TownyWorld extends TownyObject {
 	public Collection<TownBlock> getTownBlocks() {
 		return townBlocks.values();
 	}
+	
+	public void removeTown(Town town) throws NotRegisteredException {
+		if (!hasTown(town)) {
+			throw new NotRegisteredException();
+		} else {
+			towns.remove(town);
+			try {
+				town.setWorld(null);
+			} catch (AlreadyRegisteredException e) {
+			}
+		}
+	}
+	
+	public void removeTownBlocks(List<TownBlock> townBlocks) {
+		for (TownBlock townBlock : townBlocks) {
+			removeTownBlock(townBlock);
+		}
+	}
+	
+	public void removeTownBlock(TownBlock townBlock) {
+		try {
+			if (townBlock.hasResident())
+				townBlock.getResident().removeTownBlock(townBlock);
+		} catch (NotRegisteredException e) {}
+		try {
+			if (townBlock.hasTown()) {
+				townBlock.getTown().removeTownBlock(townBlock);
+			}
+		} catch (NotRegisteredException e) {}
+		
+		removeTownBlock(townBlock.getCoord());
+	}
+	
+	public void removeTownBlock(Coord coord) {
+		townBlocks.remove(coord);
+	}
 }

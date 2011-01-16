@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Player;
+import org.bukkit.entity.Player;
 
 public class TownyUniverse extends TownyObject {
 	private Towny plugin;
@@ -19,6 +19,10 @@ public class TownyUniverse extends TownyObject {
 	private TownyFormatter formatter = new TownyFormatter(settings);
 	private TownyDataSource dataSource;
 	
+	//TODO: lastOnline, an onEnable check to see if a new day has stated to collect taxes.
+	//TODO: Timer to start/stop war time, collect taxes, delete old users.
+	//TODO: Timer/Thread like Minigames that turns on during war time. Checks each player every second.
+	
 	
 	public TownyUniverse(Towny plugin) {
 		this.plugin = plugin;
@@ -26,7 +30,7 @@ public class TownyUniverse extends TownyObject {
 	
 	public void onLogin(Player player) throws AlreadyRegisteredException, NotRegisteredException {
 		Resident resident;
-		if (!isRegisteredResident(player.getName())) {
+		if (!hasResident(player.getName())) {
 			newResident(player.getName());
 			resident = getResident(player.getName());
 			if (settings.getDefaultTown() != null)
@@ -44,39 +48,57 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public void onLogout(Player player) {
-		
+		//TODO: Proceduralize updating last online
 	}
 	
 	public void newResident(String name) throws AlreadyRegisteredException, NotRegisteredException {
 		if (residents.containsKey(name.toLowerCase()))
-			throw new AlreadyRegisteredException();
+			throw new AlreadyRegisteredException("The resident " + name + " is already in use.");
 		
 		residents.put(name.toLowerCase(), new Resident(name));
 	}
 	
 	public void newTown(String name) throws AlreadyRegisteredException, NotRegisteredException {
 		if (towns.containsKey(name.toLowerCase()))
-			throw new AlreadyRegisteredException();
+			throw new AlreadyRegisteredException("The town " + name + " is already in use.");
 		
 		towns.put(name.toLowerCase(), new Town(name));
 	}
 	
 	public void newNation(String name) throws AlreadyRegisteredException, NotRegisteredException {
 		if (nations.containsKey(name.toLowerCase()))
-			throw new AlreadyRegisteredException();
+			throw new AlreadyRegisteredException("The nation " + name + " is already in use.");
 		
 		nations.put(name.toLowerCase(), new Nation(name));
 	}
 	
 	public void newWorld(String name) throws AlreadyRegisteredException {
 		if (worlds.containsKey(name.toLowerCase()))
-			throw new AlreadyRegisteredException();
+			throw new AlreadyRegisteredException("The world " + name + " is already in use.");
 		
 		worlds.put(name.toLowerCase(), new TownyWorld(name));
 	}
 	
-	public boolean isRegisteredResident(String name) {
+	public boolean hasResident(String name) {
 		return residents.containsKey(name.toLowerCase());
+	}
+	
+	public boolean hasTown(String name) {
+		return residents.containsKey(name.toLowerCase());
+	}
+	
+	public void renameTown(Town town, String newName) throws AlreadyRegisteredException {
+		if (hasTown(newName))
+			throw new AlreadyRegisteredException("The town " + newName + " is already in use.");
+		
+		//TODO: Delete/rename any invites.
+		
+		String oldName = town.getName();
+		towns.put(newName.toLowerCase(), town);
+		towns.remove(oldName.toLowerCase());
+		town.setName(newName);
+		getDataSource().saveTown(town);
+		getDataSource().saveTownList();
 	}
 	
 	public Resident getResident(String name) throws NotRegisteredException {
@@ -182,15 +204,15 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public List<String> getStatus(Resident resident) {
-		return formatter.getStatus(resident);
+		return getFormatter().getStatus(resident);
 	}
 	
 	public List<String> getStatus(Town town) {
-		return formatter.getStatus(town);
+		return getFormatter().getStatus(town);
 	}
 	
 	public List<String> getStatus(Nation nation) {
-		return formatter.getStatus(nation);
+		return getFormatter().getStatus(nation);
 	}
 
 	public Town getTown(String name) throws NotRegisteredException {
@@ -265,5 +287,13 @@ public class TownyUniverse extends TownyObject {
 
 	public TownyDataSource getDataSource() {
 		return dataSource;
+	}
+
+	public void setFormatter(TownyFormatter formatter) {
+		this.formatter = formatter;
+	}
+
+	public TownyFormatter getFormatter() {
+		return formatter;
 	}
 }

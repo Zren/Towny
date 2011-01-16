@@ -2,10 +2,10 @@ package com.shade.bukkit.towny;
 
 import java.util.HashMap;
 
-import org.bukkit.Block;
-import org.bukkit.Player;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.block.BlockPlacedEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 //TODO: Admin/Group Build Rights
 
@@ -18,16 +18,15 @@ public class TownyBlockListener extends BlockListener  {
         plugin = instance;
     }
     
-    //TODO: Updated API uses present tense
-    public void onBlockPlaced(BlockPlacedEvent event) {
+    public void onBlockPlace(BlockPlaceEvent event) {
     	long start = System.currentTimeMillis();
     	
-    	onBlockPlacedEvent(event);
+    	onBlockPlaceEvent(event);
     	
     	if (plugin.getTownyUniverse().getSettings().getDebug())
     		System.out.println("[Towny] Debug: onBlockPlacedEvent took " + (System.currentTimeMillis()-start) + "ms");
     }
-    public void onBlockPlacedEvent(BlockPlacedEvent event) {
+    public void onBlockPlaceEvent(BlockPlaceEvent event) {
     	Player player = event.getPlayer();
     	Block block = event.getBlock();
     	TownyUniverse universe = plugin.getTownyUniverse();
@@ -57,6 +56,7 @@ public class TownyBlockListener extends BlockListener  {
     		//Unclaimed Zone Build Rights
 			if (!settings.getUnclaimedZoneBuildRights()) {
 				//TODO: Have permission to build here
+				plugin.sendErrorMsg(player, "Not allowed to build in the wild.");
 				event.setBuild(false);
 				cacheBuild(player.getName(), pos, false);
 				event.setCancelled(true);
@@ -109,7 +109,7 @@ public class TownyBlockListener extends BlockListener  {
     	cache.setBuildPermission(buildRight);
     	
     	if (plugin.getTownyUniverse().getSettings().getDebug())
-    		System.out.println("[Towny] "+name+" ("+coord.toString()+") Cached Build: "+buildRight);
+    		System.out.println("[Towny] Debug: "+name+" ("+coord.toString()+") Cached Build: "+buildRight);
     }
     
     public void cacheDestroy(String name, Coord coord, boolean destroyRight) {
@@ -117,7 +117,7 @@ public class TownyBlockListener extends BlockListener  {
     	cache.setDestroyPermission(destroyRight);
     	
     	if (plugin.getTownyUniverse().getSettings().getDebug())
-    		System.out.println("[Towny] "+name+" ("+coord.toString()+") Cached Destroy: "+destroyRight);
+    		System.out.println("[Towny] Debug: "+name+" ("+coord.toString()+") Cached Destroy: "+destroyRight);
     }
     
     public CachedPermission getCache(String name, Coord coord) {

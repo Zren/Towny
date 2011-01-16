@@ -22,8 +22,22 @@ public class Nation extends TownyIConomyObject {
 		}
 	}
 	
-	public boolean removeAlly(Nation nation) {
-		return getAllies().remove(nation);
+	public boolean removeAlly(Nation nation) throws NotRegisteredException {
+		if (!hasAlly(nation)) {
+			throw new NotRegisteredException();
+		} else {
+			return getAllies().remove(nation);
+		}
+	}
+	
+	public boolean removeAllAllies() {
+		for (Nation ally : getAllies()) {
+			try {
+				removeAlly(ally);
+				ally.removeAlly(this);
+			} catch (NotRegisteredException e) {}
+		}
+		return getAllies().size() == 0;
 	}
 	
 	public boolean hasAlly(Nation nation) {
@@ -38,8 +52,22 @@ public class Nation extends TownyIConomyObject {
 		}
 	}
 	
-	public boolean removeEnemy(Nation nation) {
-		return getEnemies().remove(nation);
+	public boolean removeEnemy(Nation nation) throws NotRegisteredException {
+		if (!hasEnemy(nation)) {
+			throw new NotRegisteredException();
+		} else {
+			return getEnemies().remove(nation);
+		}
+	}
+	
+	public boolean removeAllEnemies() {
+		for (Nation enemy : getEnemies()) {
+			try {
+				removeEnemy(enemy);
+				enemy.removeEnemy(this);
+			} catch (NotRegisteredException e) {}
+		}
+		return getAllies().size() == 0;
 	}
 	
 	public boolean hasEnemy(Nation nation) {
@@ -122,6 +150,8 @@ public class Nation extends TownyIConomyObject {
 	        }
 		} catch (AlreadyRegisteredException x) {
 			return false;
+		} catch (NotRegisteredException e) {
+			return false;
 		}
         
         return false;
@@ -153,5 +183,31 @@ public class Nation extends TownyIConomyObject {
 	
 	public int getNumTowns() {
 		return towns.size();
+	}
+
+	public void removeTown(Town town) throws NotRegisteredException, EmptyNationException {
+		if (!hasTown(town)) {
+			throw new NotRegisteredException();
+		} else {
+			if (isCapital(town) && getNumTowns() == 1)
+				
+			towns.remove(town);
+			try {
+				town.setNation(null);
+			} catch (AlreadyRegisteredException e) {
+			}
+			if (getNumTowns() == 0) {
+				clear();
+				throw new EmptyNationException(this);
+			}
+		}
+	}
+	
+	public void clear() {
+		capital = null;
+		removeAllAllies();
+		removeAllEnemies();
+		assistants.clear();
+		towns.clear();
 	}
 }

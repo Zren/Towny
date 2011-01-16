@@ -35,14 +35,22 @@ public class Town extends TownBlockOwner {
 		this.mayor = mayor;
 	}
 
-	public Nation getNation() throws TownyException {
+	public Nation getNation() throws NotRegisteredException {
 		if (hasNation())
 			return nation;
 		else
-			throw new TownyException("Town doesn't belong to any nation.");
+			throw new NotRegisteredException("Town doesn't belong to any nation.");
 	}
 
-	public void setNation(Nation nation) {
+	public void setNation(Nation nation) throws AlreadyRegisteredException {
+		if (nation == null) {
+			this.nation = null;
+			return;
+		}
+		if (this.nation == nation)
+			return;
+		if (hasNation())
+			throw new AlreadyRegisteredException();
 		this.nation = nation;
 	}
 
@@ -143,6 +151,10 @@ public class Town extends TownBlockOwner {
 		return bonusBlocks;
 	}
 	public void setHomeBlock(TownBlock homeBlock) throws TownyException {
+		if (homeBlock == null) {
+			this.homeBlock = null;
+			return;
+		}
 		if (!hasTownBlock(homeBlock))
 			throw new TownyException("Town has no claim over this town block.");
 		this.homeBlock = homeBlock;
@@ -162,8 +174,17 @@ public class Town extends TownBlockOwner {
 			throw new TownyException("Town has not set a home block."); 
 	}
 
-	public void setWorld(TownyWorld world) {
-		this.world = world;
+	public void setWorld(TownyWorld world) throws AlreadyRegisteredException {
+		if (world == null) {
+			this.world = null;
+			return;
+		}
+		if (this.world == world)
+			return;
+		if (hasWorld())
+			throw new AlreadyRegisteredException();
+		else
+			this.world = world;
 	}
 
 	public TownyWorld getWorld() {
@@ -182,12 +203,25 @@ public class Town extends TownBlockOwner {
 		return taxes;
 	}
 	
-	public void removeResident(Resident resident) throws NotRegisteredException {
+	public void removeResident(Resident resident) throws NotRegisteredException, EmptyTownException {
 		if (!hasResident(resident)) {
 			throw new NotRegisteredException();
 		} else {
 			//TODO: Remove all plots of land owned in town.
+			
 			residents.remove(resident);
+			try {
+				resident.setTown(null);
+			} catch (AlreadyRegisteredException e) {
+			}
+			if (getNumResidents() == 0) {
+				try {
+					clear();
+					throw new EmptyTownException(this);
+				} catch (EmptyNationException e) {
+					throw new EmptyTownException(this, e);
+				}
+			}
 		}
 	}
 	
@@ -199,11 +233,7 @@ public class Town extends TownBlockOwner {
 					
 				} else {
 					//TODO: Make a message that tells the player they ran out of money to live in the town.
-					try {
-						removeResident(resident);
-					} catch (NotRegisteredException e) {
-						//TODO: Possibly format a list of residents who refused to leave?
-					}
+					
 				}
 			}
 		}
@@ -232,5 +262,39 @@ public class Town extends TownBlockOwner {
 
 	public boolean hasHomeBlock() {
 		return homeBlock != null;
+	}
+	
+	public void clear() throws NotRegisteredException, EmptyNationException {
+		mayor = null;
+		residents.clear();
+		assistants.clear();
+		homeBlock = null;
+		
+		try {
+			if (hasWorld()) {
+				world.removeTownBlocks(getTownBlocks());
+				world.removeTown(this);
+			}
+		} catch (NotRegisteredException e) {}
+		try {
+			if (hasNation())
+				nation.removeTown(this);
+		} catch (NotRegisteredException e) {}
+	}
+
+	private boolean hasWorld() {
+		return world != null;
+	}
+	
+	public void removeTownBlock(TownBlock townBlock) throws NotRegisteredException {
+		if (!hasTownBlock(townBlock)) {
+			throw new NotRegisteredException();
+		} else {
+			try {
+				if (getHomeBlock() == townBlock)
+					setHomeBlock(null);
+			} catch (TownyException e) {}
+			townBlocks.remove(townBlock);
+		}
 	}
 }

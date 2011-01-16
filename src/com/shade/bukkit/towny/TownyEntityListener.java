@@ -1,18 +1,18 @@
 package com.shade.bukkit.towny;
 
-import org.bukkit.Entity;
-import org.bukkit.Player;
-import org.bukkit.event.entity.EntityDamagedByEntityEvent;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityListener;
 
-public class TownyEntityListener extends PlayerListener  {
+public class TownyEntityListener extends EntityListener  {
 	private final Towny plugin;
 
 	public TownyEntityListener(Towny instance) {
 		plugin = instance;
 	}
 	
-	public void onEntityDamagedByEntity(EntityDamagedByEntityEvent event) {
+	public void onEntityDamagedByEntity(EntityDamageByEntityEvent event) {
 		Entity attacker = event.getDamager();
 		Entity defender = event.getEntity();
 		

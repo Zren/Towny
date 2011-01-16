@@ -25,4 +25,12 @@ public class TownBlockOwner extends TownyIConomyObject {
 			townBlocks.add(townBlock);
 		}
 	}
+	
+	public void removeTownBlock(TownBlock townBlock) throws NotRegisteredException {
+		if (!hasTownBlock(townBlock)) {
+			throw new NotRegisteredException();
+		} else {
+			townBlocks.remove(townBlock);
+		}
+	}
 }

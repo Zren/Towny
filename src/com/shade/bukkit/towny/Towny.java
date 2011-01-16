@@ -1,9 +1,9 @@
 package com.shade.bukkit.towny;
 
 import java.io.File;
-import org.bukkit.Player;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -44,7 +44,6 @@ public class Towny extends JavaPlugin {
     	
     	Coord.setTownBlockSize(townyUniverse.getSettings().getTownBlockSize());
     	
-    	TownyIConomyObject.setSettings(townyUniverse.getSettings());
     	TownyIConomyObject.setPlugin(this);
     	
     	townyUniverse.getDataSource().saveAll();
@@ -74,6 +73,10 @@ public class Towny extends JavaPlugin {
     public void sendErrorMsg(Player player, String msg) {
     	player.sendMessage(Colors.Gold + "[Towny] " + Colors.Rose + msg);
     	System.out.println("[Towny] Error: " + player.getName() + ": " + msg);
+    }
+    public void sendErrorMsg(Player player, String[] msg) {
+    	for (String line : msg)
+    		sendErrorMsg(player, line);
     }
 
 	public String getVersion() {

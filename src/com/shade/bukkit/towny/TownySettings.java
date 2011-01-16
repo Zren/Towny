@@ -114,4 +114,12 @@ public class TownySettings {
 	public boolean getDebug() {
 		return true;
 	}
+
+	public boolean getShowTownNotifications() {
+		return true;
+	}
+
+	public String getUnclaimedZoneName() {
+		return "Wilderness";
+	}
 }

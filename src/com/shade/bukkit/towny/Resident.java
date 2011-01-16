@@ -22,7 +22,7 @@ public class Resident extends TownBlockOwner {
 
 	public boolean isKing() {
 		try {
-			return town.getNation().isKing(this);
+			return getTown().getNation().isKing(this);
 		} catch (TownyException e) {
 			return false;
 		}
@@ -40,14 +40,22 @@ public class Resident extends TownBlockOwner {
 		return (hasTown() ? town.hasNation() : false);
 	}
 	
-	public Town getTown() throws TownyException {
+	public Town getTown() throws NotRegisteredException {
 		if (hasTown())
 			return town;
 		else
-			throw new TownyException("Resident doesn't belong to any town");
+			throw new NotRegisteredException("Resident doesn't belong to any town");
 	}
 	
-	public void setTown(Town town) {
+	public void setTown(Town town) throws AlreadyRegisteredException {
+		if (town == null) {
+			this.town = null;
+			return;
+		}
+		if (this.town == town)
+			return;
+		if (hasTown())
+			throw new AlreadyRegisteredException();
 		this.town = town;
 	}
 	

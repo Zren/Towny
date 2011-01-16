@@ -5,7 +5,6 @@ import org.bukkit.plugin.Plugin;
 import com.nijikokun.bukkit.iConomy.iConomy;;
 
 public class TownyIConomyObject extends TownyObject {
-	private static TownySettings settings;
 	private static Towny plugin;
 	private String iConomyNamePrefix;
 	
@@ -17,32 +16,22 @@ public class TownyIConomyObject extends TownyObject {
 		TownyIConomyObject.plugin = plugin;
 	}
 	
-	public static void setSettings(TownySettings settings) {
-		TownyIConomyObject.settings = settings;
-	}
-
-	public static TownySettings getSettings() {
-		return settings;
-	}
-
-	@SuppressWarnings("static-access")
 	public boolean pay(int n) throws IConomyException {
-		iConomy iconomy = getIConomy();
-		int balance = iconomy.i.getBalance(getIConomyName());
+		checkIConomy();
+		int balance = iConomy.db.get_balance(getIConomyName());
 
 		if(balance < n || (balance - n) < 0) {
 		    return false;
 		}
 
-		iconomy.i.setBalance(getIConomyName(), (balance - n));
+		iConomy.db.set_balance(getIConomyName(), (balance - n));
 		return true;
 	}
 	
-	@SuppressWarnings("static-access")
 	public void collect(int n) throws IConomyException {
-		iConomy iconomy = getIConomy();
-		int balance = iconomy.i.getBalance(getIConomyName());
-		iconomy.i.setBalance(getIConomyName(), (balance + n));
+		checkIConomy();
+		int balance = iConomy.db.get_balance(getIConomyName());
+		iConomy.db.set_balance(getIConomyName(), (balance + n));
 	}
 	
 	public boolean pay(int n, TownyIConomyObject collector) throws IConomyException {
@@ -72,15 +61,12 @@ public class TownyIConomyObject extends TownyObject {
 			return getName();
 	}
 	
-	@SuppressWarnings("static-access")
 	public int getIConomyBalance() throws IConomyException {
-		iConomy iconomy = getIConomy();
-		return iconomy.i.getBalance(getIConomyName());
+		checkIConomy();
+		return iConomy.db.get_balance(getIConomyName());
 	}
 	
-	public iConomy getIConomy() throws IConomyException {
-		if (settings == null)
-			throw new IConomyException("IConomyObject has not had settings configured.");
+	public iConomy checkIConomy() throws IConomyException {
 		if (plugin == null)
 			throw new IConomyException("IConomyObject has not had plugin configured.");
 		
