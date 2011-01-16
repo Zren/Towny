@@ -71,4 +71,16 @@ public class TownBlock {
 	public TownyWorld getWorld() {
 		return world;
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (!(obj instanceof TownBlock))
+			return false;
+		
+		TownBlock o = (TownBlock)obj;
+		return this.getX() == o.getX()
+			&& this.getZ() == o.getZ()
+			&& this.getWorld() == o.getWorld();
+	}
 }

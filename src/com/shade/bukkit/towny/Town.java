@@ -155,8 +155,11 @@ public class Town extends TownBlockOwner {
 		}
 	}
 
-	public TownBlock getHomeBlock() {
-		return homeBlock;
+	public TownBlock getHomeBlock() throws TownyException {
+		if (hasHomeBlock())
+			return homeBlock;
+		else
+			throw new TownyException("Town has not set a home block."); 
 	}
 
 	public void setWorld(TownyWorld world) {
@@ -207,6 +210,8 @@ public class Town extends TownBlockOwner {
 	}
 
 	public void setSpawn(Location spawn) throws TownyException {
+		if (!hasHomeBlock())
+			throw new TownyException("Home Block has not been set");
 		Coord spawnBlock = Coord.parseCoord(spawn);
 		if (homeBlock.getX() == spawnBlock.getX() && homeBlock.getZ() == spawnBlock.getZ())
 			this.spawn = spawn;

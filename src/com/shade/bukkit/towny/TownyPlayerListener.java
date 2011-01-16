@@ -2,6 +2,7 @@ package com.shade.bukkit.towny;
 
 import java.util.ArrayList;
 
+import org.bukkit.Location;
 import org.bukkit.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
@@ -33,6 +34,27 @@ public class TownyPlayerListener extends PlayerListener {
     public void onPlayerQuit(PlayerEvent event) {
     	plugin.getTownyUniverse().onLogout(event.getPlayer());
     }
+    
+    @Override
+    public void onPlayerMove(PlayerMoveEvent event) {
+    	Player player = event.getPlayer();
+    	Location from = event.getFrom();
+    	Location to = event.getTo();
+    	
+    	Coord fromCoord = Coord.parseCoord(from);
+    	Coord toCoord = Coord.parseCoord(to);
+    	if (!fromCoord.equals(toCoord))
+    		onPlayerMoveChunk(player, fromCoord, toCoord);
+    }
+    
+    public void onPlayerMoveChunk(Player player, Coord from, Coord to) {
+    	//TODO: Cache build/destroy permissions
+    	//TODO: Player mode
+    	// map: send the map
+    	// claim: attempt to claim area
+    	// claim remove: remove area from town
+    	//TODO: Check if player has entered a new town/wilderness
+    }
 
     @Override
     public void onPlayerCommand(PlayerChatEvent event) {
@@ -59,11 +81,6 @@ public class TownyPlayerListener extends PlayerListener {
         	parseTownyCommand(player, newSplit);
         	event.setCancelled(true);
         }
-    }
-
-    @Override
-    public void onPlayerMove(PlayerMoveEvent event) {
-    	
     }
     
     public void parseResidentCommand(Player player, String[] split) {

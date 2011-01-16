@@ -72,8 +72,8 @@ public class Towny extends JavaPlugin {
     }
     
     public void sendErrorMsg(Player player, String msg) {
-    	player.sendMessage("[Towny] " + msg);
-    	System.out.println("[Towny] " + msg);
+    	player.sendMessage(Colors.Gold + "[Towny] " + Colors.Rose + msg);
+    	System.out.println("[Towny] Error: " + player.getName() + ": " + msg);
     }
 
 	public String getVersion() {

@@ -61,9 +61,11 @@ public class TownyFormatter {
         } catch (NullPointerException e) {}
         
 		// Town Size: 0 / 16 [Bonus: 0] [Home: 33,44]
-		out.add(Colors.Green + "Town Size: " + Colors.LightGreen + town.getTownBlocks().size() + " / " + settings.getMaxTownBlocks(town)
-				+ Colors.LightBlue + " [Bonus: "+town.getBonusBlocks()+"]"
-				+ Colors.LightGray + " [Home: "+(town.hasHomeBlock() ? town.getHomeBlock().getCoord().toString() : "None") + "]");
+        try {
+	        out.add(Colors.Green + "Town Size: " + Colors.LightGreen + town.getTownBlocks().size() + " / " + settings.getMaxTownBlocks(town)
+					+ Colors.LightBlue + " [Bonus: "+town.getBonusBlocks()+"]"
+					+ Colors.LightGray + " [Home: "+(town.hasHomeBlock() ? town.getHomeBlock().getCoord().toString() : "None") + "]");
+		} catch (TownyException e) {}
 		
 		//if (mayor != null)
             out.add(Colors.Green + "Lord: " + Colors.LightGreen + getFormattedName(town.getMayor()));
