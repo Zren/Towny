@@ -245,6 +245,19 @@ public class TownyUniverse extends TownyObject {
 		}
 		return false;
 	}
+	
+	public boolean isAlly(Town a, Town b) {
+		try {
+			if (a == b) return true;
+			if (a.getNation() == b.getNation()) return true;
+			if (a.getNation().hasAlly(b.getNation())) return true;
+		} catch (NotRegisteredException e) {
+			return false;
+		} catch (TownyException e) {
+			return false;
+		}
+		return false;
+	}
 
 	public void setDataSource(TownyDataSource dataSource) {
 		this.dataSource = dataSource;

@@ -106,4 +106,12 @@ public class TownySettings {
 	public int getNewTownPrice() {
 		return 100;
 	}
+
+	public boolean getUnclaimedZoneBuildRights() {
+		return false;
+	}
+	
+	public boolean getDebug() {
+		return true;
+	}
 }

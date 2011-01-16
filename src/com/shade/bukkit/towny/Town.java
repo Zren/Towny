@@ -3,10 +3,11 @@ package com.shade.bukkit.towny;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Town extends TownyIConomyObject {
+import org.bukkit.Location;
+
+public class Town extends TownBlockOwner {
 	private List<Resident> residents = new ArrayList<Resident>();
 	private List<Resident> assistants = new ArrayList<Resident>();
-	private List<TownBlock> townblocks = new ArrayList<TownBlock>();
 	private Resident mayor;
 	private int bonusBlocks, taxes;
 	private Nation nation;
@@ -15,9 +16,13 @@ public class Town extends TownyIConomyObject {
 	private TownBlock homeBlock;
 	private TownyWorld world;
 	private TownyPermission permissions = new TownyPermission();
+	private Location spawn;
 	
 	public Town(String name) {
 		setName(name);
+		permissions.allies = true;
+		permissions.residentBuild = true;
+		permissions.residentDestroy = true;
 	}
 
 	public Resident getMayor() {
@@ -30,8 +35,11 @@ public class Town extends TownyIConomyObject {
 		this.mayor = mayor;
 	}
 
-	public Nation getNation() {
-		return nation;
+	public Nation getNation() throws TownyException {
+		if (hasNation())
+			return nation;
+		else
+			throw new TownyException("Town doesn't belong to any nation.");
 	}
 
 	public void setNation(Nation nation) {
@@ -79,7 +87,7 @@ public class Town extends TownyIConomyObject {
 	}
 	
 	public boolean isMayor(Resident resident) {
-		return (resident == mayor);
+		return resident == mayor;
 	}
 	
 	public boolean hasNation() {
@@ -134,17 +142,17 @@ public class Town extends TownyIConomyObject {
 	public int getBonusBlocks() {
 		return bonusBlocks;
 	}
-
-	public void setTownblocks(List<TownBlock> townblocks) {
-		this.townblocks = townblocks;
-	}
-
-	public List<TownBlock> getTownblocks() {
-		return townblocks;
-	}
-
-	public void setHomeBlock(TownBlock homeBlock) {
+	public void setHomeBlock(TownBlock homeBlock) throws TownyException {
+		if (!hasTownBlock(homeBlock))
+			throw new TownyException("Town has no claim over this town block.");
 		this.homeBlock = homeBlock;
+		try {
+			setSpawn(spawn);
+		} catch (TownyException e) {
+			spawn = null;
+		} catch(NullPointerException e) { 
+			// In the event that spawn is already null
+		}
 	}
 
 	public TownBlock getHomeBlock() {
@@ -196,5 +204,28 @@ public class Town extends TownyIConomyObject {
 				}
 			}
 		}
+	}
+
+	public void setSpawn(Location spawn) throws TownyException {
+		Coord spawnBlock = Coord.parseCoord(spawn);
+		if (homeBlock.getX() == spawnBlock.getX() && homeBlock.getZ() == spawnBlock.getZ())
+			this.spawn = spawn;
+		else
+			throw new TownyException("Spawn is not within the homeBlock."); 
+	}
+
+	public Location getSpawn() throws TownyException {
+		if (hasSpawn())
+			return spawn;
+		else
+			throw new TownyException("Town has not set a spawn location."); 
+	}
+
+	private boolean hasSpawn() {
+		return spawn != null;
+	}
+
+	public boolean hasHomeBlock() {
+		return homeBlock != null;
 	}
 }

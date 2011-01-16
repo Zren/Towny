@@ -1,8 +1,11 @@
 package com.shade.bukkit.towny;
 
+import org.bukkit.Block;
+import org.bukkit.Location;
 import org.bukkit.Player;
 
 public class Coord {
+	private static int townBlockSize = 16;
 	private int x, z;
 	
 	public Coord(int x, int z) {
@@ -44,17 +47,33 @@ public class Coord {
 			&& this.z == o.z;
 	}
 	
-	public static Coord parseCoord(TownySettings settings, int x, int z) {
+	public static Coord parseCoord(int x, int z) {
 		return new Coord(
-				x / settings.getTownBlockSize() - (x < 0 ? 1 : 0),
-				z / settings.getTownBlockSize() - (z < 0 ? 1 : 0));
+				x / getTownBlockSize() - (x < 0 ? 1 : 0),
+				z / getTownBlockSize() - (z < 0 ? 1 : 0));
 	}
 	
-	public static Coord parseCoord(TownySettings settings, Player player) {
-		return parseCoord(settings, player.getLocation().getBlockX(), player.getLocation().getBlockZ());
+	public static Coord parseCoord(Player player) {
+		return parseCoord(player.getLocation());
+	}
+	
+	public static Coord parseCoord(Location loc) {
+		return parseCoord(loc.getBlockX(), loc.getBlockZ());
+	}
+	
+	public static Coord parseCoord(Block block) {
+		return parseCoord(block.getX(), block.getZ());
 	}
 	
 	public String toString() {
 		return getX() + "," + getZ();
+	}
+
+	public static void setTownBlockSize(int townBlockSize) {
+		Coord.townBlockSize = townBlockSize;
+	}
+
+	public static int getTownBlockSize() {
+		return townBlockSize;
 	}
 }

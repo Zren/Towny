@@ -54,7 +54,7 @@ public class TownyWorld extends TownyObject {
 		if (hasTownBlock(key))
 			throw new AlreadyRegisteredException();
 		
-		townBlocks.put(key, new TownBlock(key.getX(), key.getZ()));
+		townBlocks.put(key, new TownBlock(key.getX(), key.getZ(), this));
 	}
 	
 	public boolean hasTownBlock(Coord key) {

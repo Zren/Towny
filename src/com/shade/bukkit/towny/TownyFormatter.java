@@ -22,6 +22,10 @@ public class TownyFormatter {
         SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd '@' HH:mm");
         out.add(Colors.Green + "Last Online: " + Colors.LightGreen + sdf.format(resident.getLastOnline()));
         
+        // Owner of: 4 Town Blocks
+        if (resident.getTownBlocks().size() > 0)
+        	out.add(Colors.Green + "Owner of: " + Colors.LightGreen + resident.getTownBlocks().size());
+        
         // Town: Camelot
         String line = Colors.Green + "Town: " + Colors.LightGreen;
         if (!resident.hasTown()) {
@@ -56,9 +60,10 @@ public class TownyFormatter {
             out.add(Colors.Green + "Board: " + Colors.LightGreen + town.getTownBoard());
         } catch (NullPointerException e) {}
         
-		// Town Size: 0 / 16 [Bonus: 0]
-        // TODO: Maximum
-		out.add(Colors.Green + "Town Size: " + Colors.LightGreen + town.getTownblocks().size() + " / " + settings.getMaxTownBlocks(town) + Colors.LightBlue + " [Bonus: "+town.getBonusBlocks()+"]");
+		// Town Size: 0 / 16 [Bonus: 0] [Home: 33,44]
+		out.add(Colors.Green + "Town Size: " + Colors.LightGreen + town.getTownBlocks().size() + " / " + settings.getMaxTownBlocks(town)
+				+ Colors.LightBlue + " [Bonus: "+town.getBonusBlocks()+"]"
+				+ Colors.LightGray + " [Home: "+(town.hasHomeBlock() ? town.getHomeBlock().getCoord().toString() : "None") + "]");
 		
 		//if (mayor != null)
             out.add(Colors.Green + "Lord: " + Colors.LightGreen + getFormattedName(town.getMayor()));
@@ -69,8 +74,9 @@ public class TownyFormatter {
 			out.addAll(ChatTools.list(getFormattedNames(town.getAssistants().toArray(new Resident[0]))));
 		}
         // Nation: Azur Empire
-        if (town.hasNation())
-            out.add(Colors.Green + "Nation: " + Colors.LightGreen + getFormattedName(town.getNation()));
+		try {
+			out.add(Colors.Green + "Nation: " + Colors.LightGreen + getFormattedName(town.getNation()));
+		} catch (TownyException e) {}
         
         // Residents [12]:
         // James, Carry, Mason
@@ -113,6 +119,8 @@ public class TownyFormatter {
     }
 	
 	public String getFormattedName(Resident resident) {
+		if (resident == null)
+			return "null";
 		if (resident.isKing())
 			return settings.getKingPrefix() + resident.getName();
 		else if (resident.isMayor())

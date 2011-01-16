@@ -3,6 +3,7 @@ package com.shade.bukkit.towny;
 import java.io.File;
 import org.bukkit.Player;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -37,12 +38,16 @@ public class Towny extends JavaPlugin {
     	townyUniverse = new TownyUniverse(this);
     	townyUniverse.loadSettings();
     	if (townyUniverse.loadDatabase())
-    		System.out.println("[Towny] Loaded database");
+    		System.out.println("[Towny] Loaded database [" + townyUniverse.getSettings().getLoadDatabase() + "]");
     	else
-    		System.out.println("[Towny] Failed to load database");
+    		System.out.println("[Towny] Failed to load database [" + townyUniverse.getSettings().getLoadDatabase() + "]");
+    	
+    	Coord.setTownBlockSize(townyUniverse.getSettings().getTownBlockSize());
     	
     	TownyIConomyObject.setSettings(townyUniverse.getSettings());
     	TownyIConomyObject.setPlugin(this);
+    	
+    	townyUniverse.getDataSource().saveAll();
     	
         System.out.println("[Towny] Mod Enabled");
     }
@@ -57,7 +62,7 @@ public class Towny extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
         
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_CANBUILD, blockListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Normal, this);
         
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
     }
@@ -73,5 +78,14 @@ public class Towny extends JavaPlugin {
 
 	public String getVersion() {
 		return version;
+	}
+
+	public World getServerWorld(String name) throws NotRegisteredException {
+		for (World world : getServer().getWorlds()) {
+			if (world.getName().equals(name))
+				return world;
+		}
+		
+		throw new NotRegisteredException();
 	}
 }

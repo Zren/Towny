@@ -9,7 +9,6 @@ public class Nation extends TownyIConomyObject {
 	private List<Nation> allies  = new ArrayList<Nation>();
 	private List<Nation> enemies  = new ArrayList<Nation>();
 	private Town capital;
-	private int taxes;
 	
 	public Nation(String name) {
 		setName(name);
@@ -56,7 +55,7 @@ public class Nation extends TownyIConomyObject {
 	}
 	
 	public boolean hasCapital() {
-		return !(getCapital() == null);
+		return getCapital() != null;
 	}
 	
 	public boolean hasAssistant(Resident resident) {

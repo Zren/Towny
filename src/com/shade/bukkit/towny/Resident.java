@@ -3,7 +3,7 @@ package com.shade.bukkit.towny;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Resident extends TownyIConomyObject {
+public class Resident extends TownBlockOwner {
 	private List<Resident> friends = new ArrayList<Resident>();
 	private Town town;
 	private long lastOnline;
@@ -11,8 +11,6 @@ public class Resident extends TownyIConomyObject {
 	public Resident(String name) {
 		setName(name);
 	}
-	
-	
 
 	public void setLastOnline(long lastOnline) {
 		this.lastOnline = lastOnline;
@@ -23,7 +21,11 @@ public class Resident extends TownyIConomyObject {
 	}
 
 	public boolean isKing() {
-		return (hasNation() ? town.getNation().isKing(this) : false);
+		try {
+			return town.getNation().isKing(this);
+		} catch (TownyException e) {
+			return false;
+		}
 	}
 
 	public boolean isMayor() {
@@ -48,15 +50,11 @@ public class Resident extends TownyIConomyObject {
 	public void setTown(Town town) {
 		this.town = town;
 	}
-
-
-
+	
 	public void setFriends(List<Resident> friends) {
 		this.friends = friends;
 	}
-
-
-
+	
 	public List<Resident> getFriends() {
 		return friends;
 	}

@@ -1,7 +1,6 @@
 package com.shade.bukkit.towny;
 
 import org.bukkit.World;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /*
  * --- : Loading process : ---
@@ -11,13 +10,18 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Load nations, towns, and residents.
  */
 
+/*
+ * Loading Towns:
+ * Make sure to load TownBlocks, then HomeBlock, then Spawn.
+ */
+
 public abstract class TownyDataSource {
 	protected TownyUniverse universe;
 	protected TownySettings settings;
-	protected JavaPlugin plugin;
+	protected Towny plugin;
 	protected boolean firstRun = false;
 	
-	public void initialize(JavaPlugin plugin, TownyUniverse universe, TownySettings settings) {
+	public void initialize(Towny plugin, TownyUniverse universe, TownySettings settings) {
 		this.universe = universe;
 		this.plugin = plugin;
 		this.settings = settings;

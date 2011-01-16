@@ -134,6 +134,7 @@ public class TownyPlayerListener extends PlayerListener {
 		 *TODO: /town ?
 		 * /town list
 		 *TODO: /town leave
+		 * /town spawn
 		 * /town new [town] [mayor] *Admin
 		 *TODO: /town givebonus [town] [bonus] *Admin
 		 *TODO: /town delete [town] *Admin
@@ -170,6 +171,8 @@ public class TownyPlayerListener extends PlayerListener {
 	        		//TODO: Check if player is an admin
 	        		newTown(player, split[1], split[2]);
 	        	}
+	        } else if (split[0].equalsIgnoreCase("spawn")) {
+	        	townSpawn(player, false);
 	        }
     	}
     }
@@ -189,6 +192,7 @@ public class TownyPlayerListener extends PlayerListener {
     	//TODO: player.sendMessage(ChatTools.formatCommand("", "/town", "here", "Shortcut to the town's status of your location."));
     	player.sendMessage(ChatTools.formatCommand("", "/town", "list", ""));
     	//TODO: player.sendMessage(ChatTools.formatCommand("", "/town", "leave", ""));
+    	player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to town's spawn."));
     	player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
     	//TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add [resident]", ""));
     	//TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick [resident]", ""));
@@ -230,10 +234,10 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
     		Resident resident = universe.getResident(mayorName);
     		if (resident.hasTown())
-    			throw new TownyException(resident + " already belongs to a town.");
+    			throw new TownyException(resident.getName() + " already belongs to a town.");
     		
     		TownyWorld world = universe.getWorld(player.getWorld().getName());
-    		Coord key = Coord.parseCoord(settings, player);
+    		Coord key = Coord.parseCoord(player);
     		if (world.hasTownBlock(key))
     			throw new TownyException("This area ("+key+") already belongs to someone.");
     		
@@ -246,8 +250,11 @@ public class TownyPlayerListener extends PlayerListener {
 			Town town = universe.getTown(name);
 			town.addResident(resident);
 			town.setMayor(resident);
-			TownBlock townblock = world.getTownBlock(key);
-			town.setHomeBlock(townblock);
+			TownBlock townBlock = world.getTownBlock(key);
+			townBlock.setTown(town);
+			town.setHomeBlock(townBlock);
+			town.setSpawn(player.getLocation());
+			
 			world.addTown(town);
 			
 			universe.getDataSource().saveResident(resident);
@@ -261,6 +268,28 @@ public class TownyPlayerListener extends PlayerListener {
 			//TODO: delete town data that might have been done
 		} catch (IConomyException x) {
 			plugin.sendErrorMsg(player, x.getError());
+		}
+    }
+    
+    /**
+     * Teleports the player to his town's spawn location. If town doesn't have a spawn
+     * or player has no town, and teleport is forced, then player is sent to the world's
+     * spawn location.
+     * @param player
+     * @param forceTeleport
+     */
+    
+    public void townSpawn(Player player, boolean forceTeleport) {
+    	try {
+    		Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+    		Town town = resident.getTown();
+    		player.teleportTo(town.getSpawn());
+		} catch (TownyException x) {
+			if (forceTeleport) {
+				//TODO: When API supports: player.teleportTo(player.getWorld().getSpawnLocation());
+			} else {
+				plugin.sendErrorMsg(player, x.getError());
+			}
 		}
     }
     
@@ -379,6 +408,8 @@ public class TownyPlayerListener extends PlayerListener {
     	 * /towny map
     	 * /towny version
     	 * /towny universe
+    	 * 
+    	 * /towny tree
     	 */
     	
     	if (split.length == 0) {
@@ -387,11 +418,13 @@ public class TownyPlayerListener extends PlayerListener {
     		if (split[0].equalsIgnoreCase("?")) {
     			showResidentHelp(player);
 	        } else if (split[0].equalsIgnoreCase("map")) {
-	        	showTownyVersion(player);
+	        	showMap(player);
 	        } else if (split[0].equalsIgnoreCase("version")) {
 	        	showTownyVersion(player);
 	        } else if (split[0].equalsIgnoreCase("universe")) {
 	        	showUniverseStats(player);
+	        } else if (split[0].equalsIgnoreCase("tree")) {
+	        	showUniverseTree();
 	        }
     	}
     }
@@ -420,6 +453,7 @@ public class TownyPlayerListener extends PlayerListener {
     public void showTownyHelp(Player player) {
     	player.sendMessage(ChatTools.formatTitle("/towny"));
     	player.sendMessage(ChatTools.formatCommand("", "/towny", "", "General help for Towny"));
+    	player.sendMessage(ChatTools.formatCommand("", "/towny", "map", "Displays a map of the nearby townblocks"));
     	player.sendMessage(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
     	player.sendMessage(ChatTools.formatCommand("", "/towny", "universe", "Displays stats"));
     }
@@ -432,7 +466,6 @@ public class TownyPlayerListener extends PlayerListener {
     
     public void showMap(Player player) {
     	TownyUniverse universe = plugin.getTownyUniverse();
-    	TownySettings settings = universe.getSettings();
     	boolean hasTown = false;
     	Resident resident;
     	int lineCount = 0;
@@ -453,9 +486,9 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.sendErrorMsg(player, "You are not in a registered world.");
 			return;
 		}
-		Coord pos = Coord.parseCoord(settings, player);
+		Coord pos = Coord.parseCoord(player);
 		
-		player.sendMessage(ChatTools.formatTitle("Towny Map"));
+		player.sendMessage(ChatTools.formatTitle("Towny Map " + Colors.White + "("+pos.toString()+")"));
 		
 		String[][] townyMap = new String[31][7];
 		int x, y = 0;
@@ -466,12 +499,12 @@ public class TownyPlayerListener extends PlayerListener {
 					TownBlock townblock = world.getTownBlock(tbx, tby);
 					if (!townblock.hasTown())
 						throw new TownyException();
-					
+					System.out.println("reached 1");
 					if (x == 3 && y == 15) { //Center of map is player's location
 						townyMap[y][x] = Colors.Gold;
 					} else if (hasTown) {
 						if (resident.getTown() == townblock.getTown()) { //Player's own town
-							townyMap[y][x] = Colors.LightGreen;
+							townyMap[y][x] = Colors.LightGreen; System.out.println("reached 2");
 						} else {
 							if (resident.hasNation()) {
 								if (resident.getTown().getNation().hasTown(townblock.getTown())) { //Allied towns
@@ -536,6 +569,16 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(line);
 			lineCount++;
 		}
+		
+		//Current town block data
+		try {
+			TownBlock townblock = world.getTownBlock(pos);
+			player.sendMessage(
+					"Town: " + (townblock.hasTown() ? townblock.getTown().getName() : "None") + " : " +
+					"Owner: " + (townblock.hasResident() ? townblock.getResident().getName() : "None"));
+		} catch(TownyException e) {
+			plugin.sendErrorMsg(player, e.getError());
+		}
     }
     
     /**
@@ -562,5 +605,57 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage("§0--§4##§c###§4##§0-- §3Residents: §b" + Integer.toString(plugin.getTownyUniverse().getResidents().size()));
 		player.sendMessage("§0----§4#§c#§4#§0---- §3Towns: §b" + Integer.toString(plugin.getTownyUniverse().getTowns().size()));
 		player.sendMessage("§0-----§4#§0----- §3Nations: §b" + Integer.toString(plugin.getTownyUniverse().getNations().size()));
+    }
+    
+    /**
+     * Show the current universe in the console.
+     * Command: /towny tree
+     */
+    
+    public void showUniverseTree() {
+    	TownyUniverse universe = plugin.getTownyUniverse();
+    	System.out.println("|-Universe");
+    	for (TownyWorld world : universe.getWorlds()) {
+    		System.out.println("|---World: "+world.getName());
+    		for (TownBlock townBlock : world.getTownBlocks()) {
+    			try {
+    				System.out.println(
+    						"|------TownBlock: "+townBlock.getX()+","+townBlock.getZ()+" "+
+    						"Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : " +
+    						"Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
+    			} catch(TownyException e) {}
+    		}
+    		for (Resident resident : universe.getResidents()) {
+    			try {
+	    			System.out.println(
+	    					"|---Resident: "+resident.getName()+" "+
+	    					(resident.hasTown() ? resident.getTown().getName() : "")+
+	    					(resident.hasNation() ? resident.getTown().getNation().getName() : ""));
+	    		} catch(TownyException e) {}
+	    		for (TownBlock townBlock : resident.getTownBlocks()) {
+	    			try {
+	    				System.out.println(
+	    						"|------TownBlock: "+townBlock.getX()+","+townBlock.getZ()+" "+
+	    						"Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : " +
+	    						"Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
+	    			} catch(TownyException e) {}
+	    		}
+    		}
+    		for (Town town : universe.getTowns()) {
+    			try {
+	    			System.out.println(
+	    					"|---Town: "+town.getName()+" "+
+	    					(town.hasNation() ? town.getNation().getName() : ""));
+	    		} catch(TownyException e) {}
+	    		for (TownBlock townBlock : town.getTownBlocks()) {
+	    			try {
+	    				System.out.println(
+	    						"|------TownBlock: "+townBlock.getX()+","+townBlock.getZ()+" "+
+	    						"Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : " +
+	    						"Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
+	    			} catch(TownyException e) {}
+	    		}
+    		}
+    	}
     }
 }
