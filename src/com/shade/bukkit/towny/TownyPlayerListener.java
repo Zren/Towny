@@ -2,6 +2,9 @@ package com.shade.bukkit.towny;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -9,6 +12,11 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
+
+import com.nijikokun.bukkit.iConomy.iConomy;
+import com.shade.bukkit.util.ChatTools;
+import com.shade.bukkit.util.Colors;
+import com.shade.util.MemMgmt;
 
 /**
  * Handle events for all Player related events
@@ -20,7 +28,28 @@ public class TownyPlayerListener extends PlayerListener {
     public TownyPlayerListener(Towny instance) {
         plugin = instance;
     }
-
+    
+    public void onPlayerChat(PlayerChatEvent event) {
+    	Player player = event.getPlayer();
+    	
+    	if (plugin.getTownyUniverse().getSettings().isUsingChatPrefix()) {
+			try {
+				Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+				String colour, formatedName = "";
+				if (resident.isKing())
+					colour = Colors.Gold;
+				else if (resident.isMayor())
+					colour = Colors.LightBlue;
+				else
+					colour = Colors.White;
+				formatedName = colour + plugin.getTownyUniverse().getFormatter().getFormattedName(resident) + Colors.White;
+		    	player.setDisplayName(formatedName);
+			} catch (NotRegisteredException e) {
+			}
+    	}
+    }
+    
+    
     @Override
     public void onPlayerJoin(PlayerEvent event) {
     	Player player = event.getPlayer();
@@ -46,6 +75,10 @@ public class TownyPlayerListener extends PlayerListener {
     	Coord toCoord = Coord.parseCoord(to);
     	if (!(fromCoord.equals(toCoord)))
     		onPlayerMoveChunk(player, fromCoord, toCoord, from, to);
+    }
+    
+    public void onPlayerTeleport(PlayerMoveEvent event) {
+    	onPlayerMove(event);
     }
     
     public void onPlayerMoveChunk(Player player, Coord from, Coord to, Location fromLoc, Location toLoc) {
@@ -116,6 +149,9 @@ public class TownyPlayerListener extends PlayerListener {
         } else if (split[0].equalsIgnoreCase("/towny")) {
         	parseTownyCommand(player, newSplit);
         	event.setCancelled(true);
+        } else if (split[0].equalsIgnoreCase("/townyadmin")) {
+        	parseTownyAdminCommand(player, newSplit);
+        	event.setCancelled(true);
         }
     }
     
@@ -176,10 +212,10 @@ public class TownyPlayerListener extends PlayerListener {
 		String colour;
 		ArrayList<String> formatedList = new ArrayList<String>();
 		for (Resident resident : plugin.getTownyUniverse().getActiveResidents()) {
-			if (resident.isMayor())
+			if (resident.isKing())
+					colour = Colors.Gold;
+			else if (resident.isMayor())
 				colour = Colors.LightBlue;
-			else if (resident.isKing())
-				colour = Colors.Gold;
 			else
 				colour = Colors.White;
 			formatedList.add(colour + resident.getName() + Colors.White);
@@ -244,7 +280,7 @@ public class TownyPlayerListener extends PlayerListener {
 	        } else if (split[0].equalsIgnoreCase("claim")) {
 	        	String[] newSplit = new String[split.length-1];
 	        	System.arraycopy(split, 1, newSplit, 0, split.length-1);
-	        	townClaim(player, newSplit);
+	        	parseTownClaimCommand(player, newSplit);
 	        } else if (split[0].equalsIgnoreCase("set")) {
 	        	String[] newSplit = new String[split.length-1];
 	        	System.arraycopy(split, 1, newSplit, 0, split.length-1);
@@ -523,12 +559,14 @@ public class TownyPlayerListener extends PlayerListener {
 		}
     }
     
-    public void townClaim(Player player, String[] split) {
-    	if (split.length == 0) {
-    		
+    public void parseTownClaimCommand(Player player, String[] split) {
+    	if (split.length == 1 && split[0].equalsIgnoreCase("help")) {
+    		player.sendMessage(ChatTools.formatCommand("", "/town claim", "", "Claim this town block"));
+    		player.sendMessage(ChatTools.formatCommand("", "/town claim", "rect auto", "Claim nearby area until max."));
     	} else {
     		Resident resident;
     		Town town;
+    		TownyWorld world;
         	try {
         		resident = plugin.getTownyUniverse().getResident(player.getName());
         		town = resident.getTown();
@@ -537,20 +575,38 @@ public class TownyPlayerListener extends PlayerListener {
         				throw new TownyException("You are not the mayor or an assistant.");
         			}
         		}
+        		world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
     		} catch (TownyException x) {
     			plugin.sendErrorMsg(player, x.getError());
     			return;
     		}
     		
-    		if (split[0].equalsIgnoreCase("help")) {
-    			player.sendMessage(ChatTools.formatCommand("", "/town claim", "", "Claim this town block"));
-        		player.sendMessage(ChatTools.formatCommand("", "/town claim", "rect auto", "Claim nearby area until max."));
-    		} else if (split[0].equalsIgnoreCase("rect") && split[0].equalsIgnoreCase("auot")) {
-    			
-    		} else if (split[0].equalsIgnoreCase("help")) {
-    			
+    		if (split.length == 0) {
+    			try {
+    				townClaim(town, world, Coord.parseCoord(player));
+    			} catch (AlreadyRegisteredException x) {
+    				plugin.sendErrorMsg(player, x.getError());
+    			}
+    		} else {
+    			if (split[0].equalsIgnoreCase("rect")) {
+    			} else if (split[0].equalsIgnoreCase("help")) {
+    			}
     		} 
     	}
+    }
+    
+    public void townClaim(Town town, TownyWorld world, Coord coord) throws AlreadyRegisteredException {
+    	try {
+			TownBlock townBlock = world.getTownBlock(coord);
+			try {
+				throw new AlreadyRegisteredException("This area has already been claimed by: " + townBlock.getTown());
+			} catch (NotRegisteredException e) {
+				throw new AlreadyRegisteredException("This area has already been claimed.");
+			}
+		} catch (NotRegisteredException e) {
+			TownBlock townBlock = world.newTownBlock(coord);
+			townBlock.setTown(town);
+		}
     }
     
     /**
@@ -865,6 +921,7 @@ public class TownyPlayerListener extends PlayerListener {
     	 * /towny version
     	 * /towny universe
     	 * 
+    	 * /towny seed
     	 * /towny tree
     	 */
     	
@@ -872,7 +929,7 @@ public class TownyPlayerListener extends PlayerListener {
     		showHelp(player);
     	} else {
     		if (split[0].equalsIgnoreCase("?")) {
-    			showResidentHelp(player);
+    			showTownyHelp(player);
 	        } else if (split[0].equalsIgnoreCase("map")) {
 	        	showMap(player);
 	        } else if (split[0].equalsIgnoreCase("version")) {
@@ -881,6 +938,8 @@ public class TownyPlayerListener extends PlayerListener {
 	        	showUniverseStats(player);
 	        } else if (split[0].equalsIgnoreCase("tree")) {
 	        	showUniverseTree();
+	        } else if (split[0].equalsIgnoreCase("seed")) {
+	        	seedTowny();
 	        }
     	}
     }
@@ -894,10 +953,12 @@ public class TownyPlayerListener extends PlayerListener {
     public void showHelp(Player player) {
     	player.sendMessage(ChatTools.formatTitle("General Towny Help"));
     	player.sendMessage("Try the following commands to learn more about towny.");
-    	player.sendMessage(ChatTools.formatCommand("", "/resident", "?", ""));
-    	player.sendMessage(ChatTools.formatCommand("", "/town", "?", ""));
-    	player.sendMessage(ChatTools.formatCommand("", "/nation", "?", ""));
-    	player.sendMessage(ChatTools.formatCommand("", "/towny", "?", ""));
+    	player.sendMessage(
+    			ChatTools.formatCommand("", "/resident", "?", "") + ", " +
+    			ChatTools.formatCommand("", "/town", "?", "") + ", " +
+				ChatTools.formatCommand("", "/nation", "?", "") + ", " +
+				ChatTools.formatCommand("", "/towny", "?", ""));
+    	player.sendMessage(ChatTools.formatCommand("Admin", "/townyadmin", "?", ""));
     }
     
     /**
@@ -1113,5 +1174,97 @@ public class TownyPlayerListener extends PlayerListener {
 	    		}
     		}
     	}
+    }
+    
+    public void seedTowny() {
+    	TownyUniverse townyUniverse = plugin.getTownyUniverse();
+    	Random r = new Random();
+	    for (int i = 0; i < 1000; i++) {
+			
+			
+			try { townyUniverse.newNation(Integer.toString(r.nextInt()));} catch (TownyException e) {}
+			try { townyUniverse.newTown(Integer.toString(r.nextInt()));} catch (TownyException e) {}
+			try { townyUniverse.newResident(Integer.toString(r.nextInt()));} catch (TownyException e) {}
+		}
+    }
+    
+    public void parseTownyAdminCommand(Player player, String[] split) {
+    	/*
+    	 * /townyadmin
+    	 * /townyadmin ?
+    	 * /townyadmin set [] .. []
+    	 * /townyadmin
+    	 * /townyadmin
+    	 * 
+    	 * /towny tree
+    	 */
+    	
+    	if (split.length == 0) {
+    		showAdminPanel(player);
+    	} else {
+    		if (split[0].equalsIgnoreCase("?")) {
+    			showTownyAdminHelp(player);
+	        } else if (split[0].equalsIgnoreCase("set")) {
+	        	String[] newSplit = new String[split.length-1];
+	        	System.arraycopy(split, 1, newSplit, 0, split.length-1);
+	        	adminSet(player, newSplit);
+	        }
+    	}
+    }
+    
+    @SuppressWarnings("static-access")
+	public void showAdminPanel(Player player) {
+    	Runtime run = Runtime.getRuntime();
+    	player.sendMessage(ChatTools.formatTitle("Towny Admin Panel"));
+    	player.sendMessage(
+    			Colors.Blue + "[Towny] " +
+    			Colors.Green + " WarTime: " + Colors.LightGreen + plugin.getTownyUniverse().isWarTime());
+    	try {
+    		TownyIConomyObject.checkIConomy();
+    		player.sendMessage(
+    				Colors.Blue + "[iConomy] " +
+    				Colors.Green + " Economy: " + Colors.LightGreen + getTotalEconomy() + " " + iConomy.currency +
+    				Colors.Gray + " | " +
+    				Colors.Green + "Bank Accounts: " + Colors.LightGreen + iConomy.db.accounts.returnMap().size());
+    	} catch (Exception e) {}
+    	player.sendMessage(
+    			Colors.Blue + "[Server] " +
+    			Colors.Green + " Memory: " + Colors.LightGreen + MemMgmt.getMemSize(run.totalMemory()) +
+    			Colors.Gray + " | " +
+    			Colors.Green + "Threads: " + Colors.LightGreen + Thread.getAllStackTraces().keySet().size() +
+    			Colors.Gray + " | " +
+    			Colors.Green + "Time: " + Colors.LightGreen + plugin.getTownyUniverse().getFormatter().getTime());
+    	player.sendMessage(Colors.Yellow + MemMgmt.getMemoryBar(50, run));
+    	
+    }
+    
+	
+    public int getTotalEconomy() {
+    	int total = 0;
+    	try {
+	    	@SuppressWarnings("static-access")
+			Map<String,String> map = iConomy.db.accounts.returnMap();
+	    	Set<String> keys = map.keySet();
+	    	
+	    	for (String key : keys)
+	    		total += iConomy.db.get_balance(key);
+    	} catch (Exception e) {}
+    	return total;
+    }
+    
+    /**
+     * Send a list of all towny admin commands to player
+     * Command: /townyadmin ?
+     * @param player
+     */
+    
+    public void showTownyAdminHelp(Player player) {
+    	player.sendMessage(ChatTools.formatTitle("/townyadmin"));
+    	player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "", "Admin panel"));
+    	player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "set [] .. []", "'/townyadmin set' for help"));
+    }
+    
+    public void adminSet(Player player, String[] split) {
+    	
     }
 }

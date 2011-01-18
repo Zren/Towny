@@ -9,6 +9,8 @@ import java.io.*;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import com.shade.util.KeyValueFile;
+
 // TODO: Make sure the lake of a particular value doesn't error out the entire file
 
 public class TownyFlatFileSource extends TownyDataSource {

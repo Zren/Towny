@@ -122,4 +122,12 @@ public class TownySettings {
 	public String getUnclaimedZoneName() {
 		return "Wilderness";
 	}
+
+	public boolean getUnclaimedZoneDestroyRights() {
+		return false;
+	}
+
+	public boolean isUsingChatPrefix() {
+		return true;
+	}
 }

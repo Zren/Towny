@@ -1,7 +1,8 @@
-package com.shade.bukkit.towny;
+package com.shade.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashMap;
 
 public class KeyValueFile {
 	BufferedReader fin;

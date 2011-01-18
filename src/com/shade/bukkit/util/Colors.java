@@ -1,4 +1,4 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.util;
 
 /**
  * Colors.java- Class of all colors so I don't waste time trying to find that

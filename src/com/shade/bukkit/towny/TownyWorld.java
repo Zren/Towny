@@ -9,6 +9,8 @@ public class TownyWorld extends TownyObject {
 	private List<Town> towns = new ArrayList<Town>();
 	
 	private HashMap<Coord,TownBlock> townBlocks = new HashMap<Coord,TownBlock>();
+	//TODO: private List<TownBlock> adminTownBlocks = new ArrayList<TownBlock>();
+	
 	
 	public TownyWorld(String name) {
 		setName(name);
@@ -50,11 +52,11 @@ public class TownyWorld extends TownyObject {
 		newTownBlock(new Coord(x, z));
 	}
 	
-	public void newTownBlock(Coord key) throws AlreadyRegisteredException {
+	public TownBlock newTownBlock(Coord key) throws AlreadyRegisteredException {
 		if (hasTownBlock(key))
 			throw new AlreadyRegisteredException();
-		
 		townBlocks.put(key, new TownBlock(key.getX(), key.getZ(), this));
+		return townBlocks.get(key);
 	}
 	
 	public boolean hasTownBlock(Coord key) {

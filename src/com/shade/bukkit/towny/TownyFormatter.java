@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shade.bukkit.util.ChatTools;
+import com.shade.bukkit.util.Colors;
+
 public class TownyFormatter {
 	private TownySettings settings = new TownySettings();
 	
@@ -11,6 +14,10 @@ public class TownyFormatter {
 		this.settings = settings;
 	}
 	
+	public String getTime() {
+		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
+		return sdf.format(System.currentTimeMillis());
+	}
 	
 	public List<String> getStatus(Resident resident) {
         List<String> out = new ArrayList<String>();

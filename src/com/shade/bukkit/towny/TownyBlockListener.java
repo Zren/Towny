@@ -3,7 +3,9 @@ package com.shade.bukkit.towny;
 import java.util.HashMap;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
@@ -16,6 +18,90 @@ public class TownyBlockListener extends BlockListener  {
 
     public TownyBlockListener(Towny instance) {
         plugin = instance;
+    }
+    
+    public void onBlockDamage(BlockDamageEvent event) {
+        if (event.getDamageLevel() == BlockDamageLevel.BROKEN) {
+        	long start = System.currentTimeMillis();
+        	
+        	onBlockBreakEvent(event);
+        	
+        	if (plugin.getTownyUniverse().getSettings().getDebug())
+        		System.out.println("[Towny] Debug: onBlockBreakEvent took " + (System.currentTimeMillis()-start) + "ms");
+        }
+    }
+    
+    public void onBlockBreakEvent(BlockDamageEvent event) {
+    	Player player = event.getPlayer();
+    	Block block = event.getBlock();
+    	TownyUniverse universe = plugin.getTownyUniverse();
+    	TownySettings settings = universe.getSettings();
+    	Coord pos = Coord.parseCoord(block);
+    	
+    	// Check cached permissions first
+    	try {
+	    	if (cachedPermissions.containsKey(player.getName())) {
+	    		if (!(getCache(player.getName(), pos).getDestroyPermission())) {
+	    			event.setCancelled(true);
+	    		}
+	    		return;
+	    	}
+    	} catch (NullPointerException e) { 
+    		// New or old build permission was null, update it
+    	}
+    	
+    	TownBlock townBlock;
+    	Town town;
+    	
+    	try {
+			townBlock = universe.getWorld(player.getWorld().getName()).getTownBlock(pos);
+			town = townBlock.getTown();
+    	} catch(NotRegisteredException e) {
+    		//Unclaimed Zone Build Rights
+			if (!settings.getUnclaimedZoneDestroyRights()) {
+				//TODO: Have permission to build here
+				plugin.sendErrorMsg(player, "Not allowed to destroy in the wild.");
+				cacheDestroy(player.getName(), pos, false);
+				event.setCancelled(true);
+			}
+			
+			return;
+		}
+    	
+		try {
+			Resident resident = universe.getResident(player.getName());
+			if (!resident.hasTown())
+				throw new TownyException("You don't belong to this town.");
+			
+			// Resident Build Rights
+			if (!town.getPermissions().residentDestroy) {
+				plugin.sendErrorMsg(player, "Residents aren't allowed to build.");
+				cacheDestroy(player.getName(), pos, false);
+				event.setCancelled(true);
+			} else {
+				if (resident.getTown() != town) {
+					// Allied Build Rights
+					if ((universe.isAlly(resident.getTown(), town) && town.getPermissions().allies)) {
+						plugin.sendErrorMsg(player, "Not allowed to build here.");
+						cacheDestroy(player.getName(), pos, false);
+						event.setCancelled(true);
+					} else {
+						cacheDestroy(player.getName(), pos, true);
+					}
+				} else {
+					cacheDestroy(player.getName(), pos, true);
+				}
+			}
+		} catch(TownyException e) {
+			// Outsider Build Rights
+			if (!town.getPermissions().outsiderDestroy) {
+				plugin.sendErrorMsg(player, e.getError());
+				cacheDestroy(player.getName(), pos, false);
+				event.setCancelled(true);
+			} else {
+				cacheDestroy(player.getName(), pos, true);
+			}
+		}
     }
     
     public void onBlockPlace(BlockPlaceEvent event) {

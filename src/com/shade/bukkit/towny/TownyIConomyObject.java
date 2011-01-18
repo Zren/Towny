@@ -66,7 +66,7 @@ public class TownyIConomyObject extends TownyObject {
 		return iConomy.db.get_balance(getIConomyName());
 	}
 	
-	public iConomy checkIConomy() throws IConomyException {
+	public static iConomy checkIConomy() throws IConomyException {
 		if (plugin == null)
 			throw new IConomyException("IConomyObject has not had plugin configured.");
 		

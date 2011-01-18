@@ -18,6 +18,7 @@ public class TownyUniverse extends TownyObject {
 	private TownySettings settings = new TownySettings();
 	private TownyFormatter formatter = new TownyFormatter(settings);
 	private TownyDataSource dataSource;
+	private boolean warTime = false;
 	
 	//TODO: lastOnline, an onEnable check to see if a new day has stated to collect taxes.
 	//TODO: Timer to start/stop war time, collect taxes, delete old users.
@@ -262,8 +263,6 @@ public class TownyUniverse extends TownyObject {
 			if (residentA.getTown().getNation().hasAlly(residentB.getTown().getNation())) return true;
 		} catch (NotRegisteredException e) {
 			return false;
-		} catch (TownyException e) {
-			return false;
 		}
 		return false;
 	}
@@ -274,8 +273,6 @@ public class TownyUniverse extends TownyObject {
 			if (a.getNation() == b.getNation()) return true;
 			if (a.getNation().hasAlly(b.getNation())) return true;
 		} catch (NotRegisteredException e) {
-			return false;
-		} catch (TownyException e) {
 			return false;
 		}
 		return false;
@@ -295,5 +292,9 @@ public class TownyUniverse extends TownyObject {
 
 	public TownyFormatter getFormatter() {
 		return formatter;
+	}
+
+	public boolean isWarTime() {
+		return warTime ;
 	}
 }

@@ -1,8 +1,10 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+
 
 public class ChatTools {
     public static final int lineLength = 54;
@@ -72,7 +74,12 @@ public class ChatTools {
     }
     
     public static String formatTitle(String title) {
-        return Colors.Gold + "_____[ " + Colors.Yellow + title + Colors.Gold + " ]_____";  
+       	String line = ".oOo.__________________________________________________.oOo.";
+       	int pivot = line.length() / 2;
+       	String center = ".[ " + Colors.Yellow + title + Colors.Gold + " ].";
+       	String out = Colors.Gold + line.substring(0, pivot - (center.length() / 2));
+       	out += center + line.substring(pivot + (center.length() / 2));
+       	return out;  
     }
     
     public static String formatCommand(String requirement, String command, String subCommand, String help) {
