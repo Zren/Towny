@@ -31,7 +31,7 @@ public class TownyFormatter {
         
         // Owner of: 4 Town Blocks
         if (resident.getTownBlocks().size() > 0)
-        	out.add(Colors.Green + "Owner of: " + Colors.LightGreen + resident.getTownBlocks().size());
+        	out.add(Colors.Green + "Owner of: " + Colors.LightGreen + resident.getTownBlocks().size() + " plots");
         
         // Town: Camelot
         String line = Colors.Green + "Town: " + Colors.LightGreen;

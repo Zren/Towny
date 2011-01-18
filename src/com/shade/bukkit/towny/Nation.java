@@ -9,6 +9,7 @@ public class Nation extends TownyIConomyObject {
 	private List<Nation> allies  = new ArrayList<Nation>();
 	private List<Nation> enemies  = new ArrayList<Nation>();
 	private Town capital;
+	int taxes;
 	
 	public Nation(String name) {
 		setName(name);
@@ -189,8 +190,6 @@ public class Nation extends TownyIConomyObject {
 		if (!hasTown(town)) {
 			throw new NotRegisteredException();
 		} else {
-			if (isCapital(town) && getNumTowns() == 1)
-				
 			towns.remove(town);
 			try {
 				town.setNation(null);
@@ -201,6 +200,14 @@ public class Nation extends TownyIConomyObject {
 				throw new EmptyNationException(this);
 			}
 		}
+	}
+	
+	public void setTaxes(int taxes) {
+		this.taxes = taxes;
+	}
+
+	public int getTaxes() {
+		return taxes;
 	}
 	
 	public void clear() {

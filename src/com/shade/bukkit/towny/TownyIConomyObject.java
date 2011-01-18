@@ -54,9 +54,9 @@ public class TownyIConomyObject extends TownyObject {
 	public String getIConomyName() {
 		//TODO: Make this less hard coded.
 		if (this instanceof Nation)
-			return "nation " + getName();
+			return "nation-" + getName();
 		if (this instanceof Town)
-			return "town " + getName();
+			return "town-" + getName();
 		else
 			return getName();
 	}

@@ -9,24 +9,32 @@ public class Town extends TownBlockOwner {
 	private List<Resident> residents = new ArrayList<Resident>();
 	private List<Resident> assistants = new ArrayList<Resident>();
 	private Resident mayor;
-	private int bonusBlocks, taxes;
+	private int bonusBlocks, taxes, plotPrice;
 	private Nation nation;
 	private boolean isPVP, hasMobs;
 	private String townBoard;
 	private TownBlock homeBlock;
 	private TownyWorld world;
-	private TownyPermission permissions = new TownyPermission();
 	private Location spawn;
 	
 	public Town(String name) {
 		setName(name);
-		permissions.allies = true;
+		permissions.allyBuild = true;
+		permissions.allyDestroy = true;
 		permissions.residentBuild = true;
 		permissions.residentDestroy = true;
 	}
 
 	public Resident getMayor() {
 		return mayor;
+	}
+	
+	public void setTaxes(int taxes) {
+		this.taxes = taxes;
+	}
+
+	public int getTaxes() {
+		return taxes;
 	}
 
 	public void setMayor(Resident mayor) throws TownyException {
@@ -134,15 +142,6 @@ public class Town extends TownBlockOwner {
 		return townBoard;
 	}
 
-	public void setPermissions(String line) {
-		permissions.reset();
-		permissions.load(line);
-	}
-	
-	public TownyPermission getPermissions() {
-		return permissions;
-	}
-
 	public void setBonusBlocks(int bonusBlocks) {
 		this.bonusBlocks = bonusBlocks;
 	}
@@ -195,13 +194,7 @@ public class Town extends TownBlockOwner {
 		return mayor != null;
 	}
 
-	public void setTaxes(int taxes) {
-		this.taxes = taxes;
-	}
 
-	public int getTaxes() {
-		return taxes;
-	}
 	
 	public void removeResident(Resident resident) throws NotRegisteredException, EmptyTownException {
 		if (!hasResident(resident)) {
@@ -220,20 +213,6 @@ public class Town extends TownBlockOwner {
 					throw new EmptyTownException(this);
 				} catch (EmptyNationException e) {
 					throw new EmptyTownException(this, e);
-				}
-			}
-		}
-	}
-	
-	public void collectTaxes() throws IConomyException {
-		for (Resident resident : residents) {
-			// Mayor and his assistants don't have to pay.
-			if (!hasAssistant(resident) || !isMayor(resident)) {
-				if (resident.pay(getTaxes(), this)) {
-					
-				} else {
-					//TODO: Make a message that tells the player they ran out of money to live in the town.
-					
 				}
 			}
 		}
@@ -296,5 +275,13 @@ public class Town extends TownBlockOwner {
 			} catch (TownyException e) {}
 			townBlocks.remove(townBlock);
 		}
+	}
+
+	public void setPlotPrice(int plotPrice) {
+		this.plotPrice = plotPrice;
+	}
+
+	public int getPlotPrice() {
+		return plotPrice;
 	}
 }

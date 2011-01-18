@@ -24,6 +24,17 @@ import com.shade.bukkit.util.Colors;
  * 
  * @author Shade
  */
+
+/*
+ * 	TODO
+ * 
+ * Unclaim townblocks
+ * Assistants (town/nation)
+ * Friends
+ * flatfile-old data source
+ * 
+ */
+
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";
 	
@@ -45,10 +56,11 @@ public class Towny extends JavaPlugin {
     	
     	townyUniverse = new TownyUniverse(this);
     	townyUniverse.loadSettings();
+    	System.out.print("[Towny] Database: [" + townyUniverse.getSettings().getLoadDatabase() + "] ");
     	if (townyUniverse.loadDatabase())
-    		System.out.println("[Towny] Loaded database [" + townyUniverse.getSettings().getLoadDatabase() + "]");
+    		System.out.println("Loaded database");
     	else
-    		System.out.println("[Towny] Failed to load database [" + townyUniverse.getSettings().getLoadDatabase() + "]");
+    		System.out.println("Failed to load!\n[Towny] Error: .!.!.!.!.!.!.");
     	
     	Coord.setTownBlockSize(townyUniverse.getSettings().getTownBlockSize());
     	TownyIConomyObject.setPlugin(this);
@@ -83,7 +95,8 @@ public class Towny extends JavaPlugin {
     public void sendErrorMsg(Player player, String msg) {
     	for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Rose + msg))
     		player.sendMessage(line);
-    	System.out.println("[Towny] UserError: " + player.getName() + ": " + msg);
+    	if (getTownyUniverse().getSettings().getDebug())
+    		System.out.println("[Towny] UserError: " + player.getName() + ": " + msg);
     }
     public void sendErrorMsg(Player player, String[] msg) {
     	for (String line : msg)

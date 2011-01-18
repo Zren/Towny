@@ -2,13 +2,13 @@ package com.shade.bukkit.towny;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class TownyWorld extends TownyObject {
 	private List<Town> towns = new ArrayList<Town>();
 	
-	private HashMap<Coord,TownBlock> townBlocks = new HashMap<Coord,TownBlock>();
+	private Hashtable<Coord,TownBlock> townBlocks = new Hashtable<Coord,TownBlock>();
 	//TODO: private List<TownBlock> adminTownBlocks = new ArrayList<TownBlock>();
 	
 	

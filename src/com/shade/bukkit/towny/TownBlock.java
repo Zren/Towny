@@ -30,12 +30,18 @@ public class TownBlock {
 		return town != null;
 	}
 	public void setResident(Resident resident) {
+		try {
+			if (hasResident())
+				resident.removeTownBlock(this);
+		} catch(NotRegisteredException e) {}
 		this.resident = resident;
 		try {
 			resident.addTownBlock(this);
 		} catch(AlreadyRegisteredException e) {}
 	}
-	public Resident getResident() {
+	public Resident getResident() throws NotRegisteredException {
+		if (!hasResident())
+			throw new NotRegisteredException();
 		return resident;
 	}
 	public boolean hasResident() {

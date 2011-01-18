@@ -5,6 +5,7 @@ import java.util.List;
 
 public class TownBlockOwner extends TownyIConomyObject {
 	protected List<TownBlock> townBlocks = new ArrayList<TownBlock>();
+	protected TownyPermission permissions = new TownyPermission();
 	
 	public void setTownblocks(List<TownBlock> townblocks) {
 		this.townBlocks = townblocks;
@@ -32,5 +33,14 @@ public class TownBlockOwner extends TownyIConomyObject {
 		} else {
 			townBlocks.remove(townBlock);
 		}
+	}
+	
+	public void setPermissions(String line) {
+		permissions.reset();
+		permissions.load(line);
+	}
+	
+	public TownyPermission getPermissions() {
+		return permissions;
 	}
 }

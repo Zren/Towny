@@ -78,7 +78,7 @@ public abstract class TownyDataSource {
 	abstract public boolean saveTownList();
 	abstract public boolean saveNationList();
 	abstract public boolean saveWorldList();
-	abstract public boolean saveResident(Resident resdient);
+	abstract public boolean saveResident(Resident resident);
 	abstract public boolean saveTown(Town town);
 	abstract public boolean saveNation(Nation nation);
 	abstract public boolean saveWorld(TownyWorld world);

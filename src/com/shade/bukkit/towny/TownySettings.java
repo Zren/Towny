@@ -130,4 +130,16 @@ public class TownySettings {
 	public boolean isUsingChatPrefix() {
 		return true;
 	}
+
+	public int getMaxInactivePeriod() {
+		return 0;
+	}
+
+	public boolean isDeletingOldResidents() {
+		return false;
+	}
+
+	public int getWarTimeWarningDelay() {
+		return 30;
+	}
 }

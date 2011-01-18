@@ -235,6 +235,24 @@ public class TownyFlatFileSource extends TownyDataSource {
 					}
 				}
 				
+				line = kvFile.get("plotPrice");
+				if (line != null) {
+					try {
+						town.setPlotPrice(Integer.parseInt(line));
+					} catch (Exception e) {
+						town.setPlotPrice(0);
+					}
+				}
+				
+				line = kvFile.get("taxes");
+				if (line != null) {
+					try {
+						town.setTaxes(Integer.parseInt(line));
+					} catch (Exception e) {
+						town.setTaxes(0);
+					}
+				}
+				
 				line = kvFile.get("pvp");
 				if (line != null) {
 					try {
@@ -352,6 +370,15 @@ public class TownyFlatFileSource extends TownyDataSource {
 						if (enemy != null) {
 							nation.setAliegeance("enemy", enemy);
 						}
+					}
+				}
+				
+				line = kvFile.get("taxes");
+				if (line != null) {
+					try {
+						nation.setTaxes(Integer.parseInt(line));
+					} catch (Exception e) {
+						nation.setTaxes(0);
 					}
 				}
 				
@@ -565,6 +592,10 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.write("protectionStatus=" + town.getPermissions().toString() + newLine);
 			// Bonus Blocks
 			fout.write("bonusBlocks=" + Integer.toString(town.getBonusBlocks()) + newLine);
+			// Taxes
+			fout.write("taxes=" + Integer.toString(town.getTaxes()) + newLine);
+			// Plot Price
+			fout.write("plotPrice=" + Integer.toString(town.getPlotPrice()) + newLine);
 			// PVP
 			fout.write("pvp=" + Boolean.toString(town.isPVP()) + newLine);
 			// Mobs
@@ -615,6 +646,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			for(Nation enemyNation : nation.getEnemies())
 				fout.write(enemyNation.getName() + ",");
 			fout.write(newLine);
+			// Taxes
+			fout.write("taxes=" + Integer.toString(nation.getTaxes()) + newLine);
 			
 			fout.close();
 		} catch (Exception e) {

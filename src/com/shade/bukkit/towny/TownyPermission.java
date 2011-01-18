@@ -1,7 +1,7 @@
 package com.shade.bukkit.towny;
 
 public class TownyPermission {
-	boolean residentBuild, residentDestroy, outsiderBuild, outsiderDestroy, outsiderSwitches, allies;
+	boolean residentBuild, residentDestroy, outsiderBuild, outsiderDestroy, outsiderSwitches, allyBuild, allyDestroy;
 	
 	public TownyPermission() {
 		reset();
@@ -17,7 +17,8 @@ public class TownyPermission {
 		outsiderBuild = b;
 		outsiderDestroy = b;
 		outsiderSwitches = b;
-		allies = b;	
+		allyBuild = b;
+		allyDestroy = b;	
 	}
 	
 	public void set(String s, boolean b) {
@@ -31,8 +32,10 @@ public class TownyPermission {
 			outsiderDestroy = b;
 		else if (s.equalsIgnoreCase("outsiderSwitches"))
 			outsiderSwitches = b;
-		else if (s.equalsIgnoreCase("allies"))
-			allies = b;
+		else if (s.equalsIgnoreCase("allyBuild"))
+			allyDestroy = b;
+		else if (s.equalsIgnoreCase("allyDestroy"))
+				allyDestroy = b;
 	}
 	
 	public void load(String s) {
@@ -54,8 +57,10 @@ public class TownyPermission {
 			out += (out.length() > 0 ? "," : "") + "outsiderDestroy";
 		else if (outsiderSwitches)
 			out += (out.length() > 0 ? "," : "") + "outsiderSwitches";
-		else if (allies)
-			out += (out.length() > 0 ? "," : "") + "allies";
+		else if (allyBuild)
+			out += (out.length() > 0 ? "," : "") + "allyBuild";
+		else if (allyDestroy)
+			out += (out.length() > 0 ? "," : "") + "allyDestroy";
 		return out;
 	}
 }
