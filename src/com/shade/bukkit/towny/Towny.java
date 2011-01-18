@@ -12,6 +12,7 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.shade.bukkit.towny.TownyUniverse;
+import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
 /**
@@ -54,11 +55,11 @@ public class Towny extends JavaPlugin {
     	
     	townyUniverse.getDataSource().saveAll();
     	
-    	System.out.println("[Towny] Version: " + version + " | Mod Enabled");
+    	System.out.println("[Towny] Version: " + version + " - Mod Enabled");
     }
 
     public void onDisable() {
-        System.out.println("[Towny] Version: " + version + " | Mod Disabled");
+        System.out.println("[Towny] Version: " + version + " - Mod Disabled");
     }
 
     private void registerEvents() {
@@ -80,12 +81,18 @@ public class Towny extends JavaPlugin {
     }
     
     public void sendErrorMsg(Player player, String msg) {
-    	player.sendMessage(Colors.Gold + "[Towny] " + Colors.Rose + msg);
-    	System.out.println("[Towny] Error: " + player.getName() + ": " + msg);
+    	for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Rose + msg))
+    		player.sendMessage(line);
+    	System.out.println("[Towny] UserError: " + player.getName() + ": " + msg);
     }
     public void sendErrorMsg(Player player, String[] msg) {
     	for (String line : msg)
     		sendErrorMsg(player, line);
+    }
+    
+    public void sendMsg(Player player, String msg) {
+    	for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Green + msg))
+    		player.sendMessage(line);
     }
 
 	public String getVersion() {

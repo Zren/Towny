@@ -8,6 +8,9 @@ import java.util.Set;
 
 import org.bukkit.entity.Player;
 
+import com.shade.bukkit.util.ChatTools;
+import com.shade.bukkit.util.Colors;
+
 public class TownyUniverse extends TownyObject {
 	private Towny plugin;
 	private HashMap<String,Resident> residents = new HashMap<String,Resident>();
@@ -146,6 +149,16 @@ public class TownyUniverse extends TownyObject {
 		for (Player player : getOnlinePlayers())
 			for (String line : lines)
 				player.sendMessage(line);
+	}
+	
+	public void sendTownMessage(Town town, String line) {
+		for (Player player : getOnlinePlayers(town))
+			player.sendMessage(line);
+	}
+	
+	public void sendTownBoard(Player player, Town town) {
+		for (String line : ChatTools.color(Colors.Gold + "[" + town.getName() + "] " + town.getTownBoard()))
+			player.sendMessage(line);
 	}
 	
 	public Player[] getOnlinePlayers() {

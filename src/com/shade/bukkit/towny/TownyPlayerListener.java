@@ -309,15 +309,15 @@ public class TownyPlayerListener extends PlayerListener {
     	player.sendMessage(ChatTools.formatCommand("", "/town", "", "Your town's status"));
     	player.sendMessage(ChatTools.formatCommand("", "/town", "[town]", "Selected town's status"));
     	player.sendMessage(ChatTools.formatCommand("", "/town", "here", "Shortcut to the town's status of your location."));
-    	player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to your town's home location."));
     	player.sendMessage(ChatTools.formatCommand("", "/town", "list", ""));
     	//TODO: player.sendMessage(ChatTools.formatCommand("", "/town", "leave", ""));
-    	//TODO: player.sendMessage(ChatTools.formatCommand("", "/town", "claim", ""));
+    	player.sendMessage(ChatTools.formatCommand("", "/town", "claim", "'/town claim ?' for help"));
+    	//TODO: player.sendMessage(ChatTools.formatCommand("", "/town", "unclaim", "'/town unclaim ?' for help"));
     	player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to town's spawn."));
     	player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
-    	player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add [resident] .. [resident]", "Add online residents."));
+    	player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add [resident] .. []", "Add online residents."));
     	//TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add+ [resident]", "Add resident")); 
-    	player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick [resident] .. [resident]", ""));
+    	player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick [resident] .. []", ""));
     	//TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick+ [resident]", "Kick resident"));
     	player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "set [] .. []", "'/town set' for help"));
     	//TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "assistant [+/-] [player]", ""));
@@ -560,9 +560,11 @@ public class TownyPlayerListener extends PlayerListener {
     }
     
     public void parseTownClaimCommand(Player player, String[] split) {
-    	if (split.length == 1 && split[0].equalsIgnoreCase("help")) {
+    	if (split.length == 1 && split[0].equalsIgnoreCase("?")) {
     		player.sendMessage(ChatTools.formatCommand("", "/town claim", "", "Claim this town block"));
-    		player.sendMessage(ChatTools.formatCommand("", "/town claim", "rect auto", "Claim nearby area until max."));
+    		//TODO: player.sendMessage(ChatTools.formatCommand("", "/town claim", "auto", "Automatically expand town area till max"));
+    		player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "rect [radius]", "Attempt to claim around you."));
+    		player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "rect auto", "Detemine the maximum radius"));
     	} else {
     		Resident resident;
     		Town town;
@@ -581,33 +583,153 @@ public class TownyPlayerListener extends PlayerListener {
     			return;
     		}
     		
+    		
+        	
     		if (split.length == 0) {
     			try {
-    				townClaim(town, world, Coord.parseCoord(player));
-    			} catch (AlreadyRegisteredException x) {
+    				int available = plugin.getTownyUniverse().getSettings().getMaxTownBlocks(town) - town.getTownBlocks().size();
+    				
+    				if (available - 1 < 0)
+    					throw new TownyException("You've already claimed your maximum amount of town blocks.");
+    				
+    				townClaim(town, world, Coord.parseCoord(player), true);
+    				
+    				plugin.getTownyUniverse().getDataSource().saveTown(town);
+    				plugin.getTownyUniverse().getDataSource().saveWorld(world);
+    			} catch (TownyException x) {
     				plugin.sendErrorMsg(player, x.getError());
-    			}
+				}
     		} else {
     			if (split[0].equalsIgnoreCase("rect")) {
-    			} else if (split[0].equalsIgnoreCase("help")) {
+    				String[] newSplit = new String[split.length-1];
+    		    	System.arraycopy(split, 1, newSplit, 0, split.length-1);
+    				townClaimRect(player, newSplit, resident, town, world);
+    				
+    			} else if (split[0].equalsIgnoreCase("auto")) {
+    				//TODO: Attempt to claim edge blocks recursively.
     			}
     		} 
     	}
     }
     
-    public void townClaim(Town town, TownyWorld world, Coord coord) throws AlreadyRegisteredException {
+    public void townClaimRect(Player player, String[] split, Resident resident, Town town, TownyWorld world) {
+    	int available = plugin.getTownyUniverse().getSettings().getMaxTownBlocks(town) - town.getTownBlocks().size();
+    	
+    	if (split.length == 0 || split[0].equalsIgnoreCase("?")) {
+    		player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim rect", "[radius]", "Claim around you."));
+    		player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim rect", "auto", "Detemine the maximum radius"));
+    	} else {
+    		int r = 0;
+    		Coord pos = Coord.parseCoord(player);
+    		
+    		if (split[0].equalsIgnoreCase("auto")) {
+	        	// Automatically determine the maximum area to claim
+	        	// by taking the radius and getting the diameter and
+	        	// checking if the town has enough available town blocks
+	        	r = 0;
+	        	while (available - Math.pow((r+1)*2-1, 2) >= 0)
+	        		r++;
+	        } else {
+	        	try {
+	        		r = Integer.parseInt(split[0]);
+	        	} catch (NumberFormatException e) {
+	        		plugin.sendErrorMsg(player, "Invalid radius. Use an integer or 'auto'.");
+	        		return;
+	        	}
+	        }
+    		
+    		// A radius of 1 requires expanding the selected position by 0,
+    		// or the target radius - 1.
+    		r--; 
+    		
+    		
+        	List<Coord> coords = new ArrayList<Coord>();
+        	for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++) {
+        		for (int x = pos.getX() - r; x <= pos.getX() + r; x++) {
+        			coords.add(new Coord(x, z));
+        		}
+        	}
+    		
+        	player.sendMessage(String.format("Claiming %d town blocks within the radius of %d.", Math.pow((r+1)*2-1, 2), r));
+    		try {
+        		int n = townClaim(town, world, coords.toArray(new Coord[0]));
+        		if (n > 0) {
+					plugin.getTownyUniverse().getDataSource().saveTown(town);
+					plugin.getTownyUniverse().getDataSource().saveWorld(world);
+					
+					player.sendMessage("Successfully claimed " + n + " town blocks.");
+        		} else {
+        			plugin.sendErrorMsg(player, "None of the selected townblocks were valid to claim.");
+        		}
+	        } catch (TownyException x) {
+				plugin.sendErrorMsg(player, x.getError());
+			}
+    	}
+    }
+    
+    public int townClaim(Town town, TownyWorld world, Coord[] coords) throws TownyException {
+    	if (!isTownEdge(town, world, coords))
+    		throw new TownyException("Selected area is not connected to town.");
+    	
+    	int n = 0;
+    	for (Coord coord : coords) {
+    		try {
+	    		if (townClaim(town, world, coord, false))
+	    			n++;
+    		} catch (TownyException e) {
+    			//Ignore complaints
+    		}
+    	}
+    	return n;
+    }
+    
+    public boolean townClaim(Town town, TownyWorld world, Coord coord, boolean checkEdge) throws TownyException {
     	try {
 			TownBlock townBlock = world.getTownBlock(coord);
 			try {
-				throw new AlreadyRegisteredException("This area has already been claimed by: " + townBlock.getTown());
+				throw new AlreadyRegisteredException("This area has already been claimed by: " + townBlock.getTown().getName());
 			} catch (NotRegisteredException e) {
 				throw new AlreadyRegisteredException("This area has already been claimed.");
 			}
 		} catch (NotRegisteredException e) {
+			if (checkEdge && town.getTownBlocks().size() > 0) {
+				if (!isTownEdge(town, world, coord))
+					throw new TownyException("Selected area is not connected to town.");
+			}
 			TownBlock townBlock = world.newTownBlock(coord);
 			townBlock.setTown(town);
-		}
+			return true;
+		}		
     }
+    
+    public boolean isTownEdge(Town town, TownyWorld world, Coord[] coords) {
+    	//TODO: Better algorithm that doesn't duplicates checks.
+    	
+    	for (Coord coord : coords)
+    		if (isTownEdge(town, world, coord))
+    			return true;
+    	return false;
+    }
+    
+    public boolean isTownEdge(Town town, TownyWorld world, Coord coord) {
+    	
+    		System.out.print("[Towny] Debug: isTownEdge("+coord.toString()+") = ");
+		int[][] offset = {{-1,0},{1,0},{0,-1},{0,1}};
+		for (int i = 0; i < 4; i++) {
+			try {
+				TownBlock edgeTownBlock = world.getTownBlock(new Coord(coord.getX() + offset[i][0], coord.getZ() + offset[i][1]));
+				if (edgeTownBlock.getTown() == town) {
+					if (plugin.getTownyUniverse().getSettings().getDebug())
+						System.out.println("true");
+					return true;
+				}
+			} catch (NotRegisteredException e) {
+			}
+		}
+		if (plugin.getTownyUniverse().getSettings().getDebug())
+			System.out.println("false");
+		return false;
+	}
     
     /**
      * 
@@ -659,6 +781,8 @@ public class TownyPlayerListener extends PlayerListener {
 	    			for (int i = 2; i < split.length; i++)
 	    				line += " " + split[i];
 	    			town.setTownBoard(line);
+	    			plugin.sendMsg(player, "Successfully changed the town board.");
+	    			plugin.getTownyUniverse().sendTownBoard(player, town);
     			}
     		} else if (split[0].equalsIgnoreCase("mayor")) {
     			if (split.length < 2) {
@@ -667,6 +791,7 @@ public class TownyPlayerListener extends PlayerListener {
     				try {
 	    				Resident newMayor = plugin.getTownyUniverse().getResident(split[1]);
 	    				town.setMayor(newMayor);
+	    				plugin.getTownyUniverse().sendTownMessage(town, plugin.getTownyUniverse().getSettings().getNewMayorMsg(newMayor.getName()));
 	    			} catch (TownyException e) {
 						plugin.sendErrorMsg(player, e.getError());
 					}
@@ -749,7 +874,7 @@ public class TownyPlayerListener extends PlayerListener {
     				} catch (Exception e) {}  
     			}
     		} else {
-    			// Incorrect sub command
+    			plugin.sendErrorMsg(player, "Invalid town property.");
     			return;
     		}
     		
@@ -1016,12 +1141,11 @@ public class TownyPlayerListener extends PlayerListener {
 					TownBlock townblock = world.getTownBlock(tbx, tby);
 					if (!townblock.hasTown())
 						throw new TownyException();
-					System.out.println("reached 1");
 					if (x == 3 && y == 15) { //Center of map is player's location
 						townyMap[y][x] = Colors.Gold;
 					} else if (hasTown) {
 						if (resident.getTown() == townblock.getTown()) { //Player's own town
-							townyMap[y][x] = Colors.LightGreen; System.out.println("reached 2");
+							townyMap[y][x] = Colors.LightGreen;
 						} else {
 							if (resident.hasNation()) {
 								if (resident.getTown().getNation().hasTown(townblock.getTown())) { //Allied towns

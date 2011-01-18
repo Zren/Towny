@@ -84,7 +84,7 @@ public class TownySettings {
 	}
 
 	public int getMaxTownBlocks(Town town) {
-		return 16;
+		return 64;
 	}
 
 	public int getTownBlockSize() {
