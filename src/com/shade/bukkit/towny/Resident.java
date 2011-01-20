@@ -29,7 +29,7 @@ public class Resident extends TownBlockOwner {
 	}
 
 	public boolean isMayor() {
-		return (hasTown() ? town.isMayor(this) : false);
+		return hasTown() ? town.isMayor(this) : false;
 	}
 
 	public boolean hasTown() {
@@ -37,7 +37,7 @@ public class Resident extends TownBlockOwner {
 	}
 
 	public boolean hasNation() {
-		return (hasTown() ? town.hasNation() : false);
+		return hasTown() ? town.hasNation() : false;
 	}
 
 	public Town getTown() throws NotRegisteredException {
@@ -68,8 +68,11 @@ public class Resident extends TownBlockOwner {
 		return friends;
 	}
 
-	public boolean removeFriend(Resident resident) {
-		return friends.remove(resident);
+	public boolean removeFriend(Resident resident) throws NotRegisteredException {
+		if (hasFriend(resident))
+			return friends.remove(resident);
+		else
+			throw new NotRegisteredException();
 	}
 
 	public boolean hasFriend(Resident resident) {
@@ -77,10 +80,9 @@ public class Resident extends TownBlockOwner {
 	}
 
 	public void addFriend(Resident resident) throws AlreadyRegisteredException {
-		if (hasFriend(resident)) {
+		if (hasFriend(resident))
 			throw new AlreadyRegisteredException();
-		} else {
+		else
 			friends.add(resident);
-		}
 	}
 }

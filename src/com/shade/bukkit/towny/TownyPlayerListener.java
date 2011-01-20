@@ -347,17 +347,69 @@ public class TownyPlayerListener extends PlayerListener {
 
 			// TODO: Let admin's call a subfunction of this.
 			if (split[0].equalsIgnoreCase("add")) {
-				String[] newSplit = new String[split.length - 1];
-				System.arraycopy(split, 1, newSplit, 0, split.length - 1);
-				setTownBlockOwnerPermissions(player, resident, newSplit);
-			} else if (split[0].equalsIgnoreCase("add")) {
-				plugin.sendErrorMsg(player, "Invalid town property.");
-				return;
+				String[] names = new String[split.length - 1];
+				System.arraycopy(split, 1, names, 0, split.length - 1);
+				residentFriendAdd(player, resident, getOnlineResidents(player, names));
+			} else if (split[0].equalsIgnoreCase("remove")) {
+				String[] names = new String[split.length - 1];
+				System.arraycopy(split, 1, names, 0, split.length - 1);
+				residentFriendRemove(player, resident, getOnlineResidents(player, names));
 			} else if (split[0].equalsIgnoreCase("clearlist"))
-				return;
+				residentFriendRemove(player, resident, resident.getFriends());
 
-			plugin.getTownyUniverse().getDataSource().saveResident(resident);
 		}
+	}
+
+	public void residentFriendAdd(Player player, Resident resident, List<Resident> invited) {
+		ArrayList<Resident> remove = new ArrayList<Resident>();
+		for (Resident newFriend : invited)
+			try {
+				resident.addFriend(newFriend);
+			} catch (AlreadyRegisteredException e) {
+				remove.add(newFriend);
+			}
+		for (Resident newFriend : remove)
+			invited.remove(newFriend);
+
+		if (invited.size() > 0) {
+			String msg = "Added ";
+			for (Resident newFriend : invited) {
+				msg += newFriend.getName() + ", ";
+				Player p = plugin.getServer().getPlayer(newFriend.getName());
+				if (p != null)
+					plugin.sendMsg(p, player.getName() + " added you as a friend.");
+			}
+			msg += "to your friend list.";
+			plugin.sendMsg(player, msg);
+			plugin.getTownyUniverse().getDataSource().saveResident(resident);
+		} else
+			plugin.sendErrorMsg(player, "None of those names were valid.");
+	}
+
+	public void residentFriendRemove(Player player, Resident resident, List<Resident> kicking) {
+		ArrayList<Resident> remove = new ArrayList<Resident>();
+		for (Resident friend : kicking)
+			try {
+				resident.removeFriend(friend);
+			} catch (NotRegisteredException e) {
+				remove.add(friend);
+			}
+		for (Resident friend : remove)
+			kicking.remove(friend);
+
+		if (kicking.size() > 0) {
+			String msg = "Removed ";
+			for (Resident member : kicking) {
+				msg += member.getName() + ", ";
+				Player p = plugin.getServer().getPlayer(member.getName());
+				if (p != null)
+					plugin.sendMsg(p, player.getName() + " removed you as a friend.");
+			}
+			msg += "from your friend list.";
+			plugin.sendMsg(player, msg);
+			plugin.getTownyUniverse().getDataSource().saveResident(resident);
+		} else
+			plugin.sendErrorMsg(player, "Non of those names were valid.");
 	}
 
 	public void parsePlotCommand(Player player, String[] split) {

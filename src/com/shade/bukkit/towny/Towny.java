@@ -27,11 +27,16 @@ import com.shade.bukkit.util.Colors;
  * TODO
  * 
  * Unclaim townblocks
- * Assistants (town/nation)
- * Friends
- * flatfile-old data source
+ * flatfile-old data source / replace getDataSource() with a manager class
  * log chat
+ * update cache when adding/removing people
  * fix chat messages to not edit display name but format string
+ * save/load Nation.isNeutral
+ * prevent command use during war
+ * friends
+ * go outside
+ * have sex
+ * lots of it
  */
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";

@@ -48,8 +48,7 @@ public class TownyBlockListener extends BlockListener {
 			onBlockBreakEvent(event, true);
 
 			if (plugin.getTownyUniverse().getSettings().getDebug())
-				System.out.println("[Towny] Debug: onBlockBreakEvent took "
-						+ (System.currentTimeMillis() - start) + "ms");
+				System.out.println("[Towny] Debug: onBlockBreakEvent took " + (System.currentTimeMillis() - start) + "ms");
 		}
 	}
 
@@ -61,9 +60,8 @@ public class TownyBlockListener extends BlockListener {
 		// Check cached permissions first
 		try {
 			if (cachedPermissions.containsKey(player.getName())) {
-				if (!(getCache(player.getName(), pos).getDestroyPermission())) {
+				if (!getCache(player.getName(), pos).getDestroyPermission())
 					event.setCancelled(true);
-				}
 				return;
 			}
 		} catch (NullPointerException e) {
@@ -71,10 +69,8 @@ public class TownyBlockListener extends BlockListener {
 				// New or old destroy permission was null, update it
 				updateBuildCache(player, pos, true);
 				onBlockBreakEvent(event, false);
-			} else {
-				plugin.sendErrorMsg(player,
-						"Error updating build permissions cache.");
-			}
+			} else
+				plugin.sendErrorMsg(player, "Error updating build permissions cache.");
 		}
 
 	}
@@ -86,8 +82,7 @@ public class TownyBlockListener extends BlockListener {
 		onBlockPlaceEvent(event, true);
 
 		if (plugin.getTownyUniverse().getSettings().getDebug())
-			System.out.println("[Towny] Debug: onBlockPlacedEvent took "
-					+ (System.currentTimeMillis() - start) + "ms");
+			System.out.println("[Towny] Debug: onBlockPlacedEvent took " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	public void onBlockPlaceEvent(BlockPlaceEvent event, boolean firstCall) {
@@ -98,7 +93,7 @@ public class TownyBlockListener extends BlockListener {
 		// Check cached permissions first
 		try {
 			if (cachedPermissions.containsKey(player.getName())) {
-				if (!(getCache(player.getName(), pos).getBuildPermission())) {
+				if (!getCache(player.getName(), pos).getBuildPermission()) {
 					event.setBuild(false);
 					event.setCancelled(true);
 				}
@@ -109,10 +104,8 @@ public class TownyBlockListener extends BlockListener {
 				// New or old build permission was null, update it
 				updateBuildCache(player, pos, true);
 				onBlockPlaceEvent(event, false);
-			} else {
-				plugin.sendErrorMsg(player,
-						"Error updating build permissions cache.");
-			}
+			} else
+				plugin.sendErrorMsg(player, "Error updating build permissions cache.");
 		}
 	}
 
@@ -129,15 +122,13 @@ public class TownyBlockListener extends BlockListener {
 		Town town;
 
 		try {
-			townBlock = universe.getWorld(player.getWorld().getName())
-					.getTownBlock(pos);
+			townBlock = universe.getWorld(player.getWorld().getName()).getTownBlock(pos);
 			town = townBlock.getTown();
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone destroy rights
 			if (!settings.getUnclaimedZoneDestroyRights()) {
 				// TODO: Have permission to destroy here
-				plugin.sendErrorMsg(player,
-						"Not allowed to destroy in the wild.");
+				plugin.sendErrorMsg(player, "Not allowed to destroy in the wild.");
 				cacheDestroy(player.getName(), pos, false);
 			}
 
@@ -146,31 +137,37 @@ public class TownyBlockListener extends BlockListener {
 
 		try {
 			Resident resident = universe.getResident(player.getName());
-
+			
+			// War Time destroy rights
+			if (universe.isWarTime())
+				try {
+					if (!resident.getTown().getNation().isNeutral() && !town.getNation().isNeutral()) {
+						cacheDestroy(player.getName(), pos, true);
+						return;
+					}	
+				} catch (NotRegisteredException e) {
+				}
+			
 			// Resident Plot destroy rights
 			try {
 				Resident owner = townBlock.getResident();
-				if (resident == owner) {
+				if (resident == owner)
 					cacheDestroy(player.getName(), pos, true);
-				} else if (owner.hasFriend(resident)) {
-					if (owner.permissions.residentDestroy) {
+				else if (owner.hasFriend(resident)) {
+					if (owner.permissions.residentDestroy)
 						cacheDestroy(player.getName(), pos, true);
-					} else {
+					else {
 						if (sendMsg)
-							plugin.sendErrorMsg(player,
-									"Owner doesn't allow friends to destroy here.");
+							plugin.sendErrorMsg(player, "Owner doesn't allow friends to destroy here.");
 						cacheDestroy(player.getName(), pos, false);
 					}
-				} else {
-					if (owner.permissions.allyDestroy) {
-						// Exit out and use town permissions
-						throw new TownyException();
-					} else {
-						if (sendMsg)
-							plugin.sendErrorMsg(player,
-									"Owner doesn't allow allies to destroy here.");
-						cacheDestroy(player.getName(), pos, false);
-					}
+				} else if (owner.permissions.allyDestroy)
+					// Exit out and use town permissions
+					throw new TownyException();
+				else {
+					if (sendMsg)
+						plugin.sendErrorMsg(player, "Owner doesn't allow allies to destroy here.");
+					cacheDestroy(player.getName(), pos, false);
 				}
 
 				return;
@@ -184,34 +181,27 @@ public class TownyBlockListener extends BlockListener {
 
 			if (!town.getPermissions().residentDestroy) {
 				if (sendMsg)
-					plugin.sendErrorMsg(player,
-							"Residents aren't allowed to build.");
+					plugin.sendErrorMsg(player, "Residents aren't allowed to build.");
 				cacheDestroy(player.getName(), pos, false);
-			} else {
-				if (resident.getTown() != town) {
-					// Allied destroy rights
-					if ((universe.isAlly(resident.getTown(), town) && town
-							.getPermissions().allyDestroy)) {
-						cacheDestroy(player.getName(), pos, true);
-					} else {
-						if (sendMsg)
-							plugin.sendErrorMsg(player,
-									"Not allowed to build here.");
-						cacheDestroy(player.getName(), pos, false);
-					}
-				} else {
+			} else if (resident.getTown() != town) {
+				// Allied destroy rights
+				if (universe.isAlly(resident.getTown(), town) && town.getPermissions().allyDestroy)
 					cacheDestroy(player.getName(), pos, true);
+				else {
+					if (sendMsg)
+						plugin.sendErrorMsg(player, "Not allowed to build here.");
+					cacheDestroy(player.getName(), pos, false);
 				}
-			}
+			} else
+				cacheDestroy(player.getName(), pos, true);
 		} catch (TownyException e) {
 			// Outsider destroy rights
 			if (!town.getPermissions().outsiderDestroy) {
 				if (sendMsg)
 					plugin.sendErrorMsg(player, e.getError());
 				cacheDestroy(player.getName(), pos, false);
-			} else {
+			} else
 				cacheDestroy(player.getName(), pos, true);
-			}
 		}
 	}
 
@@ -241,30 +231,38 @@ public class TownyBlockListener extends BlockListener {
 		try {
 			Resident resident = universe.getResident(player.getName());
 
+			// War Time build rights
+			if (universe.isWarTime())
+				try {
+					if (!resident.getTown().getNation().isNeutral() && !town.getNation().isNeutral()) {
+						cacheBuild(player.getName(), pos, true);
+						return;
+					}	
+				} catch (NotRegisteredException e) {
+				}
+			
 			// Resident Plot rights
 			try {
 				Resident owner = townBlock.getResident();
-				if (resident == owner) {
+				if (resident == owner)
 					cacheBuild(player.getName(), pos, true);
-				} else if (owner.hasFriend(resident)) {
-					if (owner.permissions.residentBuild) {
+				else if (owner.hasFriend(resident)) {
+					if (owner.permissions.residentBuild)
 						cacheBuild(player.getName(), pos, true);
-					} else {
+					else {
 						if (sendMsg)
 							plugin.sendErrorMsg(player,
 									"Owner doesn't allow friends to destroy here.");
 						cacheBuild(player.getName(), pos, false);
 					}
-				} else {
-					if (owner.permissions.allyBuild) {
-						// Exit out and use town permissions
-						throw new TownyException();
-					} else {
-						if (sendMsg)
-							plugin.sendErrorMsg(player,
-									"Owner doesn't allow allies to build here.");
-						cacheBuild(player.getName(), pos, false);
-					}
+				} else if (owner.permissions.allyBuild)
+					// Exit out and use town permissions
+					throw new TownyException();
+				else {
+					if (sendMsg)
+						plugin.sendErrorMsg(player,
+								"Owner doesn't allow allies to build here.");
+					cacheBuild(player.getName(), pos, false);
 				}
 
 				return;
@@ -281,31 +279,27 @@ public class TownyBlockListener extends BlockListener {
 					plugin.sendErrorMsg(player,
 							"Residents aren't allowed to build.");
 				cacheBuild(player.getName(), pos, false);
-			} else {
-				if (resident.getTown() != town) {
-					// Allied Build Rights
-					if ((universe.isAlly(resident.getTown(), town) && town
-							.getPermissions().allyBuild)) {
-						cacheBuild(player.getName(), pos, true);
-					} else {
-						if (sendMsg)
-							plugin.sendErrorMsg(player,
-									"Not allowed to build here.");
-						cacheBuild(player.getName(), pos, false);
-					}
-				} else {
+			} else if (resident.getTown() != town) {
+				// Allied Build Rights
+				if (universe.isAlly(resident.getTown(), town) && town
+						.getPermissions().allyBuild)
 					cacheBuild(player.getName(), pos, true);
+				else {
+					if (sendMsg)
+						plugin.sendErrorMsg(player,
+								"Not allowed to build here.");
+					cacheBuild(player.getName(), pos, false);
 				}
-			}
+			} else
+				cacheBuild(player.getName(), pos, true);
 		} catch (TownyException e) {
 			// Outsider Build Rights
 			if (!town.getPermissions().outsiderBuild) {
 				if (sendMsg)
 					plugin.sendErrorMsg(player, e.getError());
 				cacheBuild(player.getName(), pos, false);
-			} else {
+			} else
 				cacheBuild(player.getName(), pos, true);
-			}
 		}
 	}
 
