@@ -18,14 +18,11 @@ public class DailyTimerTask extends TownyTimerTask {
 		}
 
 		// Automatically delete old residents
-		if (universe.getSettings().isDeletingOldResidents()) {
-			for (Resident resident : universe.getResidents()) {
-				if (System.currentTimeMillis() - resident.getLastOnline() > universe
-						.getSettings().getMaxInactivePeriod()) {
+		if (universe.getSettings().isDeletingOldResidents())
+			for (Resident resident : universe.getResidents())
+				if (System.currentTimeMillis() - resident.getLastOnline() > universe.getSettings().getMaxInactivePeriod()) {
 					// TODO: Delete resident
 				}
-			}
-		}
 
 	}
 

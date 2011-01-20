@@ -45,15 +45,15 @@ public class TownySettings {
 	}
 	
 	public List<String> getResidentCommands() {
-		return Arrays.asList(new String[]{"/resident","/player"});
+		return Arrays.asList(new String[]{"/resident","/player","/p"});
 	}
 	
 	public List<String> getTownCommands() {
-		return Arrays.asList(new String[]{"/town"});
+		return Arrays.asList(new String[]{"/town","/t"});
 	}
 	
 	public List<String> getNationCommands() {
-		return Arrays.asList(new String[]{"/nation"});
+		return Arrays.asList(new String[]{"/nation","/n"});
 	}
 	
 	public List<String> getPlotCommands() {
@@ -65,7 +65,7 @@ public class TownySettings {
 	}
 	
 	public List<String> getTownyAdminCommands() {
-		return Arrays.asList(new String[]{"/townyadmin"});
+		return Arrays.asList(new String[]{"/townyadmin","/ta"});
 	}
 	
 	public List<String> getTownChatCommands() {
@@ -74,6 +74,13 @@ public class TownySettings {
 	
 	public List<String> getNationChatCommands() {
 		return Arrays.asList(new String[]{"/nc"});
+	}
+	
+	public String getFirstCommand(List<String> commands) {
+		if (commands.size() > 0)
+			return getResidentCommands().get(0);
+		else
+			return "/<unknown>";
 	}
 
 	public Town getDefaultTown() {

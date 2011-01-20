@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nijikokun.bukkit.iConomy.iConomy;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
@@ -27,34 +28,37 @@ public class TownyFormatter {
 
 		// Last Online: March 7
 		SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd '@' HH:mm");
-		out.add(Colors.Green + "Last Online: " + Colors.LightGreen
-				+ sdf.format(resident.getLastOnline()));
+		out.add(Colors.Green + "Last Online: " + Colors.LightGreen + sdf.format(resident.getLastOnline()));
 
 		// Owner of: 4 Town Blocks
 		if (resident.getTownBlocks().size() > 0)
-			out.add(Colors.Green + "Owner of: " + Colors.LightGreen
-					+ resident.getTownBlocks().size() + " plots");
+			out.add(Colors.Green + "Owner of: " + Colors.LightGreen + resident.getTownBlocks().size() + " plots");
 
+		// Bank: 534 coins
+		if (settings.isUsingIConomy())
+			try {
+				TownyIConomyObject.checkIConomy();
+				out.add(Colors.Green + "Bank: " + Colors.LightGreen + resident.getIConomyBalance() + " " + iConomy.currency);
+			} catch (IConomyException e1) {
+			}
+		
 		// Town: Camelot
 		String line = Colors.Green + "Town: " + Colors.LightGreen;
-		if (!resident.hasTown()) {
+		if (!resident.hasTown())
 			line += "None";
-		} else {
+		else
 			try {
 				line += getFormattedName(resident.getTown());
 			} catch (TownyException e) {
 				line += "Error: " + e.getError();
 			}
-		}
 		out.add(line);
 
 		// Friends [12]:
 		// James, Carry, Mason
 		List<Resident> friends = resident.getFriends();
-		out.add(Colors.Green + "Friends " + Colors.LightGreen + "["
-				+ friends.size() + "]" + Colors.Green + ":");
-		out.addAll(ChatTools.list(getFormattedNames(friends
-				.toArray(new Resident[0]))));
+		out.add(Colors.Green + "Friends " + Colors.LightGreen + "[" + friends.size() + "]" + Colors.Green + ":");
+		out.addAll(ChatTools.list(getFormattedNames(friends.toArray(new Resident[0]))));
 
 		return out;
 	}
@@ -77,21 +81,19 @@ public class TownyFormatter {
 		// Town Size: 0 / 16 [Bonus: 0] [Home: 33,44]
 		try {
 			out.add(Colors.Green
-					+ "Town Size: "
-					+ Colors.LightGreen
-					+ town.getTownBlocks().size()
-					+ " / "
-					+ settings.getMaxTownBlocks(town)
-					+ Colors.LightBlue
-					+ " [Bonus: "
-					+ town.getBonusBlocks()
-					+ "]"
-					+ Colors.LightGray
-					+ " [Home: "
-					+ (town.hasHomeBlock() ? town.getHomeBlock().getCoord()
-							.toString() : "None") + "]");
+					+ "Town Size: " + Colors.LightGreen + town.getTownBlocks().size() + " / " + settings.getMaxTownBlocks(town)
+					+ Colors.LightBlue + " [Bonus: " + town.getBonusBlocks() + "]"
+					+ Colors.LightGray + " [Home: " + (town.hasHomeBlock() ? town.getHomeBlock().getCoord().toString() : "None") + "]");
 		} catch (TownyException e) {
 		}
+		
+		// Bank: 534 coins
+		if (settings.isUsingIConomy())
+			try {
+				TownyIConomyObject.checkIConomy();
+				out.add(Colors.Green + "Bank: " + Colors.LightGreen + town.getIConomyBalance() + " " + iConomy.currency);
+			} catch (IConomyException e1) {
+			}
 
 		// if (mayor != null)
 		out.add(Colors.Green + "Lord: " + Colors.LightGreen
@@ -126,6 +128,14 @@ public class TownyFormatter {
 		// ___[ Azur Empire ]___
 		out.add(ChatTools.formatTitle(getFormattedName(nation)));
 
+		// Bank: 534 coins
+		if (settings.isUsingIConomy())
+			try {
+				TownyIConomyObject.checkIConomy();
+				out.add(Colors.Green + "Bank: " + Colors.LightGreen + nation.getIConomyBalance() + " " + iConomy.currency);
+			} catch (IConomyException e1) {
+			}
+		
 		// King: King Harlus
 		if (nation.getNumTowns() > 0 && nation.hasCapital()
 				&& nation.getCapital().hasMayor())

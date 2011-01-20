@@ -46,6 +46,10 @@ public class TownyUniverse extends TownyObject {
 
 		dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), result.getTime(), oneDay);
 	}
+	
+	public void newDay() {
+		dailyTimer.schedule(new DailyTimerTask(this), 0);
+	}
 
 	public void onLogin(Player player) throws AlreadyRegisteredException, NotRegisteredException {
 		Resident resident;

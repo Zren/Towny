@@ -28,16 +28,19 @@ import com.shade.bukkit.util.Colors;
  * 
  * Commenting
  * Unclaim townblocks
- * flatfile-old data source / replace getDataSource() with a manager class
+ * flatfile-old data source and replace getDataSource() with a manager class
  * log chat
+ * permissions
  * update cache when adding/removing people
  * fix chat messages to not edit display name but format string
- * save/load Nation.isNeutral
+ * save/load Nation.isNeutral, and make a /nation set command
  * prevent command use during war
  * allies
- * go outside
- * have sex
- * lots of it
+ * replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
+ * access and withdraw from bank accounts
+ * more iconomy prices (new nation, claim block, etc)
+ * delete townyobject
+ * update map for resident owned plots (yellow?)
  */
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";
@@ -148,5 +151,4 @@ public class Towny extends JavaPlugin {
 			if (Coord.parseCoord(player).equals(coord))
 				updatePlayerCache(player);
 	}
-
 }

@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import com.nijikokun.bukkit.iConomy.iConomy;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
+import com.shade.bukkit.util.Compass;
 import com.shade.util.MemMgmt;
 
 /**
@@ -1668,9 +1669,11 @@ public class TownyPlayerListener extends PlayerListener {
 		 * /towny universe
 		 * /towny war stats
 		 * /towny war scores
+		 * 
 		 * Debug only:
 		 * /towny seed
 		 * /towny tree
+		 * /towny newday
 		 */
 
 		if (split.length == 0)
@@ -1698,6 +1701,8 @@ public class TownyPlayerListener extends PlayerListener {
 				showUniverseTree();
 			else if (split[0].equalsIgnoreCase("seed"))
 				seedTowny();
+			else if (split[0].equalsIgnoreCase("newday"))
+				seedTowny();
 	}
 
 	/**
@@ -1708,15 +1713,17 @@ public class TownyPlayerListener extends PlayerListener {
 	 */
 
 	public void showHelp(Player player) {
+		TownySettings settings = plugin.getTownyUniverse().getSettings();
 		player.sendMessage(ChatTools.formatTitle("General Towny Help"));
 		player.sendMessage("Try the following commands to learn more about towny.");
-		player.sendMessage(ChatTools.formatCommand("", "/resident", "?", "")
-				+ ", " + ChatTools.formatCommand("", "/town", "?", "") 
-				+ ", " + ChatTools.formatCommand("", "/nation", "?", "")
-				+ ", " + ChatTools.formatCommand("", "/towny", "?", ""));
-		player.sendMessage(ChatTools.formatCommand("", "/tc", " [msg]", "Town Chat")
-				+ ", " + ChatTools.formatCommand("", "/nc", " [msg]", "Nation Chat"));
-		player.sendMessage(ChatTools.formatCommand("Admin", "/townyadmin", "?", ""));
+		player.sendMessage(ChatTools.formatCommand("", settings.getFirstCommand(settings.getResidentCommands()), "?", "")
+				+ ", " + ChatTools.formatCommand("", settings.getFirstCommand(settings.getTownCommands()), "?", "") 
+				+ ", " + ChatTools.formatCommand("", settings.getFirstCommand(settings.getNationCommands()), "?", "")
+				+ ", " + ChatTools.formatCommand("", settings.getFirstCommand(settings.getPlotCommands()), "?", "")
+				+ ", " + ChatTools.formatCommand("", settings.getFirstCommand(settings.getTownyCommands()), "?", ""));
+		player.sendMessage(ChatTools.formatCommand("", settings.getFirstCommand(settings.getTownChatCommands()), " [msg]", "Town Chat")
+				+ ", " + ChatTools.formatCommand("", settings.getFirstCommand(settings.getNationChatCommands()), " [msg]", "Nation Chat"));
+		player.sendMessage(ChatTools.formatCommand("Admin", settings.getFirstCommand(settings.getTownyAdminCommands()), "?", ""));
 	}
 
 	/**
@@ -1817,12 +1824,28 @@ public class TownyPlayerListener extends PlayerListener {
 			y++;
 		}
 
+		Compass.Point dir = Compass.getCompassPointForDirection(player.getLocation().getYaw());
+		
 		String[] compass = {
 				Colors.Black + "  -----  ",
-				Colors.Black + "  --" + Colors.White + "N" + Colors.Black + "--  ",
-				Colors.Black + "  -" + Colors.White + "W+E" + Colors.Black + "-  ",
-				Colors.Black + "  --" + Colors.White + "S" + Colors.Black + "--  " };
+				Colors.Black + "  -" + (dir == Compass.Point.NW ? Colors.Gold + "\\" : "-")
+				+ (dir == Compass.Point.N ? Colors.Gold : Colors.White) + "N"
+				+ (dir == Compass.Point.NE ? Colors.Gold + "/" + Colors.Black : Colors.Black + "-") + "-  ",
+				Colors.Black + "  -" + (dir == Compass.Point.W ? Colors.Gold + "W" : Colors.White + "W") + Colors.LightGray + "+"
+				+ (dir == Compass.Point.E ? Colors.Gold : Colors.White) + "E" + Colors.Black  + "-  ",
+				Colors.Black + "  -" + (dir == Compass.Point.SW ? Colors.Gold + "/" : "-")
+				+ (dir == Compass.Point.S ? Colors.Gold : Colors.White) + "S"
+				+ (dir == Compass.Point.SE ? Colors.Gold + "\\" + Colors.Black : Colors.Black + "-") + "-  "};
 
+		String[] help = {
+				"  " + Colors.Gray + "-" + Colors.LightGray + " = Unclaimed",
+				"  " + Colors.Gray + "+" + Colors.LightGray + " = Claimed",
+				"  " + Colors.LightGreen + "+" + Colors.LightGray + " = Your town",
+				"  " + Colors.Green + "+" + Colors.LightGray + " = Ally",
+				"  " + Colors.Red + "+" + Colors.LightGray + " = Enemy",
+				"  " + Colors.White + "+" + Colors.LightGray + " = Other"
+		};
+		
 		String line;
 		// Variables have been rotated to fit N/S/E/W properly
 		for (int my = 0; my < 7; my++) {
@@ -1832,6 +1855,10 @@ public class TownyPlayerListener extends PlayerListener {
 
 			for (int mx = 30; mx >= 0; mx--)
 				line += townyMap[mx][my];
+			
+			if (lineCount < help.length)
+				line += help[lineCount];
+			
 			player.sendMessage(line);
 			lineCount++;
 		}

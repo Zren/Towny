@@ -8,7 +8,6 @@ import com.nijikokun.bukkit.iConomy.iConomy;
 
 public class TownyIConomyObject extends TownyObject {
 	private static Towny plugin;
-	private String iConomyNamePrefix;
 
 	public static Towny getPlugin() {
 		return plugin;
@@ -22,9 +21,8 @@ public class TownyIConomyObject extends TownyObject {
 		checkIConomy();
 		int balance = iConomy.db.get_balance(getIConomyName());
 
-		if (balance < n || (balance - n) < 0) {
+		if (balance < n || balance - n < 0)
 			return false;
-		}
 
 		iConomy.db.set_balance(getIConomyName(), (balance - n));
 		return true;
@@ -41,17 +39,8 @@ public class TownyIConomyObject extends TownyObject {
 		if (pay(n)) {
 			collector.collect(n);
 			return true;
-		} else {
+		} else
 			return false;
-		}
-	}
-
-	public void setIConomyNamePrefix(String iConomyNamePrefix) {
-		this.iConomyNamePrefix = iConomyNamePrefix;
-	}
-
-	public String getIConomyNamePrefix() {
-		return iConomyNamePrefix;
 	}
 
 	public String getIConomyName() {
@@ -77,10 +66,9 @@ public class TownyIConomyObject extends TownyObject {
 		Plugin test = plugin.getServer().getPluginManager()
 				.getPlugin("iConomy");
 
-		if (test != null) {
+		if (test != null)
 			return (iConomy) test;
-		} else {
+		else
 			throw new IConomyException("IConomy has not been installed.");
-		}
 	}
 }
