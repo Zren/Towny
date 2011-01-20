@@ -41,9 +41,8 @@ public class TownyPermission {
 
 	public void load(String s) {
 		String[] tokens = s.split(",");
-		for (String token : tokens) {
+		for (String token : tokens)
 			set(token, true);
-		}
 	}
 
 	@Override
@@ -51,17 +50,17 @@ public class TownyPermission {
 		String out = "";
 		if (residentBuild)
 			out += "residentBuild";
-		else if (residentDestroy)
+		if (residentDestroy)
 			out += (out.length() > 0 ? "," : "") + "residentDestroy";
-		else if (outsiderBuild)
+		if (outsiderBuild)
 			out += (out.length() > 0 ? "," : "") + "outsiderBuild";
-		else if (outsiderDestroy)
+		if (outsiderDestroy)
 			out += (out.length() > 0 ? "," : "") + "outsiderDestroy";
-		else if (outsiderSwitches)
+		if (outsiderSwitches)
 			out += (out.length() > 0 ? "," : "") + "outsiderSwitches";
-		else if (allyBuild)
+		if (allyBuild)
 			out += (out.length() > 0 ? "," : "") + "allyBuild";
-		else if (allyDestroy)
+		if (allyDestroy)
 			out += (out.length() > 0 ? "," : "") + "allyDestroy";
 		return out;
 	}

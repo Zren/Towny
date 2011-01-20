@@ -41,6 +41,10 @@ import com.shade.bukkit.util.Colors;
  * more iconomy prices (new nation, claim block, etc)
  * delete townyobject
  * update map for resident owned plots (yellow?)
+ * 
+ * iconomy
+ * plot taxe & resident tax
+ * new nation cost
  */
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";
@@ -132,17 +136,24 @@ public class Towny extends JavaPlugin {
 		throw new NotRegisteredException();
 	}
 
+	
+
+	public void clearPlayerCache() {
+		blockListener.clearCache();
+	}
+	
+	public void clearPlayerCache(Player player) {
+		blockListener.clearCache();
+	}
+
 	public void updatePlayerCache() {
 		clearPlayerCache();
 		for (Player player : getServer().getOnlinePlayers())
 			updatePlayerCache(player);
 	}
-
-	public void clearPlayerCache() {
-		blockListener.clearCache();
-	}
-
+	
 	public void updatePlayerCache(Player player) {
+		clearPlayerCache(player);
 		blockListener.updatePlayerCache(player);
 	}
 

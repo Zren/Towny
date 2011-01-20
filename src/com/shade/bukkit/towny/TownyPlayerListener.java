@@ -86,7 +86,12 @@ public class TownyPlayerListener extends PlayerListener {
 		TownyUniverse universe = plugin.getTownyUniverse();
 		TownySettings settings = universe.getSettings();
 
+		
 		// TODO: Cache build/destroy permissions
+		// TODO: Choose to either update on the fly, or simple clear.
+		plugin.updatePlayerCache(player);
+		
+		
 		// TODO: Player mode
 		// map: send the map
 		// claim: attempt to claim area
@@ -128,9 +133,7 @@ public class TownyPlayerListener extends PlayerListener {
 			
 			boolean sendToMsg = false;
 			String toMsg = Colors.Gold + " ~ ";
-			
-			
-			
+
 			if (fromWild ^ toWild || !fromWild && !toWild && fromTown != null && toTown != null && fromTown != toTown) {
 				sendToMsg = true;
 				if (toWild)
@@ -149,10 +152,11 @@ public class TownyPlayerListener extends PlayerListener {
 			
 			if (sendToMsg)
 				player.sendMessage(toMsg);
-				
+			
 			if (settings.getDebug())
 				System.out.println("[Towny] Debug: onPlayerMoveChunk: " + fromWild + " ^ " + toWild + " " + fromTown + " = " + toTown);
 		}
+		
 	}
 
 	@Override
@@ -160,6 +164,8 @@ public class TownyPlayerListener extends PlayerListener {
 		if (event.isCancelled())
 			return;
 
+		long start = System.currentTimeMillis();
+		
 		String[] split = event.getMessage().split(" ");
 		Player player = event.getPlayer();
 
@@ -187,6 +193,8 @@ public class TownyPlayerListener extends PlayerListener {
 		else
 			return;
 
+		if (plugin.getTownyUniverse().getSettings().getDebug())
+			System.out.println("[Towny] Debug: onCommand took " + (System.currentTimeMillis() - start) + "ms");
 		event.setCancelled(true);
 	}
 
@@ -1222,10 +1230,9 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 	}
 
-	public void setTownBlockOwnerPermissions(Player player,
-			TownBlockOwner townBlockOwner, String[] split) {
+	public void setTownBlockOwnerPermissions(Player player, TownBlockOwner townBlockOwner, String[] split) {
 		// TODO: switches
-		if (split.length < 2) {
+		if (split.length == 0 || split[0].equalsIgnoreCase("?")) {
 			player.sendMessage(ChatTools.formatTitle("/... set perm"));
 			player.sendMessage(ChatTools.formatCommand("", "", "[on/off]", "Toggle all permissions"));
 			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [on/off]", "Toggle specifics"));
@@ -1236,33 +1243,33 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage("Resident plots don't make use of outsider permissions.");
 		} else {
 			TownyPermission perm = townBlockOwner.getPermissions();
-			if (split.length == 2)
+			if (split.length == 1)
 				try {
-					perm.setAll(parseOnOff(split[1]));
+					perm.setAll(parseOnOff(split[0]));
 				} catch (Exception e) {
 				}
-			else if (split.length == 3)
+			else if (split.length == 2)
 				try {
-					boolean b = parseOnOff(split[2]);
-					if (split[1].equalsIgnoreCase("resident")) {
+					boolean b = parseOnOff(split[1]);
+					if (split[0].equalsIgnoreCase("resident")) {
 						perm.residentBuild = b;
 						perm.residentDestroy = b;
-					} else if (split[1].equalsIgnoreCase("outsider")) {
+					} else if (split[0].equalsIgnoreCase("outsider")) {
 						perm.outsiderBuild = b;
 						perm.outsiderDestroy = b;
-					} else if (split[1].equalsIgnoreCase("ally")) {
+					} else if (split[0].equalsIgnoreCase("ally")) {
 						perm.allyBuild = b;
 						perm.allyDestroy = b;
 					}
 				} catch (Exception e) {
 				}
-			else if (split.length == 4)
+			else if (split.length == 3)
 				try {
-					boolean b = parseOnOff(split[3]);
+					boolean b = parseOnOff(split[2]);
 					String s = "";
-					if ((split[1].equalsIgnoreCase("resident") || split[1].equalsIgnoreCase("outsider") || split[1].equalsIgnoreCase("ally"))
-							&& (split[2].equalsIgnoreCase("build") || split[2].equalsIgnoreCase("destroy")))
-						s = split[1] + split[2];
+					if ((split[0].equalsIgnoreCase("resident") || split[0].equalsIgnoreCase("outsider") || split[0].equalsIgnoreCase("ally"))
+							&& (split[1].equalsIgnoreCase("build") || split[1].equalsIgnoreCase("destroy")))
+						s = split[0] + split[1];
 					perm.set(s, b);
 				} catch (Exception e) {
 				}

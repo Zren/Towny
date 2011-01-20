@@ -102,7 +102,7 @@ public class TownyBlockListener extends BlockListener {
 		} catch (NullPointerException e) {
 			if (firstCall) {
 				// New or old build permission was null, update it
-				updateBuildCache(player, pos, true);
+				updateBuildCache(player, pos, false);
 				onBlockPlaceEvent(event, false);
 			} else
 				plugin.sendErrorMsg(player, "Error updating build permissions cache.");
@@ -212,16 +212,14 @@ public class TownyBlockListener extends BlockListener {
 		Town town;
 
 		try {
-			townBlock = universe.getWorld(player.getWorld().getName())
-					.getTownBlock(pos);
+			townBlock = universe.getWorld(player.getWorld().getName()).getTownBlock(pos);
 			town = townBlock.getTown();
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone Build Rights
 			if (!settings.getUnclaimedZoneBuildRights()) {
 				// TODO: Have permission to build here
 				if (sendMsg)
-					plugin.sendErrorMsg(player,
-							"Not allowed to build in the wild.");
+					plugin.sendErrorMsg(player, "Not allowed to build in the wild.");
 				cacheBuild(player.getName(), pos, false);
 			}
 
@@ -251,8 +249,7 @@ public class TownyBlockListener extends BlockListener {
 						cacheBuild(player.getName(), pos, true);
 					else {
 						if (sendMsg)
-							plugin.sendErrorMsg(player,
-									"Owner doesn't allow friends to destroy here.");
+							plugin.sendErrorMsg(player, "Owner doesn't allow friends to destroy here.");
 						cacheBuild(player.getName(), pos, false);
 					}
 				} else if (owner.permissions.allyBuild)
@@ -260,8 +257,7 @@ public class TownyBlockListener extends BlockListener {
 					throw new TownyException();
 				else {
 					if (sendMsg)
-						plugin.sendErrorMsg(player,
-								"Owner doesn't allow allies to build here.");
+						plugin.sendErrorMsg(player, "Owner doesn't allow allies to build here.");
 					cacheBuild(player.getName(), pos, false);
 				}
 
@@ -276,18 +272,15 @@ public class TownyBlockListener extends BlockListener {
 
 			if (!town.getPermissions().residentBuild) {
 				if (sendMsg)
-					plugin.sendErrorMsg(player,
-							"Residents aren't allowed to build.");
+					plugin.sendErrorMsg(player, "Residents aren't allowed to build.");
 				cacheBuild(player.getName(), pos, false);
 			} else if (resident.getTown() != town) {
 				// Allied Build Rights
-				if (universe.isAlly(resident.getTown(), town) && town
-						.getPermissions().allyBuild)
+				if (universe.isAlly(resident.getTown(), town) && town.getPermissions().allyBuild)
 					cacheBuild(player.getName(), pos, true);
 				else {
 					if (sendMsg)
-						plugin.sendErrorMsg(player,
-								"Not allowed to build here.");
+						plugin.sendErrorMsg(player, "Not allowed to build here.");
 					cacheBuild(player.getName(), pos, false);
 				}
 			} else
@@ -308,8 +301,7 @@ public class TownyBlockListener extends BlockListener {
 		cache.setBuildPermission(buildRight);
 
 		if (plugin.getTownyUniverse().getSettings().getDebug())
-			System.out.println("[Towny] Debug: " + name + " ("
-					+ coord.toString() + ") Cached Build: " + buildRight);
+			System.out.println("[Towny] Debug: " + name + " (" + coord.toString() + ") Cached Build: " + buildRight);
 	}
 
 	public void cacheDestroy(String name, Coord coord, boolean destroyRight) {
@@ -317,8 +309,7 @@ public class TownyBlockListener extends BlockListener {
 		cache.setDestroyPermission(destroyRight);
 
 		if (plugin.getTownyUniverse().getSettings().getDebug())
-			System.out.println("[Towny] Debug: " + name + " ("
-					+ coord.toString() + ") Cached Destroy: " + destroyRight);
+			System.out.println("[Towny] Debug: " + name + " (" + coord.toString() + ") Cached Destroy: " + destroyRight);
 	}
 
 	public void clearCache() {
@@ -330,8 +321,8 @@ public class TownyBlockListener extends BlockListener {
 
 	public void updateCache(Player player) {
 		Coord coord = Coord.parseCoord(player);
-		cacheBuild(player.getName(), coord, false);
-		cacheDestroy(player.getName(), coord, false);
+		updateBuildCache(player, coord, false);
+		updateDestroyCache(player, coord, false);
 	}
 
 	public CachedPermission getCache(String name, Coord coord) {

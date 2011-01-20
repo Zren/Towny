@@ -1,12 +1,51 @@
 package com.shade.bukkit.towny;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
 
 
 public class TownySettings {
 	private Town defaultTown;
+	private Hashtable<String,Object> config = new Hashtable<String,Object>();
+	
+	public void loadDefault() {
+		
+	}
+	
+	public void load(File folder) {
+		
+	}
+	
+	private Object get(String key) {
+		return config.get(key);
+	}
+	
+	private Integer getInt(String key) {
+		Object value = get(key);
+		if (value instanceof Integer)
+			return (Integer)value;
+		else
+			return 0;
+	}
+	
+	private String getString(String key) {
+		Object value = get(key);
+		if (value instanceof String)
+			return (String)value;
+		else
+			return "";
+	}
+	
+	private String[] getStrings(String key) {
+		Object value = get(key);
+		if (value instanceof String[])
+			return (String[])value;
+		else
+			return new String[]{""};
+	}
 
 	public String[] parseString(String str) {
 		return str.replaceAll("&", "\u00A7").split("@");
@@ -78,7 +117,7 @@ public class TownySettings {
 	
 	public String getFirstCommand(List<String> commands) {
 		if (commands.size() > 0)
-			return getResidentCommands().get(0);
+			return commands.get(0);
 		else
 			return "/<unknown>";
 	}
@@ -144,7 +183,7 @@ public class TownySettings {
 	}
 
 	public boolean isUsingIConomy() {
-		return false;
+		return true;
 	}
 
 	public int getNewTownPrice() {
