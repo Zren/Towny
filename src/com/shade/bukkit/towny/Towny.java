@@ -26,6 +26,7 @@ import com.shade.bukkit.util.Colors;
 /*
  * TODO
  * 
+ * Commenting
  * Unclaim townblocks
  * flatfile-old data source / replace getDataSource() with a manager class
  * log chat
@@ -33,7 +34,7 @@ import com.shade.bukkit.util.Colors;
  * fix chat messages to not edit display name but format string
  * save/load Nation.isNeutral
  * prevent command use during war
- * friends
+ * allies
  * go outside
  * have sex
  * lots of it

@@ -1,5 +1,8 @@
 package com.shade.bukkit.towny;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 
 public class TownySettings {
@@ -39,6 +42,38 @@ public class TownySettings {
 
 	public void setDefaultTown(Town defaultTown) {
 		this.defaultTown = defaultTown;
+	}
+	
+	public List<String> getResidentCommands() {
+		return Arrays.asList(new String[]{"/resident","/player"});
+	}
+	
+	public List<String> getTownCommands() {
+		return Arrays.asList(new String[]{"/town"});
+	}
+	
+	public List<String> getNationCommands() {
+		return Arrays.asList(new String[]{"/nation"});
+	}
+	
+	public List<String> getPlotCommands() {
+		return Arrays.asList(new String[]{"/plot"});
+	}
+	
+	public List<String> getTownyCommands() {
+		return Arrays.asList(new String[]{"/towny"});
+	}
+	
+	public List<String> getTownyAdminCommands() {
+		return Arrays.asList(new String[]{"/townyadmin"});
+	}
+	
+	public List<String> getTownChatCommands() {
+		return Arrays.asList(new String[]{"/tc"});
+	}
+	
+	public List<String> getNationChatCommands() {
+		return Arrays.asList(new String[]{"/nc"});
 	}
 
 	public Town getDefaultTown() {

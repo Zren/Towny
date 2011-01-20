@@ -165,21 +165,23 @@ public class TownyPlayerListener extends PlayerListener {
 		String[] newSplit = new String[split.length - 1];
 		System.arraycopy(split, 1, newSplit, 0, split.length - 1);
 
-		if (split[0].equalsIgnoreCase("/resident") || split[0].equalsIgnoreCase("/player"))
+		TownySettings settings = plugin.getTownyUniverse().getSettings();
+		
+		if (settings.getResidentCommands().contains(split[0]))
 			parseResidentCommand(player, newSplit);
-		else if (split[0].equalsIgnoreCase("/town"))
+		else if (settings.getTownCommands().contains(split[0]))
 			parseTownCommand(player, newSplit);
-		else if (split[0].equalsIgnoreCase("/nation"))
+		else if (settings.getNationCommands().contains(split[0]))
 			parseNationCommand(player, newSplit);
-		else if (split[0].equalsIgnoreCase("/plot"))
+		else if (settings.getPlotCommands().contains(split[0]))
 			parsePlotCommand(player, newSplit);
-		else if (split[0].equalsIgnoreCase("/towny"))
+		else if (settings.getTownyCommands().contains(split[0]))
 			parseTownyCommand(player, newSplit);
-		else if (split[0].equalsIgnoreCase("/townyadmin"))
+		else if (settings.getTownyAdminCommands().contains(split[0]))
 			parseTownyAdminCommand(player, newSplit);
-		else if (split[0].equalsIgnoreCase("/tc"))
+		else if (settings.getTownChatCommands().contains(split[0]))
 			parseTownChatCommand(player, event.getMessage().substring(4));
-		else if (split[0].equalsIgnoreCase("/nc"))
+		else if (settings.getNationChatCommands().contains(split[0]))
 			parseNationChatCommand(player, event.getMessage().substring(4));
 		else
 			return;
