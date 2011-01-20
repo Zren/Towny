@@ -200,19 +200,14 @@ public class Town extends TownBlockOwner implements Walled {
 	public boolean hasMayor() {
 		return mayor != null;
 	}
-
-	public void removeResident(Resident resident)
-			throws NotRegisteredException, EmptyTownException {
+	
+	public void removeResident(Resident resident) throws NotRegisteredException, EmptyTownException {
 		if (!hasResident(resident))
 			throw new NotRegisteredException();
 		else {
-			// TODO: Remove all plots of land owned in town.
-
-			residents.remove(resident);
-			try {
-				resident.setTown(null);
-			} catch (AlreadyRegisteredException e) {
-			}
+			
+			remove(resident);
+			
 			if (getNumResidents() == 0)
 				try {
 					clear();
@@ -221,6 +216,38 @@ public class Town extends TownBlockOwner implements Walled {
 					throw new EmptyTownException(this, e);
 				}
 		}
+	}
+	private void removeAllResidents() {
+		for (Resident resident : new ArrayList<Resident>(residents))
+			remove(resident);
+	}
+	
+	private void remove(Resident resident) {
+		// TODO: Remove all plots of land owned in town.
+
+		if (hasNation() && nation.hasAssistant(resident))
+			try {
+				nation.removeAssistant(resident);
+			} catch (NotRegisteredException e) {
+			}
+		if (hasAssistant(resident))
+			try {
+				removeAssistant(resident);
+			} catch (NotRegisteredException e) {
+			}
+			
+		try {
+			resident.setTown(null);
+		} catch (AlreadyRegisteredException e) {
+		}
+		residents.remove(resident);
+	}
+	
+	public void removeAssistant(Resident resident) throws NotRegisteredException {
+		if (!hasAssistant(resident))
+			throw new NotRegisteredException();
+		else
+			assistants.remove(resident);
 	}
 
 	public void setSpawn(Location spawn) throws TownyException {
@@ -249,10 +276,12 @@ public class Town extends TownBlockOwner implements Walled {
 		return homeBlock != null;
 	}
 
-	public void clear() throws NotRegisteredException, EmptyNationException {
+	public void clear() throws EmptyNationException {
+		//Cleanup
+		removeAllResidents();
 		mayor = null;
-		residents.clear();
-		assistants.clear();
+		residents = null;
+		assistants = null;
 		homeBlock = null;
 
 		try {
@@ -262,11 +291,11 @@ public class Town extends TownBlockOwner implements Walled {
 			}
 		} catch (NotRegisteredException e) {
 		}
-		try {
-			if (hasNation())
+		if (hasNation())
+			try {
 				nation.removeTown(this);
-		} catch (NotRegisteredException e) {
-		}
+			} catch (NotRegisteredException e) {
+			}
 	}
 
 	private boolean hasWorld() {

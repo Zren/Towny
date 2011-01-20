@@ -30,6 +30,8 @@ import com.shade.bukkit.util.Colors;
  * Assistants (town/nation)
  * Friends
  * flatfile-old data source
+ * log chat
+ * fix chat messages to not edit display name but format string
  */
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";
@@ -69,6 +71,8 @@ public class Towny extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		if (getTownyUniverse().isWarTime())
+			getTownyUniverse().getWarEvent().end();
 		System.out.println("[Towny] Version: " + version + " - Mod Disabled");
 	}
 

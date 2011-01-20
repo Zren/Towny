@@ -259,6 +259,36 @@ public class TownyUniverse extends TownyObject {
 		return System.currentTimeMillis() - resident.getLastOnline() < settings
 				.getInactiveAfter();
 	}
+	
+	public List<Resident> getResidents(String[] names) {
+		List<Resident> matches = new ArrayList<Resident>();
+		for (String name : names)
+			try {
+				matches.add(getResident(name));
+			} catch (NotRegisteredException e) {
+			}
+		return matches;
+	}
+	
+	public List<Town> getTowns(String[] names) {
+		List<Town> matches = new ArrayList<Town>();
+		for (String name : names)
+			try {
+				matches.add(getTown(name));
+			} catch (NotRegisteredException e) {
+			}
+		return matches;
+	}
+	
+	public List<Nation> getNations(String[] names) {
+		List<Nation> matches = new ArrayList<Nation>();
+		for (String name : names)
+			try {
+				matches.add(getNation(name));
+			} catch (NotRegisteredException e) {
+			}
+		return matches;
+	}
 
 	public TownySettings getSettings() {
 		return settings;
@@ -414,6 +444,13 @@ public class TownyUniverse extends TownyObject {
 		this.warEvent = new War(plugin, settings.getWarTimeWarningDelay());
 	}
 	
+	public void endWarEvent() {
+		if (isWarTime())
+			warEvent.end();
+		// Automatically makes warEvent null
+	}
+	
+	//TODO: throw error if null
 	public War getWarEvent() {
 		return warEvent;
 	}
@@ -428,5 +465,17 @@ public class TownyUniverse extends TownyObject {
 
 	public void setPlugin(Towny plugin) {
 		this.plugin = plugin;
+	}
+
+	public void removeNation(Nation nation) {
+		nation.clear();
+		nations.remove(nation.getName().toLowerCase());
+		getDataSource().saveNationList();
+	}
+
+	public void removeTown(Town town) throws EmptyNationException {
+		town.clear();
+		towns.remove(town.getName().toLowerCase());
+		getDataSource().saveTownList();
 	}
 }

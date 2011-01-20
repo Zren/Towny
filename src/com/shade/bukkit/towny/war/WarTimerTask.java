@@ -21,6 +21,16 @@ public class WarTimerTask extends TownyTimerTask {
 	@Override
 	public void run() {
 		//TODO: check if war has ended and end gracefully
+		if (!warEvent.isWarTime()) {
+			for (Player player : universe.getOnlinePlayers())
+				warEvent.sendStats(player);
+			warEvent.getWarTimer().cancel();
+			universe.setWarEvent(null);
+			if (universe.getSettings().getDebug())
+				System.out.println("[Towny] [War] Debug: End");
+			return;
+		}
+		
 		int numPlayers = 0;
 		for (Player player : universe.getOnlinePlayers()) {
 			numPlayers++;

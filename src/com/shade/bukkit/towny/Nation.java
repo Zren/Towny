@@ -112,12 +112,18 @@ public class Nation extends TownyIConomyObject {
 		}
 	}
 
-	public void addAssistant(Resident resident)
-			throws AlreadyRegisteredException {
+	public void addAssistant(Resident resident) throws AlreadyRegisteredException {
 		if (hasAssistant(resident))
 			throw new AlreadyRegisteredException();
 		else
 			getAssistants().add(resident);
+	}
+	
+	public void removeAssistant(Resident resident) throws NotRegisteredException {
+		if (!hasAssistant(resident))
+			throw new NotRegisteredException();
+		else
+			assistants.remove(resident);
 	}
 
 	public void setCapital(Town capital) {
@@ -183,21 +189,43 @@ public class Nation extends TownyIConomyObject {
 		return towns.size();
 	}
 
-	public void removeTown(Town town) throws NotRegisteredException,
-			EmptyNationException {
+	public void removeTown(Town town) throws EmptyNationException, NotRegisteredException {
 		if (!hasTown(town))
 			throw new NotRegisteredException();
 		else {
-			towns.remove(town);
-			try {
-				town.setNation(null);
-			} catch (AlreadyRegisteredException e) {
-			}
+
+			remove(town);
+			
 			if (getNumTowns() == 0) {
 				clear();
 				throw new EmptyNationException(this);
 			}
 		}
+	}
+	
+	private void remove(Town town) {
+		removeAssistantsIn(town);
+		try {
+			town.setNation(null);
+		} catch (AlreadyRegisteredException e) {
+		}
+		towns.remove(town);
+	}
+
+	public boolean hasAssistantIn(Town town) {
+		for (Resident resident : town.getResidents())
+			if (hasAssistant(resident))
+				return true;
+		return false;
+	}
+	
+	private void removeAssistantsIn(Town town) {
+		for (Resident resident : town.getResidents())
+			if (hasAssistant(resident))
+				try {
+					removeAssistant(resident);
+				} catch (NotRegisteredException e) {
+				}
 	}
 
 	public void setTaxes(int taxes) {
@@ -209,6 +237,7 @@ public class Nation extends TownyIConomyObject {
 	}
 
 	public void clear() {
+		//TODO: Check cleanup
 		capital = null;
 		removeAllAllies();
 		removeAllEnemies();

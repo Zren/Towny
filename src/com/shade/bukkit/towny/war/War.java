@@ -12,7 +12,6 @@ import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.Town;
 import com.shade.bukkit.towny.TownBlock;
 import com.shade.bukkit.towny.Towny;
-import com.shade.bukkit.towny.TownyException;
 import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.towny.TownyUniverse;
 import com.shade.bukkit.towny.WorldCoord;
@@ -35,12 +34,12 @@ public class War {
 	private boolean warTime = false;
 	private Timer warTimer = new Timer();
 	
-	public War(Towny plugin, long startDelay) {
+	public War(Towny plugin, int startDelay) {
 		this.plugin = plugin;
 		this.universe = plugin.getTownyUniverse();
 		this.settings = universe.getSettings();
 		
-		getWarTimer().scheduleAtFixedRate(new WarTimerTask(this), settings.getWarTimeWarningDelay(), 1000);
+		setupDelay(startDelay);
 	}
 
 	public void setWarTimer(Timer warTimer) {
@@ -59,7 +58,7 @@ public class War {
 		this.plugin = plugin;
 	}
 	
-	public void setupDelay(int delay) throws TownyException {
+	public void setupDelay(int delay) {
 		if (delay <= 0)
 			start();
 		else {
@@ -68,14 +67,9 @@ public class War {
 				warTimer.schedule(
 						new ServerBroadCastTimerTask(plugin,
 								String.format("War starts in %s", TimeMgmt.formatCountdownTime(t))),
-								delay);
-			warTimer.schedule(new StartWarTimerTask(universe), delay);
+								(delay-t)*1000);
+			warTimer.schedule(new StartWarTimerTask(universe), delay*1000);
 		}
-	}
-	
-	public void endWar() {
-		this.warTime = false;
-		warTimer.cancel();
 	}
 
 	public boolean isWarTime() {
@@ -87,7 +81,7 @@ public class War {
 	}
 
 	public void start() {
-		warTimer.cancel();
+		warTime = true;
 		
 		//Announce
 		
@@ -96,16 +90,19 @@ public class War {
 			if (!nation.isNeutral())
 				add(nation);
 		warTimer.scheduleAtFixedRate(new WarTimerTask(this), 0, 1000);
+		checkEnd();
 	}
 	
 	public void add(Nation nation) {
 		for (Town town : nation.getTowns())
 			add(town);
+		warringNations.add(nation);
 	}
 	
 	public void add(Town town) {
 		universe.sendTownMessage(town, settings.getJoinWarMsg(town));
 		townScores.put(town, 0);
+		warringTowns.add(town);
 		for (TownBlock townBlock : town.getTownBlocks())
 			if (town.isHomeBlock(townBlock))
 				warZone.put(townBlock.getWorldCoord(), settings.getWarzoneHomeBlockHealth());
@@ -182,21 +179,26 @@ public class War {
 	}
 	
 	public void end() {
-		warTimer.cancel();
-		universe.setWarEvent(null);
-		for (Player player : plugin.getServer().getOnlinePlayers())
-			sendStats(player);
+		warTime = false;
 	}
 	
 	public void sendStats(Player player) {
 		player.sendMessage(ChatTools.formatTitle("War Stats"));
+		player.sendMessage(Colors.Green + "  Nations: " + Colors.LightGreen + warringNations.size());
+		player.sendMessage(Colors.Green + "  Towns: " + Colors.LightGreen + warringTowns.size() +" / " + townScores.size());
+		player.sendMessage(Colors.Green + "  WarZone: " + Colors.LightGreen + warZone.size() + " Town blocks");
+	}
+	
+	public void sendScores(Player player) {
+		player.sendMessage(ChatTools.formatTitle("War Scores"));
 		KeyValueTable kvTable = new KeyValueTable(townScores);
 		kvTable.sortByValue();
 		kvTable.revese();
+		//TODO: limit the listing to top 10
 		for (KeyValue kv : kvTable.getKeyValues()) {
 			Town town = (Town)kv.key;
 			player.sendMessage(String.format(
-					Colors.Blue + "%24s "+Colors.Gold+"|"+Colors.LightGray+" %4d",
+					Colors.Blue + "%40s "+Colors.Gold+"|"+Colors.LightGray+" %4d",
 					universe.getFormatter().getFormattedName(town),
 					(Integer)kv.value));
 		}

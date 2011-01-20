@@ -1,6 +1,6 @@
 package com.shade.bukkit.towny;
 
-public class EmptyNationException extends TownyException {
+public class EmptyNationException extends Exception {
 	private static final long serialVersionUID = 6093696939107516795L;
 	private Nation nation;
 
