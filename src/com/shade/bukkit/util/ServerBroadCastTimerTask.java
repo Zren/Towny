@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ServerBroadCastTimerTask extends TimerTask {
 	private JavaPlugin plugin;
 	String msg;
-	
+
 	public ServerBroadCastTimerTask(JavaPlugin plugin, String msg) {
 		this.plugin = plugin;
 	}

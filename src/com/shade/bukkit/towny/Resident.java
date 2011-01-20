@@ -7,7 +7,7 @@ public class Resident extends TownBlockOwner {
 	private List<Resident> friends = new ArrayList<Resident>();
 	private Town town;
 	private long lastOnline;
-	
+
 	public Resident(String name) {
 		setName(name);
 	}
@@ -31,22 +31,23 @@ public class Resident extends TownBlockOwner {
 	public boolean isMayor() {
 		return (hasTown() ? town.isMayor(this) : false);
 	}
-	
+
 	public boolean hasTown() {
 		return !(town == null);
 	}
-	
+
 	public boolean hasNation() {
 		return (hasTown() ? town.hasNation() : false);
 	}
-	
+
 	public Town getTown() throws NotRegisteredException {
 		if (hasTown())
 			return town;
 		else
-			throw new NotRegisteredException("Resident doesn't belong to any town");
+			throw new NotRegisteredException(
+					"Resident doesn't belong to any town");
 	}
-	
+
 	public void setTown(Town town) throws AlreadyRegisteredException {
 		if (town == null) {
 			this.town = null;
@@ -58,23 +59,23 @@ public class Resident extends TownBlockOwner {
 			throw new AlreadyRegisteredException();
 		this.town = town;
 	}
-	
+
 	public void setFriends(List<Resident> friends) {
 		this.friends = friends;
 	}
-	
+
 	public List<Resident> getFriends() {
 		return friends;
 	}
-	
+
 	public boolean removeFriend(Resident resident) {
 		return friends.remove(resident);
 	}
-	
+
 	public boolean hasFriend(Resident resident) {
 		return friends.contains(resident);
 	}
-	
+
 	public void addFriend(Resident resident) throws AlreadyRegisteredException {
 		if (hasFriend(resident)) {
 			throw new AlreadyRegisteredException();

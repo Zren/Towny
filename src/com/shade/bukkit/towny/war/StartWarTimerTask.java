@@ -1,4 +1,7 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.war;
+
+import com.shade.bukkit.towny.TownyTimerTask;
+import com.shade.bukkit.towny.TownyUniverse;
 
 public class StartWarTimerTask extends TownyTimerTask {
 
@@ -8,7 +11,7 @@ public class StartWarTimerTask extends TownyTimerTask {
 
 	@Override
 	public void run() {
-		universe.getWarTimer().scheduleAtFixedRate(new WarTimerTask(universe), universe.getSettings().getWarTimeWarningDelay(), 1000);
+		universe.getWarEvent().start();		
 	}
 
 }

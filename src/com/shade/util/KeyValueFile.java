@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class KeyValueFile {
 	BufferedReader fin;
 	public HashMap<String, String> keys;
-	
+
 	public KeyValueFile(String file) {
 		String line;
 		String[] tokens;
@@ -20,9 +20,10 @@ public class KeyValueFile {
 					keys.put(tokens[0], tokens[1]);
 			}
 			fin.close();
-		} catch(Exception e) {}
+		} catch (Exception e) {
+		}
 	}
-	
+
 	public String get(String key) {
 		return keys.get(key);
 	}

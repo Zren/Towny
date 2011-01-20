@@ -8,14 +8,15 @@ import com.shade.bukkit.towny.TownyUniverse;
 public class TownInvite extends Invite {
 	private String invitorName, townName;
 	private TownyUniverse universe;
-	
-	public TownInvite(String inviteeName, String invitorName, TownyUniverse universe, String townName) {
+
+	public TownInvite(String inviteeName, String invitorName,
+			TownyUniverse universe, String townName) {
 		super(inviteeName);
 		this.universe = universe;
 		this.invitorName = invitorName;
 		this.townName = townName;
 	}
-	
+
 	@Override
 	public String getInviteString() {
 		return invitorName + " has invited you to the town " + townName + ".";
@@ -30,16 +31,17 @@ public class TownInvite extends Invite {
 			if (town.isMayor(invitor) || town.hasAssistant(invitor)) {
 				town.addResident(invitee);
 			} else {
-				throw new InviteException("Invitor no longer has permission to do this task.");
+				throw new InviteException(
+						"Invitor no longer has permission to do this task.");
 			}
-		} catch(TownyException e) {
+		} catch (TownyException e) {
 			throw new InviteException(e.getError());
 		}
 	}
 
 	@Override
 	public void deny() {
-		
+
 	}
 
 }

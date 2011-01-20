@@ -5,9 +5,13 @@ import java.util.List;
 
 import org.bukkit.Location;
 
-public class Town extends TownBlockOwner {
+import com.shade.bukkit.wallgen.WallSection;
+import com.shade.bukkit.wallgen.Walled;
+
+public class Town extends TownBlockOwner implements Walled {
 	private List<Resident> residents = new ArrayList<Resident>();
 	private List<Resident> assistants = new ArrayList<Resident>();
+	private List<WallSection> wallSections = new ArrayList<WallSection>();
 	private Resident mayor;
 	private int bonusBlocks, taxes, plotPrice;
 	private Nation nation;
@@ -16,7 +20,7 @@ public class Town extends TownBlockOwner {
 	private TownBlock homeBlock;
 	private TownyWorld world;
 	private Location spawn;
-	
+
 	public Town(String name) {
 		setName(name);
 		permissions.allyBuild = true;
@@ -28,7 +32,7 @@ public class Town extends TownBlockOwner {
 	public Resident getMayor() {
 		return mayor;
 	}
-	
+
 	public void setTaxes(int taxes) {
 		this.taxes = taxes;
 	}
@@ -47,7 +51,8 @@ public class Town extends TownBlockOwner {
 		if (hasNation())
 			return nation;
 		else
-			throw new NotRegisteredException("Town doesn't belong to any nation.");
+			throw new NotRegisteredException(
+					"Town doesn't belong to any nation.");
 	}
 
 	public void setNation(Nation nation) throws AlreadyRegisteredException {
@@ -68,54 +73,55 @@ public class Town extends TownBlockOwner {
 
 	public List<Resident> getAssistants() {
 		return assistants;
-	}	
-	
+	}
+
 	public boolean hasResident(String name) {
 		for (Resident resident : residents)
 			if (resident.getName().equalsIgnoreCase(name))
 				return true;
 		return false;
 	}
-	
+
 	public boolean hasResident(Resident resident) {
 		return residents.contains(resident);
 	}
-	
+
 	public boolean hasAssistant(Resident resident) {
 		return assistants.contains(resident);
 	}
-	
-	public void addResident(Resident resident) throws AlreadyRegisteredException {
-		if (hasResident(resident)) {
+
+	public void addResident(Resident resident)
+			throws AlreadyRegisteredException {
+		if (hasResident(resident))
 			throw new AlreadyRegisteredException();
-		} else {
+		else {
 			residents.add(resident);
 			resident.setTown(this);
 		}
 	}
-	
-	public void addAssistant(Resident resident) throws AlreadyRegisteredException {
-		if (hasAssistant(resident)) {
+
+	public void addAssistant(Resident resident)
+			throws AlreadyRegisteredException {
+		if (hasAssistant(resident))
 			throw new AlreadyRegisteredException();
-		} else {
+		else
 			assistants.add(resident);
-		}
 	}
-	
+
 	public boolean isMayor(Resident resident) {
 		return resident == mayor;
 	}
-	
+
 	public boolean hasNation() {
 		return nation != null;
 	}
-	
+
 	public int getNumResidents() {
 		return residents.size();
 	}
-	
+
 	public boolean isCapital() {
-		return (hasNation() ? nation.isCapital(this) : false);
+		return hasNation() ? nation.isCapital(this) : false;
 	}
 
 	public void setHasMobs(boolean hasMobs) {
@@ -149,6 +155,7 @@ public class Town extends TownBlockOwner {
 	public int getBonusBlocks() {
 		return bonusBlocks;
 	}
+
 	public void setHomeBlock(TownBlock homeBlock) throws TownyException {
 		if (homeBlock == null) {
 			this.homeBlock = null;
@@ -161,7 +168,7 @@ public class Town extends TownBlockOwner {
 			setSpawn(spawn);
 		} catch (TownyException e) {
 			spawn = null;
-		} catch(NullPointerException e) { 
+		} catch (NullPointerException e) {
 			// In the event that spawn is already null
 		}
 	}
@@ -170,7 +177,7 @@ public class Town extends TownBlockOwner {
 		if (hasHomeBlock())
 			return homeBlock;
 		else
-			throw new TownyException("Town has not set a home block."); 
+			throw new TownyException("Town has not set a home block.");
 	}
 
 	public void setWorld(TownyWorld world) throws AlreadyRegisteredException {
@@ -194,27 +201,25 @@ public class Town extends TownBlockOwner {
 		return mayor != null;
 	}
 
-
-	
-	public void removeResident(Resident resident) throws NotRegisteredException, EmptyTownException {
-		if (!hasResident(resident)) {
+	public void removeResident(Resident resident)
+			throws NotRegisteredException, EmptyTownException {
+		if (!hasResident(resident))
 			throw new NotRegisteredException();
-		} else {
-			//TODO: Remove all plots of land owned in town.
-			
+		else {
+			// TODO: Remove all plots of land owned in town.
+
 			residents.remove(resident);
 			try {
 				resident.setTown(null);
 			} catch (AlreadyRegisteredException e) {
 			}
-			if (getNumResidents() == 0) {
+			if (getNumResidents() == 0)
 				try {
 					clear();
 					throw new EmptyTownException(this);
 				} catch (EmptyNationException e) {
 					throw new EmptyTownException(this, e);
 				}
-			}
 		}
 	}
 
@@ -222,17 +227,18 @@ public class Town extends TownBlockOwner {
 		if (!hasHomeBlock())
 			throw new TownyException("Home Block has not been set");
 		Coord spawnBlock = Coord.parseCoord(spawn);
-		if (homeBlock.getX() == spawnBlock.getX() && homeBlock.getZ() == spawnBlock.getZ())
+		if (homeBlock.getX() == spawnBlock.getX()
+				&& homeBlock.getZ() == spawnBlock.getZ())
 			this.spawn = spawn;
 		else
-			throw new TownyException("Spawn is not within the homeBlock."); 
+			throw new TownyException("Spawn is not within the homeBlock.");
 	}
 
 	public Location getSpawn() throws TownyException {
 		if (hasSpawn())
 			return spawn;
 		else
-			throw new TownyException("Town has not set a spawn location."); 
+			throw new TownyException("Town has not set a spawn location.");
 	}
 
 	private boolean hasSpawn() {
@@ -242,37 +248,42 @@ public class Town extends TownBlockOwner {
 	public boolean hasHomeBlock() {
 		return homeBlock != null;
 	}
-	
+
 	public void clear() throws NotRegisteredException, EmptyNationException {
 		mayor = null;
 		residents.clear();
 		assistants.clear();
 		homeBlock = null;
-		
+
 		try {
 			if (hasWorld()) {
 				world.removeTownBlocks(getTownBlocks());
 				world.removeTown(this);
 			}
-		} catch (NotRegisteredException e) {}
+		} catch (NotRegisteredException e) {
+		}
 		try {
 			if (hasNation())
 				nation.removeTown(this);
-		} catch (NotRegisteredException e) {}
+		} catch (NotRegisteredException e) {
+		}
 	}
 
 	private boolean hasWorld() {
 		return world != null;
 	}
-	
-	public void removeTownBlock(TownBlock townBlock) throws NotRegisteredException {
-		if (!hasTownBlock(townBlock)) {
+
+	@Override
+	public void removeTownBlock(TownBlock townBlock)
+			throws NotRegisteredException {
+		if (!hasTownBlock(townBlock))
 			throw new NotRegisteredException();
-		} else {
+		else {
 			try {
 				if (getHomeBlock() == townBlock)
 					setHomeBlock(null);
-			} catch (TownyException e) {}
+			} catch (TownyException e) {
+			}
 			townBlocks.remove(townBlock);
 		}
 	}
@@ -283,5 +294,35 @@ public class Town extends TownBlockOwner {
 
 	public int getPlotPrice() {
 		return plotPrice;
+	}
+
+	@Override
+	public List<WallSection> getWallSections() {
+		return wallSections;
+	}
+
+	@Override
+	public void setWallSections(List<WallSection> wallSections) {
+		this.wallSections = wallSections;
+
+	}
+
+	@Override
+	public boolean hasWallSection(WallSection wallSection) {
+		return wallSections.contains(wallSection);
+	}
+
+	@Override
+	public void addWallSection(WallSection wallSection) {
+		wallSections.add(wallSection);
+	}
+
+	@Override
+	public void removeWallSection(WallSection wallSection) {
+		wallSections.remove(wallSection);
+	}
+
+	public boolean isHomeBlock(TownBlock townBlock) {
+		return hasHomeBlock() ? townBlock == homeBlock : false;
 	}
 }

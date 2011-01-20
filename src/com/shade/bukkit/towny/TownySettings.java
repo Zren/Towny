@@ -1,36 +1,38 @@
 package com.shade.bukkit.towny;
 
+
+
 public class TownySettings {
 	private Town defaultTown;
-	
+
 	public String[] parseString(String str) {
 		return str.replaceAll("&", "\u00A7").split("@");
 	}
-	
+
 	public String[] getRegistrationMsg() {
 		return parseString("Welcome this is your first login.@You've successfully registered!");
 	}
-	
+
 	public String[] getNewTownMsg(String who, String town) {
 		return parseString(String.format("%s created a new town called %s", who, town));
 	}
-	
+
 	public String[] getNewNationMsg(String who, String nation) {
 		return parseString(String.format("%s created a new nation called %s", who, nation));
 	}
-	
+
 	public String[] getJoinTownMsg(String who) {
 		return parseString(String.format("%s joined town!", who));
 	}
-	
+
 	public String[] getJoinNationMsg(String who) {
 		return parseString(String.format("%s joined the nation!", who));
 	}
-	
+
 	public String[] getNewMayorMsg(String who) {
 		return parseString(String.format("%s is now the mayor!", who));
 	}
-	
+
 	public String[] getNewKingMsg(String who) {
 		return parseString(String.format("%s is now the king!", who));
 	}
@@ -42,23 +44,23 @@ public class TownySettings {
 	public Town getDefaultTown() {
 		return defaultTown;
 	}
-	
+
 	public int getInactiveAfter() {
-		return 24*60*60*1000;
+		return 24 * 60 * 60 * 1000;
 	}
-	
+
 	public String getKingPrefix() {
 		return "King ";
 	}
-	
+
 	public String getMayorPrefix() {
 		return "Mayor ";
 	}
-	
+
 	public String getCapitalPostfix() {
 		return " Capital City";
 	}
-	
+
 	public String getTownPostfix() {
 		return " Town";
 	}
@@ -66,11 +68,11 @@ public class TownySettings {
 	public String getFlatFileFolder() {
 		return "towny";
 	}
-	
+
 	public String getLoadDatabase() {
 		return "flatfile";
 	}
-	
+
 	public String getSaveDatabase() {
 		return "flatfile";
 	}
@@ -90,7 +92,7 @@ public class TownySettings {
 	public int getTownBlockSize() {
 		return 16;
 	}
-	
+
 	public boolean getFriendlyFire() {
 		return false;
 	}
@@ -110,7 +112,7 @@ public class TownySettings {
 	public boolean getUnclaimedZoneBuildRights() {
 		return false;
 	}
-	
+
 	public boolean getDebug() {
 		return true;
 	}
@@ -141,5 +143,25 @@ public class TownySettings {
 
 	public int getWarTimeWarningDelay() {
 		return 30;
+	}
+
+	public int getWarzoneTownBlockHealth() {
+		return 60;
+	}
+	
+	public int getWarzoneHomeBlockHealth() {
+		return 120;
+	}
+
+	public String[] getJoinWarMsg(TownyObject obj) {
+		return parseString(String.format("%s joined the fight!", obj.getName()));
+	}
+
+	public String[] getWarTimeEliminatedMsg(String who) {
+		return parseString(String.format("%s was eliminated from the war.", who));
+	}
+	
+	public String[] getWarTimeForfeitMsg(String who) {
+		return parseString(String.format("%s forfeited.", who));
 	}
 }

@@ -4,15 +4,26 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+/**
+ * A class to hold and calculate coordinates in a grid according to the size defined in
+ * the static field size.
+ * 
+ * @author Shade
+ */
 public class Coord {
-	private static int townBlockSize = 16;
-	private int x, z;
+	protected static int cellSize = 16;
+	protected int x, z;
 	
 	public Coord(int x, int z) {
 		this.x = x;
 		this.z = z;
 	}
 	
+	public Coord(Coord coord) {
+		this.x = coord.getX();
+		this.z = coord.getZ();
+	}
+
 	public int getX() {
 		return x;
 	}
@@ -29,51 +40,52 @@ public class Coord {
 		this.z = z;
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 		result = 31 * result + x;
 		result = 31 * result + z;
 		return result;
 	}
-	
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
 		if (!(obj instanceof Coord))
 			return false;
-		
-		Coord o = (Coord)obj;
-		return this.x == o.x
-			&& this.z == o.z;
+
+		Coord o = (Coord) obj;
+		return this.x == o.x && this.z == o.z;
 	}
-	
+
 	public static Coord parseCoord(int x, int z) {
-		return new Coord(
-				x / getTownBlockSize() - (x < 0 ? 1 : 0),
-				z / getTownBlockSize() - (z < 0 ? 1 : 0));
+		return new Coord(x / getCellSize() - (x < 0 ? 1 : 0),
+				z / getCellSize() - (z < 0 ? 1 : 0));
 	}
-	
+
 	public static Coord parseCoord(Player player) {
 		return parseCoord(player.getLocation());
 	}
-	
+
 	public static Coord parseCoord(Location loc) {
 		return parseCoord(loc.getBlockX(), loc.getBlockZ());
 	}
-	
+
 	public static Coord parseCoord(Block block) {
 		return parseCoord(block.getX(), block.getZ());
 	}
-	
+
+	@Override
 	public String toString() {
 		return getX() + "," + getZ();
 	}
 
-	public static void setTownBlockSize(int townBlockSize) {
-		Coord.townBlockSize = townBlockSize;
+	public static void setCellSize(int cellSize) {
+		Coord.cellSize = cellSize;
 	}
 
-	public static int getTownBlockSize() {
-		return townBlockSize;
+	public static int getCellSize() {
+		return cellSize;
 	}
 }

@@ -1,16 +1,17 @@
 package com.shade.bukkit.towny;
 
 public class TownyPermission {
-	boolean residentBuild, residentDestroy, outsiderBuild, outsiderDestroy, outsiderSwitches, allyBuild, allyDestroy;
-	
+	boolean residentBuild, residentDestroy, outsiderBuild, outsiderDestroy,
+			outsiderSwitches, allyBuild, allyDestroy;
+
 	public TownyPermission() {
 		reset();
 	}
-	
+
 	public void reset() {
 		setAll(false);
 	}
-	
+
 	public void setAll(boolean b) {
 		residentBuild = b;
 		residentDestroy = b;
@@ -18,9 +19,9 @@ public class TownyPermission {
 		outsiderDestroy = b;
 		outsiderSwitches = b;
 		allyBuild = b;
-		allyDestroy = b;	
+		allyDestroy = b;
 	}
-	
+
 	public void set(String s, boolean b) {
 		if (s.equalsIgnoreCase("residentBuild"))
 			residentBuild = b;
@@ -35,16 +36,17 @@ public class TownyPermission {
 		else if (s.equalsIgnoreCase("allyBuild"))
 			allyDestroy = b;
 		else if (s.equalsIgnoreCase("allyDestroy"))
-				allyDestroy = b;
+			allyDestroy = b;
 	}
-	
+
 	public void load(String s) {
 		String[] tokens = s.split(",");
 		for (String token : tokens) {
 			set(token, true);
 		}
 	}
-	
+
+	@Override
 	public String toString() {
 		String out = "";
 		if (residentBuild)
