@@ -8,13 +8,9 @@ import com.nijikokun.bukkit.iConomy.iConomy;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
+//TODO: Make static
+
 public class TownyFormatter {
-	private TownySettings settings = new TownySettings();
-
-	public TownyFormatter(TownySettings settings) {
-		this.settings = settings;
-	}
-
 	public String getTime() {
 		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
 		return sdf.format(System.currentTimeMillis());
@@ -35,7 +31,7 @@ public class TownyFormatter {
 			out.add(Colors.Green + "Owner of: " + Colors.LightGreen + resident.getTownBlocks().size() + " plots");
 
 		// Bank: 534 coins
-		if (settings.isUsingIConomy())
+		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
 				out.add(Colors.Green + "Bank: " + Colors.LightGreen + resident.getIConomyBalance() + " " + iConomy.currency);
@@ -81,14 +77,14 @@ public class TownyFormatter {
 		// Town Size: 0 / 16 [Bonus: 0] [Home: 33,44]
 		try {
 			out.add(Colors.Green
-					+ "Town Size: " + Colors.LightGreen + town.getTownBlocks().size() + " / " + settings.getMaxTownBlocks(town)
+					+ "Town Size: " + Colors.LightGreen + town.getTownBlocks().size() + " / " + TownySettings.getMaxTownBlocks(town)
 					+ Colors.LightBlue + " [Bonus: " + town.getBonusBlocks() + "]"
 					+ Colors.LightGray + " [Home: " + (town.hasHomeBlock() ? town.getHomeBlock().getCoord().toString() : "None") + "]");
 		} catch (TownyException e) {
 		}
 		
 		// Bank: 534 coins
-		if (settings.isUsingIConomy())
+		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
 				out.add(Colors.Green + "Bank: " + Colors.LightGreen + town.getIConomyBalance() + " " + iConomy.currency);
@@ -129,7 +125,7 @@ public class TownyFormatter {
 		out.add(ChatTools.formatTitle(getFormattedName(nation)));
 
 		// Bank: 534 coins
-		if (settings.isUsingIConomy())
+		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
 				out.add(Colors.Green + "Bank: " + Colors.LightGreen + nation.getIConomyBalance() + " " + iConomy.currency);
@@ -170,24 +166,44 @@ public class TownyFormatter {
 		return out;
 	}
 
+	public String getNamePrefix(Resident resident) {
+		if (resident == null)
+			return "";
+		if (resident.isKing())
+			return TownySettings.getKingPrefix();
+		else if (resident.isMayor())
+			return TownySettings.getMayorPrefix();
+		return "";
+	}
+	
+	public String getNamePostfix(Resident resident) {
+		if (resident == null)
+			return "";
+		if (resident.isKing())
+			return TownySettings.getKingPostfix();
+		else if (resident.isMayor())
+			return TownySettings.getMayorPostfix();
+		return "";
+	}
+	
 	public String getFormattedName(Resident resident) {
 		if (resident == null)
 			return "null";
 		if (resident.isKing())
-			return settings.getKingPrefix() + resident.getName();
+			return TownySettings.getKingPrefix() + resident.getName() + TownySettings.getKingPostfix();
 		else if (resident.isMayor())
-			return settings.getMayorPrefix() + resident.getName();
+			return TownySettings.getMayorPrefix() + resident.getName() + TownySettings.getMayorPostfix();
 		return resident.getName();
 	}
 
 	public String getFormattedName(Town town) {
 		if (town.isCapital())
-			return town.getName() + settings.getCapitalPostfix();
-		return town.getName() + settings.getTownPostfix();
+			return TownySettings.getCapitalPrefix() + town.getName() + TownySettings.getCapitalPostfix();
+		return TownySettings.getTownPrefix() + town.getName() + TownySettings.getTownPostfix();
 	}
 
 	public String getFormattedName(Nation nation) {
-		return nation.getName() + settings.getNationPostfix();
+		return TownySettings.getNationPrefix() + nation.getName() + TownySettings.getNationPostfix();
 	}
 
 	public String[] getFormattedNames(Resident[] residents) {

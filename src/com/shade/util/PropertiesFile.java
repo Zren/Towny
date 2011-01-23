@@ -1,76 +1,70 @@
 package com.shade.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Properties;
+import java.util.logging.Logger;
 
-//TODO: Clean this class up.
+/**
+ * Used for accessing and creating .[properties] files, reads them as utf-8, saves as utf-8.
+ * Internationalization is key importance especially for character codes.
+ *
+ * @author Nijikokun
+ * @version 1.0.4, %G%
+ */
+public final class PropertiesFile {
 
-//Ripped Niji's properties file to not use the Properties class.
+    private static final Logger log = Logger.getLogger("Minecraft");
+    private String fileName;
+    private Properties props = new Properties();
+//    private List<String> lines = new ArrayList<String>();
+//    private Map<String, String> props = new HashMap<String, String>();
 
-public class KeyValueFile {
-	private static final String newLine = System.getProperty("line.separator");
-	private Map<String, String> keys = new HashMap<String, String>();
-	private String fileName;
-	
-	public KeyValueFile(String fileName) {
-		this.fileName = fileName;
+    /**
+     * Creates or opens a properties file using specified filename
+     *
+     * @param fileName
+     */
+    public PropertiesFile(String fileName) {
+        this.fileName = fileName;
 
         File file = new File(fileName);
 
-        if (file.exists())
-			load();
-		else
-			save();
-	}
+        try {
+            if (file.exists())
+				load();
+			else
+				save();
+        } catch (IOException ex) {
+            log.severe("[PropertiesFile] Unable to load " + fileName + "!");
+        }
+    }
 
-	public void load() {
-		String line;
-		String[] tokens;
-		try {
-			BufferedReader fin = new BufferedReader(new FileReader(fileName));
-			while ((line = fin.readLine()) != null) {
-				tokens = line.split("=");
-				if (tokens.length >= 2)
-					keys.put(tokens[0], tokens[1]);
-			}
-			fin.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void save() {
-		SortedMap<String,String> sortedKeys = new TreeMap<String,String>(keys);
-		try {
-			BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
-			for (String key : sortedKeys.keySet())
-				output.write(key.toLowerCase() + "=" + sortedKeys.get(key) + newLine);
-			output.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void setMap(Map<String, String> keys) {
-		this.keys = keys;
-		save();
-	}
-	
-	
-	public String get(String key) {
-		return keys.get(key);
-	}
-	
-	
-	/**
+    /**
+     * The loader for property files, it reads the file as UTF8 or converts the string into UTF8.
+     * Used for simple runthrough's, loading, or reloading of the file.
+     *
+     * @throws IOException
+     */
+    public void load() throws IOException {
+        props.load(new FileInputStream(fileName));
+    }
+
+    /**
+     * Writes out the <code>key=value</code> properties that were changed into
+     * a .[properties] file in UTF8.
+     */
+    public void save() {
+        try {
+        props.store(new FileOutputStream(fileName), null);
+        }catch(IOException ex) {
+        }
+    }
+
+    /**
      * Returns a Map of all <code>key=value</code> properties in the file as <code>&lt;key (java.lang.String), value (java.lang.String)></code>
      * <br /><br />
      * Example:
@@ -88,8 +82,9 @@ public class KeyValueFile {
      * @return <code>map</code> - Simple Map HashMap of the entire <code>key=value</code> as <code>&lt;key (java.lang.String), value (java.lang.String)></code>
      * @throws Exception If the properties file doesn't exist.
      */
-    public Map<String, String> returnMap() throws Exception {
-        return new HashMap<String,String>(keys);
+    @SuppressWarnings("unchecked")
+	public Map<String, String> returnMap() throws Exception {
+        return (Map<String, String>) props.clone();
     }
 
     /**
@@ -99,7 +94,7 @@ public class KeyValueFile {
      * @return <code>Boolean</code> - True if the <code>key</code> exists, false if it cannot be found.
      */
     public boolean containsKey(String var) {
-        return keys.containsKey(var);
+        return props.containsKey(var);
     }
 
     /**
@@ -109,7 +104,7 @@ public class KeyValueFile {
      * @return <code>java.lang.String</code> - True if the <code>key</code> exists, false if it cannot be found.
      */
     public String getProperty(String var) {
-        return (String)keys.get(var);
+        return (String)props.getProperty(var);
     }
 
     /**
@@ -120,8 +115,8 @@ public class KeyValueFile {
      * @param var The <code>key</code> that will be removed from the file
      */
     public void removeKey(String var) {
-        if (this.keys.containsKey(var)) {
-            this.keys.remove(var);
+        if (this.props.containsKey(var)) {
+            this.props.remove(var);
             save();
         }
     }
@@ -177,7 +172,7 @@ public class KeyValueFile {
      * @param value The <code>value</code> we will be setting inside the <code>.[properties]</code> file.
      */
     public void setString(String key, String value) {
-        keys.put(key, value);
+        props.put(key, value);
         save();
     }
 
@@ -220,7 +215,7 @@ public class KeyValueFile {
      * @param value The <code>value</code> we will be setting inside the <code>.[properties]</code> file.
      */
     public void setInt(String key, int value) {
-        keys.put(key, String.valueOf(value));
+        props.put(key, String.valueOf(value));
 
         save();
     }
@@ -263,7 +258,7 @@ public class KeyValueFile {
      * @param value The <code>value</code> we will be setting inside the <code>.[properties]</code> file.
      */
     public void setDouble(String key, double value) {
-        keys.put(key, String.valueOf(value));
+        props.put(key, String.valueOf(value));
 
         save();
     }
@@ -306,7 +301,7 @@ public class KeyValueFile {
      * @param value The <code>value</code> we will be setting inside the <code>.[properties]</code> file.
      */
     public void setLong(String key, long value) {
-        keys.put(key, String.valueOf(value));
+        props.put(key, String.valueOf(value));
 
         save();
     }
@@ -349,7 +344,7 @@ public class KeyValueFile {
      * @param value The <code>value</code> we will be setting inside the <code>.[properties]</code> file.
      */
     public void setBoolean(String key, boolean value) {
-        keys.put(key, String.valueOf(value));
+        props.put(key, String.valueOf(value));
 
         save();
     }

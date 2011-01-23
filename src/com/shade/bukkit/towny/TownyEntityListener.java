@@ -17,17 +17,20 @@ public class TownyEntityListener extends EntityListener {
 		Entity defender = event.getEntity();
 
 		if (attacker instanceof Player && defender instanceof Player) {
+			long start = System.currentTimeMillis();
+			
 			Player a = (Player) attacker;
 			Player b = (Player) defender;
-			if (preventDamageCall(a, b)) {
+			if (preventDamageCall(a, b))
 				event.setCancelled(true);
-			}
+			
+			if (TownySettings.getDebug())
+				System.out.println("[Towny] Debug: onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
 		}
 	}
 
 	public boolean preventDamageCall(Player a, Player b) {
 		TownyUniverse universe = plugin.getTownyUniverse();
-		TownySettings settings = universe.getSettings();
 
 		// Check Town PvP status
 		try {
@@ -41,8 +44,7 @@ public class TownyEntityListener extends EntityListener {
 		}
 
 		// Check Allies
-		if (!settings.getFriendlyFire()
-				&& universe.isAlly(a.getName(), b.getName()))
+		if (!TownySettings.getFriendlyFire() && universe.isAlly(a.getName(), b.getName()))
 			return true;
 
 		return false;

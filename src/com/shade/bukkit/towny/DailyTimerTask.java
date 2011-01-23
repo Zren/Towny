@@ -18,9 +18,9 @@ public class DailyTimerTask extends TownyTimerTask {
 		}
 
 		// Automatically delete old residents
-		if (universe.getSettings().isDeletingOldResidents())
+		if (TownySettings.isDeletingOldResidents())
 			for (Resident resident : universe.getResidents())
-				if (System.currentTimeMillis() - resident.getLastOnline() > universe.getSettings().getMaxInactivePeriod()) {
+				if (System.currentTimeMillis() - resident.getLastOnline() > TownySettings.getMaxInactivePeriod()) {
 					// TODO: Delete resident
 				}
 

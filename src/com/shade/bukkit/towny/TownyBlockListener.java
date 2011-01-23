@@ -47,7 +47,7 @@ public class TownyBlockListener extends BlockListener {
 
 			onBlockBreakEvent(event, true);
 
-			if (plugin.getTownyUniverse().getSettings().getDebug())
+			if (TownySettings.getDebug())
 				System.out.println("[Towny] Debug: onBlockBreakEvent took " + (System.currentTimeMillis() - start) + "ms");
 		}
 	}
@@ -81,7 +81,7 @@ public class TownyBlockListener extends BlockListener {
 
 		onBlockPlaceEvent(event, true);
 
-		if (plugin.getTownyUniverse().getSettings().getDebug())
+		if (TownySettings.getDebug())
 			System.out.println("[Towny] Debug: onBlockPlacedEvent took " + (System.currentTimeMillis() - start) + "ms");
 	}
 
@@ -109,15 +109,10 @@ public class TownyBlockListener extends BlockListener {
 		}
 	}
 
-	public void updatePlayerCache(Player player) {
-		Coord pos = Coord.parseCoord(player);
-		updateBuildCache(player, pos, false);
-		updateDestroyCache(player, pos, false);
-	}
+	
 
 	public void updateDestroyCache(Player player, Coord pos, boolean sendMsg) {
 		TownyUniverse universe = plugin.getTownyUniverse();
-		TownySettings settings = universe.getSettings();
 		TownBlock townBlock;
 		Town town;
 
@@ -126,7 +121,7 @@ public class TownyBlockListener extends BlockListener {
 			town = townBlock.getTown();
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone destroy rights
-			if (!settings.getUnclaimedZoneDestroyRights()) {
+			if (!TownySettings.getUnclaimedZoneDestroyRights()) {
 				// TODO: Have permission to destroy here
 				plugin.sendErrorMsg(player, "Not allowed to destroy in the wild.");
 				cacheDestroy(player.getName(), pos, false);
@@ -207,7 +202,6 @@ public class TownyBlockListener extends BlockListener {
 
 	public void updateBuildCache(Player player, Coord pos, boolean sendMsg) {
 		TownyUniverse universe = plugin.getTownyUniverse();
-		TownySettings settings = universe.getSettings();
 		TownBlock townBlock;
 		Town town;
 
@@ -216,7 +210,7 @@ public class TownyBlockListener extends BlockListener {
 			town = townBlock.getTown();
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone Build Rights
-			if (!settings.getUnclaimedZoneBuildRights()) {
+			if (!TownySettings.getUnclaimedZoneBuildRights()) {
 				// TODO: Have permission to build here
 				if (sendMsg)
 					plugin.sendErrorMsg(player, "Not allowed to build in the wild.");
@@ -295,12 +289,21 @@ public class TownyBlockListener extends BlockListener {
 				cacheBuild(player.getName(), pos, true);
 		}
 	}
-
+	
+	/*
+	public void updatePlayerCache(Player player) {
+	 
+		Coord pos = Coord.parseCoord(player);
+		updateBuildCache(player, pos, false);
+		updateDestroyCache(player, pos, false);
+	}
+	*/
+	
 	public void cacheBuild(String name, Coord coord, boolean buildRight) {
 		CachedPermission cache = getCache(name, coord);
 		cache.setBuildPermission(buildRight);
 
-		if (plugin.getTownyUniverse().getSettings().getDebug())
+		if (TownySettings.getDebug())
 			System.out.println("[Towny] Debug: " + name + " (" + coord.toString() + ") Cached Build: " + buildRight);
 	}
 
@@ -308,21 +311,22 @@ public class TownyBlockListener extends BlockListener {
 		CachedPermission cache = getCache(name, coord);
 		cache.setDestroyPermission(destroyRight);
 
-		if (plugin.getTownyUniverse().getSettings().getDebug())
+		if (TownySettings.getDebug())
 			System.out.println("[Towny] Debug: " + name + " (" + coord.toString() + ") Cached Destroy: " + destroyRight);
 	}
 
 	public void clearCache() {
 		cachedPermissions.clear();
 
-		if (plugin.getTownyUniverse().getSettings().getDebug())
+		if (TownySettings.getDebug())
 			System.out.println("[Towny] Debug: Build/Destroy Cache Cleared");
 	}
+	
+	public void clearCache(Player player) {
+		cachedPermissions.remove(player.getName());
 
-	public void updateCache(Player player) {
-		Coord coord = Coord.parseCoord(player);
-		updateBuildCache(player, coord, false);
-		updateDestroyCache(player, coord, false);
+		if (TownySettings.getDebug())
+			System.out.println("[Towny] Debug: " + player.getName() + ": Build/Destroy Cache Cleared");
 	}
 
 	public CachedPermission getCache(String name, Coord coord) {

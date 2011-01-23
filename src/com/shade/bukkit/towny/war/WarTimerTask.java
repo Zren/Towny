@@ -7,6 +7,7 @@ import com.shade.bukkit.towny.Nation;
 import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.Resident;
 import com.shade.bukkit.towny.TownBlock;
+import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.towny.TownyTimerTask;
 import com.shade.bukkit.towny.WorldCoord;
 
@@ -27,7 +28,7 @@ public class WarTimerTask extends TownyTimerTask {
 			warEvent.getWarTimer().cancel();
 			universe.setWarEvent(null);
 			universe.getPlugin().clearPlayerCache();
-			if (universe.getSettings().getDebug())
+			if (TownySettings.getDebug())
 				System.out.println("[Towny] [War] Debug: End");
 			return;
 		}
@@ -60,7 +61,7 @@ public class WarTimerTask extends TownyTimerTask {
 			}
 		}
 		
-		if (universe.getSettings().getDebug()) {
+		if (TownySettings.getDebug()) {
 			System.out.println("[Towny] [War] Debug: # Players: " + numPlayers);
 			System.out.println("[Towny] [War] Debug: # Towns: " + numPlayers);
 		}

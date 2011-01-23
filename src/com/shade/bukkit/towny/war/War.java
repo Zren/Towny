@@ -30,14 +30,12 @@ public class War {
 	private List<Nation> warringNations = new ArrayList<Nation>();
 	private Towny plugin;
 	private TownyUniverse universe;
-	private TownySettings settings;
 	private boolean warTime = false;
 	private Timer warTimer = new Timer();
 	
 	public War(Towny plugin, int startDelay) {
 		this.plugin = plugin;
 		this.universe = plugin.getTownyUniverse();
-		this.settings = universe.getSettings();
 		
 		setupDelay(startDelay);
 	}
@@ -100,14 +98,14 @@ public class War {
 	}
 	
 	public void add(Town town) {
-		universe.sendTownMessage(town, settings.getJoinWarMsg(town));
+		universe.sendTownMessage(town, TownySettings.getJoinWarMsg(town));
 		townScores.put(town, 0);
 		warringTowns.add(town);
 		for (TownBlock townBlock : town.getTownBlocks())
 			if (town.isHomeBlock(townBlock))
-				warZone.put(townBlock.getWorldCoord(), settings.getWarzoneHomeBlockHealth());
+				warZone.put(townBlock.getWorldCoord(), TownySettings.getWarzoneHomeBlockHealth());
 			else
-				warZone.put(townBlock.getWorldCoord(), settings.getWarzoneTownBlockHealth());
+				warZone.put(townBlock.getWorldCoord(), TownySettings.getWarzoneTownBlockHealth());
 	}
 
 	public boolean isWarZone(WorldCoord worldCoord) {
@@ -132,7 +130,7 @@ public class War {
 	
 	public void eliminate(Town town) {
 		remove(town);
-		universe.sendGlobalMessage(settings.getWarTimeEliminatedMsg(town.getName()));
+		universe.sendGlobalMessage(TownySettings.getWarTimeEliminatedMsg(town.getName()));
 		checkEnd();
 	}
 	
@@ -140,13 +138,13 @@ public class War {
 		remove(nation);
 		for (Town town : nation.getTowns())
 			remove(town);
-		universe.sendGlobalMessage(settings.getWarTimeForfeitMsg(nation.getName()));
+		universe.sendGlobalMessage(TownySettings.getWarTimeForfeitMsg(nation.getName()));
 		checkEnd();
 	}
 	
 	public void townLeave(Town town) {
 		remove(town);
-		universe.sendGlobalMessage(settings.getWarTimeForfeitMsg(town.getName()));
+		universe.sendGlobalMessage(TownySettings.getWarTimeForfeitMsg(town.getName()));
 		checkEnd();
 	}
 	
@@ -190,12 +188,20 @@ public class War {
 	}
 	
 	public void sendScores(Player player) {
-		player.sendMessage(ChatTools.formatTitle("War Scores"));
+		sendScores(player, 10);
+	}
+	
+	public void sendScores(Player player, int maxListing) {
+		player.sendMessage(ChatTools.formatTitle("War - Top Scores"));
 		KeyValueTable kvTable = new KeyValueTable(townScores);
 		kvTable.sortByValue();
 		kvTable.revese();
 		//TODO: limit the listing to top 10
+		int n = 0;
 		for (KeyValue kv : kvTable.getKeyValues()) {
+			n++;
+			if (n > maxListing)
+				break;
 			Town town = (Town)kv.key;
 			player.sendMessage(String.format(
 					Colors.Blue + "%40s "+Colors.Gold+"|"+Colors.LightGray+" %4d",

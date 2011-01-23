@@ -1,5 +1,7 @@
 package com.shade.bukkit.towny;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -24,8 +26,7 @@ public class TownyUniverse extends TownyObject {
 	private Hashtable<String, Nation> nations = new Hashtable<String, Nation>();
 	private Hashtable<String, TownyWorld> worlds = new Hashtable<String, TownyWorld>();
 	// private List<Election> elections;
-	private TownySettings settings = new TownySettings();
-	private TownyFormatter formatter = new TownyFormatter(settings);
+	private TownyFormatter formatter = new TownyFormatter(); //TODO : MAke static
 	private TownyDataSource dataSource;
 	private Timer dailyTimer = new Timer();
 	private War warEvent;
@@ -56,11 +57,13 @@ public class TownyUniverse extends TownyObject {
 		if (!hasResident(player.getName())) {
 			newResident(player.getName());
 			resident = getResident(player.getName());
-			if (settings.getDefaultTown() != null)
-				settings.getDefaultTown().addResident(resident);
-			sendMessage(player, settings.getRegistrationMsg());
-			if (settings.getDefaultTown() != null)
-				sendMessage(player, settings.getRegistrationMsg());
+			sendMessage(player, TownySettings.getRegistrationMsg());
+			if (!TownySettings.getDefaultTownName().equals(""))
+				try {
+					getTown(TownySettings.getDefaultTownName()).addResident(resident);
+				} catch (NotRegisteredException e) {
+				} catch (AlreadyRegisteredException e) {
+				}
 			getDataSource().saveResidentList();
 		} else
 			resident = getResident(player.getName());
@@ -73,7 +76,8 @@ public class TownyUniverse extends TownyObject {
 		} catch (NotRegisteredException e) {
 		}
 
-		// if wartime send warning + enemy list
+		if (isWarTime())
+			getWarEvent().sendScores(player, 3);
 	}
 
 	public void onLogout(Player player) {
@@ -260,8 +264,7 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public boolean isActiveResident(Resident resident) {
-		return System.currentTimeMillis() - resident.getLastOnline() < settings
-				.getInactiveAfter();
+		return System.currentTimeMillis() - resident.getLastOnline() < TownySettings.getInactiveAfter();
 	}
 	
 	public List<Resident> getResidents(String[] names) {
@@ -293,11 +296,7 @@ public class TownyUniverse extends TownyObject {
 			}
 		return matches;
 	}
-
-	public TownySettings getSettings() {
-		return settings;
-	}
-
+	
 	public List<String> getStatus(Resident resident) {
 		return getFormatter().getStatus(resident);
 	}
@@ -325,18 +324,26 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public boolean loadSettings() {
-		// TODO Load settings from file
-
+		String filepath = TownySettings.getFlatFileFolder() + "/settings/config.properties";
+		try {
+			TownySettings.load(filepath);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 		return true;
 	}
 
 	public boolean loadDatabase() {
-		if (settings.getLoadDatabase().equalsIgnoreCase("flatfile"))
+		if (TownySettings.getLoadDatabase().equalsIgnoreCase("flatfile"))
 			setDataSource(new TownyFlatFileSource());
 		else
 			return false;
 
-		getDataSource().initialize(plugin, this, settings);
+		getDataSource().initialize(plugin, this);
 		getDataSource().loadAll();
 		return true;
 	}
@@ -445,7 +452,7 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void startWarEvent() {
-		this.warEvent = new War(plugin, settings.getWarTimeWarningDelay());
+		this.warEvent = new War(plugin, TownySettings.getWarTimeWarningDelay());
 	}
 	
 	public void endWarEvent() {

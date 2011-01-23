@@ -68,13 +68,13 @@ public class Towny extends JavaPlugin {
 
 		townyUniverse = new TownyUniverse(this);
 		townyUniverse.loadSettings();
-		System.out.print("[Towny] Database: [" + townyUniverse.getSettings().getLoadDatabase() + "] ");
+		System.out.print("[Towny] Database: [" + TownySettings.getLoadDatabase() + "] ");
 		if (townyUniverse.loadDatabase())
 			System.out.println("Loaded database");
 		else
 			System.out.println("Failed to load!\n[Towny] Error: .!.!.!.!.!.!.");
 
-		Coord.setCellSize(townyUniverse.getSettings().getTownBlockSize());
+		Coord.setCellSize(TownySettings.getTownBlockSize());
 		TownyIConomyObject.setPlugin(this);
 
 		townyUniverse.getDataSource().saveAll();
@@ -110,7 +110,7 @@ public class Towny extends JavaPlugin {
 	public void sendErrorMsg(Player player, String msg) {
 		for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Rose + msg))
 			player.sendMessage(line);
-		if (getTownyUniverse().getSettings().getDebug())
+		if (TownySettings.getDebug())
 			System.out.println("[Towny] UserError: " + player.getName() + ": " + msg);
 	}
 
@@ -148,13 +148,13 @@ public class Towny extends JavaPlugin {
 
 	public void updatePlayerCache() {
 		clearPlayerCache();
-		for (Player player : getServer().getOnlinePlayers())
-			updatePlayerCache(player);
+		//for (Player player : getServer().getOnlinePlayers())
+		//	updatePlayerCache(player);
 	}
 	
 	public void updatePlayerCache(Player player) {
 		clearPlayerCache(player);
-		blockListener.updatePlayerCache(player);
+		//blockListener.updatePlayerCache(player);
 	}
 
 	public void updatePlayerCache(Coord coord) {

@@ -30,13 +30,11 @@ public abstract class TownyDataSource {
 	protected Towny plugin;
 	protected boolean firstRun = false;
 
-	public void initialize(Towny plugin, TownyUniverse universe,
-			TownySettings settings) {
+	public void initialize(Towny plugin, TownyUniverse universe) {
 		this.universe = universe;
 		this.plugin = plugin;
-		this.settings = settings;
 
-		if (settings.isFirstRun())
+		if (TownySettings.isFirstRun())
 			firstRun = true;
 
 		if (firstRun)
@@ -51,15 +49,15 @@ public abstract class TownyDataSource {
 	}
 
 	public boolean loadAll() {
-		return (loadWorldList() && loadNationList() && loadTownList()
+		return loadWorldList() && loadNationList() && loadTownList()
 				&& loadResidentList() && loadWorlds() && loadNations()
-				&& loadTowns() && loadResidents());
+				&& loadTowns() && loadResidents();
 	}
 
 	public boolean saveAll() {
-		return (saveWorldList() && saveNationList() && saveTownList()
+		return saveWorldList() && saveNationList() && saveTownList()
 				&& saveResidentList() && saveWorlds() && saveNations()
-				&& saveTowns() && saveResidents());
+				&& saveTowns() && saveResidents();
 	}
 
 	abstract public boolean loadResidentList();
@@ -93,12 +91,11 @@ public abstract class TownyDataSource {
 	abstract public boolean saveWorld(TownyWorld world);
 
 	public boolean loadWorldList() {
-		for (World world : plugin.getServer().getWorlds()) {
+		for (World world : plugin.getServer().getWorlds())
 			try {
 				universe.newWorld(world.getName());
 			} catch (AlreadyRegisteredException e) {
 			}
-		}
 		return true;
 	}
 
@@ -107,30 +104,26 @@ public abstract class TownyDataSource {
 	 */
 
 	public boolean loadResidents() {
-		for (Resident resident : universe.getResidents()) {
+		for (Resident resident : universe.getResidents())
 			loadResident(resident);
-		}
 		return true;
 	}
 
 	public boolean loadTowns() {
-		for (Town town : universe.getTowns()) {
+		for (Town town : universe.getTowns())
 			loadTown(town);
-		}
 		return true;
 	}
 
 	public boolean loadNations() {
-		for (Nation nation : universe.getNations()) {
+		for (Nation nation : universe.getNations())
 			loadNation(nation);
-		}
 		return true;
 	}
 
 	public boolean loadWorlds() {
-		for (TownyWorld world : universe.getWorlds()) {
+		for (TownyWorld world : universe.getWorlds())
 			loadWorld(world);
-		}
 		return true;
 	}
 
@@ -139,30 +132,26 @@ public abstract class TownyDataSource {
 	 */
 
 	public boolean saveResidents() {
-		for (Resident resident : universe.getResidents()) {
+		for (Resident resident : universe.getResidents())
 			saveResident(resident);
-		}
 		return true;
 	}
 
 	public boolean saveTowns() {
-		for (Town town : universe.getTowns()) {
+		for (Town town : universe.getTowns())
 			saveTown(town);
-		}
 		return true;
 	}
 
 	public boolean saveNations() {
-		for (Nation nation : universe.getNations()) {
+		for (Nation nation : universe.getNations())
 			saveNation(nation);
-		}
 		return true;
 	}
 
 	public boolean saveWorlds() {
-		for (TownyWorld world : universe.getWorlds()) {
+		for (TownyWorld world : universe.getWorlds())
 			saveWorld(world);
-		}
 		return true;
 	}
 }
