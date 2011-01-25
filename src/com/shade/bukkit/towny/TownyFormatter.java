@@ -9,6 +9,7 @@ import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
 //TODO: Make static
+//TODO: pull names from the config
 
 public class TownyFormatter {
 	public String getTime() {
@@ -39,7 +40,7 @@ public class TownyFormatter {
 			}
 		
 		// Town: Camelot
-		String line = Colors.Green + "Town: " + Colors.LightGreen;
+		String line = Colors.Green + "Mayor: " + Colors.LightGreen;
 		if (!resident.hasTown())
 			line += "None";
 		else
@@ -62,7 +63,7 @@ public class TownyFormatter {
 	public List<String> getStatus(Town town) {
 		List<String> out = new ArrayList<String>();
 
-		// ___[ Racoon City (PvP) ]___
+		// ___[ Raccoon City (PvP) ]___
 		out.add(ChatTools.formatTitle(getFormattedName(town)
 				+ (town.isPVP() ? Colors.Red + " (PvP)" : "")));
 

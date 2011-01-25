@@ -46,7 +46,11 @@ public class TownyPlayerListener extends PlayerListener {
 					colour = Colors.White;
 				formatedName = colour + plugin.getTownyUniverse().getFormatter().getNamePrefix(resident)
 				+ "%1$s" + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident) + Colors.White;
-				event.setFormat(event.getFormat().replaceAll("%1$s", formatedName));
+				String formatString = event.getFormat();
+				int index = formatString.indexOf("%1$s");
+				formatString = formatString.substring(0, index) + formatedName + formatString.substring(index+4);
+				event.setFormat(formatString);
+				System.out.println(event.getFormat());
 			} catch (NotRegisteredException e) {
 			}
 	}

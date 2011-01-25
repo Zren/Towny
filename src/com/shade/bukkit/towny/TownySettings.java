@@ -138,12 +138,11 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.NATION_CREATION_ADMIN_ONLY, false);
 		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_BUILD, false);
 		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_DESTROY, false);
-		configBool.put(TownySettings.Bool.SHOW_TOWN_NOTIFICATIONS, false);
+		configBool.put(TownySettings.Bool.SHOW_TOWN_NOTIFICATIONS, true);
 		configBool.put(TownySettings.Bool.USING_ICONOMY, true);
 		configBool.put(TownySettings.Bool.MODIFY_CHAT_NAME, true);
 		configBool.put(TownySettings.Bool.DELETE_OLD_RESIDENTS, false);
 		configBool.put(TownySettings.Bool.DEBUG_MODE, true);
-		//config.put(TownySettings.BLEH, );
 	}
 	
 	public static HashMap<Object,Object> getMap() {

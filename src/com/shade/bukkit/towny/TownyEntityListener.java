@@ -12,7 +12,8 @@ public class TownyEntityListener extends EntityListener {
 		plugin = instance;
 	}
 
-	public void onEntityDamagedByEntity(EntityDamageByEntityEvent event) {
+	@Override
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 		Entity attacker = event.getDamager();
 		Entity defender = event.getEntity();
 

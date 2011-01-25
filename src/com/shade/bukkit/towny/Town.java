@@ -16,7 +16,7 @@ public class Town extends TownBlockOwner implements Walled {
 	private int bonusBlocks, taxes, plotPrice;
 	private Nation nation;
 	private boolean isPVP, hasMobs;
-	private String townBoard;
+	private String townBoard = "/town set board [msg]";
 	private TownBlock homeBlock;
 	private TownyWorld world;
 	private Location spawn;
