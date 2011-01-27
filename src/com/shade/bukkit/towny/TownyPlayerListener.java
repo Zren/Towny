@@ -1033,7 +1033,7 @@ public class TownyPlayerListener extends PlayerListener {
 				for (int x = pos.getX() - r; x <= pos.getX() + r; x++)
 					coords.add(new Coord(x, z));
 
-			player.sendMessage(String.format("Claiming %d town blocks within the radius of %d.", Math.pow((r + 1) * 2 - 1, 2), r));
+			player.sendMessage(String.format("Claiming %d town blocks within the radius of %d.", (int)Math.pow((r + 1) * 2 - 1, 2), r));
 			try {
 				int n = townClaim(town, world, coords.toArray(new Coord[0]));
 				if (n > 0) {
@@ -1389,10 +1389,11 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "", "Your nation's status"));
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "[nation]", "Target nation's status"));
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "list", "List all nations"));
-		// TODO: player.sendMessage(ChatTools.formatCommand("", "/nation", "delete [nation]", ""));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "leave", "Leave your nation"));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove]", "Leave your nation"));
+		// TODO: player.sendMessage(ChatTools.formatCommand("King", "/nation", "ally [+/n/-] [nation]", "Set you alliance."));
 		player.sendMessage(ChatTools.formatCommand(newTownReq, "/nation", "new [nation] *[capital]", "Create a new nation"));
-		// TODO: player.sendMessage(ChatTools.formatCommand("", "/nation", "ally [+/n/-] [nation]", "Set you alliance."));
-
+		// TODO: player.sendMessage(ChatTools.formatCommand("Admin", "/nation", "delete [nation]", ""));
 	}
 
 	/**
@@ -1972,9 +1973,7 @@ public class TownyPlayerListener extends PlayerListener {
 		 * /townyadmin ?
 		 * /townyadmin set [] .. []
 		 * /townyadmin war toggle [on/off]
-		 * /townyadmin
-		 * 
-		 * /towny tree
+		 * /townyadmin reload
 		 */
 
 		if (split.length == 0)
@@ -1989,7 +1988,8 @@ public class TownyPlayerListener extends PlayerListener {
 			String[] newSplit = new String[split.length - 1];
 			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
 			parseWarCommand(player, newSplit);
-		}
+		} else if (split[0].equalsIgnoreCase("reload"))
+			reloadTowny(player);
 	}
 
 	@SuppressWarnings("static-access")
@@ -2037,10 +2037,17 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatTitle("/townyadmin"));
 		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "", "Admin panel"));
 		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "set [] .. []", "'/townyadmin set' for help"));
+		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "war toggle [on/off]", ""));
+		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "reload", "reload Towny"));
 	}
 
 	public void adminSet(Player player, String[] split) {
 
+	}
+	
+	public void reloadTowny(Player player) {
+		plugin.onLoad();
+		plugin.sendMsg(player, "Towny's settings was reloaded.");
 	}
 	
 	public void parseWarCommand(Player player, String[] split) {

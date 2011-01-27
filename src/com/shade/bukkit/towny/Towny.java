@@ -71,7 +71,6 @@ public class Towny extends JavaPlugin {
 		pdfFile.getVersion();
 
 		townyUniverse = new TownyUniverse(this);
-		townyUniverse.loadSettings();
 		System.out.print("[Towny] Database: [" + TownySettings.getLoadDatabase() + "] ");
 		if (townyUniverse.loadDatabase())
 			System.out.println("Loaded database");
@@ -79,9 +78,8 @@ public class Towny extends JavaPlugin {
 			System.out.println("Failed to load!");
 			getServer().getPluginManager().disablePlugin(this);
 		}
-
-		Coord.setCellSize(TownySettings.getTownBlockSize());
-		TownyIConomyObject.setPlugin(this);
+		
+		onLoad();
 
 		townyUniverse.getDataSource().saveAll();
 		
@@ -95,9 +93,17 @@ public class Towny extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		townyUniverse.getDataSource().saveAll();
+		
 		if (getTownyUniverse().isWarTime())
 			getTownyUniverse().getWarEvent().end();
 		System.out.println("[Towny] Version: " + version + " - Mod Disabled");
+	}
+	
+	public void onLoad() {
+		townyUniverse.loadSettings();
+		Coord.setCellSize(TownySettings.getTownBlockSize());
+		TownyIConomyObject.setPlugin(this);
 	}
 
 	private void registerEvents() {
@@ -157,34 +163,6 @@ public class Towny extends JavaPlugin {
 
 		throw new NotRegisteredException();
 	}
-
-	
-	/*
-	public void clearPlayerCache() {
-		blockListener.clearCache();
-	}
-	
-	public void clearPlayerCache(Player player) {
-		blockListener.clearCache();
-	}
-
-	public void updatePlayerCache() {
-		clearPlayerCache();
-		//for (Player player : getServer().getOnlinePlayers())
-		//	updatePlayerCache(player);
-	}
-	
-	public void updatePlayerCache(Player player) {
-		clearPlayerCache(player);
-		//blockListener.updatePlayerCache(player);
-	}
-
-	public void updatePlayerCache(Coord coord) {
-		for (Player player : getServer().getOnlinePlayers())
-			if (Coord.parseCoord(player).equals(coord))
-				updatePlayerCache(player);
-	}
-	*/
 	
 	public boolean hasCache(Player player) {
 		return playerCache.containsKey(player.getName().toLowerCase());

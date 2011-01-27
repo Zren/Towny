@@ -171,9 +171,9 @@ public class TownyFormatter {
 		if (resident == null)
 			return "";
 		if (resident.isKing())
-			return TownySettings.getKingPrefix();
+			return TownySettings.getKingPrefix(resident);
 		else if (resident.isMayor())
-			return TownySettings.getMayorPrefix();
+			return TownySettings.getMayorPrefix(resident);
 		return "";
 	}
 	
@@ -181,9 +181,9 @@ public class TownyFormatter {
 		if (resident == null)
 			return "";
 		if (resident.isKing())
-			return TownySettings.getKingPostfix();
+			return TownySettings.getKingPostfix(resident);
 		else if (resident.isMayor())
-			return TownySettings.getMayorPostfix();
+			return TownySettings.getMayorPostfix(resident);
 		return "";
 	}
 	
@@ -191,16 +191,16 @@ public class TownyFormatter {
 		if (resident == null)
 			return "null";
 		if (resident.isKing())
-			return TownySettings.getKingPrefix() + resident.getName() + TownySettings.getKingPostfix();
+			return TownySettings.getKingPrefix(resident) + resident.getName() + TownySettings.getKingPostfix(resident);
 		else if (resident.isMayor())
-			return TownySettings.getMayorPrefix() + resident.getName() + TownySettings.getMayorPostfix();
+			return TownySettings.getMayorPrefix(resident) + resident.getName() + TownySettings.getMayorPostfix(resident);
 		return resident.getName();
 	}
 
 	public String getFormattedName(Town town) {
 		if (town.isCapital())
-			return TownySettings.getCapitalPrefix() + town.getName() + TownySettings.getCapitalPostfix();
-		return TownySettings.getTownPrefix() + town.getName() + TownySettings.getTownPostfix();
+			return TownySettings.getCapitalPrefix(town) + town.getName() + TownySettings.getCapitalPostfix(town);
+		return TownySettings.getTownPrefix(town) + town.getName() + TownySettings.getTownPostfix(town);
 	}
 
 	public String getFormattedName(Nation nation) {

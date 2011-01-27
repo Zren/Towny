@@ -142,13 +142,13 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.UNCLAIMED_ZONE_NAME, "Wilderness");
 		configStr.put(TownySettings.Str.MSG_REGISTRATION, "&6[Towny] &bWelcome this is your first login.@&6[Towny] &bYou've successfully registered!@&6[Towny] &bTry the /towny command for more help.");
 		configStr.put(TownySettings.Str.MSG_NEW_TOWN, "&6[Towny] &b%s created a new town called %s");
-		configStr.put(TownySettings.Str.MSG_NEW_NATION, "%&6[Towny] &bs created a new nation called %s");
+		configStr.put(TownySettings.Str.MSG_NEW_NATION, "&6[Towny] &b%s created a new nation called %s");
 		configStr.put(TownySettings.Str.MSG_JOIN_TOWN, "&6[Towny] &b%s joined town!");
 		configStr.put(TownySettings.Str.MSG_JOIN_NATION, "&6[Towny] &b%s joined the nation!");
 		configStr.put(TownySettings.Str.MSG_NEW_MAYOR, "&6[Towny] &b%s is now the mayor!");
 		configStr.put(TownySettings.Str.MSG_NEW_KING, "&6[Towny] &b%s is now the king!");
 		configStr.put(TownySettings.Str.MSG_WAR_JOIN, "&6[Towny] &b%s joined the fight!");
-		configStr.put(TownySettings.Str.MSG_WAR_ELIMINATED, "%&6[Towny] &bs was eliminated from the war.");
+		configStr.put(TownySettings.Str.MSG_WAR_ELIMINATED, "&6[Towny] &b%s was eliminated from the war.");
 		configStr.put(TownySettings.Str.MSG_WAR_FORFEITED, "&6[Towny] &b%s forfeited.");
 		configStr.put(TownySettings.Str.MSG_WAR_LOSE_BLOCK, "&6[Towny] &b(%s) belonging to %s has fallen.");
 		configStr.put(TownySettings.Str.MSG_NEW_DAY, "&6[Towny] &bA new day is here! Taxes and rent has been collected.");
@@ -289,10 +289,8 @@ public class TownySettings {
 	//TODO: more efficient way
 	public static int calcTownLevel(Town town) {
 		int n = town.getNumResidents();
-		Map<TownySettings.TownLevel,Object> townLevel;
-        while (n >= 0) {
-        	townLevel = getTownLevel(n);
-            if (townLevel != null)
+		while (n >= 0) {
+            if (configTownLevel.containsKey(n))
                 break;
             n--;
         }
@@ -302,10 +300,8 @@ public class TownySettings {
 	//TODO: more efficient way
 	public static int calcNationLevel(Nation nation) {
 		int n = nation.getNumResidents();
-		Map<TownySettings.NationLevel,Object> nationLevel;
-        while (n >= 0) {
-            nationLevel = getNationLevel(n);
-            if (nationLevel != null)
+		while (n >= 0) {
+            if (configNationLevel.containsKey(n))
                 break;
             n--;
         }
@@ -427,20 +423,37 @@ public class TownySettings {
 		return 24 * 60 * 60 * 1000;
 	}
 
-	public static String getKingPrefix() {
-		return getString(TownySettings.Str.DEFAULT_KING_PREFIX);
+	public static String getKingPrefix(Resident resident) {
+		try {
+			return (String)getNationLevel(resident.getTown().getNation()).get(TownySettings.NationLevel.KING_PREFIX);
+		} catch (NotRegisteredException e) {
+			return getString(TownySettings.Str.DEFAULT_KING_PREFIX);
+		}
 	}
 
-	public static String getMayorPrefix() {
-		return getString(TownySettings.Str.DEFAULT_MAYOR_PREFIX);
+	public static String getMayorPrefix(Resident resident) {
+		try {
+			return (String)getTownLevel(resident.getTown()).get(TownySettings.TownLevel.MAYOR_PREFIX);
+		} catch (NotRegisteredException e) {
+			return getString(TownySettings.Str.DEFAULT_MAYOR_PREFIX);
+		}
 	}
 
-	public static String getCapitalPostfix() {
-		return getString(TownySettings.Str.DEFAULT_CAPITAL_POSTFIX);
+	public static String getCapitalPostfix(Town town) {
+		try {
+			return (String)getNationLevel(town.getNation()).get(TownySettings.NationLevel.CAPITAL_POSTFIX);
+		} catch (NotRegisteredException e) {
+			return getString(TownySettings.Str.DEFAULT_CAPITAL_POSTFIX);
+		}
 	}
 
-	public static String getTownPostfix() {
-		return getString(TownySettings.Str.DEFAULT_TOWN_POSTFIX);
+	public static String getTownPostfix(Town town) {
+		try {
+			return (String)getTownLevel(town).get(TownySettings.TownLevel.NAME_PREFIX);
+		} catch (Exception e) {
+			// Should not reach here
+			return getString(TownySettings.Str.DEFAULT_TOWN_POSTFIX);
+		}
 	}
 
 	public static String getLoadDatabase() {
@@ -567,20 +580,37 @@ public class TownySettings {
 		return getString(TownySettings.Str.DEFAULT_NATION_PREFIX);
 	}
 	
-	public static String getTownPrefix() {
-		return getString(TownySettings.Str.DEFAULT_TOWN_PREFIX);
+	public static String getTownPrefix(Town town) {
+		try {
+			return (String)getTownLevel(town).get(TownySettings.TownLevel.NAME_PREFIX);
+		} catch (Exception e) {
+			// Should not reach here
+			return getString(TownySettings.Str.DEFAULT_TOWN_PREFIX);
+		}
 	}
 	
-	public static String getCapitalPrefix() {
-		return getString(TownySettings.Str.DEFAULT_CAPITAL_PREFIX);
+	public static String getCapitalPrefix(Town town) {
+		try {
+			return (String)getNationLevel(town.getNation()).get(TownySettings.NationLevel.CAPITAL_PREFIX);
+		} catch (NotRegisteredException e) {
+			return getString(TownySettings.Str.DEFAULT_CAPITAL_PREFIX);
+		}
 	}
 	
-	public static String getKingPostfix() {
-		return getString(TownySettings.Str.DEFAULT_KING_POSTFIX);
+	public static String getKingPostfix(Resident resident) {
+		try {
+			return (String)getNationLevel(resident.getTown().getNation()).get(TownySettings.NationLevel.KING_POSTFIX);
+		} catch (NotRegisteredException e) {
+			return getString(TownySettings.Str.DEFAULT_KING_POSTFIX);
+		}
 	}
 	
-	public static String getMayorPostfix() {
-		return getString(TownySettings.Str.DEFAULT_MAYOR_POSTFIX);
+	public static String getMayorPostfix(Resident resident) {
+		try {
+			return (String)getTownLevel(resident.getTown()).get(TownySettings.TownLevel.MAYOR_POSTFIX);
+		} catch (NotRegisteredException e) {
+			return getString(TownySettings.Str.DEFAULT_MAYOR_POSTFIX);
+		}
 	}
 	
 	/************************************************************/

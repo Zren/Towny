@@ -289,54 +289,6 @@ public class TownyBlockListener extends BlockListener {
 		}
 	}
 	
-	/*
-	public void updatePlayerCache(Player player) {
-	 
-		Coord pos = Coord.parseCoord(player);
-		updateBuildCache(player, pos, false);
-		updateDestroyCache(player, pos, false);
-	}
-	
-	
-	public void cacheBuild(String name, Coord coord, boolean buildRight) {
-		CachedPermission cache = getCache(name, coord);
-		cache.setBuildPermission(buildRight);
-
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: " + name + " (" + coord.toString() + ") Cached Build: " + buildRight);
-	}
-
-	public void cacheDestroy(String name, Coord coord, boolean destroyRight) {
-		CachedPermission cache = getCache(name, coord);
-		cache.setDestroyPermission(destroyRight);
-
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: " + name + " (" + coord.toString() + ") Cached Destroy: " + destroyRight);
-	}
-
-	public void clearCache() {
-		cachedPermissions.clear();
-
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: Build/Destroy Cache Cleared");
-	}
-	
-	public void clearCache(Player player) {
-		cachedPermissions.remove(player.getName());
-
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: " + player.getName() + ": Build/Destroy Cache Cleared");
-	}
-
-	public CachedPermission getCache(String name, Coord coord) {
-		if (!cachedPermissions.containsKey(name))
-			cachedPermissions.put(name, new CachedPermission(coord));
-		CachedPermission cache = cachedPermissions.get(name);
-		if (!cache.getLastTownBlock().equals(coord))
-			cache.newCache(coord);
-		return cache;
-	}*/
-	
 	public void cacheBuild(Player player, Coord coord, boolean buildRight) {
 		PlayerCache cache = getCache(player);
 		cache.updateCoord(coord);

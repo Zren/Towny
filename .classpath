@@ -4,6 +4,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/bukkit.jar" sourcepath="C:/Users/Admin/Desktop/git/Bukkit"/>
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/iConomy.jar"/>
-	<classpathentry kind="lib" path="lib/snakeyaml-1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
