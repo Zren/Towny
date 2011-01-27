@@ -18,6 +18,7 @@ import com.shade.bukkit.towny.db.TownyFlatFileSource;
 import com.shade.bukkit.towny.war.War;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
+import com.shade.util.FileMgmt;
 
 public class TownyUniverse extends TownyObject {
 	private Towny plugin;
@@ -324,9 +325,16 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public boolean loadSettings() {
-		String filepath = TownySettings.getFlatFileFolder() + "/settings/config.properties";
 		try {
-			TownySettings.load(filepath);
+			String root = plugin.getDataFolder().getPath();
+			FileMgmt.checkFolders(new String[]{root, root + "/settings"});
+			FileMgmt.checkFiles(new String[]{
+					root + "/settings/config.properties",
+					root + "/settings/town-levels.ini",
+					root + "/settings/nation-levels.ini"});
+			TownySettings.loadConfig(plugin.getDataFolder().getPath() + "/settings/config.properties");
+			TownySettings.loadTownLevelConfig(plugin.getDataFolder().getPath() + "/settings/town-levels.ini");
+			TownySettings.loadNationLevelConfig(plugin.getDataFolder().getPath() + "/settings/nation-levels.ini");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -484,8 +492,12 @@ public class TownyUniverse extends TownyObject {
 		getDataSource().saveNationList();
 	}
 
-	public void removeTown(Town town) throws EmptyNationException {
-		town.clear();
+	public void removeTown(Town town) {
+		try {
+			town.clear();
+		} catch (EmptyNationException e) {
+			removeNation(e.getNation());
+		}
 		towns.remove(town.getName().toLowerCase());
 		getDataSource().saveTownList();
 	}

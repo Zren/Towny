@@ -1,6 +1,9 @@
 package com.shade.bukkit.towny;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -53,6 +56,7 @@ public class Towny extends JavaPlugin {
 	private final TownyBlockListener blockListener = new TownyBlockListener(this);
 	private final TownyEntityListener entityListener = new TownyEntityListener(this);
 	private TownyUniverse townyUniverse;
+	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
 
 	public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, folder, plugin, cLoader);
@@ -71,13 +75,20 @@ public class Towny extends JavaPlugin {
 		System.out.print("[Towny] Database: [" + TownySettings.getLoadDatabase() + "] ");
 		if (townyUniverse.loadDatabase())
 			System.out.println("Loaded database");
-		else
-			System.out.println("Failed to load!\n[Towny] Error: .!.!.!.!.!.!.");
+		else {
+			System.out.println("Failed to load!");
+			getServer().getPluginManager().disablePlugin(this);
+		}
 
 		Coord.setCellSize(TownySettings.getTownBlockSize());
 		TownyIConomyObject.setPlugin(this);
 
 		townyUniverse.getDataSource().saveAll();
+		
+		if (TownySettings.isFirstRun()) {
+			firstRun();
+			TownySettings.setBoolean(getDataFolder().getPath() + "/settings/config.properties", TownySettings.Bool.FIRST_RUN, false);
+		}
 
 		System.out.println("[Towny] Version: " + version + " - Mod Enabled");
 	}
@@ -94,13 +105,20 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent( Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
 
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
 
 		getServer().getPluginManager().registerEvent( Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
+	}
+	
+	private void firstRun() {
+		System.out.println("------------------------------");
+		System.out.println("[Towny] Detected first run");
+		System.out.println("[Towny] Registering default");
+		System.out.println("------------------------------");
 	}
 
 	public TownyUniverse getTownyUniverse() {
@@ -112,6 +130,10 @@ public class Towny extends JavaPlugin {
 			player.sendMessage(line);
 		if (TownySettings.getDebug())
 			System.out.println("[Towny] UserError: " + player.getName() + ": " + msg);
+	}
+	
+	public void sendErrorMsg(String msg) {
+		System.out.println("[Towny] Error: " + msg);
 	}
 
 	public void sendErrorMsg(Player player, String[] msg) {
@@ -137,7 +159,7 @@ public class Towny extends JavaPlugin {
 	}
 
 	
-
+	/*
 	public void clearPlayerCache() {
 		blockListener.clearCache();
 	}
@@ -161,5 +183,36 @@ public class Towny extends JavaPlugin {
 		for (Player player : getServer().getOnlinePlayers())
 			if (Coord.parseCoord(player).equals(coord))
 				updatePlayerCache(player);
+	}
+	*/
+	
+	public boolean hasCache(Player player) {
+		return playerCache.containsKey(player.getName().toLowerCase());
+	}
+	
+	public void newCache(Player player) {
+		playerCache.put(player.getName().toLowerCase(), new PlayerCache(player));
+	}
+	
+	public void deleteCache(Player player) {
+		playerCache.remove(player.getName().toLowerCase());
+	}
+	
+	public PlayerCache getCache(Player player) {
+		if (!hasCache(player))
+			newCache(player);
+		
+		return playerCache.get(player.getName().toLowerCase());
+	}
+	
+	public void updateCache(Coord coord) {
+		for (Player player : getServer().getOnlinePlayers())
+			if (Coord.parseCoord(player).equals(coord))
+				getCache(player).setLastTownBlock(coord); //Automatically resets permissions.
+	}
+	
+	public void updateCache() {
+		for (Player player : getServer().getOnlinePlayers())
+			getCache(player).setLastTownBlock(Coord.parseCoord(player));
 	}
 }

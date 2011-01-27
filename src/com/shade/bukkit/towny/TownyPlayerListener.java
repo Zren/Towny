@@ -45,12 +45,11 @@ public class TownyPlayerListener extends PlayerListener {
 				else
 					colour = Colors.White;
 				formatedName = colour + plugin.getTownyUniverse().getFormatter().getNamePrefix(resident)
-				+ "%1$s" + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident) + Colors.White;
+					+ "%1$s" + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident) + Colors.White;
 				String formatString = event.getFormat();
 				int index = formatString.indexOf("%1$s");
 				formatString = formatString.substring(0, index) + formatedName + formatString.substring(index+4);
 				event.setFormat(formatString);
-				System.out.println(event.getFormat());
 			} catch (NotRegisteredException e) {
 			}
 	}
@@ -68,6 +67,8 @@ public class TownyPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerQuit(PlayerEvent event) {
 		plugin.getTownyUniverse().onLogout(event.getPlayer());
+		
+		plugin.deleteCache(event.getPlayer());
 	}
 
 	@Override
@@ -89,11 +90,8 @@ public class TownyPlayerListener extends PlayerListener {
 
 	public void onPlayerMoveChunk(Player player, Coord from, Coord to, Location fromLoc, Location toLoc) {
 		TownyUniverse universe = plugin.getTownyUniverse();
-
 		
-		// TODO: Cache build/destroy permissions
-		// TODO: Choose to either update on the fly, or simple clear.
-		plugin.clearPlayerCache(player);
+		plugin.getCache(player).updateCoord(to);
 		
 		
 		// TODO: Player mode
@@ -446,7 +444,7 @@ public class TownyPlayerListener extends PlayerListener {
 
 					plugin.sendMsg(player, "Successfully claimed (" + coord + ").");
 
-					plugin.updatePlayerCache(coord);
+					plugin.updateCache(coord);
 					plugin.getTownyUniverse().getDataSource().saveResident(resident);
 					plugin.getTownyUniverse().getDataSource().saveWorld(world);
 				} catch (TownyException x) {
@@ -684,24 +682,27 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	public void townLeave(Player player) {
+		Resident resident;
+		Town town;
 		try {
-			Resident resident = plugin.getTownyUniverse().getResident(player.getName());
-			Town town = resident.getTown();
-			town.removeResident(resident);
-			plugin.getTownyUniverse().sendTownMessage(town, resident.getName() + " left town");
-			plugin.sendMsg(player, "You left "+town.getName()+".");
+			resident = plugin.getTownyUniverse().getResident(player.getName());
+			town = resident.getTown();
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 			return;
-		} catch (EmptyTownException et) {
-			if (et.hasEmptyNationException())
-				plugin.getTownyUniverse().removeNation(et.getEmptyNationException().getNation());
-			try {
-				plugin.getTownyUniverse().removeTown(et.getTown());
-			} catch (EmptyNationException en) {
-				plugin.getTownyUniverse().removeNation(en.getNation());
-			}
 		}
+		
+		try {
+			town.removeResident(resident);
+		} catch (EmptyTownException et) {
+			plugin.getTownyUniverse().removeTown(et.getTown());
+		} catch (NotRegisteredException x) {
+			plugin.sendErrorMsg(player, x.getError());
+			return;
+		}
+		
+		plugin.getTownyUniverse().sendTownMessage(town, resident.getName() + " left town");
+		plugin.sendMsg(player, "You left "+town.getName()+".");
 	}
 	
 	/**
@@ -1701,7 +1702,7 @@ public class TownyPlayerListener extends PlayerListener {
 			else if (split[0].equalsIgnoreCase("seed"))
 				seedTowny();
 			else if (split[0].equalsIgnoreCase("newday"))
-				seedTowny();
+				plugin.getTownyUniverse().newDay();
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class TownyFormatter {
 		// ___[ King Harlus ]___
 		out.add(ChatTools.formatTitle(getFormattedName(resident)));
 
-		// Last Online: March 7
+		// Last Online: March 7 @ 14:30
 		SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd '@' HH:mm");
 		out.add(Colors.Green + "Last Online: " + Colors.LightGreen + sdf.format(resident.getLastOnline()));
 
@@ -93,7 +93,7 @@ public class TownyFormatter {
 			}
 
 		// if (mayor != null)
-		out.add(Colors.Green + "Lord: " + Colors.LightGreen
+		out.add(Colors.Green + "Mayor: " + Colors.LightGreen
 				+ getFormattedName(town.getMayor()));
 		// Assistants:
 		// Sammy, Ginger

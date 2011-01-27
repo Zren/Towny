@@ -130,7 +130,18 @@ public class War {
 	
 	public void eliminate(Town town) {
 		remove(town);
+		try {
+			checkNation(town.getNation());
+		} catch (NotRegisteredException e) {
+			plugin.sendErrorMsg("[War] Error checking "+town.getName()+"'s nation.");
+		}
 		universe.sendGlobalMessage(TownySettings.getWarTimeEliminatedMsg(town.getName()));
+		checkEnd();
+	}
+	
+	public void eliminate(Nation nation) {
+		remove(nation);
+		universe.sendGlobalMessage(TownySettings.getWarTimeEliminatedMsg(nation.getName()));
 		checkEnd();
 	}
 	
@@ -168,12 +179,46 @@ public class War {
 	}
 	
 	public void remove(WorldCoord worldCoord) {
-		warZone.remove(worldCoord);
+		try {
+			Town town = worldCoord.getTownBlock().getTown();
+			universe.sendGlobalMessage(TownySettings.getWarTimeLoseTownBlockMsg(worldCoord, town.getName()));
+			warZone.remove(worldCoord);
+		} catch (NotRegisteredException e) {
+			universe.sendGlobalMessage(TownySettings.getWarTimeLoseTownBlockMsg(worldCoord));
+			warZone.remove(worldCoord);
+		}
+		
 	}
 	
 	public void checkEnd() {
 		if (warringNations.size() <= 1)
 			end();
+	}
+	
+	public void checkTown(Town town) {
+		if (countActiveWarBlocks(town) == 0)
+			eliminate(town);
+	}
+	
+	public void checkNation(Nation nation) {
+		if (countActiveTowns(nation) == 0)
+			eliminate(nation);
+	}
+	
+	public int countActiveWarBlocks(Town town) {
+		int n = 0;
+		for (TownBlock townBlock : town.getTownBlocks())
+			if (warZone.containsKey(townBlock.getWorldCoord()))
+				n++;
+		return n;
+	}
+	
+	public int countActiveTowns(Nation nation) {
+		int n = 0;
+		for (Town town : nation.getTowns())
+			if (warringTowns.contains(town))
+				n++;
+		return n;
 	}
 	
 	public void end() {
@@ -196,7 +241,6 @@ public class War {
 		KeyValueTable kvTable = new KeyValueTable(townScores);
 		kvTable.sortByValue();
 		kvTable.revese();
-		//TODO: limit the listing to top 10
 		int n = 0;
 		for (KeyValue kv : kvTable.getKeyValues()) {
 			n++;

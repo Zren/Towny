@@ -31,6 +31,10 @@ public class WorldCoord extends Coord {
 		return new Coord(x, z);
 	}
 	
+	public TownBlock getTownBlock() throws NotRegisteredException {
+		return getWorld().getTownBlock(getCoord());
+	}
+	
 	@Override
 	public int hashCode() {
 		int result = 17;

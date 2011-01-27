@@ -1,9 +1,12 @@
 package com.shade.bukkit.towny;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.shade.util.KeyValueFile;
@@ -26,7 +29,6 @@ public class TownySettings {
 	};
 	// String
 	enum Str {
-		FOLDER_NAME,
 		LOAD_DATABASE,
 		DEFAULT_TOWN_NAME,
 		DEFAULT_MAYOR_PREFIX,
@@ -49,7 +51,9 @@ public class TownySettings {
 		MSG_NEW_KING,
 		MSG_WAR_JOIN,
 		MSG_WAR_ELIMINATED,
-		MSG_WAR_FORFEITED
+		MSG_WAR_FORFEITED,
+		MSG_WAR_LOSE_BLOCK,
+		MSG_NEW_DAY
 	};
 	// Integer
 	enum Int {
@@ -78,11 +82,38 @@ public class TownySettings {
 		DELETE_OLD_RESIDENTS,
 		DEBUG_MODE
 	};
+	// Nation Level
+	enum NationLevel {
+		NAME_PREFIX,
+		NAME_POSTFIX,
+		CAPITAL_PREFIX,
+		CAPITAL_POSTFIX,
+		KING_PREFIX,
+		KING_POSTFIX
+	};
+	// Town Level
+	enum TownLevel {
+		NAME_PREFIX,
+		NAME_POSTFIX,
+		MAYOR_PREFIX,
+		MAYOR_POSTFIX,
+		TOWN_BLOCK_LIMIT
+	};
 	
-	private static final ConcurrentHashMap<TownySettings.StrArr,String[]> configStrArr = new ConcurrentHashMap<TownySettings.StrArr,String[]>();
-	private static final ConcurrentHashMap<TownySettings.Str,String> configStr = new ConcurrentHashMap<TownySettings.Str,String>();
-	private static final ConcurrentHashMap<TownySettings.Int,Integer> configInt = new ConcurrentHashMap<TownySettings.Int,Integer>();
-	private static final ConcurrentHashMap<TownySettings.Bool,Boolean> configBool = new ConcurrentHashMap<TownySettings.Bool,Boolean>();
+	
+	
+	private static final ConcurrentHashMap<TownySettings.StrArr,String[]> configStrArr
+		= new ConcurrentHashMap<TownySettings.StrArr,String[]>();
+	private static final ConcurrentHashMap<TownySettings.Str,String> configStr
+		= new ConcurrentHashMap<TownySettings.Str,String>();
+	private static final ConcurrentHashMap<TownySettings.Int,Integer> configInt
+		= new ConcurrentHashMap<TownySettings.Int,Integer>();
+	private static final ConcurrentHashMap<TownySettings.Bool,Boolean> configBool
+		= new ConcurrentHashMap<TownySettings.Bool,Boolean>();
+	private static final ConcurrentHashMap<Integer,ConcurrentHashMap<TownySettings.NationLevel,Object>> configNationLevel
+		= new ConcurrentHashMap<Integer,ConcurrentHashMap<TownySettings.NationLevel,Object>>();
+	private static final ConcurrentHashMap<Integer,ConcurrentHashMap<TownySettings.TownLevel,Object>> configTownLevel
+		= new ConcurrentHashMap<Integer,ConcurrentHashMap<TownySettings.TownLevel,Object>>();
 	
 	static {
 		// String[]
@@ -96,7 +127,6 @@ public class TownySettings {
 		configStrArr.put(TownySettings.StrArr.TOWN_CHAT_COMMANDS, new String[]{"/tc"});
 		configStrArr.put(TownySettings.StrArr.NATION_CHAT_COMMANDS, new String[]{"/nc"});
 		// String
-		configStr.put(TownySettings.Str.FOLDER_NAME, "towny");
 		configStr.put(TownySettings.Str.LOAD_DATABASE, "flatfile");
 		configStr.put(TownySettings.Str.DEFAULT_TOWN_NAME, "");
 		configStr.put(TownySettings.Str.DEFAULT_MAYOR_PREFIX, "Mayor ");
@@ -110,16 +140,18 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.DEFAULT_NATION_PREFIX, "");
 		configStr.put(TownySettings.Str.DEFAULT_NATION_POSTFIX, " Nation");
 		configStr.put(TownySettings.Str.UNCLAIMED_ZONE_NAME, "Wilderness");
-		configStr.put(TownySettings.Str.MSG_REGISTRATION, "Welcome this is your first login.@You've successfully registered!");
-		configStr.put(TownySettings.Str.MSG_NEW_TOWN, "%s created a new town called %s");
-		configStr.put(TownySettings.Str.MSG_NEW_NATION, "%s created a new nation called %s");
-		configStr.put(TownySettings.Str.MSG_JOIN_TOWN, "%s joined town!");
-		configStr.put(TownySettings.Str.MSG_JOIN_NATION, "%s joined the nation!");
-		configStr.put(TownySettings.Str.MSG_NEW_MAYOR, "%s is now the mayor!");
-		configStr.put(TownySettings.Str.MSG_NEW_KING, "%s is now the king!");
-		configStr.put(TownySettings.Str.MSG_WAR_JOIN, "%s joined the fight!");
-		configStr.put(TownySettings.Str.MSG_WAR_ELIMINATED, "%s was eliminated from the war.");
-		configStr.put(TownySettings.Str.MSG_WAR_FORFEITED, "%s forfeited.");
+		configStr.put(TownySettings.Str.MSG_REGISTRATION, "&6[Towny] &bWelcome this is your first login.@&6[Towny] &bYou've successfully registered!@&6[Towny] &bTry the /towny command for more help.");
+		configStr.put(TownySettings.Str.MSG_NEW_TOWN, "&6[Towny] &b%s created a new town called %s");
+		configStr.put(TownySettings.Str.MSG_NEW_NATION, "%&6[Towny] &bs created a new nation called %s");
+		configStr.put(TownySettings.Str.MSG_JOIN_TOWN, "&6[Towny] &b%s joined town!");
+		configStr.put(TownySettings.Str.MSG_JOIN_NATION, "&6[Towny] &b%s joined the nation!");
+		configStr.put(TownySettings.Str.MSG_NEW_MAYOR, "&6[Towny] &b%s is now the mayor!");
+		configStr.put(TownySettings.Str.MSG_NEW_KING, "&6[Towny] &b%s is now the king!");
+		configStr.put(TownySettings.Str.MSG_WAR_JOIN, "&6[Towny] &b%s joined the fight!");
+		configStr.put(TownySettings.Str.MSG_WAR_ELIMINATED, "%&6[Towny] &bs was eliminated from the war.");
+		configStr.put(TownySettings.Str.MSG_WAR_FORFEITED, "&6[Towny] &b%s forfeited.");
+		configStr.put(TownySettings.Str.MSG_WAR_LOSE_BLOCK, "&6[Towny] &b(%s) belonging to %s has fallen.");
+		configStr.put(TownySettings.Str.MSG_NEW_DAY, "&6[Towny] &bA new day is here! Taxes and rent has been collected.");
 		// Integer
 		configInt.put(TownySettings.Int.INACTIVE_AFTER_TIME, 24 * 60 * 60 * 1000); // 1 Day
 		configInt.put(TownySettings.Int.DELETED_AFTER_TIME, 60 * 24 * 60 * 60 * 1000); // Two Months
@@ -143,7 +175,142 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.MODIFY_CHAT_NAME, true);
 		configBool.put(TownySettings.Bool.DELETE_OLD_RESIDENTS, false);
 		configBool.put(TownySettings.Bool.DEBUG_MODE, true);
+		
+		newTownLevel(0, "", " Town", "Mayor ", "", 16);
+		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
 	}
+	
+	public static void newTownLevel(int numResidents,
+			String namePrefix, String namePostfix,
+			String mayorPrefix, String mayorPostfix, 
+			int townBlockLimit) {
+		ConcurrentHashMap<TownySettings.TownLevel,Object> m = new ConcurrentHashMap<TownySettings.TownLevel,Object>();
+		m.put(TownySettings.TownLevel.NAME_PREFIX, namePrefix);
+		m.put(TownySettings.TownLevel.NAME_POSTFIX, namePostfix);
+		m.put(TownySettings.TownLevel.MAYOR_PREFIX, mayorPrefix);
+		m.put(TownySettings.TownLevel.MAYOR_POSTFIX, mayorPostfix);
+		m.put(TownySettings.TownLevel.TOWN_BLOCK_LIMIT, townBlockLimit);
+		configTownLevel.put(numResidents, m);
+	}
+	
+	public static void newNationLevel(int numResidents, 
+			String namePrefix, String namePostfix, 
+			String capitalPrefix, String capitalPostfix,
+			String kingPrefix, String kingPostfix) {
+		ConcurrentHashMap<TownySettings.NationLevel,Object> m = new ConcurrentHashMap<TownySettings.NationLevel,Object>();
+		m.put(TownySettings.NationLevel.NAME_PREFIX, namePrefix);
+		m.put(TownySettings.NationLevel.NAME_POSTFIX, namePostfix);
+		m.put(TownySettings.NationLevel.CAPITAL_PREFIX, capitalPrefix);
+		m.put(TownySettings.NationLevel.CAPITAL_POSTFIX, capitalPostfix);
+		m.put(TownySettings.NationLevel.KING_PREFIX, kingPrefix);
+		m.put(TownySettings.NationLevel.KING_POSTFIX, kingPostfix);
+		configNationLevel.put(numResidents, m);
+	}
+	
+	/**
+	 * Loads town levels. Level format ignores lines starting with #.
+	 * Each line is considered a level. Each level is loaded as such:
+	 * 
+	 * numResidents:namePrefix:namePostfix:mayorPrefix:mayorPostfix:townBlockLimit
+	 * 
+	 * townBlockLimit is a required field even if using a calculated ratio.
+	 * 
+	 * @param filepath
+	 * @throws IOException 
+	 */
+	
+	public static void loadTownLevelConfig(String filepath) throws IOException {
+		String line;
+		String[] tokens;
+		BufferedReader fin = new BufferedReader(new FileReader(filepath));
+        while ((line = fin.readLine()) != null)
+			if (!line.startsWith("#")) { //Ignore comment lines
+                tokens = line.split(":");
+                if (tokens.length == 6)
+					try {
+                        int numResidents = Integer.parseInt(tokens[0]);
+                        int townBlockLimit = Integer.parseInt(tokens[5]);
+                        newTownLevel(numResidents, tokens[1], tokens[2], tokens[3], tokens[4], townBlockLimit);
+						if (getDebug())
+							System.out.println("[Towny] Added town level: "+numResidents+" "+Arrays.toString(getTownLevel(numResidents).values().toArray()));
+                    } catch (Exception e) {
+                    	System.out.println("[Towny] Input Error: Town level ignored: " + line);
+                    }
+            }
+        fin.close();
+	}
+	
+	/**
+	 * Loads nation levels. Level format ignores lines starting with #.
+	 * Each line is considered a level. Each level is loaded as such:
+	 * 
+	 * numResidents:namePrefix:namePostfix:capitalPrefix:capitalPostfix:kingPrefix:kingPostfix
+	 * 
+	 * @param filepath
+	 * @throws IOException 
+	 */
+	
+	public static void loadNationLevelConfig(String filepath) throws IOException {
+		String line;
+		String[] tokens;
+		BufferedReader fin = new BufferedReader(new FileReader(filepath));
+        while ((line = fin.readLine()) != null)
+			if (!line.startsWith("#")) { //Ignore comment lines
+                tokens = line.split(":");
+                if (tokens.length == 7)
+					try {
+                        int numResidents = Integer.parseInt(tokens[0]);
+                        newNationLevel(numResidents, tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]);
+						if (getDebug())
+							System.out.println("[Towny] Added town level: "+numResidents+" "+Arrays.toString(getNationLevel(numResidents).values().toArray()));
+                    } catch (Exception e) {
+                    	System.out.println("[Towny] Input Error: Town level ignored: " + line);
+                    }
+            }
+        fin.close();
+	}
+	
+	public static Map<TownySettings.TownLevel,Object> getTownLevel(int numResidents) {
+		return configTownLevel.get(numResidents);
+	}
+	
+	public static Map<TownySettings.NationLevel,Object> getNationLevel(int numResidents) {
+		return configNationLevel.get(numResidents);
+	}
+	
+	public static Map<TownySettings.TownLevel,Object> getTownLevel(Town town) {
+		return getTownLevel(calcTownLevel(town));
+	}
+	
+	public static Map<TownySettings.NationLevel,Object> getNationLevel(Nation nation) {
+		return getNationLevel(calcNationLevel(nation));
+	}
+	
+	//TODO: more efficient way
+	public static int calcTownLevel(Town town) {
+		int n = town.getNumResidents();
+		Map<TownySettings.TownLevel,Object> townLevel;
+        while (n >= 0) {
+        	townLevel = getTownLevel(n);
+            if (townLevel != null)
+                break;
+            n--;
+        }
+        return n;
+    }
+	
+	//TODO: more efficient way
+	public static int calcNationLevel(Nation nation) {
+		int n = nation.getNumResidents();
+		Map<TownySettings.NationLevel,Object> nationLevel;
+        while (n >= 0) {
+            nationLevel = getNationLevel(n);
+            if (nationLevel != null)
+                break;
+            n--;
+        }
+        return n;
+    }
 	
 	public static HashMap<Object,Object> getMap() {
 		HashMap<Object,Object> out = new HashMap<Object,Object>();
@@ -154,18 +321,18 @@ public class TownySettings {
 		return out;
 	}
 	
-	public static void load(String filepath) throws IOException {
-		KeyValueFile propertiesFile = new KeyValueFile(filepath);
+	public static void loadConfig(String filepath) throws IOException {
+		KeyValueFile kvFile = new KeyValueFile(filepath);
 		for (TownySettings.StrArr key : TownySettings.StrArr.values()) {
-			String line = propertiesFile.getString(key.toString().toLowerCase(), StringMgmt.join(getStrArr(key), ","));
+			String line = kvFile.getString(key.toString().toLowerCase(), StringMgmt.join(getStrArr(key), ","));
 			configStrArr.put(key, line.split(","));
 		}
 		for (TownySettings.Str key : TownySettings.Str.values())
-			configStr.put(key, propertiesFile.getString(key.toString().toLowerCase(), getString(key)));
+			configStr.put(key, kvFile.getString(key.toString().toLowerCase(), getString(key)));
 		for (TownySettings.Int key : TownySettings.Int.values())
-			configInt.put(key, propertiesFile.getInt(key.toString().toLowerCase(), getInt(key)));
+			configInt.put(key, kvFile.getInt(key.toString().toLowerCase(), getInt(key)));
 		for (TownySettings.Bool key : TownySettings.Bool.values())
-			configBool.put(key, propertiesFile.getBoolean(key.toString().toLowerCase(), getBoolean(key)));
+			configBool.put(key, kvFile.getBoolean(key.toString().toLowerCase(), getBoolean(key)));
 	}
 	
 	public static Integer getInt(TownySettings.Int key) {
@@ -276,10 +443,6 @@ public class TownySettings {
 		return getString(TownySettings.Str.DEFAULT_TOWN_POSTFIX);
 	}
 
-	public static String getFlatFileFolder() {
-		return getString(TownySettings.Str.FOLDER_NAME);
-	}
-
 	public static String getLoadDatabase() {
 		return getString(TownySettings.Str.LOAD_DATABASE);
 	}
@@ -299,7 +462,7 @@ public class TownySettings {
 	public static int getMaxTownBlocks(Town town) {
 		int ratio = getInt(TownySettings.Int.TOWN_BLOCK_RATIO);
 		if (ratio == 0)
-			return 64; //TODO: calculate level
+			return town.getBonusBlocks() + (Integer)getTownLevel(town).get(TownySettings.TownLevel.TOWN_BLOCK_LIMIT);
 		else
 			return town.getNumResidents()*ratio;
 	}
@@ -384,6 +547,18 @@ public class TownySettings {
 		return parseString(String.format(getString(TownySettings.Str.MSG_WAR_FORFEITED), who));
 	}
 
+	public static String[] getWarTimeLoseTownBlockMsg(WorldCoord worldCoord) {
+		return getWarTimeLoseTownBlockMsg(worldCoord, "");
+	}
+	
+	public static String[] getWarTimeLoseTownBlockMsg(WorldCoord worldCoord, String town) {
+		return parseString(String.format(getString(TownySettings.Str.MSG_WAR_LOSE_BLOCK), worldCoord.toString(), town));
+	}
+	
+	public static String[] getNewDayMsg() {
+		return parseString(getString(TownySettings.Str.MSG_NEW_DAY));
+	}
+
 	public static String getDefaultTownName() {
 		return getString(TownySettings.Str.DEFAULT_TOWN_NAME);
 	}
@@ -406,5 +581,15 @@ public class TownySettings {
 	
 	public static String getMayorPostfix() {
 		return getString(TownySettings.Str.DEFAULT_MAYOR_POSTFIX);
+	}
+	
+	/************************************************************/
+	
+	//TODO: better way to set values besides passing the filepath as a param
+	
+	public static void setBoolean(String filepath, TownySettings.Bool key, Boolean value) {
+		KeyValueFile kvFile = new KeyValueFile(filepath);
+		configBool.put(key, value);
+		kvFile.setBoolean(key.toString().toLowerCase(), getBoolean(key));
 	}
 }

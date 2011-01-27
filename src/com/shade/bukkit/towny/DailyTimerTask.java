@@ -10,6 +10,8 @@ public class DailyTimerTask extends TownyTimerTask {
 
 	@Override
 	public void run() {
+		universe.sendGlobalMessage(TownySettings.getNewDayMsg());
+		
 		// Collect taxes
 		try {
 			universe.collectTownTaxes();

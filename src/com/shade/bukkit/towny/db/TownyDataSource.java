@@ -33,20 +33,9 @@ public abstract class TownyDataSource {
 	public void initialize(Towny plugin, TownyUniverse universe) {
 		this.universe = universe;
 		this.plugin = plugin;
-
-		if (TownySettings.isFirstRun())
-			firstRun = true;
-
-		if (firstRun)
-			firstRun();
 	}
-
-	private void firstRun() {
-		System.out.println("------------------------------");
-		System.out.println("[Towny] Detected first run");
-		System.out.println("[Towny] Registering default");
-		System.out.println("------------------------------");
-	}
+	
+	
 
 	public boolean loadAll() {
 		return loadWorldList() && loadNationList() && loadTownList()

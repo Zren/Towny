@@ -188,6 +188,13 @@ public class Nation extends TownyIConomyObject {
 	public int getNumTowns() {
 		return towns.size();
 	}
+	
+	public int getNumResidents() {
+		int numResidents = 0;
+		for (Town town : getTowns())
+			numResidents += town.getNumResidents();
+		return numResidents;
+	}
 
 	public void removeTown(Town town) throws EmptyNationException, NotRegisteredException {
 		if (!hasTown(town))

@@ -27,7 +27,7 @@ public class WarTimerTask extends TownyTimerTask {
 				warEvent.sendStats(player);
 			warEvent.getWarTimer().cancel();
 			universe.setWarEvent(null);
-			universe.getPlugin().clearPlayerCache();
+			universe.getPlugin().updateCache();
 			if (TownySettings.getDebug())
 				System.out.println("[Towny] [War] Debug: End");
 			return;
