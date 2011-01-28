@@ -1888,6 +1888,7 @@ public class TownyPlayerListener extends PlayerListener {
 			for (int tbx = pos.getX() - 3; tbx <= pos.getX() + 3; tbx++) {
 				try {
 					TownBlock townblock = world.getTownBlock(tbx, tby);
+					//TODO: possibly claim outside of towns
 					if (!townblock.hasTown())
 						throw new TownyException();
 					if (x == 3 && y == 15)
@@ -1895,8 +1896,12 @@ public class TownyPlayerListener extends PlayerListener {
 						townyMap[y][x] = Colors.Gold;
 					else if (hasTown) {
 						if (resident.getTown() == townblock.getTown())
-							// own town
-							townyMap[y][x] = Colors.LightGreen;
+							if (resident == townblock.getResident())
+								//own plot
+								townyMap[y][x] = Colors.Yellow;
+							else
+								// own town
+								townyMap[y][x] = Colors.LightGreen;
 						else if (resident.hasNation()) {
 							if (resident.getTown().getNation().hasTown(townblock.getTown()))
 								// towns
@@ -1950,6 +1955,7 @@ public class TownyPlayerListener extends PlayerListener {
 				"  " + Colors.Gray + "-" + Colors.LightGray + " = Unclaimed",
 				"  " + Colors.Gray + "+" + Colors.LightGray + " = Claimed",
 				"  " + Colors.LightGreen + "+" + Colors.LightGray + " = Your town",
+				"  " + Colors.Yellow + "+" + Colors.LightGray + " = Your plot",
 				"  " + Colors.Green + "+" + Colors.LightGray + " = Ally",
 				"  " + Colors.Red + "+" + Colors.LightGray + " = Enemy",
 				"  " + Colors.White + "+" + Colors.LightGray + " = Other"
