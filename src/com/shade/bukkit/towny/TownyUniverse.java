@@ -123,7 +123,11 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public boolean hasTown(String name) {
-		return residents.containsKey(name.toLowerCase());
+		return towns.containsKey(name.toLowerCase());
+	}
+	
+	public boolean hasNation(String name) {
+		return nations.containsKey(name.toLowerCase());
 	}
 
 	public void renameTown(Town town, String newName) throws AlreadyRegisteredException {
@@ -138,6 +142,20 @@ public class TownyUniverse extends TownyObject {
 		town.setName(newName);
 		getDataSource().saveTown(town);
 		getDataSource().saveTownList();
+	}
+	
+	public void renameNation(Nation nation, String newName) throws AlreadyRegisteredException {
+		if (hasNation(newName))
+			throw new AlreadyRegisteredException("The nation " + newName + " is already in use.");
+
+		// TODO: Delete/rename any invites.
+
+		String oldName = nation.getName();
+		nations.put(newName.toLowerCase(), nation);
+		nations.remove(oldName.toLowerCase());
+		nation.setName(newName);
+		getDataSource().saveNation(nation);
+		getDataSource().saveNationList();
 	}
 
 	public Resident getResident(String name) throws NotRegisteredException {
@@ -208,6 +226,11 @@ public class TownyUniverse extends TownyObject {
 
 	public void sendTownMessage(Town town, String line) {
 		for (Player player : getOnlinePlayers(town))
+			player.sendMessage(line);
+	}
+	
+	public void sendNationMessage(Nation nation, String line) {
+		for (Player player : getOnlinePlayers(nation))
 			player.sendMessage(line);
 	}
 

@@ -456,6 +456,9 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	public boolean residentClaim(Resident resident, TownyWorld world, Coord coord) throws TownyException, IConomyException {
+		if (plugin.getTownyUniverse().isWarTime())
+			throw new TownyException("You cannot do this when the world is at war.");
+		
 		if (resident.hasTown())
 			try {
 				TownBlock townBlock = world.getTownBlock(coord);
@@ -644,6 +647,9 @@ public class TownyPlayerListener extends PlayerListener {
 	public void newTown(Player player, String name, String mayorName) {
 		TownyUniverse universe = plugin.getTownyUniverse();
 		try {
+			if (universe.isWarTime())
+				throw new TownyException("You cannot do this when the world is at war.");
+			
 			Resident resident = universe.getResident(mayorName);
 			if (resident.hasTown())
 				throw new TownyException(resident.getName() + " already belongs to a town.");
@@ -672,6 +678,8 @@ public class TownyPlayerListener extends PlayerListener {
 			universe.getDataSource().saveWorld(world);
 			universe.getDataSource().saveTownList();
 
+			plugin.updateCache();
+			
 			universe.sendGlobalMessage(TownySettings.getNewTownMsg(player.getName(), town.getName()));
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
@@ -685,6 +693,10 @@ public class TownyPlayerListener extends PlayerListener {
 		Resident resident;
 		Town town;
 		try {
+			//TODO: Allow leaving town during war.
+			if (plugin.getTownyUniverse().isWarTime()) 
+				throw new TownyException("You cannot do this when the world is at war.");
+			
 			resident = plugin.getTownyUniverse().getResident(player.getName());
 			town = resident.getTown();
 		} catch (TownyException x) {
@@ -700,6 +712,8 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.sendErrorMsg(player, x.getError());
 			return;
 		}
+		
+		plugin.updateCache();
 		
 		plugin.getTownyUniverse().sendTownMessage(town, resident.getName() + " left town");
 		plugin.sendMsg(player, "You left "+town.getName()+".");
@@ -729,6 +743,8 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 
 		townAddResidents(player, town, getOnlineResidents(player, names));
+		
+		plugin.updateCache();
 	}
 
 	// TODO: Move somewhere more useful
@@ -799,6 +815,8 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 
 		townKickResidents(player, resident, town, getOnlineResidents(player, names));
+		
+		plugin.updateCache();
 	}
 
 	public void townKickResidents(Player player, Resident resident, Town town, List<Resident> kicking) {
@@ -962,6 +980,9 @@ public class TownyPlayerListener extends PlayerListener {
 			Town town;
 			TownyWorld world;
 			try {
+				if (plugin.getTownyUniverse().isWarTime())
+					throw new TownyException("You cannot do this when the world is at war.");
+				
 				resident = plugin.getTownyUniverse().getResident(player.getName());
 				town = resident.getTown();
 				if (!resident.isMayor())
@@ -984,6 +1005,8 @@ public class TownyPlayerListener extends PlayerListener {
 
 					plugin.getTownyUniverse().getDataSource().saveTown(town);
 					plugin.getTownyUniverse().getDataSource().saveWorld(world);
+					
+					plugin.updateCache();
 				} catch (TownyException x) {
 					plugin.sendErrorMsg(player, x.getError());
 				}
@@ -991,7 +1014,8 @@ public class TownyPlayerListener extends PlayerListener {
 				String[] newSplit = new String[split.length - 1];
 				System.arraycopy(split, 1, newSplit, 0, split.length - 1);
 				townClaimRect(player, newSplit, resident, town, world);
-
+				
+				plugin.updateCache();
 			} else if (split[0].equalsIgnoreCase("auto")) {
 				// TODO: Attempt to claim edge blocks recursively.
 			}
@@ -1188,6 +1212,9 @@ public class TownyPlayerListener extends PlayerListener {
 				Coord coord = Coord.parseCoord(player);
 				TownBlock townBlock;
 				try {
+					if (plugin.getTownyUniverse().isWarTime())
+						throw new TownyException("You cannot do this when the world is at war.");
+					
 					townBlock = plugin.getTownyUniverse().getWorld(player.getWorld().getName()).getTownBlock(coord);
 					town.setHomeBlock(townBlock);
 					plugin.sendMsg(player, "Successfully changed town's home block to " + coord.toString());
@@ -1367,6 +1394,10 @@ public class TownyPlayerListener extends PlayerListener {
 			String[] newSplit = new String[split.length - 1];
 			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
 			nationAssistant(player, newSplit);
+		} else if (split[0].equalsIgnoreCase("set")) {
+			String[] newSplit = new String[split.length - 1];
+			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			nationSet(player, newSplit);
 		} else 
 			try {
 				Nation nation = plugin.getTownyUniverse().getNation(split[0]);
@@ -1391,7 +1422,9 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "list", "List all nations"));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "leave", "Leave your nation"));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove]", "Leave your nation"));
-		// TODO: player.sendMessage(ChatTools.formatCommand("King", "/nation", "ally [+/n/-] [nation]", "Set you alliance."));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "set [] .. []", ""));
+		// TODO: player.sendMessage(ChatTools.formatCommand("King", "/nation", "ally [add/remove] [nation]", "Set you alliance."));
+		// TODO: player.sendMessage(ChatTools.formatCommand("King", "/nation", "enemy [add/remove] [nation]", "Set you enemys."));
 		player.sendMessage(ChatTools.formatCommand(newTownReq, "/nation", "new [nation] *[capital]", "Create a new nation"));
 		// TODO: player.sendMessage(ChatTools.formatCommand("Admin", "/nation", "delete [nation]", ""));
 	}
@@ -1659,6 +1692,82 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.getTownyUniverse().getDataSource().saveNation(nation);
 		} else
 			plugin.sendErrorMsg(player, "Non of those names were valid.");
+	}
+	
+	public void nationSet(Player player, String[] split) {
+		if (split.length == 0) {
+			player.sendMessage(ChatTools.formatTitle("/nation set"));
+			player.sendMessage(ChatTools.formatCommand("", "/nation set", "king [resident] *[nation]", ""));
+			//TODO: player.sendMessage(ChatTools.formatCommand("", "/nation set", "capital [town] *[nation]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/nation set", "taxes [$]", ""));
+		} else {
+			Resident resident;
+			Nation nation;
+			try {
+				resident = plugin.getTownyUniverse().getResident(player.getName());
+				nation = resident.getTown().getNation();
+				if (!resident.isKing())
+					if (!nation.hasAssistant(resident))
+						throw new TownyException("You are not the king or an assistant.");
+			} catch (TownyException x) {
+				plugin.sendErrorMsg(player, x.getError());
+				return;
+			}
+
+			// TODO: Let admin's call a subfunction of this.
+			if (split[0].equalsIgnoreCase("king")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set king Dumbo");
+				else
+					try {
+						Resident newKing = plugin.getTownyUniverse().getResident(split[1]);
+						nation.setKing(newKing);
+						plugin.getTownyUniverse().sendNationMessage(nation, TownySettings.getNewKingMsg(newKing.getName()));
+					} catch (TownyException e) {
+						plugin.sendErrorMsg(player, e.getError());
+					}
+			} else if (split[0].equalsIgnoreCase("taxes")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set taxes 70");
+				else
+					try {
+						nation.setTaxes(Integer.parseInt(split[1]));
+						plugin.getTownyUniverse().sendNationMessage(nation, player.getName() + " has set the taxes at " + split[1]);
+					} catch (NumberFormatException e) {
+						plugin.sendErrorMsg(player, "Taxes must be an interger.");
+					}
+			} else if (split[0].equalsIgnoreCase("name")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set name Plutoria");
+				else
+					nationRename(player, nation, split[1]);
+			} else if (split[0].equalsIgnoreCase("neutral")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /town set neutral [on/off]");
+				else
+					try {
+						nation.setNeutral(parseOnOff(split[1]));
+						plugin.sendMsg(player, "Successfully changed nation's neutrality.");
+						plugin.getTownyUniverse().sendNationMessage(nation, "You nation is now" + (nation.isNeutral() ? Colors.Green : Colors.Red + " not") + " neutral.");
+					} catch (Exception e) {
+					}
+			} else {
+				plugin.sendErrorMsg(player, "Invalid nation property.");
+				return;
+			}
+
+			plugin.getTownyUniverse().getDataSource().saveNation(nation);
+		}
+	}
+	
+	public void nationRename(Player player, Nation nation, String newName) {
+		try {
+			plugin.getTownyUniverse().renameNation(nation, newName);
+			plugin.getTownyUniverse().sendNationMessage(nation, player.getName() + " renamed nation to " + newName);
+		} catch (TownyException e) {
+			plugin.sendErrorMsg(player, e.getError());
+		}
+
 	}
 
 	public void parseTownyCommand(Player player, String[] split) {

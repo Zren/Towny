@@ -112,15 +112,28 @@ public class War {
 		return warZone.containsKey(worldCoord);
 	}
 
-	public void damage(TownBlock townBlock) throws NotRegisteredException {
+	public void townScored(Town town, int n) {
+		townScores.put(town, townScores.get(town) + n);
+		universe.sendGlobalMessage(TownySettings.getWarTimeScoreMsg(town, n));
+	}
+	
+	public void damage(Town attacker, TownBlock townBlock) throws NotRegisteredException {
 		WorldCoord worldCoord = townBlock.getWorldCoord();
 		int hp = warZone.get(worldCoord) - 1;
 		if (hp > 0)
 			warZone.put(worldCoord, hp);
 		else
-			remove(townBlock);
+			remove(attacker, townBlock);
 	}
-
+	
+	public void remove(Town attacker, TownBlock townBlock) throws NotRegisteredException {
+		townScored(attacker, TownySettings.getWarPointsForTownBlock());
+		if (townBlock.getTown().isHomeBlock(townBlock))
+			remove(townBlock.getTown());
+		else
+			remove(townBlock.getWorldCoord());
+	}
+	
 	public void remove(TownBlock townBlock) throws NotRegisteredException {
 		if (townBlock.getTown().isHomeBlock(townBlock))
 			remove(townBlock.getTown());
@@ -159,8 +172,27 @@ public class War {
 		checkEnd();
 	}
 	
+	public void remove(Town attacker, Nation nation) {
+		townScored(attacker, TownySettings.getWarPointsForNation());
+		warringNations.remove(nation);
+	}
+	
 	public void remove(Nation nation) {
 		warringNations.remove(nation);
+	}
+	
+	
+	public void remove(Town attacker, Town town) throws NotRegisteredException {
+		townScored(attacker, TownySettings.getWarPointsForTown());
+		
+		for (TownBlock townBlock : town.getTownBlocks())
+			remove(townBlock.getWorldCoord());
+		warringTowns.remove(town);
+		try {
+			if (!townsLeft(town.getNation()))
+				remove(town.getNation());
+		} catch (NotRegisteredException e) {
+		}
 	}
 	
 	public void remove(Town town) {
@@ -252,5 +284,9 @@ public class War {
 					universe.getFormatter().getFormattedName(town),
 					(Integer)kv.value));
 		}
+	}
+	
+	public boolean isWarringNation(Nation nation) {
+		return warringNations.contains(nation);
 	}
 }

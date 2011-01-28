@@ -43,10 +43,16 @@ public class WarTimerTask extends TownyTimerTask {
 					if (nation.isNeutral())
 						continue;
 					
+					if (!warEvent.isWarringNation(nation))
+						continue;
+					
 					//TODO: Cache player coord & townblock
 					
 					WorldCoord worldCoord = new WorldCoord(universe.getWorld(player.getWorld().getName()), Coord.parseCoord(player));
 					if (!warEvent.isWarZone(worldCoord))
+						continue;
+					
+					if (player.getLocation().getBlockY() < TownySettings.getMinWarHeight())
 						continue;
 					
 					TownBlock townBlock = universe.getWorld(player.getWorld().getName()).getTownBlock(worldCoord);
@@ -54,7 +60,7 @@ public class WarTimerTask extends TownyTimerTask {
 						continue;
 					
 					//Enemy nation
-					warEvent.damage(townBlock);
+					warEvent.damage(resident.getTown(), townBlock);
 				}
 			} catch(NotRegisteredException e) {
 				continue;

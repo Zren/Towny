@@ -259,4 +259,19 @@ public class Nation extends TownyIConomyObject {
 	public boolean isNeutral() {
 		return neutral;
 	}
+	
+	public void setKing(Resident king) throws TownyException {
+		if (!hasResident(king))
+			throw new TownyException("New King doesn't belong to this nation.");
+		if (!king.isMayor())
+			throw new TownyException("New King is not a mayor.");
+		setCapital(king.getTown());
+	}
+	
+	public boolean hasResident(Resident resident) {
+		for (Town town : getTowns())
+			if (town.hasResident(resident))
+				return true;
+		return false;
+	}
 }

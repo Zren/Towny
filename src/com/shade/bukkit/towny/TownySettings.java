@@ -613,7 +613,7 @@ public class TownySettings {
 		}
 	}
 	
-	/************************************************************/
+	
 	
 	//TODO: better way to set values besides passing the filepath as a param
 	
@@ -621,5 +621,29 @@ public class TownySettings {
 		KeyValueFile kvFile = new KeyValueFile(filepath);
 		configBool.put(key, value);
 		kvFile.setBoolean(key.toString().toLowerCase(), getBoolean(key));
+	}
+	
+	/************************************************************/
+	
+	//TODO:
+	
+	public static int getWarPointsForTownBlock() {
+		return 1;
+	}
+	
+	public static int getWarPointsForTown() {
+		return 10;
+	}
+	
+	public static int getWarPointsForNation() {
+		return 100;
+	}
+
+	public static String[] getWarTimeScoreMsg(Town town, int n) {
+		return parseString(String.format("[War] %s scored %d points!", town.getName(), n));
+	}
+	
+	public static int getMinWarHeight() {
+		return 63;
 	}
 }
