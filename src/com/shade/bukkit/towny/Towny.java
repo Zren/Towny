@@ -32,18 +32,17 @@ import com.shade.bukkit.util.Colors;
  * Commenting
  * Unclaim townblocks
  * flatfile-old data source and replace getDataSource() with a manager class
- * log chat
+ * log nation/town chat
  * permissions
  * update cache when adding/removing people
- * fix chat messages to not edit display name but format string
  * save/load Nation.isNeutral, and make a /nation set command
  * prevent command use during war
  * allies
  * replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
- * access and withdraw from bank accounts
- * more iconomy prices (new nation, claim block, etc)
+ * withdraw from nation bank accounts
+ * deposit for town/nation
  * delete townyobject
- * update map for resident owned plots (yellow?)
+ * when a town/nation is detroyed. What happens to the money?
  * 
  * iconomy
  * plot taxe & resident tax

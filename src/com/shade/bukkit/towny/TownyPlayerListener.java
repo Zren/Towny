@@ -1183,6 +1183,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "perm ...", "'/town set perm' for help"));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "pvp [on/off]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "taxes [$]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/town set", "plottax [$]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "plotprice [$]", ""));
 		} else {
 			Resident resident;
@@ -1226,9 +1227,19 @@ public class TownyPlayerListener extends PlayerListener {
 				else
 					try {
 						town.setTaxes(Integer.parseInt(split[1]));
-						plugin.getTownyUniverse().sendTownMessage(town, player.getName() + " has set the taxes at " + split[1]);
+						plugin.getTownyUniverse().sendTownMessage(town, player.getName() + " has set the daily resident tax at " + split[1]);
 					} catch (NumberFormatException e) {
 						plugin.sendErrorMsg(player, "Taxes must be an interger.");
+					}
+			} else if (split[0].equalsIgnoreCase("plottax")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /town set plottax 10");
+				else
+					try {
+						town.setPlotTax(Integer.parseInt(split[1]));
+						plugin.getTownyUniverse().sendTownMessage(town, player.getName() + " has set the daily tax of plots at " + split[1]);
+					} catch (NumberFormatException e) {
+						plugin.sendErrorMsg(player, "The tax must be an interger.");
 					}
 			} else if (split[0].equalsIgnoreCase("plotprice")) {
 				if (split.length < 2)
