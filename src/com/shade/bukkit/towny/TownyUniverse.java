@@ -466,13 +466,29 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void collectTownTaxe(Town town) throws IConomyException {
+		//Resident Tax
+		for (Resident resident : town.getResidents())
+			if (!town.hasAssistant(resident) || !town.isMayor(resident))
+				if (!resident.pay(town.getTaxes(), town)) {
+					sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and was kicked from town."));
+					try {
+						town.removeResident(resident);
+					} catch (NotRegisteredException e) {
+					} catch (EmptyTownException e) {
+					}
+					getDataSource().saveResident(resident);
+					getDataSource().saveTown(town);
+				}
+		
+		//Plot Tax
 		for (TownBlock townBlock : town.getTownBlocks()) {
 			if (!townBlock.hasResident())
 				continue;
 			try {
 				Resident resident = townBlock.getResident();
 				if (!town.hasAssistant(resident) || !town.isMayor(resident))
-					if (!resident.pay(town.getTaxes(), town)) {
+					if (!resident.pay(town.getPlotTax(), town)) {
+						sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and lost ownership over a plot."));
 						townBlock.setResident(null);
 						getDataSource().saveResident(resident);
 						getDataSource().saveWorld(townBlock.getWorld());

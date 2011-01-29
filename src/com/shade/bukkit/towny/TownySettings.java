@@ -53,7 +53,9 @@ public class TownySettings {
 		MSG_WAR_ELIMINATED,
 		MSG_WAR_FORFEITED,
 		MSG_WAR_LOSE_BLOCK,
-		MSG_NEW_DAY
+		MSG_WAR_SCORE,
+		MSG_NEW_DAY,
+		MSG_COULDNT_PAY_TAXES
 	};
 	// Integer
 	enum Int {
@@ -66,7 +68,11 @@ public class TownySettings {
 		PRICE_NEW_NATION,
 		WARTIME_WARNING_DELAY,
 		WARTIME_TOWN_BLOCK_HP,
-		WARTIME_HOME_BLOCK_HP
+		WARTIME_HOME_BLOCK_HP,
+		WARTIME_POINTS_TOWNBLOCK,
+		WARTIME_POINTS_TOWN,
+		WARTIME_POINTS_NATION,
+		WARTIME_MIN_HEIGHT
 	};
 	// Boolean
 	enum Bool {
@@ -151,7 +157,9 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_WAR_ELIMINATED, "&6[Towny] &b%s was eliminated from the war.");
 		configStr.put(TownySettings.Str.MSG_WAR_FORFEITED, "&6[Towny] &b%s forfeited.");
 		configStr.put(TownySettings.Str.MSG_WAR_LOSE_BLOCK, "&6[Towny] &b(%s) belonging to %s has fallen.");
+		configStr.put(TownySettings.Str.MSG_WAR_SCORE, "&6[War] &b%s scored %d points!");
 		configStr.put(TownySettings.Str.MSG_NEW_DAY, "&6[Towny] &bA new day is here! Taxes and rent has been collected.");
+		configStr.put(TownySettings.Str.MSG_COULDNT_PAY_TAXES, "&6[Towny] &b%s couldn't pay taxes%s");
 		// Integer
 		configInt.put(TownySettings.Int.INACTIVE_AFTER_TIME, 24 * 60 * 60 * 1000); // 1 Day
 		configInt.put(TownySettings.Int.DELETED_AFTER_TIME, 60 * 24 * 60 * 60 * 1000); // Two Months
@@ -163,6 +171,10 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.WARTIME_WARNING_DELAY, 30); // 30 seconds 
 		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_HP, 60); // 1 minute
 		configInt.put(TownySettings.Int.WARTIME_HOME_BLOCK_HP, 120); // 2 minutes
+		configInt.put(TownySettings.Int.WARTIME_POINTS_TOWNBLOCK, 1);
+		configInt.put(TownySettings.Int.WARTIME_POINTS_TOWN, 10);
+		configInt.put(TownySettings.Int.WARTIME_POINTS_NATION, 100);
+		configInt.put(TownySettings.Int.WARTIME_MIN_HEIGHT, 60);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -613,7 +625,31 @@ public class TownySettings {
 		}
 	}
 	
+	public static int getWarPointsForTownBlock() {
+		return getInt(TownySettings.Int.WARTIME_POINTS_TOWNBLOCK);
+	}
 	
+	public static int getWarPointsForTown() {
+		return getInt(TownySettings.Int.WARTIME_POINTS_TOWN);
+	}
+	
+	public static int getWarPointsForNation() {
+		return getInt(TownySettings.Int.WARTIME_POINTS_NATION);
+	}
+
+	public static String[] getWarTimeScoreMsg(Town town, int n) {
+		return parseString(String.format(getString(TownySettings.Str.MSG_WAR_SCORE), town.getName(), n));
+	}
+	
+	public static int getMinWarHeight() {
+		return getInt(TownySettings.Int.WARTIME_MIN_HEIGHT);
+	}
+	
+	public static String[] getCouldntPayTaxesMsg(TownyObject obj, String reaction) {
+		return parseString(String.format(getString(TownySettings.Str.MSG_COULDNT_PAY_TAXES), reaction));
+	}
+	
+	/************************************************************/
 	
 	//TODO: better way to set values besides passing the filepath as a param
 	
@@ -627,23 +663,6 @@ public class TownySettings {
 	
 	//TODO:
 	
-	public static int getWarPointsForTownBlock() {
-		return 1;
-	}
 	
-	public static int getWarPointsForTown() {
-		return 10;
-	}
 	
-	public static int getWarPointsForNation() {
-		return 100;
-	}
-
-	public static String[] getWarTimeScoreMsg(Town town, int n) {
-		return parseString(String.format("[War] %s scored %d points!", town.getName(), n));
-	}
-	
-	public static int getMinWarHeight() {
-		return 63;
-	}
 }

@@ -249,6 +249,14 @@ public class TownyFlatFileSource extends TownyDataSource {
 					} catch (Exception e) {
 						town.setTaxes(0);
 					}
+				
+				line = kvFile.get("plotTax");
+				if (line != null)
+					try {
+						town.setPlotTax(Integer.parseInt(line));
+					} catch (Exception e) {
+						town.setPlotTax(0);
+					}
 
 				line = kvFile.get("pvp");
 				if (line != null)
@@ -378,6 +386,13 @@ public class TownyFlatFileSource extends TownyDataSource {
 						nation.setTaxes(Integer.parseInt(line));
 					} catch (Exception e) {
 						nation.setTaxes(0);
+					}
+					
+				line = kvFile.get("neutral");
+				if (line != null)
+					try {
+						nation.setNeutral(Boolean.parseBoolean(line));
+					} catch (Exception e) {
 					}
 
 			} catch (Exception e) {
@@ -594,16 +609,15 @@ public class TownyFlatFileSource extends TownyDataSource {
 			// Town Board
 			fout.write("townBoard=" + town.getTownBoard() + newLine);
 			// Town Protection
-			fout.write("protectionStatus=" + town.getPermissions().toString()
-					+ newLine);
+			fout.write("protectionStatus=" + town.getPermissions().toString() + newLine);
 			// Bonus Blocks
-			fout.write("bonusBlocks=" + Integer.toString(town.getBonusBlocks())
-					+ newLine);
+			fout.write("bonusBlocks=" + Integer.toString(town.getBonusBlocks()) + newLine);
 			// Taxes
 			fout.write("taxes=" + Integer.toString(town.getTaxes()) + newLine);
 			// Plot Price
-			fout.write("plotPrice=" + Integer.toString(town.getPlotPrice())
-					+ newLine);
+			fout.write("plotPrice=" + Integer.toString(town.getPlotPrice()) + newLine);
+			// Plot Tax
+			fout.write("plotTax=" + Integer.toString(town.getPlotTax()) + newLine);
 			// PVP
 			fout.write("pvp=" + Boolean.toString(town.isPVP()) + newLine);
 			// Mobs
@@ -659,6 +673,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.write(newLine);
 			// Taxes
 			fout.write("taxes=" + Integer.toString(nation.getTaxes()) + newLine);
+			// Neutral
+			fout.write("neutral=" + Boolean.toString(nation.isNeutral()) + newLine);
 
 			fout.close();
 		} catch (Exception e) {

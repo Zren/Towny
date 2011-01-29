@@ -13,7 +13,7 @@ public class Town extends TownBlockOwner implements Walled {
 	private List<Resident> assistants = new ArrayList<Resident>();
 	private List<WallSection> wallSections = new ArrayList<WallSection>();
 	private Resident mayor;
-	private int bonusBlocks, taxes, plotPrice;
+	private int bonusBlocks, taxes, plotPrice, plotTax;
 	private Nation nation;
 	private boolean isPVP, hasMobs;
 	private String townBoard = "/town set board [msg]";
@@ -23,6 +23,12 @@ public class Town extends TownBlockOwner implements Walled {
 
 	public Town(String name) {
 		setName(name);
+		bonusBlocks = 0;
+		taxes = 0;
+		plotTax = 0;
+		plotPrice = 0;
+		isPVP = false;
+		hasMobs = false;
 		permissions.allyBuild = true;
 		permissions.allyDestroy = true;
 		permissions.residentBuild = true;
@@ -353,5 +359,25 @@ public class Town extends TownBlockOwner implements Walled {
 
 	public boolean isHomeBlock(TownBlock townBlock) {
 		return hasHomeBlock() ? townBlock == homeBlock : false;
+	}
+
+	public void setPlotTax(int plotTax) {
+		this.plotTax = plotTax;
+	}
+
+	public int getPlotTax() {
+		return plotTax;
+	}
+	
+	public void withrawFromBank(Resident resident, int amount) throws IConomyException, TownyException {
+		if (!isMayor(resident) && !hasAssistant(resident))
+			throw new TownyException("You don't have access to the town's bank.");
+		
+		if (TownySettings.isUsingIConomy()) {
+			if (!pay(amount, resident))
+				throw new TownyException("There is not enough money in the bank.");
+		} else
+			throw new TownyException("iConomy has not been turned on.");
+			
 	}
 }
