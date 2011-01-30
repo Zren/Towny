@@ -109,6 +109,11 @@ public class TownyBlockListener extends BlockListener {
 	
 
 	public void updateDestroyCache(Player player, Coord pos, boolean sendMsg) {
+		if (plugin.isTownyAdmin(player)) {
+			cacheDestroy(player, pos, true);
+			return;
+		}
+		
 		TownyUniverse universe = plugin.getTownyUniverse();
 		TownBlock townBlock;
 		Town town;
@@ -199,6 +204,11 @@ public class TownyBlockListener extends BlockListener {
 	}
 
 	public void updateBuildCache(Player player, Coord pos, boolean sendMsg) {
+		if (plugin.isTownyAdmin(player)) {
+			cacheBuild(player, pos, true);
+			return;
+		}
+		
 		TownyUniverse universe = plugin.getTownyUniverse();
 		TownBlock townBlock;
 		Town town;

@@ -540,4 +540,14 @@ public class TownyUniverse extends TownyObject {
 		towns.remove(town.getName().toLowerCase());
 		getDataSource().saveTownList();
 	}
+
+	public void removeResident(Resident resident) {
+		try {
+			resident.clear();
+		} catch (EmptyTownException e) {
+			removeTown(e.getTown());
+		}
+		towns.remove(resident.getName().toLowerCase());
+		getDataSource().saveResidentList();
+	}
 }

@@ -19,8 +19,13 @@ public class Nation extends TownyIConomyObject {
 	public void addAlly(Nation nation) throws AlreadyRegisteredException {
 		if (hasAlly(nation))
 			throw new AlreadyRegisteredException();
-		else
+		else {
+			try {
+				removeEnemy(nation);
+			} catch (NotRegisteredException e) {
+			}
 			getAllies().add(nation);
+		}
 	}
 
 	public boolean removeAlly(Nation nation) throws NotRegisteredException {
@@ -47,8 +52,14 @@ public class Nation extends TownyIConomyObject {
 	public void addEnemy(Nation nation) throws AlreadyRegisteredException {
 		if (hasEnemy(nation))
 			throw new AlreadyRegisteredException();
-		else
+		else {
+			try {
+				removeAlly(nation);
+			} catch (NotRegisteredException e) {
+			}
 			getEnemies().add(nation);
+		}
+			
 	}
 
 	public boolean removeEnemy(Nation nation) throws NotRegisteredException {
@@ -134,6 +145,8 @@ public class Nation extends TownyIConomyObject {
 		return capital;
 	}
 
+	
+	//TODO: Remove
 	public boolean setAliegeance(String type, Nation nation) {
 		try {
 			if (type.equalsIgnoreCase("ally")) {
@@ -273,5 +286,17 @@ public class Nation extends TownyIConomyObject {
 			if (town.hasResident(resident))
 				return true;
 		return false;
+	}
+	
+	public void withdrawFromBank(Resident resident, int amount) throws IConomyException, TownyException {
+		if (!isKing(resident) && !hasAssistant(resident))
+			throw new TownyException("You don't have access to the nation's bank.");
+		
+		if (TownySettings.isUsingIConomy()) {
+			if (!pay(amount, resident))
+				throw new TownyException("There is not enough money in the bank.");
+		} else
+			throw new TownyException("iConomy has not been turned on.");
+			
 	}
 }

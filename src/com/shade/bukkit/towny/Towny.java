@@ -10,10 +10,13 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
@@ -43,6 +46,8 @@ import com.shade.bukkit.util.Colors;
  * deposit for town/nation
  * delete townyobject
  * when a town/nation is detroyed. What happens to the money?
+ * When adding allying another nation, ask that nation and add this nation to their ally list.
+ * Make the formatting/wording for [nation] .. [nation] etc, better.
  * 
  * iconomy
  * plot taxe & resident tax
@@ -56,6 +61,7 @@ public class Towny extends JavaPlugin {
 	private final TownyEntityListener entityListener = new TownyEntityListener(this);
 	private TownyUniverse townyUniverse;
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
+	private PermissionHandler permissionHandler = null;
 
 	public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, folder, plugin, cLoader);
@@ -77,6 +83,13 @@ public class Towny extends JavaPlugin {
 			System.out.println("Failed to load!");
 			getServer().getPluginManager().disablePlugin(this);
 		}
+		
+		Plugin test = getServer().getPluginManager().getPlugin("Permissions");
+		if(permissionHandler == null)
+			if(test != null)
+				permissionHandler = ((Permissions)test).getHandler();
+			else
+				System.out.println("[Towny] Permission system not enabled. Towny Admins not loaded.");
 		
 		onLoad();
 
@@ -191,5 +204,12 @@ public class Towny extends JavaPlugin {
 	public void updateCache() {
 		for (Player player : getServer().getOnlinePlayers())
 			getCache(player).setLastTownBlock(Coord.parseCoord(player));
+	}
+	
+	public boolean isTownyAdmin(Player player) {
+		if (permissionHandler == null)
+			return false;
+		else
+			return permissionHandler.has(player, "towny.admin");
 	}
 }

@@ -4,6 +4,7 @@ Towny is a plugin for Bukkit (originally from but discontinued from hMod) that a
 
 Compiling
 ---------
-Towny uses 2 libraries to compile.
+Towny uses 3 libraries to compile.
 Bukkit : https://github.com/Bukkit/Bukkit : http://bamboo.lukegb.com/browse/BUKKIT-BUKKITMAIN/
-iConomy : http://iconomy.nexua.org/
+iConomy : by Nijikokun
+Permissions : by Nijikokun

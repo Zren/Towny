@@ -85,4 +85,23 @@ public class Resident extends TownBlockOwner {
 		else
 			friends.add(resident);
 	}
+	
+	public void removeAllFriends() {
+		for (Resident resident : new ArrayList<Resident>(friends))
+			try {
+				removeFriend(resident);
+			} catch (NotRegisteredException e) {
+			}
+	}
+
+	public void clear() throws EmptyTownException {
+		removeAllFriends();
+		setLastOnline(0);
+		
+		if (hasTown())
+			try {
+				town.removeResident(this);
+			} catch (NotRegisteredException e) {
+			}
+	}
 }

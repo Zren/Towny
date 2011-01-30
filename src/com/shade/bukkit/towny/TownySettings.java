@@ -47,6 +47,9 @@ public class TownySettings {
 		MSG_NEW_NATION,
 		MSG_JOIN_TOWN,
 		MSG_JOIN_NATION,
+		MSG_DEL_RESIDENT,
+		MSG_DEL_TOWN,
+		MSG_DEL_NATION,
 		MSG_NEW_MAYOR,
 		MSG_NEW_KING,
 		MSG_WAR_JOIN,
@@ -151,6 +154,9 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_NEW_NATION, "&6[Towny] &b%s created a new nation called %s");
 		configStr.put(TownySettings.Str.MSG_JOIN_TOWN, "&6[Towny] &b%s joined town!");
 		configStr.put(TownySettings.Str.MSG_JOIN_NATION, "&6[Towny] &b%s joined the nation!");
+		configStr.put(TownySettings.Str.MSG_DEL_RESIDENT, "&6[Towny] &b%s lost all his Towny data!");
+		configStr.put(TownySettings.Str.MSG_DEL_TOWN, "&6[Towny] &bThe town of %s fell into ruin!");
+		configStr.put(TownySettings.Str.MSG_DEL_NATION, "&6[Towny] &bThe nation %s was disbanded!");
 		configStr.put(TownySettings.Str.MSG_NEW_MAYOR, "&6[Towny] &b%s is now the mayor!");
 		configStr.put(TownySettings.Str.MSG_NEW_KING, "&6[Towny] &b%s is now the king!");
 		configStr.put(TownySettings.Str.MSG_WAR_JOIN, "&6[Towny] &b%s joined the fight!");
@@ -649,6 +655,18 @@ public class TownySettings {
 		return parseString(String.format(getString(TownySettings.Str.MSG_COULDNT_PAY_TAXES), reaction));
 	}
 	
+	public static String[] getDelResidentMsg(Resident resident) {
+		return parseString(String.format(getString(TownySettings.Str.MSG_DEL_RESIDENT), resident.getName()));
+	}
+	
+	public static String[] getDelTownMsg(Town town) {
+		return parseString(String.format(getString(TownySettings.Str.MSG_DEL_TOWN), town.getName()));
+	}
+	
+	public static String[] getDelNationMsg(Nation nation) {
+		return parseString(String.format(getString(TownySettings.Str.MSG_DEL_NATION), nation.getName()));
+	}
+	
 	/************************************************************/
 	
 	//TODO: better way to set values besides passing the filepath as a param
@@ -658,6 +676,8 @@ public class TownySettings {
 		configBool.put(key, value);
 		kvFile.setBoolean(key.toString().toLowerCase(), getBoolean(key));
 	}
+
+	
 	
 	/************************************************************/
 	

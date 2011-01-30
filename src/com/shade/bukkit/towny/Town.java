@@ -223,6 +223,7 @@ public class Town extends TownBlockOwner implements Walled {
 				}
 		}
 	}
+	
 	private void removeAllResidents() {
 		for (Resident resident : new ArrayList<Resident>(residents))
 			remove(resident);
@@ -369,7 +370,7 @@ public class Town extends TownBlockOwner implements Walled {
 		return plotTax;
 	}
 	
-	public void withrawFromBank(Resident resident, int amount) throws IConomyException, TownyException {
+	public void withdrawFromBank(Resident resident, int amount) throws IConomyException, TownyException {
 		if (!isMayor(resident) && !hasAssistant(resident))
 			throw new TownyException("You don't have access to the town's bank.");
 		
