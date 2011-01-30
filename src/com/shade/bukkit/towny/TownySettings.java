@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.shade.util.KeyValueFile;
 import com.shade.util.StringMgmt;
 
-
+//TODO: Make String[]/StrArr into lists.
 
 public class TownySettings {
 	// String[]
@@ -25,7 +25,8 @@ public class TownySettings {
 		TOWNY_COMMANDS,
 		TOWNY_ADMIN_COMMANDS,
 		TOWN_CHAT_COMMANDS,
-		NATION_CHAT_COMMANDS
+		NATION_CHAT_COMMANDS,
+		MOB_REMOVAL_ENTITIES
 	};
 	// String
 	enum Str {
@@ -75,7 +76,9 @@ public class TownySettings {
 		WARTIME_POINTS_TOWNBLOCK,
 		WARTIME_POINTS_TOWN,
 		WARTIME_POINTS_NATION,
-		WARTIME_MIN_HEIGHT
+		WARTIME_MIN_HEIGHT,
+		MOB_REMOVAL_SPEED,
+		HEALTH_REGEN_SPEED
 	};
 	// Boolean
 	enum Bool {
@@ -89,7 +92,9 @@ public class TownySettings {
 		USING_ICONOMY,
 		MODIFY_CHAT_NAME,
 		DELETE_OLD_RESIDENTS,
-		DEBUG_MODE
+		DEBUG_MODE,
+		MOB_REMOVAL,
+		HEALTH_REGEN
 	};
 	// Nation Level
 	enum NationLevel {
@@ -135,6 +140,9 @@ public class TownySettings {
 		configStrArr.put(TownySettings.StrArr.TOWNY_ADMIN_COMMANDS, new String[]{"/townyadmin","/ta"});
 		configStrArr.put(TownySettings.StrArr.TOWN_CHAT_COMMANDS, new String[]{"/tc"});
 		configStrArr.put(TownySettings.StrArr.NATION_CHAT_COMMANDS, new String[]{"/nc"});
+		configStrArr.put(TownySettings.StrArr.MOB_REMOVAL_ENTITIES, new String[]{
+				"Zombie", "Skeleton", "Creeper", "Spider", "Squid", "Ghast", "PigZombie"
+		});
 		// String
 		configStr.put(TownySettings.Str.LOAD_DATABASE, "flatfile");
 		configStr.put(TownySettings.Str.DEFAULT_TOWN_NAME, "");
@@ -181,6 +189,8 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.WARTIME_POINTS_TOWN, 10);
 		configInt.put(TownySettings.Int.WARTIME_POINTS_NATION, 100);
 		configInt.put(TownySettings.Int.WARTIME_MIN_HEIGHT, 60);
+		configInt.put(TownySettings.Int.MOB_REMOVAL_SPEED, 5000); // 5 Seconds
+		configInt.put(TownySettings.Int.HEALTH_REGEN_SPEED, 3000); // 9 Seconds (20*3 = 3 minute)
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -193,6 +203,8 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.MODIFY_CHAT_NAME, true);
 		configBool.put(TownySettings.Bool.DELETE_OLD_RESIDENTS, false);
 		configBool.put(TownySettings.Bool.DEBUG_MODE, true);
+		configBool.put(TownySettings.Bool.MOB_REMOVAL, true);
+		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -667,6 +679,26 @@ public class TownySettings {
 		return parseString(String.format(getString(TownySettings.Str.MSG_DEL_NATION), nation.getName()));
 	}
 	
+	public static List<String> getMobRemovalEntities() {
+		return Arrays.asList(getStrArr(TownySettings.StrArr.MOB_REMOVAL_ENTITIES));
+	}
+	
+	public static int getMobRemovalSpeed() {
+		return getInt(TownySettings.Int.MOB_REMOVAL_SPEED);
+	}
+	
+	public static boolean isRemovingMobs() {
+		return getBoolean(TownySettings.Bool.MOB_REMOVAL);
+	}
+	
+	public static int getHealthRegenSpeed() {
+		return getInt(TownySettings.Int.HEALTH_REGEN_SPEED);
+	}
+	
+	public static boolean hasHealthRegen() {
+		return getBoolean(TownySettings.Bool.HEALTH_REGEN);
+	}
+	
 	/************************************************************/
 	
 	//TODO: better way to set values besides passing the filepath as a param
@@ -677,12 +709,11 @@ public class TownySettings {
 		kvFile.setBoolean(key.toString().toLowerCase(), getBoolean(key));
 	}
 
-	
-	
 	/************************************************************/
 	
 	//TODO:
 	
 	
+
 	
 }

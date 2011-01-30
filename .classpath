@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/bukkit.jar" sourcepath="C:/Users/Admin/Desktop/git/Bukkit"/>
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/iConomy.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/Permissions.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/craftbukkit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

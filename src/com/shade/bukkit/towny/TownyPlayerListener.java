@@ -566,7 +566,7 @@ public class TownyPlayerListener extends PlayerListener {
 		else if (split[0].equalsIgnoreCase("kick"))
 			townKick(player, newSplit);
 		else if (split[0].equalsIgnoreCase("spawn"))
-			townSpawn(player, false);
+			plugin.getTownyUniverse().townSpawn(player, false);
 		else if (split[0].equalsIgnoreCase("claim"))
 			parseTownClaimCommand(player, newSplit);
 		else if (split[0].equalsIgnoreCase("set"))
@@ -1416,28 +1416,7 @@ public class TownyPlayerListener extends PlayerListener {
 			}
 	}
 
-	/**
-	 * Teleports the player to his town's spawn location. If town doesn't have a
-	 * spawn or player has no town, and teleport is forced, then player is sent
-	 * to the world's spawn location.
-	 * 
-	 * @param player
-	 * @param forceTeleport
-	 */
-
-	public void townSpawn(Player player, boolean forceTeleport) {
-		try {
-			Resident resident = plugin.getTownyUniverse().getResident(player.getName());
-			Town town = resident.getTown();
-			player.teleportTo(town.getSpawn());
-		} catch (TownyException x) {
-			if (forceTeleport) {
-				// TODO: When API supports:
-				// player.teleportTo(player.getWorld().getSpawnLocation());
-			} else
-				plugin.sendErrorMsg(player, x.getError());
-		}
-	}
+	
 
 	public void parseNationCommand(Player player, String[] split) {
 		/*

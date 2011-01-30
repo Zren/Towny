@@ -3,10 +3,7 @@ package com.shade.bukkit.towny;
 public class DailyTimerTask extends TownyTimerTask {
 	public DailyTimerTask(TownyUniverse universe) {
 		super(universe);
-		// TODO Auto-generated constructor stub
 	}
-
-	private TownyUniverse universe;
 
 	@Override
 	public void run() {

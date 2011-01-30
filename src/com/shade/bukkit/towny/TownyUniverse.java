@@ -30,8 +30,12 @@ public class TownyUniverse extends TownyObject {
 	private TownyFormatter formatter = new TownyFormatter(); //TODO : MAke static
 	private TownyDataSource dataSource;
 	private Timer dailyTimer = new Timer();
+	private Timer mobRemoveTimer = null;
+	private Timer healthRegenTimer = null;
 	private War warEvent;
-
+	private final int oneDay = 24 * 60 * 60 * 1000;
+	
+	
 	// TODO: lastOnline, an onEnable check to see if a new day has stated to
 	// collect taxes.
 	// TODO: Timer to start/stop war time, collect taxes, delete old users.
@@ -40,17 +44,45 @@ public class TownyUniverse extends TownyObject {
 	
 	public TownyUniverse(Towny plugin) {
 		this.plugin = plugin;
-
-		int oneDay = 24 * 60 * 60 * 1000;
-		Calendar tomorrow = new GregorianCalendar();
-		tomorrow.add(Calendar.DATE, oneDay);
-		Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0);
-
-		dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), result.getTime(), oneDay);
 	}
 	
 	public void newDay() {
+		if (dailyTimer == null)
+			toggleDailyTimer(true);
 		dailyTimer.schedule(new DailyTimerTask(this), 0);
+	}
+	
+	public void toggleMobRemoval(boolean on) {
+		if (on && mobRemoveTimer == null) {
+			mobRemoveTimer = new Timer();
+			mobRemoveTimer.scheduleAtFixedRate(new MobRemovalTimerTask(this, plugin.getServer()), 0, TownySettings.getMobRemovalSpeed());
+		} else if (!on && mobRemoveTimer != null) {
+			mobRemoveTimer.cancel();
+			mobRemoveTimer = null;
+		}
+	}
+	
+	public void toggleDailyTimer(boolean on) {
+		if (on && dailyTimer == null) {
+			dailyTimer = new Timer();
+			Calendar tomorrow = new GregorianCalendar();
+			tomorrow.add(Calendar.DATE, oneDay);
+			Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0);
+			dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), result.getTime(), oneDay);
+		} else if (!on && dailyTimer != null) {
+			dailyTimer.cancel();
+			dailyTimer = null;
+		}
+	}
+	
+	public void toggleHealthRegen(boolean on) {
+		if (on && healthRegenTimer == null) {
+			healthRegenTimer = new Timer();
+			healthRegenTimer.scheduleAtFixedRate(new HealthRegenTimerTask(this, plugin.getServer()), 0, TownySettings.getHealthRegenSpeed());
+		} else if (!on && healthRegenTimer != null) {
+			healthRegenTimer.cancel();
+			healthRegenTimer = null;
+		}
 	}
 
 	public void onLogin(Player player) throws AlreadyRegisteredException, NotRegisteredException {
@@ -87,6 +119,28 @@ public class TownyUniverse extends TownyObject {
 			resident.setLastOnline(System.currentTimeMillis());
 			getDataSource().saveResident(resident);
 		} catch (NotRegisteredException e) {
+		}
+	}
+	
+	/**
+	 * Teleports the player to his town's spawn location. If town doesn't have a
+	 * spawn or player has no town, and teleport is forced, then player is sent
+	 * to the world's spawn location.
+	 * 
+	 * @param player
+	 * @param forceTeleport
+	 */
+
+	public void townSpawn(Player player, boolean forceTeleport) {
+		try {
+			Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+			Town town = resident.getTown();
+			player.teleportTo(town.getSpawn());
+		} catch (TownyException x) {
+			if (forceTeleport)
+				player.teleportTo(player.getWorld().getSpawnLocation());
+			else
+				plugin.sendErrorMsg(player, x.getError());
 		}
 	}
 

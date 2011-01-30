@@ -50,4 +50,12 @@ public class TownyEntityListener extends EntityListener {
 
 		return false;
 	}
+	
+	/*
+	public void onEntityDeath(EntityDeathEvent event) {
+		Player player = event.getPlayer();
+		plugin.getTownyUniverse().townSpawn(player, true);
+    }
+    */
+    
 }

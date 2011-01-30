@@ -82,7 +82,7 @@ public class Towny extends JavaPlugin {
 		else {
 			System.out.println("Failed to load!");
 			getServer().getPluginManager().disablePlugin(this);
-		}
+		}		
 		
 		Plugin test = getServer().getPluginManager().getPlugin("Permissions");
 		if(permissionHandler == null)
@@ -109,6 +109,10 @@ public class Towny extends JavaPlugin {
 		
 		if (getTownyUniverse().isWarTime())
 			getTownyUniverse().getWarEvent().end();
+		townyUniverse.toggleDailyTimer(false);
+		townyUniverse.toggleMobRemoval(false);
+		townyUniverse.toggleHealthRegen(false);
+		
 		System.out.println("[Towny] Version: " + version + " - Mod Disabled");
 	}
 	
@@ -116,6 +120,9 @@ public class Towny extends JavaPlugin {
 		townyUniverse.loadSettings();
 		Coord.setCellSize(TownySettings.getTownBlockSize());
 		TownyIConomyObject.setPlugin(this);
+		townyUniverse.toggleDailyTimer(true);
+		townyUniverse.toggleMobRemoval(TownySettings.isRemovingMobs());
+		townyUniverse.toggleHealthRegen(TownySettings.hasHealthRegen());
 	}
 
 	private void registerEvents() {
