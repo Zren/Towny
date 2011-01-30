@@ -33,9 +33,9 @@ public class TownyWorld extends TownyObject {
 	}
 
 	public void addTown(Town town) throws AlreadyRegisteredException {
-		if (hasTown(town)) {
+		if (hasTown(town))
 			throw new AlreadyRegisteredException();
-		} else {
+		else {
 			towns.add(town);
 			town.setWorld(this);
 		}
@@ -73,9 +73,9 @@ public class TownyWorld extends TownyObject {
 	}
 
 	public void removeTown(Town town) throws NotRegisteredException {
-		if (!hasTown(town)) {
+		if (!hasTown(town))
 			throw new NotRegisteredException();
-		} else {
+		else {
 			towns.remove(town);
 			try {
 				town.setWorld(null);
@@ -85,9 +85,8 @@ public class TownyWorld extends TownyObject {
 	}
 
 	public void removeTownBlocks(List<TownBlock> townBlocks) {
-		for (TownBlock townBlock : townBlocks) {
+		for (TownBlock townBlock : new ArrayList<TownBlock>(townBlocks))
 			removeTownBlock(townBlock);
-		}
 	}
 
 	public void removeTownBlock(TownBlock townBlock) {
@@ -97,9 +96,8 @@ public class TownyWorld extends TownyObject {
 		} catch (NotRegisteredException e) {
 		}
 		try {
-			if (townBlock.hasTown()) {
+			if (townBlock.hasTown())
 				townBlock.getTown().removeTownBlock(townBlock);
-			}
 		} catch (NotRegisteredException e) {
 		}
 

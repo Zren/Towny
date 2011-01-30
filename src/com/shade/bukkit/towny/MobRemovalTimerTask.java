@@ -18,25 +18,31 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 
 	@Override
 	public void run() {
+		int numRemoved = 0;
+		
 		for (World world : server.getWorlds())
-			for (Object e : getWorldEntities(world)) {
-				Entity entity = (Entity)e;
-				Location loc = entity.getLocation();
-				Coord coord = Coord.parseCoord(loc);
-				if (TownySettings.getMobRemovalEntities().contains(e.getClass().getName()))
+			for (Object e : getWorldEntities(world))
+				if (TownySettings.getMobRemovalEntities().contains(e.getClass().getName())) {
+					Entity entity = (Entity)e;
+					Location loc = entity.getLocation();
+					Coord coord = Coord.parseCoord(loc);
 					try {
 						TownyWorld townyWorld = universe.getWorld(world.getName());
 						TownBlock townBlock = townyWorld.getTownBlock(coord);
-						if (!townBlock.getTown().hasMobs())
+						if (!townBlock.getTown().hasMobs()) {
 							entity.teleportTo(new Location(world, loc.getX(), -50, loc.getZ()));
+							numRemoved++;
+						}
 					} catch (TownyException x) {
 					}
-			}
+				}
+		if (TownySettings.getDebug())
+			System.out.println("[Towny] Debug: MobRemoval (Removed: "+numRemoved+")");
 	}
 	
 	@SuppressWarnings("rawtypes")
 	public final List getWorldEntities(World world) {
-		CraftWorld w = (CraftWorld)server.getWorlds()[(int)world.getId()];
+		CraftWorld w = (CraftWorld)world;
         return w.getHandle().b;
     }
 }

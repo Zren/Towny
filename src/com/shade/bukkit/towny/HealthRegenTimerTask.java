@@ -14,6 +14,9 @@ private Server server;
 	
 	@Override
 	public void run() {
+		if (universe.isWarTime())
+			return;
+		
 		for (Player player : server.getOnlinePlayers()) {
 			Coord coord = Coord.parseCoord(player);
 			try {
@@ -25,12 +28,15 @@ private Server server;
 			} catch (TownyException x) {
 			}
 		}
+		
+		//if (TownySettings.getDebug())
+		//	System.out.println("[Towny] Debug: Health Regen");
 	}
 	
 	public void incHealth(Player player) {
 		int currentHP = player.getHealth();
 		if (currentHP < 20)
-			player.setHealth(currentHP++);
+			player.setHealth(++currentHP);
 	}
 	
 }

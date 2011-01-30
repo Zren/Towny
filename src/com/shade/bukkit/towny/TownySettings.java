@@ -59,7 +59,9 @@ public class TownySettings {
 		MSG_WAR_LOSE_BLOCK,
 		MSG_WAR_SCORE,
 		MSG_NEW_DAY,
-		MSG_COULDNT_PAY_TAXES
+		MSG_COULDNT_PAY_TAXES,
+		MSG_BUY_RESIDENT_PLOT,
+		MSG_PLOT_FOR_SALE
 	};
 	// Integer
 	enum Int {
@@ -141,7 +143,7 @@ public class TownySettings {
 		configStrArr.put(TownySettings.StrArr.TOWN_CHAT_COMMANDS, new String[]{"/tc"});
 		configStrArr.put(TownySettings.StrArr.NATION_CHAT_COMMANDS, new String[]{"/nc"});
 		configStrArr.put(TownySettings.StrArr.MOB_REMOVAL_ENTITIES, new String[]{
-				"Zombie", "Skeleton", "Creeper", "Spider", "Squid", "Ghast", "PigZombie"
+				"EntityZombie", "EntitySkeleton", "EntityCreeper", "EntitySpider", "EntitySquid", "EntityGhast", "EntityPigZombie"
 		});
 		// String
 		configStr.put(TownySettings.Str.LOAD_DATABASE, "flatfile");
@@ -174,6 +176,8 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_WAR_SCORE, "&6[War] &b%s scored %d points!");
 		configStr.put(TownySettings.Str.MSG_NEW_DAY, "&6[Towny] &bA new day is here! Taxes and rent has been collected.");
 		configStr.put(TownySettings.Str.MSG_COULDNT_PAY_TAXES, "&6[Towny] &b%s couldn't pay taxes%s");
+		configStr.put(TownySettings.Str.MSG_BUY_RESIDENT_PLOT, "&6[Towny] &b%s bought %s's plot!");
+		configStr.put(TownySettings.Str.MSG_PLOT_FOR_SALE, "&6[Towny] &b%s put the plot (%s) up for sale!");
 		// Integer
 		configInt.put(TownySettings.Int.INACTIVE_AFTER_TIME, 24 * 60 * 60 * 1000); // 1 Day
 		configInt.put(TownySettings.Int.DELETED_AFTER_TIME, 60 * 24 * 60 * 60 * 1000); // Two Months
@@ -203,7 +207,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.MODIFY_CHAT_NAME, true);
 		configBool.put(TownySettings.Bool.DELETE_OLD_RESIDENTS, false);
 		configBool.put(TownySettings.Bool.DEBUG_MODE, true);
-		configBool.put(TownySettings.Bool.MOB_REMOVAL, true);
+		configBool.put(TownySettings.Bool.MOB_REMOVAL, false);
 		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
@@ -255,7 +259,7 @@ public class TownySettings {
 		BufferedReader fin = new BufferedReader(new FileReader(filepath));
         while ((line = fin.readLine()) != null)
 			if (!line.startsWith("#")) { //Ignore comment lines
-                tokens = line.split(":");
+                tokens = line.split(",");
                 if (tokens.length == 6)
 					try {
                         int numResidents = Integer.parseInt(tokens[0]);
@@ -286,7 +290,7 @@ public class TownySettings {
 		BufferedReader fin = new BufferedReader(new FileReader(filepath));
         while ((line = fin.readLine()) != null)
 			if (!line.startsWith("#")) { //Ignore comment lines
-                tokens = line.split(":");
+                tokens = line.split(",");
                 if (tokens.length == 7)
 					try {
                         int numResidents = Integer.parseInt(tokens[0]);
@@ -699,6 +703,14 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.HEALTH_REGEN);
 	}
 	
+	public static String[] getBuyResidentPlotMsg(String who, String owner) {
+		return parseString(String.format(getString(TownySettings.Str.MSG_BUY_RESIDENT_PLOT), who, owner));
+	}
+	
+	public static String[] getPlotForSaleMsg(String who, WorldCoord worldCoord) {
+		return parseString(String.format(getString(TownySettings.Str.MSG_PLOT_FOR_SALE), who, worldCoord.toString()));
+	}
+	
 	/************************************************************/
 	
 	//TODO: better way to set values besides passing the filepath as a param
@@ -708,6 +720,8 @@ public class TownySettings {
 		configBool.put(key, value);
 		kvFile.setBoolean(key.toString().toLowerCase(), getBoolean(key));
 	}
+
+	
 
 	/************************************************************/
 	

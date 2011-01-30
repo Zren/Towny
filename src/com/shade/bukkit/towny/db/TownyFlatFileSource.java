@@ -33,7 +33,7 @@ import com.shade.util.KeyValueFile;
 
 public class TownyFlatFileSource extends TownyDataSource {
 	private final String newLine = System.getProperty("line.separator");
-	protected static final Logger log = Logger.getLogger("Minecraft"); //TODO: remove
+	protected static final Logger log = Logger.getLogger("Minecraft");
 	protected String rootFolder = "";
 
 	@Override
@@ -755,7 +755,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 							townblock.setResident(resident);
 
 						if (tokens.length >= 3)
-							townblock.setForSale(true);
+							townblock.setForSale(true); //Automatically assume the townblock is for sale
 					} catch (NumberFormatException e) {
 					} catch (NotRegisteredException e) {
 					}
@@ -781,8 +781,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 		for (TownyWorld world : worlds.keySet()) {
 			out += world.getName() + ":";
 			for (TownBlock townBlock : worlds.get(world))
-				out += townBlock.getX() + "," + townBlock.getZ()
-						+ (townBlock.isForSale() ? ",true" : "") + ";";
+				out += townBlock.getX() + "," + townBlock.getZ() + (townBlock.isForSale() ? ",true" : "") + ";";
 			out += "|";
 		}
 

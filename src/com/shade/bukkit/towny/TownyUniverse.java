@@ -29,7 +29,7 @@ public class TownyUniverse extends TownyObject {
 	// private List<Election> elections;
 	private TownyFormatter formatter = new TownyFormatter(); //TODO : MAke static
 	private TownyDataSource dataSource;
-	private Timer dailyTimer = new Timer();
+	private Timer dailyTimer = null;
 	private Timer mobRemoveTimer = null;
 	private Timer healthRegenTimer = null;
 	private War warEvent;
@@ -407,11 +407,11 @@ public class TownyUniverse extends TownyObject {
 			FileMgmt.checkFolders(new String[]{root, root + "/settings"});
 			FileMgmt.checkFiles(new String[]{
 					root + "/settings/config.properties",
-					root + "/settings/town-levels.ini",
-					root + "/settings/nation-levels.ini"});
+					root + "/settings/town-levels.csv",
+					root + "/settings/nation-levels.csv"});
 			TownySettings.loadConfig(plugin.getDataFolder().getPath() + "/settings/config.properties");
-			TownySettings.loadTownLevelConfig(plugin.getDataFolder().getPath() + "/settings/town-levels.ini");
-			TownySettings.loadNationLevelConfig(plugin.getDataFolder().getPath() + "/settings/nation-levels.ini");
+			TownySettings.loadTownLevelConfig(plugin.getDataFolder().getPath() + "/settings/town-levels.csv");
+			TownySettings.loadNationLevelConfig(plugin.getDataFolder().getPath() + "/settings/nation-levels.csv");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -446,11 +446,9 @@ public class TownyUniverse extends TownyObject {
 			Resident residentB = getResident(b);
 			if (residentA.getTown() == residentB.getTown())
 				return true;
-			if (residentA.getTown().getNation() == residentB.getTown()
-					.getNation())
+			if (residentA.getTown().getNation() == residentB.getTown().getNation())
 				return true;
-			if (residentA.getTown().getNation()
-					.hasAlly(residentB.getTown().getNation()))
+			if (residentA.getTown().getNation().hasAlly(residentB.getTown().getNation()))
 				return true;
 		} catch (NotRegisteredException e) {
 			return false;
@@ -580,18 +578,24 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void removeNation(Nation nation) {
+		List<Town> toSave = new ArrayList<Town>(nation.getTowns());
 		nation.clear();
 		nations.remove(nation.getName().toLowerCase());
+		for (Town town : toSave)
+			getDataSource().saveTown(town);
 		getDataSource().saveNationList();
 	}
 
 	public void removeTown(Town town) {
+		List<Resident> toSave = new ArrayList<Resident>(town.getResidents());
 		try {
 			town.clear();
 		} catch (EmptyNationException e) {
 			removeNation(e.getNation());
 		}
 		towns.remove(town.getName().toLowerCase());
+		for (Resident resident : toSave)
+			getDataSource().saveResident(resident);
 		getDataSource().saveTownList();
 	}
 
@@ -601,7 +605,7 @@ public class TownyUniverse extends TownyObject {
 		} catch (EmptyTownException e) {
 			removeTown(e.getTown());
 		}
-		towns.remove(resident.getName().toLowerCase());
+		residents.remove(resident.getName().toLowerCase());
 		getDataSource().saveResidentList();
 	}
 }

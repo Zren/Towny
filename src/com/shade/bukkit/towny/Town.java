@@ -287,8 +287,8 @@ public class Town extends TownBlockOwner implements Walled {
 		//Cleanup
 		removeAllResidents();
 		mayor = null;
-		residents = null;
-		assistants = null;
+		residents.clear();
+		assistants.clear();
 		homeBlock = null;
 
 		try {

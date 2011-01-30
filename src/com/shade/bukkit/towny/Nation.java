@@ -36,7 +36,7 @@ public class Nation extends TownyIConomyObject {
 	}
 
 	public boolean removeAllAllies() {
-		for (Nation ally : getAllies())
+		for (Nation ally : new ArrayList<Nation>(getAllies()))
 			try {
 				removeAlly(ally);
 				ally.removeAlly(this);
@@ -70,7 +70,7 @@ public class Nation extends TownyIConomyObject {
 	}
 
 	public boolean removeAllEnemies() {
-		for (Nation enemy : getEnemies())
+		for (Nation enemy : new ArrayList<Nation>(getEnemies()))
 			try {
 				removeEnemy(enemy);
 				enemy.removeEnemy(this);
@@ -240,7 +240,7 @@ public class Nation extends TownyIConomyObject {
 	}
 	
 	private void removeAssistantsIn(Town town) {
-		for (Resident resident : town.getResidents())
+		for (Resident resident : new ArrayList<Resident>(town.getResidents()))
 			if (hasAssistant(resident))
 				try {
 					removeAssistant(resident);
@@ -258,9 +258,9 @@ public class Nation extends TownyIConomyObject {
 
 	public void clear() {
 		//TODO: Check cleanup
-		capital = null;
 		removeAllAllies();
 		removeAllEnemies();
+		capital = null;
 		assistants.clear();
 		towns.clear();
 	}

@@ -1,6 +1,6 @@
 package com.shade.bukkit.towny;
 
-
+//TODO: have toString() include the worlds?
 public class WorldCoord extends Coord {
 	private TownyWorld world;
 	

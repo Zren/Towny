@@ -1,8 +1,12 @@
 package com.shade.bukkit.towny;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Server;
@@ -36,22 +40,12 @@ import com.shade.bukkit.util.Colors;
  * Unclaim townblocks
  * flatfile-old data source and replace getDataSource() with a manager class
  * log nation/town chat
- * permissions
  * update cache when adding/removing people
- * save/load Nation.isNeutral, and make a /nation set command
- * prevent command use during war
- * allies
  * replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
- * withdraw from nation bank accounts
  * deposit for town/nation
- * delete townyobject
- * when a town/nation is detroyed. What happens to the money?
+ * when a town/nation is detroyed. What happens to the money? (give to Shade :D jk)
  * When adding allying another nation, ask that nation and add this nation to their ally list.
  * Make the formatting/wording for [nation] .. [nation] etc, better.
- * 
- * iconomy
- * plot taxe & resident tax
- * new nation cost
  */
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";
@@ -61,6 +55,7 @@ public class Towny extends JavaPlugin {
 	private final TownyEntityListener entityListener = new TownyEntityListener(this);
 	private TownyUniverse townyUniverse;
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
+	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
 	private PermissionHandler permissionHandler = null;
 
 	public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
@@ -98,9 +93,18 @@ public class Towny extends JavaPlugin {
 		if (TownySettings.isFirstRun()) {
 			firstRun();
 			TownySettings.setBoolean(getDataFolder().getPath() + "/settings/config.properties", TownySettings.Bool.FIRST_RUN, false);
+			townyUniverse.loadSettings();
 		}
 
 		System.out.println("[Towny] Version: " + version + " - Mod Enabled");
+		
+		// Re login anyone online. (In case of plugin reloading)
+		for (Player player : getServer().getOnlinePlayers())
+			try {
+				getTownyUniverse().onLogin(player);
+			} catch (TownyException x) {
+				sendErrorMsg(player, x.getError());
+			}
 	}
 
 	@Override
@@ -112,6 +116,9 @@ public class Towny extends JavaPlugin {
 		townyUniverse.toggleDailyTimer(false);
 		townyUniverse.toggleMobRemoval(false);
 		townyUniverse.toggleHealthRegen(false);
+		
+		playerCache.clear();
+		playerMode.clear();
 		
 		System.out.println("[Towny] Version: " + version + " - Mod Disabled");
 	}
@@ -142,7 +149,34 @@ public class Towny extends JavaPlugin {
 	private void firstRun() {
 		System.out.println("------------------------------");
 		System.out.println("[Towny] Detected first run");
-		System.out.println("[Towny] Registering default");
+		
+		try {
+			String newLine = System.getProperty("line.separator");
+			BufferedWriter fout = new BufferedWriter(new FileWriter(getDataFolder().getPath() + "/settings/town-levels.csv"));
+			fout.write("0,, Ruin:Spirit ,,1" + newLine);
+			fout.write("1,, Hamlet,,,16" + newLine);
+			fout.write("2,, Village,Mayor ,,64" + newLine);
+			fout.write("6,, Town,Lord ,,128" + newLine);
+			fout.write("12,, City,Lord ,,256" + newLine);
+			fout.close();
+			System.out.println("[Towny] Registered default town levels.");
+		} catch (Exception e) {
+			System.out.println("[Towny] Error: Could not write default town levels file.");
+		}
+		try {
+			String newLine = System.getProperty("line.separator");
+			BufferedWriter fout = new BufferedWriter(new FileWriter(getDataFolder().getPath() + "/settings/nation-levels.csv"));
+			fout.write("0,, Wilderness,, Lands,Leader ," + newLine);
+			fout.write("1,Dominion of , ,, Center,Leader," + newLine);
+			fout.write("2,Lands of ,,, Center,Leader ," + newLine);
+			fout.write("3,, Country,, Lands,King ," + newLine);
+			fout.write("6,, Kingdom,, Lands,King ," + newLine);
+			fout.write("12,, Empire,, Lands,Emperor ," + newLine);
+			fout.close();
+			System.out.println("[Towny] Registered default nation levels.");
+		} catch (Exception e) {
+			System.out.println("[Towny] Error: Could not write default nation levels file.");
+		}
 		System.out.println("------------------------------");
 	}
 
@@ -218,5 +252,25 @@ public class Towny extends JavaPlugin {
 			return false;
 		else
 			return permissionHandler.has(player, "towny.admin");
+	}
+	
+	public void setPlayerMode(Player player, String[] modes) {
+		playerMode.put(player.getName(), Arrays.asList(modes));
+	}
+	
+	public void removePlayerMode(Player player) {
+		playerMode.remove(player.getName());
+	}
+	
+	public List<String> getPlayerMode(Player player) {
+		return playerMode.get(player.getName());
+	}
+	
+	public boolean hasPlayerMode(Player player, String mode) {
+		List<String> modes = getPlayerMode(player);
+		if (modes == null)
+			return false;
+		else
+			return modes.contains(mode); 
 	}
 }
