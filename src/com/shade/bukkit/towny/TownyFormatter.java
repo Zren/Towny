@@ -23,9 +23,12 @@ public class TownyFormatter {
 		// ___[ King Harlus ]___
 		out.add(ChatTools.formatTitle(getFormattedName(resident)));
 
-		// Last Online: March 7 @ 14:30
-		SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd '@' HH:mm");
-		out.add(Colors.Green + "Last Online: " + Colors.LightGreen + sdf.format(resident.getLastOnline()));
+		// Registered: Sept 3 2009 | Last Online: March 7 @ 14:30
+		SimpleDateFormat rsdf = new SimpleDateFormat("MMM d yyyy");
+		SimpleDateFormat losdf = new SimpleDateFormat("MMMMM dd '@' HH:mm");
+		out.add(Colors.Green + "Last Online: " + Colors.LightGreen + rsdf.format(resident.getRegistered())
+			+ Colors.Gray + " | "
+			+ Colors.Green + "Last Online: " + Colors.LightGreen + losdf.format(resident.getLastOnline()));
 
 		// Owner of: 4 Town Blocks
 		if (resident.getTownBlocks().size() > 0)

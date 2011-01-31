@@ -6,7 +6,7 @@ import java.util.List;
 public class Resident extends TownBlockOwner {
 	private List<Resident> friends = new ArrayList<Resident>();
 	private Town town;
-	private long lastOnline;
+	private long lastOnline, registered;
 
 	public Resident(String name) {
 		setName(name);
@@ -107,5 +107,13 @@ public class Resident extends TownBlockOwner {
 				town.removeResident(this);
 			} catch (NotRegisteredException e) {
 			}
+	}
+
+	public void setRegistered(long registered) {
+		this.registered = registered;
+	}
+
+	public long getRegistered() {
+		return registered;
 	}
 }

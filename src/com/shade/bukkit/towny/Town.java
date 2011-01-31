@@ -261,8 +261,7 @@ public class Town extends TownBlockOwner implements Walled {
 		if (!hasHomeBlock())
 			throw new TownyException("Home Block has not been set");
 		Coord spawnBlock = Coord.parseCoord(spawn);
-		if (homeBlock.getX() == spawnBlock.getX()
-				&& homeBlock.getZ() == spawnBlock.getZ())
+		if (homeBlock.getX() == spawnBlock.getX() && homeBlock.getZ() == spawnBlock.getZ())
 			this.spawn = spawn;
 		else
 			throw new TownyException("Spawn is not within the homeBlock.");

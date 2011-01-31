@@ -156,7 +156,14 @@ public class TownyFlatFileSource extends TownyDataSource {
 			try {
 				KeyValueFile kvFile = new KeyValueFile(path);
 				resident.setLastOnline(Long.parseLong(kvFile.get("lastOnline")));
-
+				
+				line = kvFile.get("registered");
+				if (line != null)
+					resident.setRegistered(Long.parseLong(line));
+				else
+					resident.setRegistered(resident.getLastOnline());
+				
+				
 				line = kvFile.get("town");
 				if (line != null)
 					resident.setTown(universe.getTown(line));
@@ -561,8 +568,9 @@ public class TownyFlatFileSource extends TownyDataSource {
 			String path = rootFolder + "/data/residents/" + resident.getName() + ".txt";
 			BufferedWriter fout = new BufferedWriter(new FileWriter(path));
 			// Last Online
-			fout.write("lastOnline=" + Long.toString(resident.getLastOnline())
-					+ newLine);
+			fout.write("lastOnline=" + Long.toString(resident.getLastOnline()) + newLine);
+			// Registered
+			fout.write("registered=" + Long.toString(resident.getRegistered()) + newLine);
 			if (resident.hasTown())
 				fout.write("town=" + resident.getTown().getName() + newLine);
 			// Friends
