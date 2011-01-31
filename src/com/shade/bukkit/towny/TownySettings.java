@@ -80,7 +80,8 @@ public class TownySettings {
 		WARTIME_POINTS_NATION,
 		WARTIME_MIN_HEIGHT,
 		MOB_REMOVAL_SPEED,
-		HEALTH_REGEN_SPEED
+		HEALTH_REGEN_SPEED,
+		TOWN_LIMIT
 	};
 	// Boolean
 	enum Bool {
@@ -195,6 +196,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.WARTIME_MIN_HEIGHT, 60);
 		configInt.put(TownySettings.Int.MOB_REMOVAL_SPEED, 5000); // 5 Seconds
 		configInt.put(TownySettings.Int.HEALTH_REGEN_SPEED, 3000); // 9 Seconds (20*3 = 3 minute)
+		configInt.put(TownySettings.Int.TOWN_LIMIT, 3000);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -526,7 +528,7 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.TOWN_CREATION_ADMIN_ONLY);
 	}
 	
-	public boolean isNationCreationAdminOnly() {
+	public static boolean isNationCreationAdminOnly() {
 		return getBoolean(TownySettings.Bool.NATION_CREATION_ADMIN_ONLY);
 	}
 
@@ -711,6 +713,14 @@ public class TownySettings {
 		return parseString(String.format(getString(TownySettings.Str.MSG_PLOT_FOR_SALE), who, worldCoord.toString()));
 	}
 	
+	public static boolean hasTownLimit() {
+		return getInt(TownySettings.Int.TOWN_LIMIT) == 0;
+	}
+	
+	public static int getTownLimit() {
+		return getInt(TownySettings.Int.TOWN_LIMIT);
+	}
+	
 	/************************************************************/
 	
 	//TODO: better way to set values besides passing the filepath as a param
@@ -720,6 +730,8 @@ public class TownySettings {
 		configBool.put(key, value);
 		kvFile.setBoolean(key.toString().toLowerCase(), getBoolean(key));
 	}
+
+	
 
 	
 

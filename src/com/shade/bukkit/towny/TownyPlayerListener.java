@@ -782,6 +782,12 @@ public class TownyPlayerListener extends PlayerListener {
 			if (universe.isWarTime())
 				throw new TownyException("You cannot do this when the world is at war.");
 			
+			if (TownySettings.isTownCreationAdminOnly() && !plugin.isTownyAdmin(player))
+				throw new TownyException("Only admins are allowed to create towns.");
+			
+			if (TownySettings.hasTownLimit() && universe.getTowns().size() >= TownySettings.getTownLimit())
+				throw new TownyException("The universe cannot hold any more towns.");
+			
 			Resident resident = universe.getResident(mayorName);
 			if (resident.hasTown())
 				throw new TownyException(resident.getName() + " already belongs to a town.");
@@ -1646,6 +1652,9 @@ public class TownyPlayerListener extends PlayerListener {
 	public void newNation(Player player, String name, String capitalName) {
 		TownyUniverse universe = plugin.getTownyUniverse();
 		try {
+			if (TownySettings.isNationCreationAdminOnly() && !plugin.isTownyAdmin(player))
+				throw new TownyException("Only admins are allowed to create nations.");
+			
 			Town town = universe.getTown(capitalName);
 			if (town.hasNation())
 				throw new TownyException("Target already belongs to a nation.");
@@ -2106,7 +2115,7 @@ public class TownyPlayerListener extends PlayerListener {
 				}
 		else if (TownySettings.getDebug())
 			if (split[0].equalsIgnoreCase("tree"))
-				showUniverseTree();
+				plugin.getTownyUniverse().printUniverseTree();
 			else if (split[0].equalsIgnoreCase("seed"))
 				seedTowny();
 			else if (split[0].equalsIgnoreCase("newday"))
@@ -2322,48 +2331,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * Show the current universe in the console. Command: /towny tree
 	 */
 
-	public void showUniverseTree() {
-		TownyUniverse universe = plugin.getTownyUniverse();
-		System.out.println("|-Universe");
-		for (TownyWorld world : universe.getWorlds()) {
-			System.out.println("|---World: " + world.getName());
-			for (TownBlock townBlock : world.getTownBlocks())
-				try {
-					System.out.println("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
-							+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
-							+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
-				} catch (TownyException e) {
-				}
-			for (Resident resident : universe.getResidents()) {
-				try {
-					System.out.println("|---Resident: " + resident.getName()
-							+ " " + (resident.hasTown() ? resident.getTown().getName() : "")
-							+ (resident.hasNation() ? resident.getTown().getNation().getName() : ""));
-				} catch (TownyException e) {
-				}
-				for (TownBlock townBlock : resident.getTownBlocks())
-					try {
-						System.out.println("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
-								+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
-								+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
-					} catch (TownyException e) {
-					}
-			}
-			for (Town town : universe.getTowns()) {
-				try {
-					System.out.println("|---Town: " + town.getName() + " " + (town.hasNation() ? town.getNation().getName() : ""));
-				} catch (TownyException e) {
-				}
-				for (TownBlock townBlock : town.getTownBlocks())
-					try {
-						System.out.println("|------TownBlock: "  + "," + townBlock.getZ() + " "
-								+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
-								+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
-					} catch (TownyException e) {
-					}
-			}
-		}
-	}
+	
 
 	public void seedTowny() {
 		TownyUniverse townyUniverse = plugin.getTownyUniverse();

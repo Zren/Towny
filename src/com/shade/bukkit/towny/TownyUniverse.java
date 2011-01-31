@@ -34,6 +34,7 @@ public class TownyUniverse extends TownyObject {
 	private Timer healthRegenTimer = null;
 	private War warEvent;
 	private final int oneDay = 24 * 60 * 60 * 1000;
+	private String rootFolder;
 	
 	
 	// TODO: lastOnline, an onEnable check to see if a new day has stated to
@@ -41,6 +42,14 @@ public class TownyUniverse extends TownyObject {
 	// TODO: Timer to start/stop war time, collect taxes, delete old users.
 	// TODO: Timer/Thread like Minigames that turns on during war time. Checks
 	// each player every second.
+	
+	public TownyUniverse() {
+		rootFolder = "";
+	}
+	
+	public TownyUniverse(String rootFolder) {
+		this.rootFolder = rootFolder;
+	}
 	
 	public TownyUniverse(Towny plugin) {
 		this.plugin = plugin;
@@ -91,6 +100,7 @@ public class TownyUniverse extends TownyObject {
 			newResident(player.getName());
 			resident = getResident(player.getName());
 			sendMessage(player, TownySettings.getRegistrationMsg());
+			resident.setRegistered(System.currentTimeMillis());
 			if (!TownySettings.getDefaultTownName().equals(""))
 				try {
 					getTown(TownySettings.getDefaultTownName()).addResident(resident);
@@ -400,18 +410,24 @@ public class TownyUniverse extends TownyObject {
 			throw new NotRegisteredException();
 		return nation;
 	}
+	
+	public String getRootFolder() {
+		if (plugin != null)
+			return plugin.getDataFolder().getPath();
+		else
+			return rootFolder;
+	}
 
 	public boolean loadSettings() {
 		try {
-			String root = plugin.getDataFolder().getPath();
-			FileMgmt.checkFolders(new String[]{root, root + "/settings"});
+			FileMgmt.checkFolders(new String[]{getRootFolder(), getRootFolder() + "/settings"});
 			FileMgmt.checkFiles(new String[]{
-					root + "/settings/config.properties",
-					root + "/settings/town-levels.csv",
-					root + "/settings/nation-levels.csv"});
-			TownySettings.loadConfig(plugin.getDataFolder().getPath() + "/settings/config.properties");
-			TownySettings.loadTownLevelConfig(plugin.getDataFolder().getPath() + "/settings/town-levels.csv");
-			TownySettings.loadNationLevelConfig(plugin.getDataFolder().getPath() + "/settings/nation-levels.csv");
+					getRootFolder() + "/settings/config.properties",
+					getRootFolder() + "/settings/town-levels.csv",
+					getRootFolder() + "/settings/nation-levels.csv"});
+			TownySettings.loadConfig(getRootFolder() + "/settings/config.properties");
+			TownySettings.loadTownLevelConfig(getRootFolder() + "/settings/town-levels.csv");
+			TownySettings.loadNationLevelConfig(getRootFolder() + "/settings/nation-levels.csv");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -607,5 +623,47 @@ public class TownyUniverse extends TownyObject {
 		}
 		residents.remove(resident.getName().toLowerCase());
 		getDataSource().saveResidentList();
+	}
+	
+	public void printUniverseTree() {
+		System.out.println("|-Universe");
+		for (TownyWorld world : getWorlds()) {
+			System.out.println("|---World: " + world.getName());
+			for (TownBlock townBlock : world.getTownBlocks())
+				try {
+					System.out.println("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
+							+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
+							+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
+				} catch (TownyException e) {
+				}
+			for (Resident resident : getResidents()) {
+				try {
+					System.out.println("|---Resident: " + resident.getName()
+							+ " " + (resident.hasTown() ? resident.getTown().getName() : "")
+							+ (resident.hasNation() ? resident.getTown().getNation().getName() : ""));
+				} catch (TownyException e) {
+				}
+				for (TownBlock townBlock : resident.getTownBlocks())
+					try {
+						System.out.println("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
+								+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
+								+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
+					} catch (TownyException e) {
+					}
+			}
+			for (Town town : getTowns()) {
+				try {
+					System.out.println("|---Town: " + town.getName() + " " + (town.hasNation() ? town.getNation().getName() : ""));
+				} catch (TownyException e) {
+				}
+				for (TownBlock townBlock : town.getTownBlocks())
+					try {
+						System.out.println("|------TownBlock: "  + "," + townBlock.getZ() + " "
+								+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
+								+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
+					} catch (TownyException e) {
+					}
+			}
+		}
 	}
 }

@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -33,14 +31,13 @@ import com.shade.util.KeyValueFile;
 
 public class TownyFlatFileSource extends TownyDataSource {
 	private final String newLine = System.getProperty("line.separator");
-	protected static final Logger log = Logger.getLogger("Minecraft");
 	protected String rootFolder = "";
 
 	@Override
 	public void initialize(Towny plugin, TownyUniverse universe) {
 		this.universe = universe;
 		this.plugin = plugin;
-		this.rootFolder = plugin.getDataFolder().getPath();
+		this.rootFolder = universe.getRootFolder();
 
 		// Create files and folders if non-existent
 		try {
@@ -57,7 +54,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 					rootFolder + "/data/nations.txt",
 					rootFolder + "/data/worlds.txt"});
 		} catch (IOException e) {
-			log.info("[Towny] Error creating flatfile default files and folders.");
+			System.out.println("[Towny] Error: Could not create flatfile default files and folders.");
 		}
 	}
 
@@ -142,6 +139,42 @@ public class TownyFlatFileSource extends TownyDataSource {
 		}
 		return true;
 	}
+	
+	
+	@Override
+	public boolean loadWorldList() {
+		if (plugin != null) {
+			for (World world : plugin.getServer().getWorlds())
+				try {
+					universe.newWorld(world.getName());
+				} catch (AlreadyRegisteredException e) {
+				}
+			return true;
+		} else {
+			String line;
+			BufferedReader fin;
+
+			try {
+				fin = new BufferedReader(new FileReader(rootFolder + "/data/worlds.txt"));
+			} catch (FileNotFoundException e) {
+				return false;
+			}
+			try {
+				while ((line = fin.readLine()) != null)
+					if (!line.equals(""))
+						universe.newWorld(line);
+				fin.close();
+			} catch (Exception e) {
+				try {
+					fin.close();
+				} catch (IOException ioe) {
+					System.out.println(ioe.getStackTrace());
+				}
+				return false;
+			}
+			return true;
+		}
+	}
 
 	/*
 	 * Load individual towny object
@@ -183,8 +216,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 					utilLoadTownBlocks(line, null, resident);
 
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Exception while reading resident file "
-						+ resident.getName(), e);
+				System.out.println("[Towny] Loading Error: Exception while reading resident file " + resident.getName());
+				e.printStackTrace();
 				return false;
 			}
 
@@ -320,12 +353,13 @@ public class TownyFlatFileSource extends TownyDataSource {
 							town.setSpawn(new Location(world, x, y, z));
 						} catch (NumberFormatException e) {
 						} catch (NotRegisteredException e) {
+						} catch (NullPointerException e) {
 						}
 				}
 
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Exception while reading town file "
-						+ town.getName(), e);
+				System.out.println("[Towny] Loading Error: Exception while reading town file " + town.getName());
+				e.printStackTrace();
 				return false;
 			}
 
@@ -403,8 +437,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 					}
 
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Exception while reading nation file "
-						+ nation.getName(), e);
+				System.out.println("[Towny] Loading Error: Exception while reading nation file " + nation.getName());
+				e.printStackTrace();
 				return false;
 			}
 
@@ -436,8 +470,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 				// loadTownBlocks(world);
 
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Exception while reading world file "
-						+ world.getName(), e);
+				System.out.println("[Towny] Loading Error: Exception while reading world file " + world.getName());
+				e.printStackTrace();
 				return false;
 			}
 
@@ -510,8 +544,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.close();
 			return true;
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Exception while saving residents list file",
-					e);
+			System.out.println("[Towny] Loading Error: Exception while saving residents list file");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -525,7 +559,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.close();
 			return true;
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Exception while saving town list file", e);
+			System.out.println("[Towny] Loading Error: Exception while saving town list file");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -539,7 +574,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.close();
 			return true;
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Exception while saving nation list file", e);
+			System.out.println("[Towny] Loading Error: Exception while saving nation list file");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -553,7 +589,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.close();
 			return true;
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Exception while saving world list file", e);
+			System.out.println("[Towny] Loading Error: Exception while saving world list file");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -721,7 +758,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 	 * (townblock.hasResident()) line += townblock.getResident().getName(); line
 	 * += "," + Boolean.toString(townblock.isForSale()); fout.write(line +
 	 * newLine); } fout.close(); return true; } catch (Exception e) {
-	 * log.log(Level.SEVERE, "Exception while saving town blocks list file", e);
+	 * System.out.println("[Towny] Loading Error: Exception while saving town blocks list file");
+	 * e.printStackTrace();
 	 * return false; } }
 	 */
 

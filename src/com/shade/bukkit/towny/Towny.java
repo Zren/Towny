@@ -43,9 +43,11 @@ import com.shade.bukkit.util.Colors;
  * update cache when adding/removing people
  * replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
  * deposit for town/nation
- * when a town/nation is detroyed. What happens to the money? (give to Shade :D jk)
+ * when a town/nation is destroyed. What happens to the money? (give to Shade :D jk)
  * When adding allying another nation, ask that nation and add this nation to their ally list.
  * Make the formatting/wording for [nation] .. [nation] etc, better.
+ * In the wild, users who've registered less than X time are exempt to permissions.
+ * Some way to distinguish home block.
  */
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";
@@ -57,7 +59,7 @@ public class Towny extends JavaPlugin {
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
 	private PermissionHandler permissionHandler = null;
-
+	
 	public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, folder, plugin, cLoader);
 		version = this.getDescription().getVersion();

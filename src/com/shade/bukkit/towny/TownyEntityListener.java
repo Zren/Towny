@@ -3,6 +3,7 @@ package com.shade.bukkit.towny;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 
 public class TownyEntityListener extends EntityListener {
@@ -51,11 +52,15 @@ public class TownyEntityListener extends EntityListener {
 		return false;
 	}
 	
-	/*
+	
+	@Override
 	public void onEntityDeath(EntityDeathEvent event) {
-		Player player = event.getPlayer();
-		plugin.getTownyUniverse().townSpawn(player, true);
+		Entity entity =  event.getEntity();
+		if (entity instanceof Player) {
+			Player player = (Player)entity;
+			plugin.getTownyUniverse().townSpawn(player, true);
+		}
     }
-    */
+    
     
 }
