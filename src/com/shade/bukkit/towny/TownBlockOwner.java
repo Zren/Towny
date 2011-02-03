@@ -21,20 +21,18 @@ public class TownBlockOwner extends TownyIConomyObject {
 
 	public void addTownBlock(TownBlock townBlock)
 			throws AlreadyRegisteredException {
-		if (hasTownBlock(townBlock)) {
+		if (hasTownBlock(townBlock))
 			throw new AlreadyRegisteredException();
-		} else {
+		else
 			townBlocks.add(townBlock);
-		}
 	}
 
 	public void removeTownBlock(TownBlock townBlock)
 			throws NotRegisteredException {
-		if (!hasTownBlock(townBlock)) {
+		if (!hasTownBlock(townBlock))
 			throw new NotRegisteredException();
-		} else {
+		else
 			townBlocks.remove(townBlock);
-		}
 	}
 
 	public void setPermissions(String line) {

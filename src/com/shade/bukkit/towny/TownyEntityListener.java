@@ -56,11 +56,12 @@ public class TownyEntityListener extends EntityListener {
 	@Override
 	public void onEntityDeath(EntityDeathEvent event) {
 		Entity entity =  event.getEntity();
+		if (TownySettings.getDebug())
+			System.out.println("[Towny] Debug: onDeath: " + entity.getEntityId());
+		
 		if (entity instanceof Player) {
 			Player player = (Player)entity;
 			plugin.getTownyUniverse().townSpawn(player, true);
 		}
     }
-    
-    
 }

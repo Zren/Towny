@@ -23,6 +23,7 @@ import com.shade.util.MemMgmt;
  * Handle events for all Player related events
  * 
  * @author Shade
+ * 
  */
 public class TownyPlayerListener extends PlayerListener {
 	private final Towny plugin;
@@ -97,6 +98,10 @@ public class TownyPlayerListener extends PlayerListener {
 		// TODO: Player mode
 		if (plugin.hasPlayerMode(player, "map"))
 			showMap(player);
+		if (plugin.hasPlayerMode(player, "townclaim"))
+			parseTownClaimCommand(player, new String[]{"/town","claim"});
+		if (plugin.hasPlayerMode(player, "townunclaim"))
+			parseTownClaimCommand(player, new String[]{"/town","unclaim"});
 		// claim: attempt to claim area
 		// claim remove: remove area from town
 
@@ -201,6 +206,26 @@ public class TownyPlayerListener extends PlayerListener {
 			System.out.println("[Towny] Debug: onCommand took " + (System.currentTimeMillis() - start) + "ms");
 		event.setCancelled(true);
 	}
+	
+	/**
+	 * Show a general help and list other help commands to player Command:
+	 * /towny
+	 * 
+	 * @param player
+	 */
+
+	public void showHelp(Player player) {
+		player.sendMessage(ChatTools.formatTitle("General Towny Help"));
+		player.sendMessage("Try the following commands to learn more about towny.");
+		player.sendMessage(ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getResidentCommands()), "?", "")
+				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getTownCommands()), "?", "") 
+				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getNationCommands()), "?", "")
+				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getPlotCommands()), "?", "")
+				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getTownyCommands()), "?", ""));
+		player.sendMessage(ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getTownChatCommands()), " [msg]", "Town Chat")
+				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getNationChatCommands()), " [msg]", "Nation Chat"));
+		player.sendMessage(ChatTools.formatCommand("Admin", TownySettings.getFirstCommand(TownySettings.getTownyAdminCommands()), "?", ""));
+	}
 
 	public void parseTownChatCommand(Player player, String msg) {
 		try {
@@ -228,17 +253,23 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 	}
 
-	public void parseResidentCommand(Player player, String[] split) {
-		/*
-		 * /resident
-		 * /resident ?
-		 * /resident [resident]
-		 * /resident list
-		 * /resident set [] .. []
-		 * /resident friend [add/remove] [resident]
-		 * TODO: /resident delete [resident] *Admin
-		 */
+	/**
+	 * Send a list of all resident commands to player Command: /resident ?
+	 * 
+	 * @param player
+	 */
 
+	public void showResidentHelp(Player player) {
+		player.sendMessage(ChatTools.formatTitle("/resident"));
+		player.sendMessage(ChatTools.formatCommand("", "/resident", "", "Your status"));
+		player.sendMessage(ChatTools.formatCommand("", "/resident", "[resident]", "Target player's status"));
+		player.sendMessage(ChatTools.formatCommand("", "/resident", "list", "List all active players"));
+		player.sendMessage(ChatTools.formatCommand("", "/resident", "set [] .. []", "'/resident set' for help"));
+		player.sendMessage(ChatTools.formatCommand("", "/resident", "friend [add/remove] [resident]", ""));
+		player.sendMessage(ChatTools.formatCommand("Admin", "/resident", "delete [resident]", ""));
+	}
+	
+	public void parseResidentCommand(Player player, String[] split) {
 		if (split.length == 0)
 			try {
 				Resident resident = plugin.getTownyUniverse().getResident( player.getName());
@@ -269,22 +300,6 @@ public class TownyPlayerListener extends PlayerListener {
 			} catch (NotRegisteredException x) {
 				plugin.sendErrorMsg(player, split[0] + " is not registered");
 			}
-	}
-
-	/**
-	 * Send a list of all resident commands to player Command: /resident ?
-	 * 
-	 * @param player
-	 */
-
-	public void showResidentHelp(Player player) {
-		player.sendMessage(ChatTools.formatTitle("/resident"));
-		player.sendMessage(ChatTools.formatCommand("", "/resident", "", "Your status"));
-		player.sendMessage(ChatTools.formatCommand("", "/resident", "[resident]", "Target player's status"));
-		player.sendMessage(ChatTools.formatCommand("", "/resident", "list", "List all active players"));
-		player.sendMessage(ChatTools.formatCommand("", "/resident", "set [] .. []", "'/resident set' for help"));
-		player.sendMessage(ChatTools.formatCommand("", "/resident", "friend [add/remove] [resident]", ""));
-		// TODO: player.sendMessage(ChatTools.formatCommand("", "/resident", "delete [resident]", ""));
 	}
 
 	/**
@@ -359,7 +374,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatCommand("", "/resident set mode", "reset", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/resident set mode", "[mode] ...[mode]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "    Mode:", "map", "Show the map between each townblock"));
-			//TODO: player.sendMessage(ChatTools.formatCommand("", "    Mode:", "townclaim", "Attempt to claim the new area"));
+			player.sendMessage(ChatTools.formatCommand("", "    Mode:", "townclaim", "Attempt to claim the new area"));
 			player.sendMessage(ChatTools.formatCommand("Eg", "/resident set mode", "map townclaim", ""));
 		} else if (split[0].equalsIgnoreCase("reset"))
 			plugin.removePlayerMode(player);
@@ -590,28 +605,39 @@ public class TownyPlayerListener extends PlayerListener {
 				return;
 			}
 	}
+	
+	/**
+	 * Send a list of all town commands to player Command: /town ?
+	 * 
+	 * @param player
+	 */
+
+	public void showTownHelp(Player player) {
+		String newTownReq = TownySettings.isTownCreationAdminOnly() ? "Admin" : "";
+
+		player.sendMessage(ChatTools.formatTitle("/town"));
+		player.sendMessage(ChatTools.formatCommand("", "/town", "", "Your town's status"));
+		player.sendMessage(ChatTools.formatCommand("", "/town", "[town]", "Selected town's status"));
+		player.sendMessage(ChatTools.formatCommand("", "/town", "here", "Shortcut to the town's status of your location."));
+		player.sendMessage(ChatTools.formatCommand("", "/town", "list", ""));
+		player.sendMessage(ChatTools.formatCommand("", "/town", "leave", ""));
+		player.sendMessage(ChatTools.formatCommand("", "/town", "claim", "'/town claim ?' for help"));
+		player.sendMessage(ChatTools.formatCommand("", "/town", "unclaim", "'/town unclaim ?' for help"));
+		player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to town's spawn."));
+		player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add [resident] .. []", "Add online residents."));
+		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add+ [resident]", "Add resident"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick [resident] .. []", ""));
+		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick+ [resident]", "Kick resident"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "set [] .. []", "'/town set' for help"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "assistant [add/remove] [player]", ""));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "withdraw [$]", ""));
+		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "wall [type] [height]", ""));
+		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "wall remove", ""));
+		player.sendMessage(ChatTools.formatCommand("Mayor/Admin", "/town", "delete [town]", ""));
+	}
 
 	public void parseTownCommand(Player player, String[] split) {
-		/*
-		 * /town
-		 * /town ?
-		 * /town list
-		 * TODO: /town leave 
-		 * /town here 
-		 * /town spawn
-		 * /town claim ... 
-		 * /town new [town] [mayor] *Admin
-		 * TODO: /town givebonus [town] [bonus] *Admin
-		 * TODO: /town delete [town] *Admin
-		 * /town add [resident] .. [resident] *Mayor
-		 * TODO: /town add+ [resident] *Mayor (For inviting offline residents) 
-		 * /town kick [resident] .. [resident] *Mayor
-		 * TODO: /town kick+ [resident] *Mayor (For kicking offline residents)
-		 * TODO: /town wall 
-		 * /town set [] ... [] *Mayor *Admin
-		 * /town assistant add [resident] .. [resident]
-		 */
-		
 		if (split.length == 0)
 			try {
 				Resident resident = plugin.getTownyUniverse().getResident(player.getName());
@@ -665,6 +691,8 @@ public class TownyPlayerListener extends PlayerListener {
 				townKick(player, newSplit);
 			else if (split[0].equalsIgnoreCase("claim"))
 				parseTownClaimCommand(player, newSplit);
+			else if (split[0].equalsIgnoreCase("unclaim"))
+				parseTownUnClaimCommand(player, newSplit);
 			else
 				try {
 					Town town = plugin.getTownyUniverse().getTown(split[0]);
@@ -689,38 +717,6 @@ public class TownyPlayerListener extends PlayerListener {
 		} catch (IConomyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		}
-	}
-
-	/**
-	 * Send a list of all town commands to player Command: /town ?
-	 * 
-	 * @param player
-	 */
-
-	public void showTownHelp(Player player) {
-		String newTownReq = TownySettings.isTownCreationAdminOnly() ? "Admin" : "";
-
-		player.sendMessage(ChatTools.formatTitle("/town"));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "", "Your town's status"));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "[town]", "Selected town's status"));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "here", "Shortcut to the town's status of your location."));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "list", ""));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "leave", ""));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "claim", "'/town claim ?' for help"));
-		// TODO: player.sendMessage(ChatTools.formatCommand("", "/town", "unclaim", "'/town unclaim ?' for help"));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to town's spawn."));
-		player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add [resident] .. []", "Add online residents."));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add+ [resident]", "Add resident"));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick [resident] .. []", ""));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick+ [resident]", "Kick resident"));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "set [] .. []", "'/town set' for help"));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "assistant [add/remove] [player]", ""));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "withdraw [$]", ""));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "wall [type] [height]", ""));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "wall remove", ""));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Admin", "/town", "givebonus [town] [bonus]", ""));
-		player.sendMessage(ChatTools.formatCommand("Mayor/Admin", "/town", "delete [town]", ""));
 	}
 
 	/**
@@ -1109,8 +1105,8 @@ public class TownyPlayerListener extends PlayerListener {
 	public void parseTownClaimCommand(Player player, String[] split) {
 		if (split.length == 1 && split[0].equalsIgnoreCase("?")) {
 			player.sendMessage(ChatTools.formatTitle("/town claim"));
-			player.sendMessage(ChatTools.formatCommand("", "/town claim", "", "Claim this town block"));
-			// TODO: player.sendMessage(ChatTools.formatCommand("", "/town claim", "auto", "Automatically expand town area till max"));
+			player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "", "Claim this town block"));
+			// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "auto", "Automatically expand town area till max"));
 			player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "rect [radius]", "Attempt to claim around you."));
 			player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "rect auto", "Detemine the maximum radius"));
 		} else {
@@ -1241,9 +1237,77 @@ public class TownyPlayerListener extends PlayerListener {
 					throw new TownyException("Selected area is not connected to town.");
 			TownBlock townBlock = world.newTownBlock(coord);
 			townBlock.setTown(town);
-			
+			if (!town.hasHomeBlock())
+				town.setHomeBlock(townBlock);
 			return true;
 		}
+	}
+	
+	public void parseTownUnClaimCommand(Player player, String[] split) {
+		if (split.length == 1 && split[0].equalsIgnoreCase("?")) {
+			player.sendMessage(ChatTools.formatTitle("/town unclaim"));
+			player.sendMessage(ChatTools.formatCommand("Mayor", "/town unclaim", "", "Unclaim this town block"));
+			player.sendMessage(ChatTools.formatCommand("Mayor", "/town unclaim", "all", "Remove all townblocks"));
+		} else {
+			Resident resident;
+			Town town;
+			TownyWorld world;
+			try {
+				if (plugin.getTownyUniverse().isWarTime())
+					throw new TownyException("You cannot do this when the world is at war.");
+				
+				resident = plugin.getTownyUniverse().getResident(player.getName());
+				town = resident.getTown();
+				if (!resident.isMayor())
+					if (!town.hasAssistant(resident))
+						throw new TownyException("You are not the mayor or an assistant.");
+				world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
+			} catch (TownyException x) {
+				plugin.sendErrorMsg(player, x.getError());
+				return;
+			}
+
+			if (split.length == 0)
+				try {
+					Coord coord = Coord.parseCoord(player);
+					townUnClaim(town, world, coord, false);
+					plugin.sendMsg(player, "Abandoned area ("+coord+")");
+					plugin.getTownyUniverse().getDataSource().saveTown(town);
+					plugin.getTownyUniverse().getDataSource().saveWorld(world);
+					
+					plugin.updateCache();
+				} catch (TownyException x) {
+					plugin.sendErrorMsg(player, x.getError());
+				}
+			else if (split[0].equalsIgnoreCase("all")) {
+				townUnClaimAll(town);
+				plugin.getTownyUniverse().getDataSource().saveTown(town);
+				plugin.getTownyUniverse().getDataSource().saveWorld(world);
+				
+				plugin.updateCache();
+			}
+		}
+	}
+	
+	public boolean townUnClaim(Town town, TownyWorld world, Coord coord, boolean force) throws TownyException {
+		try {
+			TownBlock townBlock = world.getTownBlock(coord);
+			if (town != townBlock.getTown() && !force)
+				throw new TownyException("This area does not belong to you.");
+			
+			plugin.getTownyUniverse().removeTownBlock(townBlock);
+			
+			return true;
+		} catch (NotRegisteredException e) {
+			throw new TownyException("This area has not been claimed.");
+		}
+	}
+	
+	public boolean townUnClaimAll(Town town) {
+		plugin.getTownyUniverse().removeTownBlocks(town);
+		plugin.getTownyUniverse().sendTownMessage(town, "Your town abadoned the area");
+		
+		return true;
 	}
 
 	public boolean isTownEdge(Town town, TownyWorld world, Coord[] coords) {
@@ -1300,6 +1364,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "taxes [$]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "plottax [$]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "plotprice [$]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/town set", "name [name]", ""));
 		} else {
 			Resident resident;
 			Town town;
@@ -1508,20 +1573,29 @@ public class TownyPlayerListener extends PlayerListener {
 			}
 	}
 
-	
+	/**
+	 * Send a list of all nation commands to player Command: /nation ?
+	 * 
+	 * @param player
+	 */
+
+	public void showNationHelp(Player player) {
+		String newNationReq = TownySettings.isNationCreationAdminOnly() ? "Admin" : "";
+
+		player.sendMessage(ChatTools.formatTitle("/nation"));
+		player.sendMessage(ChatTools.formatCommand("", "/nation", "", "Your nation's status"));
+		player.sendMessage(ChatTools.formatCommand("", "/nation", "[nation]", "Target nation's status"));
+		player.sendMessage(ChatTools.formatCommand("", "/nation", "list", "List all nations"));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "leave", "Leave your nation"));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove]", "Leave your nation"));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "set [] .. []", ""));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "ally [add/remove] [nation]", "Set you alliance."));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "enemy [add/remove] [nation]", "Set you enemys."));
+		player.sendMessage(ChatTools.formatCommand(newNationReq, "/nation", "new [nation] *[capital]", "Create a new nation"));
+		player.sendMessage(ChatTools.formatCommand("King/Admin", "/nation", "delete [nation]", ""));
+	}
 
 	public void parseNationCommand(Player player, String[] split) {
-		/*
-		 * /nation
-		 * /nation list
-		 * /nation [nation]
-		 * TODO: /nation leave *Mayor
-		 * /nation new [nation] [capital] *Admin
-		 * TODO: /nation delete [nation]*Admin
-		 * TODO: /nation add [town] *King
-		 * TODO: /nation kick [town] *King
-		 */
-
 		if (split.length == 0)
 			try {
 				Resident resident = plugin.getTownyUniverse().getResident(player.getName());
@@ -1603,28 +1677,6 @@ public class TownyPlayerListener extends PlayerListener {
 		} catch (IConomyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		}
-	}
-
-	/**
-	 * Send a list of all nation commands to player Command: /nation ?
-	 * 
-	 * @param player
-	 */
-
-	public void showNationHelp(Player player) {
-		String newTownReq = TownySettings.isTownCreationAdminOnly() ? "Admin" : "";
-
-		player.sendMessage(ChatTools.formatTitle("/nation"));
-		player.sendMessage(ChatTools.formatCommand("", "/nation", "", "Your nation's status"));
-		player.sendMessage(ChatTools.formatCommand("", "/nation", "[nation]", "Target nation's status"));
-		player.sendMessage(ChatTools.formatCommand("", "/nation", "list", "List all nations"));
-		player.sendMessage(ChatTools.formatCommand("King", "/nation", "leave", "Leave your nation"));
-		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove]", "Leave your nation"));
-		player.sendMessage(ChatTools.formatCommand("King", "/nation", "set [] .. []", ""));
-		player.sendMessage(ChatTools.formatCommand("King", "/nation", "ally [add/remove] [nation]", "Set you alliance."));
-		player.sendMessage(ChatTools.formatCommand("King", "/nation", "enemy [add/remove] [nation]", "Set you enemys."));
-		player.sendMessage(ChatTools.formatCommand(newTownReq, "/nation", "new [nation] *[capital]", "Create a new nation"));
-		player.sendMessage(ChatTools.formatCommand("King/Admin", "/nation", "delete [nation]", ""));
 	}
 
 	/**
@@ -2004,9 +2056,10 @@ public class TownyPlayerListener extends PlayerListener {
 	public void nationSet(Player player, String[] split) {
 		if (split.length == 0) {
 			player.sendMessage(ChatTools.formatTitle("/nation set"));
-			player.sendMessage(ChatTools.formatCommand("", "/nation set", "king [resident] *[nation]", ""));
-			//TODO: player.sendMessage(ChatTools.formatCommand("", "/nation set", "capital [town] *[nation]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/nation set", "king [resident]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/nation set", "capital [town]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/nation set", "taxes [$]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/nation set", "name [name]", ""));
 		} else {
 			Resident resident;
 			Nation nation;
@@ -2030,6 +2083,19 @@ public class TownyPlayerListener extends PlayerListener {
 						Resident newKing = plugin.getTownyUniverse().getResident(split[1]);
 						nation.setKing(newKing);
 						plugin.getTownyUniverse().sendNationMessage(nation, TownySettings.getNewKingMsg(newKing.getName()));
+					} catch (TownyException e) {
+						plugin.sendErrorMsg(player, e.getError());
+					}
+			} else if (split[0].equalsIgnoreCase("capital")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set capital 70");
+				else
+					try {
+						Town newCapital = plugin.getTownyUniverse().getTown(split[1]);
+						nation.setCapital(newCapital);
+						plugin.getTownyUniverse().sendNationMessage(nation, TownySettings.getNewKingMsg(newCapital.getMayor().getName()));
+					} catch (NumberFormatException e) {
+						plugin.sendErrorMsg(player, "Taxes must be an interger.");
 					} catch (TownyException e) {
 						plugin.sendErrorMsg(player, e.getError());
 					}
@@ -2077,22 +2143,26 @@ public class TownyPlayerListener extends PlayerListener {
 
 	}
 
-	public void parseTownyCommand(Player player, String[] split) {
-		/*
-		 * /towny
-		 * /towny ?
-		 * /towny map
-		 * /towny version
-		 * /towny universe
-		 * /towny war stats
-		 * /towny war scores
-		 * 
-		 * Debug only:
-		 * /towny seed
-		 * /towny tree
-		 * /towny newday
-		 */
+	/**
+	 * Send a list of all towny commands to player Command: /towny ?
+	 * 
+	 * @param player
+	 */
 
+	public void showTownyHelp(Player player) {
+		player.sendMessage(ChatTools.formatTitle("/towny"));
+		player.sendMessage(ChatTools.formatCommand("", "/towny", "", "General help for Towny"));
+		player.sendMessage(ChatTools.formatCommand("", "/towny", "map", "Displays a map of the nearby townblocks"));
+		player.sendMessage(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
+		player.sendMessage(ChatTools.formatCommand("", "/towny", "universe", "Displays stats"));
+		if (TownySettings.getDebug()) {
+			player.sendMessage(ChatTools.formatCommand("Debug", "/towny", "seed", "Create tons of empty objects"));
+			player.sendMessage(ChatTools.formatCommand("Debug", "/towny", "tree", "Print univese to console"));
+			player.sendMessage(ChatTools.formatCommand("Debug", "/towny", "newday", "Run the new day code"));
+		}
+	}
+	
+	public void parseTownyCommand(Player player, String[] split) {
 		if (split.length == 0)
 			showHelp(player);
 		else if (split[0].equalsIgnoreCase("?"))
@@ -2122,39 +2192,9 @@ public class TownyPlayerListener extends PlayerListener {
 				plugin.getTownyUniverse().newDay();
 	}
 
-	/**
-	 * Show a general help and list other help commands to player Command:
-	 * /towny
-	 * 
-	 * @param player
-	 */
+	
 
-	public void showHelp(Player player) {
-		player.sendMessage(ChatTools.formatTitle("General Towny Help"));
-		player.sendMessage("Try the following commands to learn more about towny.");
-		player.sendMessage(ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getResidentCommands()), "?", "")
-				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getTownCommands()), "?", "") 
-				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getNationCommands()), "?", "")
-				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getPlotCommands()), "?", "")
-				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getTownyCommands()), "?", ""));
-		player.sendMessage(ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getTownChatCommands()), " [msg]", "Town Chat")
-				+ ", " + ChatTools.formatCommand("", TownySettings.getFirstCommand(TownySettings.getNationChatCommands()), " [msg]", "Nation Chat"));
-		player.sendMessage(ChatTools.formatCommand("Admin", TownySettings.getFirstCommand(TownySettings.getTownyAdminCommands()), "?", ""));
-	}
-
-	/**
-	 * Send a list of all towny commands to player Command: /towny ?
-	 * 
-	 * @param player
-	 */
-
-	public void showTownyHelp(Player player) {
-		player.sendMessage(ChatTools.formatTitle("/towny"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "", "General help for Towny"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "map", "Displays a map of the nearby townblocks"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "universe", "Displays stats"));
-	}
+	
 
 	/**
 	 * Send a map of the nearby townblocks status to player Command: /towny map
@@ -2234,6 +2274,8 @@ public class TownyPlayerListener extends PlayerListener {
 					// Registered town block
 					if (townblock.isForSale())
 						townyMap[y][x] += "$";
+					else if (townblock.isHomeBlock())
+						townyMap[y][x] += "H";
 					else
 						townyMap[y][x] += "+";
 				} catch (TownyException e) {
@@ -2354,14 +2396,6 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	public void parseTownyAdminCommand(Player player, String[] split) {
-		/*
-		 * /townyadmin
-		 * /townyadmin ?
-		 * /townyadmin set [] .. []
-		 * /townyadmin war toggle [on/off]
-		 * /townyadmin reload
-		 */
-
 		if (split.length == 0)
 			showAdminPanel(player);
 		else if (split[0].equalsIgnoreCase("?"))
@@ -2374,7 +2408,22 @@ public class TownyPlayerListener extends PlayerListener {
 			String[] newSplit = new String[split.length - 1];
 			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
 			parseWarCommand(player, newSplit);
-		} else if (split[0].equalsIgnoreCase("reload"))
+		} else if (split[0].equalsIgnoreCase("givebonus"))
+			try {
+				if (split.length != 3)
+					throw new TownyException("Wrong input. Eg: givebonus [town] [n]");
+				
+				Town town = plugin.getTownyUniverse().getTown(split[1]);
+				try {
+					town.setBonusBlocks(town.getBonusBlocks() + Integer.parseInt(split[2]));
+				} catch (NumberFormatException nfe) {
+					throw new TownyException("Bonus amount must be an integer.");
+				}
+				plugin.getTownyUniverse().getDataSource().saveTown(town);
+			} catch (TownyException e) {
+				plugin.sendErrorMsg(player, e.getError());
+			}
+		else if (split[0].equalsIgnoreCase("reload"))
 			reloadTowny(player);
 	}
 
@@ -2424,11 +2473,56 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "", "Admin panel"));
 		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "set [] .. []", "'/townyadmin set' for help"));
 		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "war toggle [on/off]", ""));
+		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "givebonus [town] [num]", ""));
+		//TODO: player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "npc rename [old name] [new name]", ""));
+		//TODO: player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "npc list", ""));
 		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "reload", "reload Towny"));
 	}
 
 	public void adminSet(Player player, String[] split) {
-
+		if (split.length == 0) {
+			player.sendMessage(ChatTools.formatTitle("/townyadmin set"));
+			//TODO: player.sendMessage(ChatTools.formatCommand("", "/townyadmin set", "king [nation] [king]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyadmin set", "mayor [town] [mayor]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyadmin set", "mayor [town] npc", ""));
+		} else if (split[0].equalsIgnoreCase("mayor")) {
+			if (split.length < 3) {
+				player.sendMessage(ChatTools.formatTitle("/townyadmin set mayor"));
+				player.sendMessage(ChatTools.formatCommand("Eg", "/townyadmin set mayor", "[town] [mayor]", ""));
+				player.sendMessage(ChatTools.formatCommand("Eg", "/townyadmin set mayor", "[town] npc", ""));
+			} else
+				try {
+					Resident newMayor = null;
+					if (split[2].equalsIgnoreCase("npc")) {
+						String name = nextNpcName();
+						plugin.getTownyUniverse().newResident(name);
+						newMayor = plugin.getTownyUniverse().getResident(name);
+						plugin.getTownyUniverse().getDataSource().saveResident(newMayor);
+					} else
+						newMayor = plugin.getTownyUniverse().getResident(split[2]);
+					Town town = plugin.getTownyUniverse().getTown(split[1]);
+					town.setMayor(newMayor);
+					plugin.getTownyUniverse().getDataSource().saveTown(town);
+					plugin.getTownyUniverse().sendTownMessage(town, TownySettings.getNewMayorMsg(newMayor.getName()));
+				} catch (TownyException e) {
+					plugin.sendErrorMsg(player, e.getError());
+				}
+		} else {
+			plugin.sendErrorMsg(player, "Invalid administrative property.");
+			return;
+		}
+	}
+	
+	public String nextNpcName() throws TownyException {
+		String name;
+		int i = 0;
+		do {
+			name = TownySettings.getNPCPrefix() + ++i;
+			if (!plugin.getTownyUniverse().hasResident(name))
+				return name;
+			if (i > 1000)
+				throw new TownyException("Too many npc's registered.");
+		} while (true);
 	}
 	
 	public void reloadTowny(Player player) {

@@ -84,11 +84,6 @@ public class TownyWorld extends TownyObject {
 		}
 	}
 
-	public void removeTownBlocks(List<TownBlock> townBlocks) {
-		for (TownBlock townBlock : new ArrayList<TownBlock>(townBlocks))
-			removeTownBlock(townBlock);
-	}
-
 	public void removeTownBlock(TownBlock townBlock) {
 		try {
 			if (townBlock.hasResident())
@@ -102,6 +97,11 @@ public class TownyWorld extends TownyObject {
 		}
 
 		removeTownBlock(townBlock.getCoord());
+	}
+	
+	public void removeTownBlocks(List<TownBlock> townBlocks) {
+		for (TownBlock townBlock : new ArrayList<TownBlock>(townBlocks))
+			removeTownBlock(townBlock);
 	}
 
 	public void removeTownBlock(Coord coord) {

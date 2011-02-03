@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.shade.bukkit.towny.db.TownyDataSource;
@@ -151,6 +152,19 @@ public class TownyUniverse extends TownyObject {
 				player.teleportTo(player.getWorld().getSpawnLocation());
 			else
 				plugin.sendErrorMsg(player, x.getError());
+		}
+	}
+	
+	public Location getTownSpawnLocation(Player player, boolean forceTeleport) throws TownyException {
+		try {
+			Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+			Town town = resident.getTown();
+			return town.getSpawn();
+		} catch (TownyException x) {
+			if (forceTeleport)
+				return player.getWorld().getSpawnLocation();
+			else
+				throw new TownyException("Unable to get spawn location");
 		}
 	}
 
@@ -665,5 +679,30 @@ public class TownyUniverse extends TownyObject {
 					}
 			}
 		}
+	}
+
+	public void removeTownBlock(TownBlock townBlock) {
+		Resident resident = null;
+		Town town = null;
+		try {
+			resident = townBlock.getResident();
+		} catch (NotRegisteredException e) {
+		}
+		try {
+			town = townBlock.getTown();
+		} catch (NotRegisteredException e) {
+		}
+		TownyWorld world = townBlock.getWorld();
+		world.removeTownBlock(townBlock);
+		getDataSource().saveWorld(world);
+		if (resident != null)
+			getDataSource().saveResident(resident);
+		if (town != null)
+			getDataSource().saveTown(town);
+	}
+	
+	public void removeTownBlocks(Town town) {
+		for (TownBlock townBlock : town.getTownBlocks())
+			removeTownBlock(townBlock);
 	}
 }

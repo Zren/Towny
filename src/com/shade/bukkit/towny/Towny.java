@@ -46,8 +46,23 @@ import com.shade.bukkit.util.Colors;
  * when a town/nation is destroyed. What happens to the money? (give to Shade :D jk)
  * When adding allying another nation, ask that nation and add this nation to their ally list.
  * Make the formatting/wording for [nation] .. [nation] etc, better.
- * In the wild, users who've registered less than X time are exempt to permissions.
  * Some way to distinguish home block.
+ * Shift functions in player listener to help function then parse function.
+ * Re-register a player after res delete
+ * 
+ * 
+ * --- Cool Concepts ---
+ * 
+ * Town spawn will spawn a obsidian portal. When spawning, the portal activates for a few seconds.
+ * In the wild, users who've registered less than X time are exempt to permissions. 
+ * 
+ * 
+ * --- Timeline ---
+ * 
+ * Unclaim
+ * Npc
+ * Flatfile
+ * 
  */
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";
@@ -68,7 +83,7 @@ public class Towny extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		registerEvents();
-
+		
 		PluginDescriptionFile pdfFile = this.getDescription();
 		pdfFile.getVersion();
 
@@ -250,8 +265,10 @@ public class Towny extends JavaPlugin {
 	}
 	
 	public boolean isTownyAdmin(Player player) {
+		if (player.isOp())
+			return true;
 		if (permissionHandler == null)
-			return false;
+			return player.isOp();
 		else
 			return permissionHandler.has(player, "towny.admin");
 	}

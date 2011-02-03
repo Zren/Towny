@@ -61,7 +61,8 @@ public class TownySettings {
 		MSG_NEW_DAY,
 		MSG_COULDNT_PAY_TAXES,
 		MSG_BUY_RESIDENT_PLOT,
-		MSG_PLOT_FOR_SALE
+		MSG_PLOT_FOR_SALE//,
+		//MSG_WILD_MUST_BUILD_TOWN
 	};
 	// Integer
 	enum Int {
@@ -81,7 +82,8 @@ public class TownySettings {
 		WARTIME_MIN_HEIGHT,
 		MOB_REMOVAL_SPEED,
 		HEALTH_REGEN_SPEED,
-		TOWN_LIMIT
+		TOWN_LIMIT//,
+		//WILD_BUILD_TIME_LIMIT
 	};
 	// Boolean
 	enum Bool {
@@ -729,6 +731,10 @@ public class TownySettings {
 		KeyValueFile kvFile = new KeyValueFile(filepath);
 		configBool.put(key, value);
 		kvFile.setBoolean(key.toString().toLowerCase(), getBoolean(key));
+	}
+
+	public static String getNPCPrefix() {
+		return "NPC_";
 	}
 
 	

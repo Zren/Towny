@@ -30,9 +30,16 @@ public class TownyFormatter {
 			+ Colors.Gray + " | "
 			+ Colors.Green + "Last Online: " + Colors.LightGreen + losdf.format(resident.getLastOnline()));
 
-		// Owner of: 4 Town Blocks
+		// Owner of: 4 Town Blocks | Perm: B=f- D=fa
 		if (resident.getTownBlocks().size() > 0)
-			out.add(Colors.Green + "Owner of: " + Colors.LightGreen + resident.getTownBlocks().size() + " plots");
+			out.add(Colors.Green + "Owner of: " + Colors.LightGreen + resident.getTownBlocks().size() + " plots"
+					+ Colors.Gray + " | " + Colors.Green + "Perm: "
+					+ Colors.LightGreen + "B=" + Colors.LightGray
+					+ (resident.getPermissions().residentBuild ? "f" : "-")
+					+ (resident.getPermissions().allyBuild ? "a" : "-")
+					+ Colors.LightGreen + "D=" + Colors.LightGray
+					+ (resident.getPermissions().residentDestroy ? "f" : "-")
+					+ (resident.getPermissions().allyDestroy ? "a" : "-"));
 
 		// Bank: 534 coins
 		if (TownySettings.isUsingIConomy())
@@ -87,24 +94,33 @@ public class TownyFormatter {
 		} catch (TownyException e) {
 		}
 		
-		// Bank: 534 coins
+		// Permissions: B=rao D=---
+		out.add(Colors.Green + "Permissions: "
+				+ Colors.LightGreen + "B=" + Colors.LightGray
+				+ (town.getPermissions().residentBuild ? "r" : "-")
+				+ (town.getPermissions().allyBuild ? "a" : "-")
+				+ (town.getPermissions().outsiderBuild ? "o" : "-")
+				+ Colors.LightGreen + "D=" + Colors.LightGray
+				+ (town.getPermissions().residentDestroy ? "r" : "-")
+				+ (town.getPermissions().allyDestroy ? "a" : "-")
+				+ (town.getPermissions().outsiderDestroy ? "o" : "-"));
+		
+
+		// | Bank: 534 coins
+		String bankString = "";
 		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
-				out.add(Colors.Green + "Bank: " + Colors.LightGreen + town.getIConomyBalance() + " " + iConomy.currency);
+				bankString = Colors.Gray + " | " + Colors.Green + "Bank: " + Colors.LightGreen + town.getIConomyBalance() + " " + iConomy.currency;
 			} catch (IConomyException e1) {
 			}
 
-		// if (mayor != null)
-		out.add(Colors.Green + "Mayor: " + Colors.LightGreen
-				+ getFormattedName(town.getMayor()));
-		// Assistants:
-		// Sammy, Ginger
-		if (town.getAssistants().size() > 0) {
-			out.add(Colors.Green + "Assistants:");
-			out.addAll(ChatTools.list(getFormattedNames(town.getAssistants()
-					.toArray(new Resident[0]))));
-		}
+		// Mayor: MrSand | Bank: 534 coins
+		out.add(Colors.Green + "Mayor: " + Colors.LightGreen + getFormattedName(town.getMayor()) + bankString);
+		
+		// Assistants: Sammy, Ginger
+		if (town.getAssistants().size() > 0)
+			out.addAll(ChatTools.list(getFormattedNames(town.getAssistants().toArray(new Resident[0])), Colors.Green + "Assistants:"));
 		// Nation: Azur Empire
 		try {
 			out.add(Colors.Green + "Nation: " + Colors.LightGreen
@@ -112,12 +128,10 @@ public class TownyFormatter {
 		} catch (TownyException e) {
 		}
 
-		// Residents [12]:
-		// James, Carry, Mason
-		out.add(Colors.Green + "Residents " + Colors.LightGreen + "["
-				+ town.getNumResidents() + "]" + Colors.Green + ":");
-		out.addAll(ChatTools.list(getFormattedNames(town.getResidents()
-				.toArray(new Resident[0]))));
+		// Residents [12]: James, Carry, Mason
+		
+		out.addAll(ChatTools.list(getFormattedNames(town.getResidents().toArray(new Resident[0])),
+				Colors.Green + "Residents " + Colors.LightGreen + "[" + town.getNumResidents() + "]" + Colors.Green + ":"));
 
 		return out;
 	}

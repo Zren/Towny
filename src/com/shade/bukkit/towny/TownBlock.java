@@ -16,6 +16,11 @@ public class TownBlock {
 	}
 
 	public void setTown(Town town) {
+		try {
+			if (hasTown())
+				this.town.removeTownBlock(this);
+		} catch (NotRegisteredException e) {
+		}
 		this.town = town;
 		try {
 			town.addTownBlock(this);
@@ -36,7 +41,7 @@ public class TownBlock {
 	public void setResident(Resident resident) {
 		try {
 			if (hasResident())
-				resident.removeTownBlock(this);
+				this.resident.removeTownBlock(this);
 		} catch (NotRegisteredException e) {
 		}
 		this.resident = resident;
@@ -62,6 +67,14 @@ public class TownBlock {
 
 	public boolean isForSale() {
 		return isForSale;
+	}
+	
+	public boolean isHomeBlock() {
+		try {
+			return getTown().isHomeBlock(this);
+		} catch (NotRegisteredException e) {
+			return false;
+		}
 	}
 
 	public void setX(int x) {
@@ -106,5 +119,11 @@ public class TownBlock {
 		TownBlock o = (TownBlock) obj;
 		return this.getX() == o.getX() && this.getZ() == o.getZ()
 				&& this.getWorld() == o.getWorld();
+	}
+	
+	public void clear() {
+		setTown(null);
+		setResident(null);
+		setWorld(null);
 	}
 }

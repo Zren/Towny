@@ -10,15 +10,23 @@ public class ChatTools {
 	public static List<String> list(Object[] args) {
 		return list(Arrays.asList(args));
 	}
+	
+	public static List<String> list(Object[] args, String prefix) {
+		return list(Arrays.asList(args), prefix);
+	}
 
 	public static List<String> list(List<Object> args) {
+		return list(args, "");
+	}
+	
+	public static List<String> list(List<Object> args, String prefix) {
 		if (args.size() > 0) {
 			String line = "";
 			for (int i = 0; i < args.size() - 1; i++)
 				line += args.get(i) + ", ";
 			line += args.get(args.size() - 1).toString();
 
-			return color(line);
+			return color(prefix + line);
 		}
 
 		return new ArrayList<String>();
@@ -30,9 +38,8 @@ public class ChatTools {
 
 		for (String s : tokens) {
 			if (stripColour(out.get(out.size() - 1)).length()
-					+ stripColour(s).length() + 1 > lineLength) {
+					+ stripColour(s).length() + 1 > lineLength)
 				out.add("");
-			}
 			out.set(out.size() - 1, out.get(out.size() - 1) + s + " ");
 		}
 
@@ -47,15 +54,13 @@ public class ChatTools {
 			if (!out.get(i).startsWith("§"))
 				out.set(i, "§" + c + out.get(i));
 
-			for (int index = 0; index < lineLength; index++) {
+			for (int index = 0; index < lineLength; index++)
 				try {
 					if (out.get(i).substring(index, index + 1)
-							.equalsIgnoreCase("\u00A7")) {
+							.equalsIgnoreCase("\u00A7"))
 						c = out.get(i).substring(index + 1, index + 2);
-					}
 				} catch (Exception e) {
 				}
-			}
 		}
 
 		return out;
@@ -65,11 +70,10 @@ public class ChatTools {
 		String out = "";
 		for (int i = 0; i < s.length() - 1; i++) {
 			String c = s.substring(i, i + 1);
-			if (c.equals("§")) {
+			if (c.equals("§"))
 				i += 1;
-			} else {
+			else
 				out += c;
-			}
 		}
 		return out;
 	}
@@ -79,8 +83,8 @@ public class ChatTools {
 		int pivot = line.length() / 2;
 		String center = ".[ " + Colors.Yellow + title + Colors.Gold + " ].";
 		String out = Colors.Gold
-				+ line.substring(0, pivot - (center.length() / 2));
-		out += center + line.substring(pivot + (center.length() / 2));
+				+ line.substring(0, pivot - center.length() / 2);
+		out += center + line.substring(pivot + center.length() / 2);
 		return out;
 	}
 
