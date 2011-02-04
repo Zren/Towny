@@ -274,7 +274,7 @@ public class TownySettings {
                         int townBlockLimit = Integer.parseInt(tokens[5]);
                         newTownLevel(numResidents, tokens[1], tokens[2], tokens[3], tokens[4], townBlockLimit);
 						if (getDebug())
-							System.out.println("[Towny] Added town level: "+numResidents+" "+Arrays.toString(getTownLevel(numResidents).values().toArray()));
+							System.out.println("[Towny] Debug: Added town level: "+numResidents+" "+Arrays.toString(getTownLevel(numResidents).values().toArray()));
                     } catch (Exception e) {
                     	System.out.println("[Towny] Input Error: Town level ignored: " + line);
                     }
@@ -304,7 +304,7 @@ public class TownySettings {
                         int numResidents = Integer.parseInt(tokens[0]);
                         newNationLevel(numResidents, tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]);
 						if (getDebug())
-							System.out.println("[Towny] Added town level: "+numResidents+" "+Arrays.toString(getNationLevel(numResidents).values().toArray()));
+							System.out.println("[Towny] Debug: Added town level: "+numResidents+" "+Arrays.toString(getNationLevel(numResidents).values().toArray()));
                     } catch (Exception e) {
                     	System.out.println("[Towny] Input Error: Town level ignored: " + line);
                     }

@@ -63,7 +63,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	@Override
 	public void backup() throws IOException {
 		long t = System.currentTimeMillis();
-		String newBackupFolder = rootFolder + "/backup/"+Long.toString(t) + " - " + new SimpleDateFormat("yyyy-MM-dd HH-mm").format(t);
+		String newBackupFolder = rootFolder + "/backup/" + new SimpleDateFormat("yyyy-MM-dd HH-mm").format(t) + " - " + Long.toString(t);
 		FileMgmt.checkFolders(new String[]{ rootFolder,
 				rootFolder + "/backup",
 				newBackupFolder});
@@ -463,9 +463,9 @@ public class TownyFlatFileSource extends TownyDataSource {
 	public boolean loadWorld(TownyWorld world) {
 		String line = "";
 		String[] tokens;
-		String path = rootFolder + dataFolder + "/nations/" + world.getName() + ".txt";
-		File fileResident = new File(path);
-		if (fileResident.exists() && fileResident.isFile()) {
+		String path = rootFolder + dataFolder + "/worlds/" + world.getName() + ".txt";
+		File fileWorld = new File(path);
+		if (fileWorld.exists() && fileWorld.isFile()) {
 			try {
 				KeyValueFile kvFile = new KeyValueFile(path);
 

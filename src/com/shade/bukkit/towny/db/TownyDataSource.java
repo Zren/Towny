@@ -58,7 +58,7 @@ public abstract class TownyDataSource {
 
 	abstract public boolean loadNationList();
 
-	abstract public boolean loadResident(Resident resdient);
+	abstract public boolean loadResident(Resident resident);
 
 	abstract public boolean loadTown(Town town);
 
@@ -98,28 +98,29 @@ public abstract class TownyDataSource {
 	public boolean loadResidents() {
 		for (Resident resident : universe.getResidents())
 			if (!loadResident(resident))
-				System.out.println("[Towny] Loading Error: Could not read resdient data " + resident.getName());
+				System.out.println("[Towny] Loading Error: Could not read resident data '" + resident.getName() + "'.");
 		return true;
 	}
 
 	public boolean loadTowns() {
 		for (Town town : universe.getTowns())
 			if (!loadTown(town))
-				System.out.println("[Towny] Loading Error: Could not read resdient data " + town.getName());
+				System.out.println("[Towny] Loading Error: Could not read town data " + town.getName() + "'.");
 		return true;
 	}
 
 	public boolean loadNations() {
 		for (Nation nation : universe.getNations())
 			if (!loadNation(nation))
-				System.out.println("[Towny] Loading Error: Could not read resdient data " + nation.getName());
+				System.out.println("[Towny] Loading Error: Could not read nation data '" + nation.getName() + "'.");
 		return true;
 	}
 
 	public boolean loadWorlds() {
 		for (TownyWorld world : universe.getWorlds())
 			if (!loadWorld(world))
-				System.out.println("[Towny] Loading Error: Could not read resdient data " + world.getName());
+				if (!TownySettings.isFirstRun())
+					System.out.println("[Towny] Loading Error: Could not read world data '" + world.getName() + "'.");
 		return true;
 	}
 

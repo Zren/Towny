@@ -94,11 +94,9 @@ public class Towny extends JavaPlugin {
 		townyUniverse.loadSettings();
 		Coord.setCellSize(TownySettings.getTownBlockSize());
 		
-		System.out.print("[Towny] Database: [Load] " + TownySettings.getLoadDatabase() + " [Save] " + TownySettings.getSaveDatabase());
-		if (townyUniverse.loadDatabase(TownySettings.getLoadDatabase()))
-			System.out.print("[Towny] Loaded - ");
-		else {
-			System.out.println("Error: Failed to load!");
+		System.out.println("[Towny] Database: [Load] " + TownySettings.getLoadDatabase() + " [Save] " + TownySettings.getSaveDatabase());
+		if (!townyUniverse.loadDatabase(TownySettings.getLoadDatabase())) {
+			System.out.println("[Towny] Error: Failed to load!");
 			getServer().getPluginManager().disablePlugin(this);
 		}
 		try {
@@ -107,14 +105,13 @@ public class Towny extends JavaPlugin {
 			try {
 				townyUniverse.getDataSource().backup();
 			} catch (IOException e) {
-				System.out.println("Error: Could not create backup.");
-				System.out.print(e.getStackTrace());
+				System.out.println("[Towny] Error: Could not create backup.");
+				System.out.println(e.getStackTrace());
 			}
 			
 			townyUniverse.getDataSource().saveAll();
-			System.out.println("Saved");
 		} catch (UnsupportedOperationException e) {
-			System.out.println("Unsupported save format!");
+			System.out.println("[Towny] Error: Unsupported save format!");
 			getServer().getPluginManager().disablePlugin(this);
 		}
 		

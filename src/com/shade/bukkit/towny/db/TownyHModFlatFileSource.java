@@ -328,35 +328,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 
 	@Override
 	public boolean loadWorld(TownyWorld world) {
-		String line = "";
-		String[] tokens;
-		String path = rootFolder + dataFolder + "/nations/" + world.getName() + ".txt";
-		File fileResident = new File(path);
-		if (fileResident.exists() && fileResident.isFile()) {
-			try {
-				KeyValueFile kvFile = new KeyValueFile(path);
-
-				line = kvFile.get("towns");
-				if (line != null) {
-					tokens = line.split(",");
-					for (String token : tokens) {
-						Town town = universe.getTown(token);
-						if (town != null)
-							world.addTown(town);
-					}
-				}
-
-				// loadTownBlocks(world);
-
-			} catch (Exception e) {
-				System.out.println("[Towny] Loading Error: Exception while reading world file " + world.getName());
-				e.printStackTrace();
-				return false;
-			}
-
-			return true;
-		} else
-			return false;
+		return false;
 	}
 
 	/*
