@@ -1710,6 +1710,9 @@ public class TownyPlayerListener extends PlayerListener {
 			Town town = universe.getTown(capitalName);
 			if (town.hasNation())
 				throw new TownyException("Target already belongs to a nation.");
+			
+			if (TownySettings.isUsingIConomy() && !town.pay(TownySettings.getNewNationPrice()))
+				throw new TownyException("You can't afford to start a new nation.");
 
 			universe.newNation(name);
 			Nation nation = universe.getNation(name);
@@ -1724,6 +1727,8 @@ public class TownyPlayerListener extends PlayerListener {
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 			// TODO: delete town data that might have been done
+		} catch (IConomyException x) {
+			plugin.sendErrorMsg(player, x.getError());
 		}
 	}
 	
@@ -2119,10 +2124,21 @@ public class TownyPlayerListener extends PlayerListener {
 					plugin.sendErrorMsg(player, "Eg: /town set neutral [on/off]");
 				else
 					try {
-						nation.setNeutral(parseOnOff(split[1]));
+						boolean choice = parseOnOff(split[1]);
+						
+						if (choice && TownySettings.isUsingIConomy() && !nation.pay(TownySettings.getNationNeutralityCost()))
+							throw new TownyException("Nation couldn't afford to become a neutral nation.");
+							
+						nation.setNeutral(choice);
 						plugin.sendMsg(player, "Successfully changed nation's neutrality.");
 						plugin.getTownyUniverse().sendNationMessage(nation, "You nation is now" + (nation.isNeutral() ? Colors.Green : Colors.Red + " not") + " neutral.");
+					} catch (IConomyException e) {
+						plugin.sendErrorMsg(player, e.getError());
+					} catch (TownyException e) {
+						nation.setNeutral(false);
+						plugin.sendErrorMsg(player, e.getError());
 					} catch (Exception e) {
+						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
 					}
 			} else {
 				plugin.sendErrorMsg(player, "Invalid nation property.");
@@ -2155,6 +2171,7 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/towny", "map", "Displays a map of the nearby townblocks"));
 		player.sendMessage(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
 		player.sendMessage(ChatTools.formatCommand("", "/towny", "universe", "Displays stats"));
+		player.sendMessage(ChatTools.formatCommand("", "/towny", "prices", "Display the prices used with iConomy"));
 		if (TownySettings.getDebug()) {
 			player.sendMessage(ChatTools.formatCommand("Debug", "/towny", "seed", "Create tons of empty objects"));
 			player.sendMessage(ChatTools.formatCommand("Debug", "/towny", "tree", "Print univese to console"));
@@ -2173,6 +2190,8 @@ public class TownyPlayerListener extends PlayerListener {
 			showTownyVersion(player);
 		else if (split[0].equalsIgnoreCase("universe"))
 			showUniverseStats(player);
+		else if (split[0].equalsIgnoreCase("prices"))
+			showTownyPrices(player);
 		else if (split[0].equalsIgnoreCase("war"))
 				if (split.length == 2) {
 					if (plugin.getTownyUniverse().isWarTime()) {
@@ -2367,6 +2386,58 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage("§0--§4##§c###§4##§0-- §3Residents: §b" + Integer.toString(plugin.getTownyUniverse().getResidents().size()));
 		player.sendMessage("§0----§4#§c#§4#§0---- §3Towns: §b" + Integer.toString(plugin.getTownyUniverse().getTowns().size()));
 		player.sendMessage("§0-----§4#§0----- §3Nations: §b" + Integer.toString(plugin.getTownyUniverse().getNations().size()));
+	}
+	
+	/**
+	 * Send the list of costs for iConomy to player Command: /towny prices
+	 * 
+	 * @param player
+	 */
+
+	//TODO: Proceduralize and make parse function for /towny prices [town]
+	public void showTownyPrices(Player player) {
+		/*
+		 * [New] Town: 100 | Nation: 500
+		 * Town [Elden]:
+		 *     [Price] Plot: 100
+		 *     [Upkeep] Resident: 20 | Plot: 50
+		 * Nation [Albion]:
+		 *     [Upkeep] Town: 100 | Neutrality: 100 
+		 */
+		
+		
+		player.sendMessage(Colors.Red + "[New] "
+				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(TownySettings.getNewTownPrice())
+				+ Colors.Gray + " | "
+				+ Colors.Green + "Nation: " + Colors.LightGreen + Integer.toString(TownySettings.getNewNationPrice()));
+		
+		Resident resident = null;
+		Town town = null;
+		try {
+			resident = plugin.getTownyUniverse().getResident(player.getName());
+			town = resident.getTown();
+		} catch (NotRegisteredException x) {
+			return;
+		}
+		player.sendMessage(Colors.Red + "Town ["+plugin.getTownyUniverse().getFormatter().getFormattedName(town)+"]");
+		player.sendMessage(Colors.Rose + "    [Price] "
+				+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotPrice()));
+		player.sendMessage(Colors.Rose + "    [Upkeep] "
+				+ Colors.Green + "Resident: " + Colors.LightGreen + Integer.toString(town.getTaxes())
+				+ Colors.Gray + " | "
+				+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotTax()));
+		
+		Nation nation = null;
+		try {
+			nation = town.getNation();
+		} catch (NotRegisteredException x) {
+			return;
+		}
+		player.sendMessage(Colors.Red + "Nation ["+plugin.getTownyUniverse().getFormatter().getFormattedName(nation)+"]");
+		player.sendMessage(Colors.Rose + "    [Upkeep] "
+				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(nation.getTaxes())
+				+ Colors.Gray + " | "
+				+ Colors.Green + "Neutrality: " + Colors.LightGreen + Integer.toString(TownySettings.getNationNeutralityCost()));
 	}
 
 	/**

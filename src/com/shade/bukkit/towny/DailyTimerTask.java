@@ -13,6 +13,8 @@ public class DailyTimerTask extends TownyTimerTask {
 		try {
 			universe.collectTownTaxes();
 			universe.collectNationTaxes();
+			
+			universe.collectNationCosts();
 		} catch (IConomyException e) {
 		}
 

@@ -39,16 +39,17 @@ import com.shade.bukkit.util.Colors;
  * Commenting
  * Unclaim townblocks
  * flatfile-old data source and replace getDataSource() with a manager class
- * log nation/town chat
- * update cache when adding/removing people
- * replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
+ * Log nation/town chat
+ * Log town/nation messages with timestamps. On login, see if there's been any events. Make command: /town log [page] to see messages.
+ * Update cache when adding/removing people
+ * Replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
  * deposit for town/nation
  * when a town/nation is destroyed. What happens to the money? (give to Shade :D jk)
  * When adding allying another nation, ask that nation and add this nation to their ally list.
  * Make the formatting/wording for [nation] .. [nation] etc, better.
  * Some way to distinguish home block.
- * Shift functions in player listener to help function then parse function.
  * Re-register a player after res delete
+ * Comply with the updated API onCommand.
  * 
  * 
  * --- Cool Concepts ---

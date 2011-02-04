@@ -705,4 +705,15 @@ public class TownyUniverse extends TownyObject {
 		for (TownBlock townBlock : town.getTownBlocks())
 			removeTownBlock(townBlock);
 	}
+
+	public void collectNationCosts() throws IConomyException {
+		for (Nation nation : nations.values())
+			if (nation.isNeutral())
+				if (!nation.pay(TownySettings.getNationNeutralityCost())) {
+					nation.setNeutral(false);
+					getDataSource().saveNation(nation);
+					sendNationMessage(nation, "Nation couldn't afford it's neutral state.");
+				}
+		
+	}
 }

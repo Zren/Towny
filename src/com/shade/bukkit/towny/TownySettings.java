@@ -73,6 +73,7 @@ public class TownySettings {
 		DEFAULT_MAX_TOWN_BLOCKS,
 		PRICE_NEW_TOWN,
 		PRICE_NEW_NATION,
+		PRICE_NATION_NEUTRALITY,
 		WARTIME_WARNING_DELAY,
 		WARTIME_TOWN_BLOCK_HP,
 		WARTIME_HOME_BLOCK_HP,
@@ -189,6 +190,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.DEFAULT_MAX_TOWN_BLOCKS, 64);
 		configInt.put(TownySettings.Int.PRICE_NEW_TOWN, 250);
 		configInt.put(TownySettings.Int.PRICE_NEW_NATION, 1000);
+		configInt.put(TownySettings.Int.PRICE_NATION_NEUTRALITY, 100);
 		configInt.put(TownySettings.Int.WARTIME_WARNING_DELAY, 30); // 30 seconds 
 		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_HP, 60); // 1 minute
 		configInt.put(TownySettings.Int.WARTIME_HOME_BLOCK_HP, 120); // 2 minutes
@@ -541,6 +543,10 @@ public class TownySettings {
 	public static int getNewTownPrice() {
 		return getInt(TownySettings.Int.PRICE_NEW_TOWN);
 	}
+	
+	public static int getNewNationPrice() {
+		return getInt(TownySettings.Int.PRICE_NEW_NATION);
+	}
 
 	public static boolean getUnclaimedZoneBuildRights() {
 		return getBoolean(TownySettings.Bool.UNCLAIMED_ZONE_BUILD);
@@ -721,6 +727,10 @@ public class TownySettings {
 	
 	public static int getTownLimit() {
 		return getInt(TownySettings.Int.TOWN_LIMIT);
+	}
+	
+	public static int getNationNeutralityCost() {
+		return getInt(TownySettings.Int.PRICE_NATION_NEUTRALITY);
 	}
 	
 	/************************************************************/
