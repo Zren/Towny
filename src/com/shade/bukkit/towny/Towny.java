@@ -3,6 +3,7 @@ package com.shade.bukkit.towny;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,11 +98,19 @@ public class Towny extends JavaPlugin {
 		if (townyUniverse.loadDatabase(TownySettings.getLoadDatabase()))
 			System.out.print("[Towny] Loaded - ");
 		else {
-			System.out.println("Failed to load!");
+			System.out.println("Error: Failed to load!");
 			getServer().getPluginManager().disablePlugin(this);
 		}
 		try {
 			townyUniverse.setDataSource(TownySettings.getSaveDatabase());
+			townyUniverse.getDataSource().initialize(this, townyUniverse);
+			try {
+				townyUniverse.getDataSource().backup();
+			} catch (IOException e) {
+				System.out.println("Error: Could not create backup.");
+				System.out.print(e.getStackTrace());
+			}
+			
 			townyUniverse.getDataSource().saveAll();
 			System.out.println("Saved");
 		} catch (UnsupportedOperationException e) {
