@@ -2217,7 +2217,7 @@ public class TownyPlayerListener extends PlayerListener {
 				}
 		else if (TownySettings.getDebug())
 			if (split[0].equalsIgnoreCase("tree"))
-				plugin.getTownyUniverse().printUniverseTree();
+				plugin.getTownyUniverse().sendUniverseTree(player);
 			else if (split[0].equalsIgnoreCase("seed"))
 				seedTowny();
 			else if (split[0].equalsIgnoreCase("newday"))

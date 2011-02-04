@@ -1,5 +1,7 @@
 package com.shade.bukkit.util;
 
+import org.bukkit.ChatColor;
+
 /**
  * Colors.java- Class of all colors so I don't waste time trying to find that
  * damn character
@@ -7,7 +9,6 @@ package com.shade.bukkit.util;
  * @author James
  */
 public class Colors {
-
 	public static final String Black = "\u00A70";
 	public static final String Navy = "\u00A71";
 	public static final String Green = "\u00A72";
@@ -24,4 +25,10 @@ public class Colors {
 	public static final String LightPurple = "\u00A7d";
 	public static final String Yellow = "\u00A7e";
 	public static final String White = "\u00A7f";
+	
+	public static String strip(String line) {
+		for (ChatColor cc : ChatColor.values())
+			line.replaceAll(cc.toString(), "");
+		return line;
+	}
 }

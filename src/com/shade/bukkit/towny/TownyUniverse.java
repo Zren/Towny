@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Timer;
 
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.shade.bukkit.towny.db.TownyDataSource;
@@ -650,27 +651,27 @@ public class TownyUniverse extends TownyObject {
 		getDataSource().saveResidentList();
 	}
 	
-	public void printUniverseTree() {
-		System.out.println("|-Universe");
+	public void sendUniverseTree(CommandSender sender) {
+		sender.sendMessage("|-Universe");
 		for (TownyWorld world : getWorlds()) {
-			System.out.println("|---World: " + world.getName());
+			sender.sendMessage("|---World: " + world.getName());
 			for (TownBlock townBlock : world.getTownBlocks())
 				try {
-					System.out.println("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
+					sender.sendMessage("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
 							+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
 							+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
 				} catch (TownyException e) {
 				}
 			for (Resident resident : getResidents()) {
 				try {
-					System.out.println("|---Resident: " + resident.getName()
+					sender.sendMessage("|---Resident: " + resident.getName()
 							+ " " + (resident.hasTown() ? resident.getTown().getName() : "")
 							+ (resident.hasNation() ? resident.getTown().getNation().getName() : ""));
 				} catch (TownyException e) {
 				}
 				for (TownBlock townBlock : resident.getTownBlocks())
 					try {
-						System.out.println("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
+						sender.sendMessage("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
 								+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
 								+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
 					} catch (TownyException e) {
@@ -678,12 +679,12 @@ public class TownyUniverse extends TownyObject {
 			}
 			for (Town town : getTowns()) {
 				try {
-					System.out.println("|---Town: " + town.getName() + " " + (town.hasNation() ? town.getNation().getName() : ""));
+					sender.sendMessage("|---Town: " + town.getName() + " " + (town.hasNation() ? town.getNation().getName() : ""));
 				} catch (TownyException e) {
 				}
 				for (TownBlock townBlock : town.getTownBlocks())
 					try {
-						System.out.println("|------TownBlock: "  + "," + townBlock.getZ() + " "
+						sender.sendMessage("|------TownBlock: "  + "," + townBlock.getZ() + " "
 								+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
 								+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
 					} catch (TownyException e) {

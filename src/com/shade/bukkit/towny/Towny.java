@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -22,6 +24,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.shade.bukkit.towny.command.TownyCommand;
+import com.shade.bukkit.towny.command.TownyCommandMap;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
@@ -51,6 +55,7 @@ import com.shade.bukkit.util.Colors;
  * Some way to distinguish home block.
  * Re-register a player after res delete
  * Comply with the updated API onCommand.
+ * Move commands to onCommand (at least console type ones)
  * 
  * 
  * --- Cool Concepts ---
@@ -159,6 +164,7 @@ public class Towny extends JavaPlugin {
 	
 	public void onLoad() {
 		TownyIConomyObject.setPlugin(this);
+		TownyCommand.setUniverse(townyUniverse);
 		townyUniverse.toggleDailyTimer(true);
 		townyUniverse.toggleMobRemoval(TownySettings.isRemovingMobs());
 		townyUniverse.toggleHealthRegen(TownySettings.hasHealthRegen());
@@ -210,6 +216,13 @@ public class Towny extends JavaPlugin {
 			System.out.println("[Towny] Error: Could not write default nation levels file.");
 		}
 		System.out.println("------------------------------");
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("towny"))
+			return new TownyCommandMap(getServer()).execute(sender, commandLabel, args);
+		return false;	
 	}
 
 	public TownyUniverse getTownyUniverse() {

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.bukkit.World;
 
@@ -77,7 +76,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 		String[] tokens;
 		
 		//Default world is the first one loaded
-		TownyWorld world = ((ArrayList<TownyWorld>)universe.getWorlds()).get(0);
+		TownyWorld world = universe.getWorlds().toArray(new TownyWorld[0])[0];
 		
 		try {
 			BufferedReader fin = new BufferedReader(new FileReader(rootFolder + dataFolder + "/townblocks.csv"));
