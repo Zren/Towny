@@ -12,6 +12,9 @@ import com.shade.bukkit.util.Colors;
 //TODO: pull names from the config
 
 public class TownyFormatter {
+	public static final SimpleDateFormat lastOnlineFormat = new SimpleDateFormat("MMMMM dd '@' HH:mm");
+	public static final SimpleDateFormat registeredFormat = new SimpleDateFormat("MMM d yyyy");
+	
 	public String getTime() {
 		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
 		return sdf.format(System.currentTimeMillis());
@@ -24,11 +27,9 @@ public class TownyFormatter {
 		out.add(ChatTools.formatTitle(getFormattedName(resident)));
 
 		// Registered: Sept 3 2009 | Last Online: March 7 @ 14:30
-		SimpleDateFormat rsdf = new SimpleDateFormat("MMM d yyyy");
-		SimpleDateFormat losdf = new SimpleDateFormat("MMMMM dd '@' HH:mm");
-		out.add(Colors.Green + "Registered: " + Colors.LightGreen + rsdf.format(resident.getRegistered())
+		out.add(Colors.Green + "Registered: " + Colors.LightGreen + registeredFormat.format(resident.getRegistered())
 			+ Colors.Gray + " | "
-			+ Colors.Green + "Last Online: " + Colors.LightGreen + losdf.format(resident.getLastOnline()));
+			+ Colors.Green + "Last Online: " + Colors.LightGreen + lastOnlineFormat.format(resident.getLastOnline()));
 
 		// Owner of: 4 Town Blocks | Perm: B=f- D=fa
 		if (resident.getTownBlocks().size() > 0)

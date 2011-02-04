@@ -83,7 +83,8 @@ public class TownySettings {
 		WARTIME_MIN_HEIGHT,
 		MOB_REMOVAL_SPEED,
 		HEALTH_REGEN_SPEED,
-		TOWN_LIMIT//,
+		TOWN_LIMIT,
+		PRICE_CLAIM_TOWNBLOCK
 		//WILD_BUILD_TIME_LIMIT
 	};
 	// Boolean
@@ -201,6 +202,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.MOB_REMOVAL_SPEED, 5000); // 5 Seconds
 		configInt.put(TownySettings.Int.HEALTH_REGEN_SPEED, 3000); // 9 Seconds (20*3 = 3 minute)
 		configInt.put(TownySettings.Int.TOWN_LIMIT, 3000);
+		configInt.put(TownySettings.Int.PRICE_CLAIM_TOWNBLOCK, 25);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -500,8 +502,13 @@ public class TownySettings {
 		return getString(TownySettings.Str.LOAD_DATABASE);
 	}
 
-	public static String[] getSaveDatabase() {
+	public static String[] getSaveDatabases() {
 		return getStrArr(TownySettings.StrArr.SAVE_DATABASES);
+	}
+	
+	//TODO: Remove workaround
+	public static String getSaveDatabase() {
+		return getSaveDatabases()[0];
 	}
 
 	public static boolean isFirstRun() {
@@ -744,18 +751,11 @@ public class TownySettings {
 	}
 
 	public static String getNPCPrefix() {
-		return "NPC_";
+		return "[NPC]";
 	}
 
-	
-
-	
-
-	/************************************************************/
-	
-	//TODO:
-	
-	
-
+	public static int getClaimPrice() {
+		return getInt(TownySettings.Int.PRICE_CLAIM_TOWNBLOCK);
+	}
 	
 }

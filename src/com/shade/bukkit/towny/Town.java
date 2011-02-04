@@ -96,9 +96,10 @@ public class Town extends TownBlockOwner implements Walled {
 		return assistants.contains(resident);
 	}
 
-	public void addResident(Resident resident)
-			throws AlreadyRegisteredException {
+	public void addResident(Resident resident)  throws AlreadyRegisteredException {
 		if (hasResident(resident))
+			throw new AlreadyRegisteredException();
+		else if (resident.hasTown())
 			throw new AlreadyRegisteredException();
 		else {
 			residents.add(resident);

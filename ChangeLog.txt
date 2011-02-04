@@ -1,9 +1,9 @@
---- Towny ChangeLog ---
-
 v0.12:
-Ability to unclaim areas.
-Daily and initial cost to nations to stay neutral.
-Ability to make NPC Residents profiles (not actual human entities).
-Changed the way admins permissions are dealt with.
-New nations actually cost now.
-New command /towny prices
+	Ability to unclaim areas.
+	Daily and initial cost to nations to stay neutral.
+	Ability to make NPC Residents profiles (not actual human entities).
+	Changed the way admins permissions are dealt with.
+	New nations actually cost now.
+	New command /towny prices. Shows the prices for a new town, nation as well as your town's plot price and upkeep costs. It also shows similar aspects for your nation.
+	Ability to convert from hMod database.
+	Flatfile database backup on server start as well as during the daily scheduler. 

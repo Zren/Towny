@@ -1,5 +1,7 @@
 package com.shade.bukkit.towny.db;
 
+import java.io.IOException;
+
 import org.bukkit.World;
 
 import com.shade.bukkit.towny.AlreadyRegisteredException;
@@ -35,7 +37,8 @@ public abstract class TownyDataSource {
 		this.plugin = plugin;
 	}
 	
-	
+	public void backup() throws IOException {
+	}
 
 	public boolean loadAll() {
 		return loadWorldList() && loadNationList() && loadTownList()

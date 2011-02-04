@@ -1224,6 +1224,11 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	public boolean townClaim(Town town, TownyWorld world, Coord coord, boolean checkEdge) throws TownyException {
+		//TODO: Don't calculate this here?
+		int available = TownySettings.getMaxTownBlocks(town) - town.getTownBlocks().size();
+		if (available <= 0)
+			throw new TownyException("Reached limit");
+		
 		try {
 			TownBlock townBlock = world.getTownBlock(coord);
 			try {
@@ -1235,6 +1240,14 @@ public class TownyPlayerListener extends PlayerListener {
 			if (checkEdge && town.getTownBlocks().size() > 0)
 				if (!isTownEdge(town, world, coord))
 					throw new TownyException("Selected area is not connected to town.");
+			
+			try {
+				if (TownySettings.isUsingIConomy() && !town.pay(TownySettings.getClaimPrice()))
+					throw new TownyException("Town has run out of funds.");
+			} catch (IConomyException e1) {
+				throw new TownyException("Iconomy Error");
+			}
+			
 			TownBlock townBlock = world.newTownBlock(coord);
 			townBlock.setTown(town);
 			if (!town.hasHomeBlock())

@@ -27,8 +27,8 @@ import com.shade.bukkit.util.Colors;
 /**
  * Towny Plugin for Bukkit
  * 
- * Website: https://sites.google.com/site/townymod/ Source:
- * https://github.com/Zren/Towny
+ * Website: https://sites.google.com/site/townymod/
+ * Source: https://github.com/Zren/Towny
  * 
  * @author Shade
  */
@@ -87,15 +87,27 @@ public class Towny extends JavaPlugin {
 		
 		PluginDescriptionFile pdfFile = this.getDescription();
 		pdfFile.getVersion();
-
+		
 		townyUniverse = new TownyUniverse(this);
-		System.out.print("[Towny] Database: [" + TownySettings.getLoadDatabase() + "] ");
-		if (townyUniverse.loadDatabase())
-			System.out.println("Loaded database");
+		
+		townyUniverse.loadSettings();
+		Coord.setCellSize(TownySettings.getTownBlockSize());
+		
+		System.out.print("[Towny] Database: [Load] " + TownySettings.getLoadDatabase() + " [Save] " + TownySettings.getSaveDatabase());
+		if (townyUniverse.loadDatabase(TownySettings.getLoadDatabase()))
+			System.out.print("[Towny] Loaded - ");
 		else {
 			System.out.println("Failed to load!");
 			getServer().getPluginManager().disablePlugin(this);
-		}		
+		}
+		try {
+			townyUniverse.setDataSource(TownySettings.getSaveDatabase());
+			townyUniverse.getDataSource().saveAll();
+			System.out.println("Saved");
+		} catch (UnsupportedOperationException e) {
+			System.out.println("Unsupported save format!");
+			getServer().getPluginManager().disablePlugin(this);
+		}
 		
 		Plugin test = getServer().getPluginManager().getPlugin("Permissions");
 		if(permissionHandler == null)
@@ -105,8 +117,6 @@ public class Towny extends JavaPlugin {
 				System.out.println("[Towny] Permission system not enabled. Towny Admins not loaded.");
 		
 		onLoad();
-
-		townyUniverse.getDataSource().saveAll();
 		
 		if (TownySettings.isFirstRun()) {
 			firstRun();
@@ -142,8 +152,6 @@ public class Towny extends JavaPlugin {
 	}
 	
 	public void onLoad() {
-		townyUniverse.loadSettings();
-		Coord.setCellSize(TownySettings.getTownBlockSize());
 		TownyIConomyObject.setPlugin(this);
 		townyUniverse.toggleDailyTimer(true);
 		townyUniverse.toggleMobRemoval(TownySettings.isRemovingMobs());

@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import com.shade.bukkit.towny.db.TownyDataSource;
 import com.shade.bukkit.towny.db.TownyFlatFileSource;
+import com.shade.bukkit.towny.db.TownyHModFlatFileSource;
 import com.shade.bukkit.towny.war.War;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
@@ -452,11 +453,12 @@ public class TownyUniverse extends TownyObject {
 		return true;
 	}
 
-	public boolean loadDatabase() {
-		if (TownySettings.getLoadDatabase().equalsIgnoreCase("flatfile"))
-			setDataSource(new TownyFlatFileSource());
-		else
+	public boolean loadDatabase(String databaseType) {
+		try {
+			setDataSource(databaseType);
+		} catch (UnsupportedOperationException e) {
 			return false;
+		}
 
 		getDataSource().initialize(plugin, this);
 		getDataSource().loadAll();
@@ -500,6 +502,15 @@ public class TownyUniverse extends TownyObject {
 		return false;
 	}
 
+	public void setDataSource(String databaseType) throws UnsupportedOperationException {
+		if (databaseType.equalsIgnoreCase("flatfile"))
+			setDataSource(new TownyFlatFileSource());
+		else if (databaseType.equalsIgnoreCase("flatfile-hmod"))
+			setDataSource(new TownyHModFlatFileSource());
+		else
+			throw new UnsupportedOperationException();
+	}
+	
 	public void setDataSource(TownyDataSource dataSource) {
 		this.dataSource = dataSource;
 	}

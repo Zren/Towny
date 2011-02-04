@@ -117,6 +117,8 @@ public class Nation extends TownyIConomyObject {
 	public void addTown(Town town) throws AlreadyRegisteredException {
 		if (hasTown(town))
 			throw new AlreadyRegisteredException();
+		else if (town.hasNation())
+			throw new AlreadyRegisteredException();
 		else {
 			towns.add(town);
 			town.setNation(this);

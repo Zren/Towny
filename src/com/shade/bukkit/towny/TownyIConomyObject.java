@@ -60,11 +60,9 @@ public class TownyIConomyObject extends TownyObject {
 
 	public static iConomy checkIConomy() throws IConomyException {
 		if (plugin == null)
-			throw new IConomyException(
-					"IConomyObject has not had plugin configured.");
+			throw new IConomyException("IConomyObject has not had plugin configured.");
 
-		Plugin test = plugin.getServer().getPluginManager()
-				.getPlugin("iConomy");
+		Plugin test = plugin.getServer().getPluginManager().getPlugin("iConomy");
 
 		if (test != null)
 			return (iConomy) test;
