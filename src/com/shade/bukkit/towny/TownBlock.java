@@ -60,6 +60,22 @@ public class TownBlock {
 	public boolean hasResident() {
 		return resident != null;
 	}
+	
+	public boolean isOwner(TownBlockOwner owner) {
+		try {
+			if (owner == getTown())
+				return true;
+		} catch (NotRegisteredException e) {
+		}
+		
+		try {
+			if (owner == getResident())
+				return true;
+		} catch (NotRegisteredException e) {
+		}
+		
+		return false;
+	}
 
 	public void setForSale(boolean isForSale) {
 		this.isForSale = isForSale;

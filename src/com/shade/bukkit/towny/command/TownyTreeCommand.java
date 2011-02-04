@@ -13,5 +13,4 @@ public class TownyTreeCommand extends TownyCommand {
 		universe.sendUniverseTree(sender);
 		return true;
 	}
-
 }

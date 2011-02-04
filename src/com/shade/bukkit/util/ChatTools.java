@@ -82,22 +82,20 @@ public class ChatTools {
 		String line = ".oOo.__________________________________________________.oOo.";
 		int pivot = line.length() / 2;
 		String center = ".[ " + Colors.Yellow + title + Colors.Gold + " ].";
-		String out = Colors.Gold
-				+ line.substring(0, pivot - center.length() / 2);
+		String out = Colors.Gold + line.substring(0, pivot - center.length() / 2);
 		out += center + line.substring(pivot + center.length() / 2);
 		return out;
 	}
 
-	public static String formatCommand(String requirement, String command,
-			String subCommand, String help) {
+	public static String formatCommand(String requirement, String command, String subCommand, String help) {
 		String out = "  ";
 		if (requirement.length() > 0)
 			out += Colors.Rose + requirement + ": ";
-		out += Colors.Blue + command + " ";
+		out += Colors.Blue + command;
 		if (subCommand.length() > 0)
-			out += Colors.LightBlue + subCommand + " ";
+			out += " " + Colors.LightBlue + subCommand;
 		if (help.length() > 0)
-			out += Colors.LightGray + " : " + help;
+			out += " " + Colors.LightGray + " : " + help;
 		return out;
 	}
 

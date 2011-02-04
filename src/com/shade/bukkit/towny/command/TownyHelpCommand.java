@@ -33,6 +33,4 @@ public class TownyHelpCommand extends TownyCommand {
 				sender.sendMessage(Colors.strip(line));
 		return true;
 	}
-
-
 }

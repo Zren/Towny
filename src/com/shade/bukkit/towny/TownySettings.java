@@ -84,7 +84,8 @@ public class TownySettings {
 		MOB_REMOVAL_SPEED,
 		HEALTH_REGEN_SPEED,
 		TOWN_LIMIT,
-		PRICE_CLAIM_TOWNBLOCK
+		PRICE_CLAIM_TOWNBLOCK,
+		PRICE_OUTPOST
 		//WILD_BUILD_TIME_LIMIT
 	};
 	// Boolean
@@ -101,7 +102,8 @@ public class TownySettings {
 		DELETE_OLD_RESIDENTS,
 		DEBUG_MODE,
 		MOB_REMOVAL,
-		HEALTH_REGEN
+		HEALTH_REGEN,
+		ALLOW_OUTPOSTS
 	};
 	// Nation Level
 	enum NationLevel {
@@ -203,6 +205,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.HEALTH_REGEN_SPEED, 3000); // 9 Seconds (20*3 = 3 minute)
 		configInt.put(TownySettings.Int.TOWN_LIMIT, 3000);
 		configInt.put(TownySettings.Int.PRICE_CLAIM_TOWNBLOCK, 25);
+		configInt.put(TownySettings.Int.PRICE_OUTPOST, 500);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -217,6 +220,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.DEBUG_MODE, true);
 		configBool.put(TownySettings.Bool.MOB_REMOVAL, false);
 		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
+		configBool.put(TownySettings.Bool.ALLOW_OUTPOSTS, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -519,7 +523,8 @@ public class TownySettings {
 		return getString(TownySettings.Str.DEFAULT_NATION_POSTFIX);
 	}
 
-	public static int getMaxTownBlocks(Town town) {
+	public static int getMaxTownBlocks(TownBlockOwner owner) {
+		Town town = (Town)owner;
 		int ratio = getInt(TownySettings.Int.TOWN_BLOCK_RATIO);
 		if (ratio == 0)
 			return town.getBonusBlocks() + (Integer)getTownLevel(town).get(TownySettings.TownLevel.TOWN_BLOCK_LIMIT);
@@ -739,6 +744,14 @@ public class TownySettings {
 	public static int getNationNeutralityCost() {
 		return getInt(TownySettings.Int.PRICE_NATION_NEUTRALITY);
 	}
+	
+	public static boolean isAllowingOutposts() {
+		return getBoolean(TownySettings.Bool.ALLOW_OUTPOSTS);
+	}
+	
+	public static int getOutpostCost() {
+		return getInt(TownySettings.Int.PRICE_OUTPOST);
+	} 
 	
 	/************************************************************/
 	

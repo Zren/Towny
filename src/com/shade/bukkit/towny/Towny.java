@@ -56,6 +56,7 @@ import com.shade.bukkit.util.Colors;
  * Re-register a player after res delete
  * Comply with the updated API onCommand.
  * Move commands to onCommand (at least console type ones)
+ * Organise PlayerListener. Functions. Functions EVERYWHERE!
  * 
  * 
  * --- Cool Concepts ---

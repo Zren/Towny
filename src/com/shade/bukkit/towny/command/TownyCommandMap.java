@@ -24,5 +24,4 @@ public class TownyCommandMap extends TownyCommand {
 	public boolean execute(CommandSender sender, String currentAlias, String[] args) {
 		return subCommands.dispatch(sender, StringMgmt.join(args, " "));
 	}
-
 }
