@@ -1276,7 +1276,7 @@ public class TownyPlayerListener extends PlayerListener {
 						throw new TownyException("Only towns can use rect auto.");
 				} else
 					try {
-						r = Integer.parseInt(args[0]);
+						r = Integer.parseInt(args[1]);
 					} catch (NumberFormatException e) {
 						throw new TownyException("Invalid radius. Use an integer or 'auto'.");
 					}	
