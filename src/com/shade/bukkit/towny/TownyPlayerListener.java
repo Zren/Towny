@@ -98,12 +98,12 @@ public class TownyPlayerListener extends PlayerListener {
 		
 		
 		// TODO: Player mode
-		if (plugin.hasPlayerMode(player, "map"))
-			showMap(player);
 		if (plugin.hasPlayerMode(player, "townclaim"))
 			parseTownClaimCommand(player, new String[]{});
 		if (plugin.hasPlayerMode(player, "townunclaim"))
 			parseTownUnclaimCommand(player, new String[]{});
+		if (plugin.hasPlayerMode(player, "map"))
+			showMap(player);
 		// claim: attempt to claim area
 		// claim remove: remove area from town
 
@@ -1173,12 +1173,14 @@ public class TownyPlayerListener extends PlayerListener {
 				int blockCost = 0;
 				List<WorldCoord> selection;
 				String[] newSplit = StringMgmt.remFirstArg(split);
+				boolean attachedToEdge = true;
 				
 				if (newSplit.length == 1 && newSplit[0].equalsIgnoreCase("outpost")) {
 					if (TownySettings.isAllowingOutposts()) {
 						selection = new ArrayList<WorldCoord>();
 						selection.add(new WorldCoord(world, Coord.parseCoord(player)));
 						blockCost = TownySettings.getOutpostCost();
+						attachedToEdge = false;
 					} else
 						throw new TownyException("Outposts are not available.");
 				} else {
@@ -1187,7 +1189,7 @@ public class TownyPlayerListener extends PlayerListener {
 				}
 				
 				selection = removeTownOwnedBlocks(selection);
-				checkIfSelectionIsValid(town, selection, true, blockCost, false);
+				checkIfSelectionIsValid(town, selection, attachedToEdge, blockCost, false);
 				
 				try {
 					int cost = blockCost * selection.size();
@@ -1203,7 +1205,7 @@ public class TownyPlayerListener extends PlayerListener {
 				plugin.getTownyUniverse().getDataSource().saveTown(town);
 				plugin.getTownyUniverse().getDataSource().saveWorld(world);
 				
-				plugin.sendMsg(player, "Annexed area " + Arrays.toString(selection.toArray(new String[0])));
+				plugin.sendMsg(player, "Annexed area " + Arrays.toString(selection.toArray(new WorldCoord[0])));
 				plugin.updateCache();
 			} catch (TownyException x) {
 				plugin.sendErrorMsg(player, x.getError());
@@ -1245,7 +1247,7 @@ public class TownyPlayerListener extends PlayerListener {
 					for (WorldCoord worldCoord : selection)
 						townUnclaim(town, worldCoord, false);
 	
-					plugin.sendMsg(player, "Annexed area " + Arrays.toString(selection.toArray(new String[0])));
+					plugin.sendMsg(player, "Abandoned area " + Arrays.toString(selection.toArray(new WorldCoord[0])));
 				}
 				plugin.getTownyUniverse().getDataSource().saveTown(town);
 				plugin.getTownyUniverse().getDataSource().saveWorld(world);
@@ -1352,12 +1354,7 @@ public class TownyPlayerListener extends PlayerListener {
 		return out;
 	}
 	
-	public boolean townClaim(Town town, WorldCoord worldCoord) throws TownyException {
-		//TODO: Don't calculate this here?
-		int available = TownySettings.getMaxTownBlocks(town) - town.getTownBlocks().size();
-		if (available <= 0)
-			throw new TownyException("Reached limit");
-		
+	public boolean townClaim(Town town, WorldCoord worldCoord) throws TownyException {		
 		try {
 			TownBlock townBlock = worldCoord.getTownBlock();
 			try {
