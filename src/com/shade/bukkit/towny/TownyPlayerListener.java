@@ -109,7 +109,7 @@ public class TownyPlayerListener extends PlayerListener {
 
 		// Check if player has entered a new town/wilderness
 		if (TownySettings.getShowTownNotifications()) {
-			boolean fromWild = false, toWild = false;
+			boolean fromWild = false, toWild = false, toForSale = false, toHomeBlock = false;
 			TownBlock fromTownBlock, toTownBlock;
 			Town fromTown = null, toTown = null;
 			Resident fromResident = null, toResident = null;
@@ -137,6 +137,9 @@ public class TownyPlayerListener extends PlayerListener {
 					toResident = toTownBlock.getResident();
 				} catch (NotRegisteredException e) {
 				}
+				
+				toForSale = toTownBlock.isForSale();
+				toHomeBlock = toTownBlock.isHomeBlock();
 			} catch (NotRegisteredException e) {
 				toWild = true;
 			}
@@ -152,12 +155,27 @@ public class TownyPlayerListener extends PlayerListener {
 					toMsg += universe.getFormatter().getFormattedName(toTown);
 			}
 			
-			if (toResident != null && fromResident != toResident) {
+			if (fromResident != toResident) {
 				if (!sendToMsg)
 					sendToMsg = true;
 				else
 					toMsg += Colors.LightGray + "  -  ";
-				toMsg += Colors.LightGreen + universe.getFormatter().getFormattedName(toResident);
+				
+				if (toResident != null)
+					toMsg += Colors.LightGreen + universe.getFormatter().getFormattedName(toResident);
+				else
+					toMsg += Colors.LightGreen + TownySettings.getUnclaimedPlotName();
+			}
+			
+			if (toTown != null && (toForSale || toHomeBlock)) {
+				if (!sendToMsg)
+					sendToMsg = true;
+				else
+					toMsg += Colors.LightGray + "  -  ";
+				if (toHomeBlock)
+					toMsg += Colors.LightBlue + "[Home]";
+				if (toForSale)
+					toMsg += Colors.Yellow + "[For Sale: "+toTown.getPlotPrice()+"]";
 			}
 			
 			if (sendToMsg)
@@ -1188,7 +1206,11 @@ public class TownyPlayerListener extends PlayerListener {
 					blockCost = TownySettings.getClaimPrice();
 				}
 				
+				if (TownySettings.getDebug())
+					System.out.println("[Towny] Debug: townClaim: Pre-Filter Selection " + Arrays.toString(selection.toArray(new WorldCoord[0])));
 				selection = removeTownOwnedBlocks(selection);
+				if (TownySettings.getDebug())
+					System.out.println("[Towny] Debug: townClaim: Post-Filter Selection " + Arrays.toString(selection.toArray(new WorldCoord[0])));
 				checkIfSelectionIsValid(town, selection, attachedToEdge, blockCost, false);
 				
 				try {
@@ -1259,7 +1281,7 @@ public class TownyPlayerListener extends PlayerListener {
 	
 	public List<WorldCoord> selectWorldCoordArea(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
 		List<WorldCoord> out = new ArrayList<WorldCoord>();
-		int available = TownySettings.getMaxTownBlocks(owner) - owner.getTownBlocks().size();
+		
 		if (args.length == 0)
 			out.add(pos);
 		else if (args[0].equalsIgnoreCase("rect")) {
@@ -1269,9 +1291,11 @@ public class TownyPlayerListener extends PlayerListener {
 				int r;
 				if (args[1].equalsIgnoreCase("auto")) {
 					if (owner instanceof Town) {
+						Town town = (Town)owner;
+						int available = TownySettings.getMaxTownBlocks(town) - town.getTownBlocks().size();
 						r = 0;
 						while (available - Math.pow((r + 1) * 2 - 1, 2) >= 0)
-							r++;
+							r += 1;
 					} else
 						throw new TownyException("Only towns can use rect auto.");
 				} else
@@ -1281,7 +1305,7 @@ public class TownyPlayerListener extends PlayerListener {
 						throw new TownyException("Invalid radius. Use an integer or 'auto'.");
 					}	
 				
-				r--;
+				r -= 1;
 				
 				for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++)
 					for (int x = pos.getX() - r; x <= pos.getX() + r; x++)
@@ -1304,6 +1328,8 @@ public class TownyPlayerListener extends PlayerListener {
 		if (owner instanceof Town) {
 			Town town = (Town)owner;
 			int available = TownySettings.getMaxTownBlocks(town) - town.getTownBlocks().size();
+			if (TownySettings.getDebug())
+				System.out.println("[Towny] Debug: Claim Check Available: " + available);
 			if (available - selection.size() < 0)
 				throw new TownyException("Not enough available town blocks to claim this selection.");
 		}
@@ -1399,8 +1425,7 @@ public class TownyPlayerListener extends PlayerListener {
 		int[][] offset = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
 		for (int i = 0; i < 4; i++)
 			try {
-				TownBlock edgeTownBlock = worldCoord.getWorld().getTownBlock(
-						new Coord(worldCoord.getX() + offset[i][0], worldCoord.getZ() + offset[i][1]));
+				TownBlock edgeTownBlock = worldCoord.getWorld().getTownBlock(new Coord(worldCoord.getX() + offset[i][0], worldCoord.getZ() + offset[i][1]));
 				if (edgeTownBlock.isOwner(owner)) {
 					if (TownySettings.getDebug())
 						System.out.println("true");

@@ -65,7 +65,9 @@ public class TownySettings {
 		MSG_NEW_DAY,
 		MSG_COULDNT_PAY_TAXES,
 		MSG_BUY_RESIDENT_PLOT,
-		MSG_PLOT_FOR_SALE//,
+		MSG_PLOT_FOR_SALE,
+		UNCLAIMED_PLOT_NAME,
+		NPC_PREFIX
 		//MSG_WILD_MUST_BUILD_TOWN
 	};
 	// Integer
@@ -194,6 +196,8 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_COULDNT_PAY_TAXES, "&6[Towny] &b%s couldn't pay taxes%s");
 		configStr.put(TownySettings.Str.MSG_BUY_RESIDENT_PLOT, "&6[Towny] &b%s bought %s's plot!");
 		configStr.put(TownySettings.Str.MSG_PLOT_FOR_SALE, "&6[Towny] &b%s put the plot (%s) up for sale!");
+		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
+		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		// Integer
 		configInt.put(TownySettings.Int.INACTIVE_AFTER_TIME, 24 * 60 * 60 * 1000); // 1 Day
 		configInt.put(TownySettings.Int.DELETED_AFTER_TIME, 60 * 24 * 60 * 60 * 1000); // Two Months
@@ -537,8 +541,7 @@ public class TownySettings {
 		return getString(TownySettings.Str.DEFAULT_NATION_POSTFIX);
 	}
 
-	public static int getMaxTownBlocks(TownBlockOwner owner) {
-		Town town = (Town)owner;
+	public static int getMaxTownBlocks(Town town) {
 		int ratio = getInt(TownySettings.Int.TOWN_BLOCK_RATIO);
 		if (ratio == 0)
 			return town.getBonusBlocks() + (Integer)getTownLevel(town).get(TownySettings.TownLevel.TOWN_BLOCK_LIMIT);
@@ -782,7 +785,7 @@ public class TownySettings {
 	}
 
 	public static String getNPCPrefix() {
-		return "[NPC]";
+		return getString(TownySettings.Str.NPC_PREFIX);
 	}
 
 	public static int getClaimPrice() {
@@ -791,6 +794,10 @@ public class TownySettings {
 
 	public static boolean getUnclaimedZoneSwitchRights() {
 		return getBoolean(TownySettings.Bool.UNCLAIMED_ZONE_SWITCH);
+	}
+
+	public static String getUnclaimedPlotName() {
+		return getString(TownySettings.Str.UNCLAIMED_PLOT_NAME);
 	}
 	
 }

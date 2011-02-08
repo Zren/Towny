@@ -136,9 +136,8 @@ public class TownyBlockListener extends BlockListener {
 			try {
 				PlayerCache cache = getCache(player);
 				cache.updateCoord(pos);
-				if (!cache.getSwitchPermission()) { // If build cache is empty, throws null pointer
-					
-				}
+				if (!cache.getSwitchPermission())
+					event.setCancelled(true);
 				return;
 			} catch (NullPointerException e) {
 				if (firstCall) {
