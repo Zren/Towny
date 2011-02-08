@@ -4,16 +4,22 @@ v0.10:
 v0.12:
 	Ability to unclaim areas.
 	Daily and initial cost to nations to stay neutral.
-	Ability to make NPC Residents profiles (not actual human entities).
+	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
 	Changed the way admins permissions are dealt with.
 	New nations actually cost now.
 	New command /towny prices. Shows the prices for a new town, nation as well as your town's plot price and upkeep costs. It also shows similar aspects for your nation.
 	Flatfile database backup on server start as well as during the daily scheduler. 
 	Rewrote Claim and Unclaim to use the same methods for selecting area.
-	Switch permissions using BlockInteract.
+	Switch permissions using BlockInteract. Switches may or not actually work and hooking this event may cause bugs.
 	World names loaded from server take the last token after spliting with "/". Eg: Name=map with "worlds/map".
 	HomeBlocks show up as H on towny map.
+	Deposit for both town and nation banks. Any resident can deposit. Withdrawal/Deposits show a message to all online.
+	World names that represent subfolders, eg: "worlds/normal" are use the last token when split with "/". So the example world would use "normal".
+	Added permissions:
+		towny.wild.switch
+		towny.wild.build
+		towny.wild.destroy
 TODO: v0.13:
 	Builds on Essentials for Town Spawn teleports and teleport cost.
-	Ability to convert from hMod database.
+	Ability to convert from hMod database. Not really recommended.
 	

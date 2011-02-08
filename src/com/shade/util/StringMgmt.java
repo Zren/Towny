@@ -28,4 +28,14 @@ public class StringMgmt {
 			out += separator + arr[i];
 		return out;
 	}
+	
+	public static String[] remFirstArg(String[] arr) {
+		if (arr.length == 0)
+			return arr;
+		else {
+			String[] newSplit = new String[arr.length - 1];
+			System.arraycopy(arr, 1, newSplit, 0, arr.length - 1);
+			return newSplit;
+		}
+	}
 }

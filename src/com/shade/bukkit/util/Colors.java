@@ -2,12 +2,6 @@ package com.shade.bukkit.util;
 
 import org.bukkit.ChatColor;
 
-/**
- * Colors.java- Class of all colors so I don't waste time trying to find that
- * damn character
- * 
- * @author James
- */
 public class Colors {
 	public static final String Black = "\u00A70";
 	public static final String Navy = "\u00A71";

@@ -39,7 +39,7 @@ public class TownyPermission {
 		else if (s.equalsIgnoreCase("outsiderSwitch"))
 			outsiderSwitch = b;
 		else if (s.equalsIgnoreCase("allyBuild"))
-			allyDestroy = b;
+			allyBuild = b;
 		else if (s.equalsIgnoreCase("allyDestroy"))
 			allyDestroy = b;
 		else if (s.equalsIgnoreCase("allySwitch"))

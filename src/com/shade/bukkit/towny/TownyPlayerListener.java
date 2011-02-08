@@ -19,6 +19,7 @@ import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 import com.shade.bukkit.util.Compass;
 import com.shade.util.MemMgmt;
+import com.shade.util.StringMgmt;
 
 /**
  * Handle events for all Player related events
@@ -100,9 +101,9 @@ public class TownyPlayerListener extends PlayerListener {
 		if (plugin.hasPlayerMode(player, "map"))
 			showMap(player);
 		if (plugin.hasPlayerMode(player, "townclaim"))
-			parseTownClaimCommand(player, new String[]{"/town","claim"});
+			parseTownClaimCommand(player, new String[]{});
 		if (plugin.hasPlayerMode(player, "townunclaim"))
-			parseTownClaimCommand(player, new String[]{"/town","unclaim"});
+			parseTownUnclaimCommand(player, new String[]{});
 		// claim: attempt to claim area
 		// claim remove: remove area from town
 
@@ -178,8 +179,7 @@ public class TownyPlayerListener extends PlayerListener {
 		String[] split = event.getMessage().split(" ");
 		Player player = event.getPlayer();
 
-		String[] newSplit = new String[split.length - 1];
-		System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+		String[] newSplit = StringMgmt.remFirstArg(split);
 		
 		if (TownySettings.getResidentCommands().contains(split[0]))
 			parseResidentCommand(player, newSplit);
@@ -283,16 +283,13 @@ public class TownyPlayerListener extends PlayerListener {
 		else if (split[0].equalsIgnoreCase("list"))
 			listResidents(player);
 		else if (split[0].equalsIgnoreCase("set")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			residentSet(player, newSplit);
 		} else if (split[0].equalsIgnoreCase("friend")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			residentFriend(player, newSplit);
 		} else if (split[0].equalsIgnoreCase("delete")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			residentDelete(player, newSplit);
 		} else
 			try {
@@ -354,12 +351,10 @@ public class TownyPlayerListener extends PlayerListener {
 
 			// TODO: Let admin's call a subfunction of this.
 			if (split[0].equalsIgnoreCase("perm")) {
-				String[] newSplit = new String[split.length - 1];
-				System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+				String[] newSplit = StringMgmt.remFirstArg(split);
 				setTownBlockOwnerPermissions(player, resident, newSplit);
 			} else if (split[0].equalsIgnoreCase("mode")) {
-				String[] newSplit = new String[split.length - 1];
-				System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+				String[] newSplit = StringMgmt.remFirstArg(split);
 				setMode(player, newSplit);
 			} else {
 				plugin.sendErrorMsg(player, "Invalid town property.");
@@ -651,15 +646,14 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/town", "leave", ""));
 		player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to town's spawn."));
 		player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
+		player.sendMessage(ChatTools.formatCommand("Resident", "/nation", "deposit [$]", ""));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "withdraw [$]", ""));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "claim", "'/town claim ?' for help"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "unclaim", "'/town unclaim ?' for help"));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add [resident] .. []", "Add online residents."));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick [resident] .. []", ""));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add+ [resident]", "Add resident"));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick+ [resident]", "Kick resident"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "[add/kick] [resident] .. []", "Online only"));
+		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "[add+/kick+] [resident]", "Offline only"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "set [] .. []", "'/town set' for help"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "assistant [add/remove] [player]", ""));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "withdraw [$]", ""));
 		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "wall [type] [height]", ""));
 		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "wall remove", ""));
 		player.sendMessage(ChatTools.formatCommand("Mayor/Admin", "/town", "delete [town]", ""));
@@ -703,9 +697,17 @@ public class TownyPlayerListener extends PlayerListener {
 				}
 			else
 				plugin.sendErrorMsg(player, "Must specify amount. Eg: /town withdraw 54");
+		} else if (split[0].equalsIgnoreCase("deposit")) {
+			if (split.length == 2)
+				try {
+					townDeposit(player, Integer.parseInt(split[1]));
+				} catch (NumberFormatException e) {
+					plugin.sendErrorMsg(player, "Amount must be an integer.");
+				}
+			else
+				plugin.sendErrorMsg(player, "Must specify amount. Eg: /town withdraw 54");
 		} else {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			
 			if (split[0].equalsIgnoreCase("set"))
 				townSet(player, newSplit);
@@ -739,7 +741,23 @@ public class TownyPlayerListener extends PlayerListener {
 			town = resident.getTown();
 			
 			town.withdrawFromBank(resident, amount);
+			plugin.getTownyUniverse().sendTownMessage(town, resident.getName() + " withdrew " + amount + " from the town bank.");
+		} catch (TownyException x) {
+			plugin.sendErrorMsg(player, x.getError());
+		} catch (IConomyException x) {
+			plugin.sendErrorMsg(player, x.getError());
+		}
+	}
+	
+	private void townDeposit(Player player, int amount) {
+		Resident resident;
+		Town town;
+		try {
+			resident = plugin.getTownyUniverse().getResident(player.getName());
+			town = resident.getTown();
 			
+			resident.pay(amount, town);
+			plugin.getTownyUniverse().sendTownMessage(town, resident.getName() + " deposited " + amount + " into the town bank.");
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		} catch (IConomyException x) {
@@ -1019,12 +1037,10 @@ public class TownyPlayerListener extends PlayerListener {
 		if (split.length == 0) {
 			//TODO: assistant help
 		} else if (split[0].equalsIgnoreCase("add")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			townAssistantsAdd(player, newSplit);
 		} else if (split[0].equalsIgnoreCase("remove")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			townAssistantsRemove(player, newSplit);
 		}
 	}
@@ -1152,11 +1168,12 @@ public class TownyPlayerListener extends PlayerListener {
 					throw new TownyException("You are not the mayor or an assistant.");
 				world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
 				
-				String[] newSplit = new String[split.length - 1];
-				System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+				
 
 				int blockCost = 0;
 				List<WorldCoord> selection;
+				String[] newSplit = StringMgmt.remFirstArg(split);
+				
 				if (newSplit.length == 1 && newSplit[0].equalsIgnoreCase("outpost")) {
 					if (TownySettings.isAllowingOutposts()) {
 						selection = new ArrayList<WorldCoord>();
@@ -1216,9 +1233,8 @@ public class TownyPlayerListener extends PlayerListener {
 						throw new TownyException("You are not the mayor or an assistant.");
 				world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
 				
-				String[] newSplit = new String[split.length - 1];
-				System.arraycopy(split, 1, newSplit, 0, split.length - 1);
-
+				String[] newSplit = StringMgmt.remFirstArg(split);
+				
 				List<WorldCoord> selection;
 				if (newSplit.length == 1 && newSplit[0].equalsIgnoreCase("all"))
 					townUnclaimAll(town);
@@ -1522,8 +1538,7 @@ public class TownyPlayerListener extends PlayerListener {
 					plugin.sendErrorMsg(player, e.getError());
 				}
 			else if (split[0].equalsIgnoreCase("perm")) {
-				String[] newSplit = new String[split.length - 1];
-				System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+				String[] newSplit = StringMgmt.remFirstArg(split);
 				setTownBlockOwnerPermissions(player, town, newSplit);
 			} else if (split[0].equalsIgnoreCase("pvp")) {
 				if (split.length < 2)
@@ -1654,7 +1669,10 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "", "Your nation's status"));
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "[nation]", "Target nation's status"));
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "list", "List all nations"));
-		player.sendMessage(ChatTools.formatCommand("King", "/nation", "leave", "Leave your nation"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/nation", "leave", "Leave your nation"));
+		player.sendMessage(ChatTools.formatCommand("Resident", "/nation", "deposit [$]", ""));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "withdraw [$]", ""));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "[add/kick] [town] .. [town]", ""));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove]", "Leave your nation"));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "set [] .. []", ""));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "ally [add/remove] [nation]", "Set you alliance."));
@@ -1703,9 +1721,17 @@ public class TownyPlayerListener extends PlayerListener {
 				}
 			else
 				plugin.sendErrorMsg(player, "Must specify amount. Eg: /nation withdraw 54");
+		} else if (split[0].equalsIgnoreCase("deposit")) {
+			if (split.length == 2)
+				try {
+					nationDeposit(player, Integer.parseInt(split[1]));
+				} catch (NumberFormatException e) {
+					plugin.sendErrorMsg(player, "Amount must be an integer.");
+				}
+			else
+				plugin.sendErrorMsg(player, "Must specify amount. Eg: /nation deposit 54");
 		} else {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			
 			if (split[0].equalsIgnoreCase("add"))
 				nationAdd(player, newSplit);
@@ -1739,7 +1765,23 @@ public class TownyPlayerListener extends PlayerListener {
 			nation = resident.getTown().getNation();
 			
 			nation.withdrawFromBank(resident, amount);
+			plugin.getTownyUniverse().sendNationMessage(nation, resident.getName() + " withdrew " + amount + " from the nation bank.");
+		} catch (TownyException x) {
+			plugin.sendErrorMsg(player, x.getError());
+		} catch (IConomyException x) {
+			plugin.sendErrorMsg(player, x.getError());
+		}
+	}
+	
+	private void nationDeposit(Player player, int amount) {
+		Resident resident;
+		Nation nation;
+		try {
+			resident = plugin.getTownyUniverse().getResident(player.getName());
+			nation = resident.getTown().getNation();
 			
+			resident.pay(amount, nation);
+			plugin.getTownyUniverse().sendNationMessage(nation, resident.getName() + " deposited " + amount + " to the nation bank.");
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		} catch (IConomyException x) {
@@ -1936,12 +1978,10 @@ public class TownyPlayerListener extends PlayerListener {
 		if (split.length == 0) {
 			//TODO: assistant help
 		} else if (split[0].equalsIgnoreCase("add")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			nationAssistantsAdd(player, newSplit);
 		} else if (split[0].equalsIgnoreCase("remove")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			nationAssistantsRemove(player, newSplit);
 		}
 	}
@@ -2474,7 +2514,7 @@ public class TownyPlayerListener extends PlayerListener {
 		 */
 		
 		
-		player.sendMessage(Colors.Red + "[New] "
+		player.sendMessage(Colors.Gold + "[New] "
 				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(TownySettings.getNewTownPrice())
 				+ Colors.Gray + " | "
 				+ Colors.Green + "Nation: " + Colors.LightGreen + Integer.toString(TownySettings.getNewNationPrice()));
@@ -2487,7 +2527,7 @@ public class TownyPlayerListener extends PlayerListener {
 		} catch (NotRegisteredException x) {
 			return;
 		}
-		player.sendMessage(Colors.Red + "Town ["+plugin.getTownyUniverse().getFormatter().getFormattedName(town)+"]");
+		player.sendMessage(Colors.Gold + "Town ["+plugin.getTownyUniverse().getFormatter().getFormattedName(town)+"]");
 		player.sendMessage(Colors.Rose + "    [Price] "
 				+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotPrice())
 				+ Colors.Gray + " | "
@@ -2503,7 +2543,7 @@ public class TownyPlayerListener extends PlayerListener {
 		} catch (NotRegisteredException x) {
 			return;
 		}
-		player.sendMessage(Colors.Red + "Nation ["+plugin.getTownyUniverse().getFormatter().getFormattedName(nation)+"]");
+		player.sendMessage(Colors.Gold + "Nation ["+plugin.getTownyUniverse().getFormatter().getFormattedName(nation)+"]");
 		player.sendMessage(Colors.Rose + "    [Upkeep] "
 				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(nation.getTaxes())
 				+ Colors.Gray + " | "
@@ -2542,12 +2582,10 @@ public class TownyPlayerListener extends PlayerListener {
 		else if (split[0].equalsIgnoreCase("?"))
 			showTownyAdminHelp(player);
 		else if (split[0].equalsIgnoreCase("set")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			adminSet(player, newSplit);
 		} else if (split[0].equalsIgnoreCase("war")) {
-			String[] newSplit = new String[split.length - 1];
-			System.arraycopy(split, 1, newSplit, 0, split.length - 1);
+			String[] newSplit = StringMgmt.remFirstArg(split);
 			parseWarCommand(player, newSplit);
 		} else if (split[0].equalsIgnoreCase("givebonus"))
 			try {

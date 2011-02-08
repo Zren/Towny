@@ -22,7 +22,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.shade.bukkit.towny.command.TownyCommand;
 import com.shade.bukkit.towny.command.TownyCommandMap;
@@ -57,6 +56,7 @@ import com.shade.bukkit.util.Colors;
  * Comply with the updated API onCommand. Move commands to onCommand (at least console type ones).
  * Organise PlayerListener. Functions. Functions EVERYWHERE!
  * Use unclaim/claim selections with the /plot command
+ * SortedList<Integer> townLevels to efficiently find the keys for the level hashmap.
  * 
  * Permissions:
  * towny.worldbuilder
@@ -87,7 +87,7 @@ public class Towny extends JavaPlugin {
 	private TownyUniverse townyUniverse;
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
-	private PermissionHandler permissionHandler = null;
+	private Permissions permissions = null;
 	
 	public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, folder, plugin, cLoader);
@@ -128,9 +128,9 @@ public class Towny extends JavaPlugin {
 		}
 		
 		Plugin test = getServer().getPluginManager().getPlugin("Permissions");
-		if(permissionHandler == null)
+		if(permissions == null)
 			if(test != null)
-				permissionHandler = ((Permissions)test).getHandler();
+				permissions = (Permissions)test;
 			else
 				System.out.println("[Towny] Permission system not enabled. Towny Admins not loaded.");
 		
@@ -302,10 +302,7 @@ public class Towny extends JavaPlugin {
 	public boolean isTownyAdmin(Player player) {
 		if (player.isOp())
 			return true;
-		if (permissionHandler == null)
-			return player.isOp();
-		else
-			return permissionHandler.has(player, "towny.admin");
+		return hasPermission(player, "towny.admin");
 	}
 	
 	public void setPlayerMode(Player player, String[] modes) {
@@ -334,20 +331,23 @@ public class Towny extends JavaPlugin {
 			return true;
 		
 		/*
-		Class User = getClassLoader().loadClass("org.bukkit.earth2me.essentials.User");
-		Object user = User.getMethod("get", Player.class, Server.class).invoke(player, getServer());
-		
-		
-		if (test != null)
-			try {
-				User user = User.get(player, plugin.getServer());
-				user.teleportCooldown();
-				user.charge(new Commandtp());
-			} catch (Exception e) {
-				plugin.sendErrorMsg(player, "Error: " + e.getMessage());
-			}
+		try {
+			User user = User.get(player, getServer());
+			user.teleportCooldown();
+			user.charge(new Commandtp());
+		} catch (Exception e) {
+			sendErrorMsg(player, "Error: " + e.getMessage());
+			return false;
+		}
 		*/
 			
 		return true;
+	}
+
+	public boolean hasPermission(Player player, String node) {
+		if (permissions != null)
+			return Permissions.Security.permission(player, node);
+		else
+			return false;
 	}
 }

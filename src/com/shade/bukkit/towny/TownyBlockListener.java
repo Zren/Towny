@@ -165,7 +165,9 @@ public class TownyBlockListener extends BlockListener {
 			town = townBlock.getTown();
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone switch rights
-			if (!TownySettings.getUnclaimedZoneSwitchRights()) {
+			if (plugin.hasPermission(player, "towny.wild.switch"))
+				cacheSwitch(player, pos, true);
+			else if (!TownySettings.getUnclaimedZoneSwitchRights()) {
 				// TODO: Have permission to switch here
 				if (sendMsg)
 					plugin.sendErrorMsg(player, "Not allowed to toggle switches in the wild.");
@@ -260,7 +262,9 @@ public class TownyBlockListener extends BlockListener {
 			town = townBlock.getTown();
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone destroy rights
-			if (!TownySettings.getUnclaimedZoneDestroyRights()) {
+			if (plugin.hasPermission(player, "towny.wild.destroy"))
+				cacheSwitch(player, pos, true);
+			else if (!TownySettings.getUnclaimedZoneDestroyRights()) {
 				// TODO: Have permission to destroy here
 				if (sendMsg)
 					plugin.sendErrorMsg(player, "Not allowed to destroy in the wild.");
@@ -356,7 +360,9 @@ public class TownyBlockListener extends BlockListener {
 			town = townBlock.getTown();
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone Build Rights
-			if (!TownySettings.getUnclaimedZoneBuildRights()) {
+			if (plugin.hasPermission(player, "towny.wild.build"))
+				cacheSwitch(player, pos, true);
+			else if (!TownySettings.getUnclaimedZoneBuildRights()) {
 				// TODO: Have permission to build here
 				if (sendMsg)
 					plugin.sendErrorMsg(player, "Not allowed to build in the wild.");
