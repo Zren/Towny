@@ -19,6 +19,10 @@ v0.12:
 		towny.wild.switch
 		towny.wild.build
 		towny.wild.destroy
+	onMoveChunkTransitions update. Added unowned plot name as well as a homeblock and for sale notfier.
+	Added command /townyadmin backup to force a backup at any time.
+	Fixed bugs.
+	Some tax output during new day.
 TODO: v0.13:
 	Builds on Essentials for Town Spawn teleports and teleport cost.
 	Ability to convert from hMod database. Not really recommended.

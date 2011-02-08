@@ -74,6 +74,7 @@ public class TownySettings {
 	enum Int {
 		INACTIVE_AFTER_TIME,
 		DELETED_AFTER_TIME,
+		DAY_INTERVAL,
 		TOWN_BLOCK_SIZE,
 		TOWN_BLOCK_RATIO,
 		DEFAULT_MAX_TOWN_BLOCKS,
@@ -201,6 +202,7 @@ public class TownySettings {
 		// Integer
 		configInt.put(TownySettings.Int.INACTIVE_AFTER_TIME, 24 * 60 * 60 * 1000); // 1 Day
 		configInt.put(TownySettings.Int.DELETED_AFTER_TIME, 60 * 24 * 60 * 60 * 1000); // Two Months
+		configInt.put(TownySettings.Int.DAY_INTERVAL, 24 * 60 * 60 * 1000); // 24 Hours
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
 		configInt.put(TownySettings.Int.DEFAULT_MAX_TOWN_BLOCKS, 64);
@@ -798,6 +800,10 @@ public class TownySettings {
 
 	public static String getUnclaimedPlotName() {
 		return getString(TownySettings.Str.UNCLAIMED_PLOT_NAME);
+	}
+
+	public static int getDayInterval() {
+		return getInt(TownySettings.Int.DAY_INTERVAL);
 	}
 	
 }

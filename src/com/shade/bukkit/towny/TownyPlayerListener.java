@@ -1,5 +1,6 @@
 package com.shade.bukkit.towny;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -155,7 +156,7 @@ public class TownyPlayerListener extends PlayerListener {
 					toMsg += universe.getFormatter().getFormattedName(toTown);
 			}
 			
-			if (fromResident != toResident) {
+			if (fromResident != toResident && !toWild) {
 				if (!sendToMsg)
 					sendToMsg = true;
 				else
@@ -2320,23 +2321,29 @@ public class TownyPlayerListener extends PlayerListener {
 			showUniverseStats(player);
 		else if (split[0].equalsIgnoreCase("prices"))
 			showTownyPrices(player);
-		else if (split[0].equalsIgnoreCase("war"))
-				if (split.length == 2) {
-					if (plugin.getTownyUniverse().isWarTime()) {
-						if (split[1].equalsIgnoreCase("stats"))
-							plugin.getTownyUniverse().getWarEvent().sendStats(player);
-						else if (split[1].equalsIgnoreCase("scores"))
-							plugin.getTownyUniverse().getWarEvent().sendScores(player);
-					} else //TODO: Remove smartassery
-						plugin.sendErrorMsg(player, "The world isn't currently going to hell.");
-				}
-		else if (TownySettings.getDebug())
-			if (split[0].equalsIgnoreCase("tree"))
-				plugin.getTownyUniverse().sendUniverseTree(player);
-			else if (split[0].equalsIgnoreCase("seed"))
-				seedTowny();
-			else if (split[0].equalsIgnoreCase("newday"))
-				plugin.getTownyUniverse().newDay();
+		else if (split[0].equalsIgnoreCase("war")) {
+			if (split.length < 2 || split[1].equalsIgnoreCase("?")) {
+				player.sendMessage(ChatTools.formatTitle("/towny war"));
+				player.sendMessage(ChatTools.formatCommand("", "/towny war", "stats", ""));
+				player.sendMessage(ChatTools.formatCommand("", "/towny war", "scores", ""));
+			} else
+				if (plugin.getTownyUniverse().isWarTime()) {
+					if (split[1].equalsIgnoreCase("stats"))
+						plugin.getTownyUniverse().getWarEvent().sendStats(player);
+					else if (split[1].equalsIgnoreCase("scores"))
+						plugin.getTownyUniverse().getWarEvent().sendScores(player);
+					else
+						plugin.sendErrorMsg(player, "Invalid sub command.");
+				} else //TODO: Remove smartassery
+					plugin.sendErrorMsg(player, "The world isn't currently going to hell.");
+		} else if (split[0].equalsIgnoreCase("tree") && TownySettings.getDebug())
+			plugin.getTownyUniverse().sendUniverseTree(player);
+		else if (split[0].equalsIgnoreCase("seed") && TownySettings.getDebug())
+			seedTowny();
+		else if (split[0].equalsIgnoreCase("newday") && TownySettings.getDebug())
+			plugin.getTownyUniverse().newDay();
+		else
+			plugin.sendErrorMsg(player, "Invalid sub command.");
 	}
 
 	
@@ -2624,6 +2631,13 @@ public class TownyPlayerListener extends PlayerListener {
 			}
 		else if (split[0].equalsIgnoreCase("reload"))
 			reloadTowny(player);
+		else if (split[0].equalsIgnoreCase("backup"))
+			try {
+				plugin.getTownyUniverse().getDataSource().backup();
+				plugin.sendMsg(player, "Backup sucessful.");
+			} catch (IOException e) {
+				plugin.sendErrorMsg(player, "Error: " + e.getMessage());
+			}
 	}
 
 	@SuppressWarnings("static-access")

@@ -25,6 +25,7 @@ public class TownBlock {
 		try {
 			town.addTownBlock(this);
 		} catch (AlreadyRegisteredException e) {
+		} catch (NullPointerException e) {
 		}
 	}
 
@@ -48,6 +49,7 @@ public class TownBlock {
 		try {
 			resident.addTownBlock(this);
 		} catch (AlreadyRegisteredException e) {
+		} catch (NullPointerException e) {
 		}
 	}
 

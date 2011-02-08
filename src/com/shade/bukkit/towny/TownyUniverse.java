@@ -36,7 +36,6 @@ public class TownyUniverse extends TownyObject {
 	private Timer mobRemoveTimer = null;
 	private Timer healthRegenTimer = null;
 	private War warEvent;
-	private final int oneDay = 24 * 60 * 60 * 1000;
 	private String rootFolder;
 	
 	
@@ -78,9 +77,9 @@ public class TownyUniverse extends TownyObject {
 		if (on && dailyTimer == null) {
 			dailyTimer = new Timer();
 			Calendar tomorrow = new GregorianCalendar();
-			tomorrow.add(Calendar.DATE, oneDay);
+			tomorrow.add(Calendar.DATE, TownySettings.getDayInterval());
 			Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0);
-			dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), result.getTime(), oneDay);
+			dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), result.getTime(), TownySettings.getDayInterval());
 		} else if (!on && dailyTimer != null) {
 			dailyTimer.cancel();
 			dailyTimer = null;
@@ -298,8 +297,7 @@ public class TownyUniverse extends TownyObject {
 				player.sendMessage(line);
 	}
 
-	public void sendResidentMessage(Resident resident, String line)
-			throws TownyException {
+	public void sendResidentMessage(Resident resident, String line) throws TownyException {
 		Player player = getPlayer(resident);
 		player.sendMessage(line);
 	}
@@ -543,6 +541,7 @@ public class TownyUniverse extends TownyObject {
 				continue;
 			if (!town.pay(nation.getTaxes(), nation)) {
 				try {
+					sendNationMessage(nation, TownySettings.getCouldntPayTaxesMsg(town, ", and was kicked from the nation."));
 					nation.removeTown(town);
 				} catch (EmptyNationException e) {
 					// Always has 1 town (capital) so ignore
@@ -550,7 +549,8 @@ public class TownyUniverse extends TownyObject {
 				}
 				getDataSource().saveTown(town);
 				getDataSource().saveNation(nation);
-			}
+			} else
+				sendTownMessage(town, "Payed town tax of " + nation.getTaxes());
 		}
 	}
 
@@ -562,7 +562,7 @@ public class TownyUniverse extends TownyObject {
 	public void collectTownTaxe(Town town) throws IConomyException {
 		//Resident Tax
 		for (Resident resident : town.getResidents())
-			if (!town.hasAssistant(resident) || !town.isMayor(resident))
+			if (!town.hasAssistant(resident) || !town.isMayor(resident)) {
 				if (!resident.pay(town.getTaxes(), town)) {
 					sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and was kicked from town."));
 					try {
@@ -572,9 +572,19 @@ public class TownyUniverse extends TownyObject {
 					}
 					getDataSource().saveResident(resident);
 					getDataSource().saveTown(town);
+				} else
+					try {
+						sendResidentMessage(resident, "Payed resident tax of " + town.getTaxes());
+					} catch (TownyException e1) {
+					}
+			} else
+				try {
+					sendResidentMessage(resident, "Town staff are exempt from taxes.");
+				} catch (TownyException e) {
 				}
 		
 		//Plot Tax
+		Hashtable<Resident,Integer> townPlots = new Hashtable<Resident,Integer>();
 		for (TownBlock townBlock : town.getTownBlocks()) {
 			if (!townBlock.hasResident())
 				continue;
@@ -586,10 +596,18 @@ public class TownyUniverse extends TownyObject {
 						townBlock.setResident(null);
 						getDataSource().saveResident(resident);
 						getDataSource().saveWorld(townBlock.getWorld());
-					}
+					} else
+						townPlots.put(resident, (townPlots.containsKey(resident) ? townPlots.get(resident) : 0) + 1);
 			} catch (NotRegisteredException e) {
 			}
 		}
+		for (Resident resident : townPlots.keySet())
+			try {
+				int numPlots = townPlots.get(resident);
+				int totalCost = town.getPlotTax() * numPlots;
+				sendResidentMessage(resident, "Payed " + totalCost + " for " + numPlots + " plots in " + town.getName());
+			} catch (TownyException e) {
+			}
 	}
 
 	public void startWarEvent() {
@@ -718,6 +736,10 @@ public class TownyUniverse extends TownyObject {
 			removeTownBlock(townBlock);
 	}
 
+	public void collectTownCosts() throws IConomyException {
+		for (Town town : towns.values());
+	}
+	
 	public void collectNationCosts() throws IConomyException {
 		for (Nation nation : nations.values())
 			if (nation.isNeutral())

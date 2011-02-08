@@ -110,6 +110,7 @@ public class Towny extends JavaPlugin {
 		if (!townyUniverse.loadDatabase(TownySettings.getLoadDatabase())) {
 			System.out.println("[Towny] Error: Failed to load!");
 			getServer().getPluginManager().disablePlugin(this);
+			return;
 		}
 		try {
 			townyUniverse.setDataSource(TownySettings.getSaveDatabase());
@@ -125,6 +126,7 @@ public class Towny extends JavaPlugin {
 		} catch (UnsupportedOperationException e) {
 			System.out.println("[Towny] Error: Unsupported save format!");
 			getServer().getPluginManager().disablePlugin(this);
+			return;
 		}
 		
 		Plugin test = getServer().getPluginManager().getPlugin("Permissions");
@@ -155,7 +157,8 @@ public class Towny extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		townyUniverse.getDataSource().saveAll();
+		if (townyUniverse.getDataSource() != null)
+			townyUniverse.getDataSource().saveAll();
 		
 		if (getTownyUniverse().isWarTime())
 			getTownyUniverse().getWarEvent().end();
