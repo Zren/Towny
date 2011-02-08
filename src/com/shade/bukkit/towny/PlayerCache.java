@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerCache {
 	private Coord lastTownBlock;
-	private Boolean buildPermission, destroyPermission;
+	private Boolean buildPermission, destroyPermission, switchPermission;
 	//TODO: cache last entity attacked
 
 	public PlayerCache(Player player) {
@@ -51,6 +51,17 @@ public class PlayerCache {
 			return destroyPermission;
 	}
 	
+	public void setSwitchPermission(boolean switchPermission) {
+		this.switchPermission = switchPermission;
+	}
+	
+	public boolean getSwitchPermission() throws NullPointerException {
+		if (switchPermission == null)
+			throw new NullPointerException();
+		else
+			return switchPermission;
+	}
+	
 	public boolean updateCoord(Coord pos) {
 		if (!getLastTownBlock().equals(pos)) {
 			setLastTownBlock(pos);
@@ -63,5 +74,6 @@ public class PlayerCache {
 		lastTownBlock = null;
 		buildPermission = null;
 		destroyPermission = null;
+		switchPermission = null;
 	}
 }

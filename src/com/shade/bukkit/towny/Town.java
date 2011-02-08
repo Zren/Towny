@@ -31,8 +31,10 @@ public class Town extends TownBlockOwner implements Walled {
 		hasMobs = false;
 		permissions.allyBuild = true;
 		permissions.allyDestroy = true;
+		permissions.allySwitch = true;
 		permissions.residentBuild = true;
 		permissions.residentDestroy = true;
+		permissions.residentSwitch = true;
 	}
 
 	public Resident getMayor() {

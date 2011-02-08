@@ -34,6 +34,8 @@ public class DailyTimerTask extends TownyTimerTask {
 			System.out.println("[Towny] Error: Could not create backup.");
 			System.out.print(e.getStackTrace());
 		}
+		if (TownySettings.getDebug())
+			System.out.println("[Towny] Debug: New Day");
 	}
 
 }

@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.bukkit.World;
-
 import com.shade.bukkit.towny.AlreadyRegisteredException;
 import com.shade.bukkit.towny.Nation;
 import com.shade.bukkit.towny.NotRegisteredException;
@@ -58,14 +56,8 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 	
 	@Override
 	public boolean loadWorldList() {
-		if (plugin != null) {
-			for (World world : plugin.getServer().getWorlds())
-				try {
-					universe.newWorld(world.getName());
-				} catch (AlreadyRegisteredException e) {
-				}
-			return true;
-		}
+		if (plugin != null)
+			return loadServerWorldsList();
 		return false;
 	}
 

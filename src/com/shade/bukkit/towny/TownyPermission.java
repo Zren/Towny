@@ -1,8 +1,9 @@
 package com.shade.bukkit.towny;
 
 public class TownyPermission {
-	boolean residentBuild, residentDestroy, outsiderBuild, outsiderDestroy,
-			outsiderSwitches, allyBuild, allyDestroy;
+	boolean residentBuild, residentDestroy, residentSwitch,
+		outsiderBuild, outsiderDestroy, outsiderSwitch,
+		allyBuild, allyDestroy, allySwitch;
 
 	public TownyPermission() {
 		reset();
@@ -15,11 +16,13 @@ public class TownyPermission {
 	public void setAll(boolean b) {
 		residentBuild = b;
 		residentDestroy = b;
+		residentSwitch = b;
 		outsiderBuild = b;
 		outsiderDestroy = b;
-		outsiderSwitches = b;
+		outsiderSwitch = b;
 		allyBuild = b;
 		allyDestroy = b;
+		allySwitch = b;
 	}
 
 	public void set(String s, boolean b) {
@@ -27,16 +30,20 @@ public class TownyPermission {
 			residentBuild = b;
 		else if (s.equalsIgnoreCase("residentDestroy"))
 			residentDestroy = b;
+		else if (s.equalsIgnoreCase("residentSwitch"))
+			residentSwitch = b;
 		else if (s.equalsIgnoreCase("outsiderBuild"))
 			outsiderBuild = b;
 		else if (s.equalsIgnoreCase("outsiderDestroy"))
 			outsiderDestroy = b;
-		else if (s.equalsIgnoreCase("outsiderSwitches"))
-			outsiderSwitches = b;
+		else if (s.equalsIgnoreCase("outsiderSwitch"))
+			outsiderSwitch = b;
 		else if (s.equalsIgnoreCase("allyBuild"))
 			allyDestroy = b;
 		else if (s.equalsIgnoreCase("allyDestroy"))
 			allyDestroy = b;
+		else if (s.equalsIgnoreCase("allySwitch"))
+			allySwitch = b;
 	}
 
 	public void load(String s) {
@@ -52,16 +59,20 @@ public class TownyPermission {
 			out += "residentBuild";
 		if (residentDestroy)
 			out += (out.length() > 0 ? "," : "") + "residentDestroy";
+		if (residentSwitch)
+			out += (out.length() > 0 ? "," : "") + "residentSwitch";
 		if (outsiderBuild)
 			out += (out.length() > 0 ? "," : "") + "outsiderBuild";
 		if (outsiderDestroy)
 			out += (out.length() > 0 ? "," : "") + "outsiderDestroy";
-		if (outsiderSwitches)
+		if (outsiderSwitch)
 			out += (out.length() > 0 ? "," : "") + "outsiderSwitches";
 		if (allyBuild)
 			out += (out.length() > 0 ? "," : "") + "allyBuild";
 		if (allyDestroy)
 			out += (out.length() > 0 ? "," : "") + "allyDestroy";
+		if (allySwitch)
+			out += (out.length() > 0 ? "," : "") + "allySwitch";
 		return out;
 	}
 }

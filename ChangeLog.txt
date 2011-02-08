@@ -1,3 +1,6 @@
+v0.10:
+	Compass on towny map.
+	Plots and /plot command.
 v0.12:
 	Ability to unclaim areas.
 	Daily and initial cost to nations to stay neutral.
@@ -5,5 +8,12 @@ v0.12:
 	Changed the way admins permissions are dealt with.
 	New nations actually cost now.
 	New command /towny prices. Shows the prices for a new town, nation as well as your town's plot price and upkeep costs. It also shows similar aspects for your nation.
-	Ability to convert from hMod database.
 	Flatfile database backup on server start as well as during the daily scheduler. 
+	Rewrote Claim and Unclaim to use the same methods for selecting area.
+	Switch permissions using BlockInteract.
+	World names loaded from server take the last token after spliting with "/". Eg: Name=map with "worlds/map".
+	HomeBlocks show up as H on towny map.
+TODO: v0.13:
+	Builds on Essentials for Town Spawn teleports and teleport cost.
+	Ability to convert from hMod database.
+	

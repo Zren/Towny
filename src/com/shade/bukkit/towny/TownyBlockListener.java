@@ -1,14 +1,18 @@
 package com.shade.bukkit.towny;
 
+import java.util.Arrays;
+
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 //TODO: Admin/Group Build Rights
 //TODO: algorithm is updating coord twice when updating permissions 
+//TODO: Combine the three similar functions into a single function.
 
 /*
  * Logic:
@@ -37,6 +41,7 @@ public class TownyBlockListener extends BlockListener {
 		plugin = instance;
 	}
 
+	
 	@Override
 	public void onBlockDamage(BlockDamageEvent event) {
 		if (event.getDamageLevel() == BlockDamageLevel.BROKEN) {
@@ -105,8 +110,141 @@ public class TownyBlockListener extends BlockListener {
 				plugin.sendErrorMsg(player, "Error updating build permissions cache.");
 		}
 	}
-
 	
+	@Override
+	public void onBlockInteract(BlockInteractEvent event) {
+		long start = System.currentTimeMillis();
+
+		onBlockInteractEvent(event, true);
+
+		if (TownySettings.getDebug())
+			System.out.println("[Towny] Debug: onBlockInteractEvent took " + (System.currentTimeMillis() - start) + "ms");
+	}
+	
+	
+	
+	public void onBlockInteractEvent(BlockInteractEvent event, boolean firstCall) {
+		if (event.getEntity() != null && event.getEntity() instanceof Player) {
+			Player player = (Player)event.getEntity();
+			Block block = event.getBlock();
+			if (!Arrays.asList(TownySettings.getSwitchIds()).contains(block.getTypeId()))
+				return;
+					
+			Coord pos = Coord.parseCoord(block);
+	
+			// Check cached permissions first
+			try {
+				PlayerCache cache = getCache(player);
+				cache.updateCoord(pos);
+				if (!cache.getSwitchPermission()) { // If build cache is empty, throws null pointer
+					
+				}
+				return;
+			} catch (NullPointerException e) {
+				if (firstCall) {
+					// New or old build permission was null, update it
+					updateSwitchCache(player, pos, true);
+					onBlockInteractEvent(event, false);
+				} else
+					plugin.sendErrorMsg(player, "Error updating build permissions cache.");
+			}
+		}
+	}
+
+	public void updateSwitchCache(Player player, Coord pos, boolean sendMsg) {
+		if (plugin.isTownyAdmin(player)) {
+			cacheSwitch(player, pos, true);
+			return;
+		}
+		
+		TownyUniverse universe = plugin.getTownyUniverse();
+		TownBlock townBlock;
+		Town town;
+		try {
+			townBlock = universe.getWorld(player.getWorld().getName()).getTownBlock(pos);
+			town = townBlock.getTown();
+		} catch (NotRegisteredException e) {
+			// Unclaimed Zone switch rights
+			if (!TownySettings.getUnclaimedZoneSwitchRights()) {
+				// TODO: Have permission to switch here
+				if (sendMsg)
+					plugin.sendErrorMsg(player, "Not allowed to toggle switches in the wild.");
+				cacheSwitch(player, pos, false);
+			} else
+				cacheSwitch(player, pos, true);
+
+			return;
+		}
+
+		try {
+			Resident resident = universe.getResident(player.getName());
+			
+			// War Time switch rights
+			if (universe.isWarTime())
+				try {
+					if (!resident.getTown().getNation().isNeutral() && !town.getNation().isNeutral()) {
+						cacheSwitch(player, pos, true);
+						return;
+					}	
+				} catch (NotRegisteredException e) {
+				}
+			
+			// Resident Plot switch rights
+			try {
+				Resident owner = townBlock.getResident();
+				if (resident == owner)
+					cacheSwitch(player, pos, true);
+				else if (owner.hasFriend(resident)) {
+					if (owner.permissions.residentSwitch)
+						cacheSwitch(player, pos, true);
+					else {
+						if (sendMsg)
+							plugin.sendErrorMsg(player, "Owner doesn't allow friends to toggle switches.");
+						cacheSwitch(player, pos, false);
+					}
+				} else if (owner.permissions.allySwitch)
+					// Exit out and use town permissions
+					throw new TownyException();
+				else {
+					if (sendMsg)
+						plugin.sendErrorMsg(player, "Owner doesn't allow allies to toggle switches.");
+					cacheSwitch(player, pos, false);
+				}
+
+				return;
+			} catch (NotRegisteredException x) {
+			} catch (TownyException x) {
+			}
+
+			// Town resident destroy rights
+			if (!resident.hasTown())
+				throw new TownyException("You don't belong to this town.");
+
+			if (!town.getPermissions().residentSwitch) {
+				if (sendMsg)
+					plugin.sendErrorMsg(player, "Residents aren't allowed to toggle switches.");
+				cacheSwitch(player, pos, false);
+			} else if (resident.getTown() != town) {
+				// Allied destroy rights
+				if (universe.isAlly(resident.getTown(), town) && town.getPermissions().allyDestroy)
+					cacheSwitch(player, pos, true);
+				else {
+					if (sendMsg)
+						plugin.sendErrorMsg(player, "Not allowed to toggle switches here.");
+					cacheSwitch(player, pos, false);
+				}
+			} else
+				cacheSwitch(player, pos, true);
+		} catch (TownyException e) {
+			// Outsider destroy rights
+			if (!town.getPermissions().outsiderSwitch) {
+				if (sendMsg)
+					plugin.sendErrorMsg(player, e.getError());
+				cacheSwitch(player, pos, false);
+			} else
+				cacheSwitch(player, pos, true);
+		}
+	}
 
 	public void updateDestroyCache(Player player, Coord pos, boolean sendMsg) {
 		if (plugin.isTownyAdmin(player)) {
@@ -315,6 +453,15 @@ public class TownyBlockListener extends BlockListener {
 
 		if (TownySettings.getDebug())
 			System.out.println("[Towny] Debug: " + player.getName() + " (" + coord.toString() + ") Cached Destroy: " + destroyRight);
+	}
+	
+	public void cacheSwitch(Player player, Coord coord, boolean switchRight) {
+		PlayerCache cache = getCache(player);
+		cache.updateCoord(coord);
+		cache.setSwitchPermission(switchRight);
+
+		if (TownySettings.getDebug())
+			System.out.println("[Towny] Debug: " + player.getName() + " (" + coord.toString() + ") Cached Switch: " + switchRight);
 	}
 	
 	public PlayerCache getCache(Player player) {

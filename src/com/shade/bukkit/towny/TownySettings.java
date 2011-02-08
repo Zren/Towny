@@ -28,6 +28,10 @@ public class TownySettings {
 		NATION_CHAT_COMMANDS,
 		MOB_REMOVAL_ENTITIES
 	};
+	// Integer[]
+	enum IntArr {
+		SWITCH_IDS
+	};
 	// String
 	enum Str {
 		LOAD_DATABASE,
@@ -96,6 +100,7 @@ public class TownySettings {
 		NATION_CREATION_ADMIN_ONLY,
 		UNCLAIMED_ZONE_BUILD,
 		UNCLAIMED_ZONE_DESTROY,
+		UNCLAIMED_ZONE_SWITCH,
 		SHOW_TOWN_NOTIFICATIONS,
 		USING_ICONOMY,
 		MODIFY_CHAT_NAME,
@@ -127,6 +132,8 @@ public class TownySettings {
 	
 	private static final ConcurrentHashMap<TownySettings.StrArr,String[]> configStrArr
 		= new ConcurrentHashMap<TownySettings.StrArr,String[]>();
+	private static final ConcurrentHashMap<TownySettings.IntArr,Integer[]> configIntArr
+		= new ConcurrentHashMap<TownySettings.IntArr,Integer[]>();
 	private static final ConcurrentHashMap<TownySettings.Str,String> configStr
 		= new ConcurrentHashMap<TownySettings.Str,String>();
 	private static final ConcurrentHashMap<TownySettings.Int,Integer> configInt
@@ -152,6 +159,8 @@ public class TownySettings {
 		configStrArr.put(TownySettings.StrArr.MOB_REMOVAL_ENTITIES, new String[]{
 				"EntityZombie", "EntitySkeleton", "EntityCreeper", "EntitySpider", "EntitySquid", "EntityGhast", "EntityPigZombie"
 		});
+		// Integer[]
+		configIntArr.put(TownySettings.IntArr.SWITCH_IDS, new Integer[]{64,69,70,71,72,77});
 		// String
 		configStr.put(TownySettings.Str.LOAD_DATABASE, "flatfile");
 		configStr.put(TownySettings.Str.DEFAULT_TOWN_NAME, "");
@@ -213,6 +222,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.NATION_CREATION_ADMIN_ONLY, false);
 		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_BUILD, false);
 		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_DESTROY, false);
+		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_SWITCH, true);
 		configBool.put(TownySettings.Bool.SHOW_TOWN_NOTIFICATIONS, true);
 		configBool.put(TownySettings.Bool.USING_ICONOMY, true);
 		configBool.put(TownySettings.Bool.MODIFY_CHAT_NAME, true);
@@ -387,6 +397,10 @@ public class TownySettings {
 	
 	public static String getString(TownySettings.Str key) {
 		return configStr.get(key);
+	}
+	
+	public static Integer[] getIntArr(TownySettings.IntArr key) {
+		return configIntArr.get(key);
 	}
 	
 	public static String[] getStrArr(TownySettings.StrArr key) {
@@ -753,6 +767,10 @@ public class TownySettings {
 		return getInt(TownySettings.Int.PRICE_OUTPOST);
 	} 
 	
+	public static Integer[] getSwitchIds() {
+		return getIntArr(TownySettings.IntArr.SWITCH_IDS);
+	}
+	
 	/************************************************************/
 	
 	//TODO: better way to set values besides passing the filepath as a param
@@ -769,6 +787,10 @@ public class TownySettings {
 
 	public static int getClaimPrice() {
 		return getInt(TownySettings.Int.PRICE_CLAIM_TOWNBLOCK);
+	}
+
+	public static boolean getUnclaimedZoneSwitchRights() {
+		return getBoolean(TownySettings.Bool.UNCLAIMED_ZONE_SWITCH);
 	}
 	
 }

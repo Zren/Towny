@@ -31,14 +31,17 @@ public class TownyFormatter {
 			+ Colors.Gray + " | "
 			+ Colors.Green + "Last Online: " + Colors.LightGreen + lastOnlineFormat.format(resident.getLastOnline()));
 
-		// Owner of: 4 Town Blocks | Perm: B=f- D=fa
+		// Owner of: 4 Town Blocks | Perm: B=f- D=fa S=f-
 		if (resident.getTownBlocks().size() > 0)
 			out.add(Colors.Green + "Owner of: " + Colors.LightGreen + resident.getTownBlocks().size() + " plots"
 					+ Colors.Gray + " | " + Colors.Green + "Perm: "
 					+ Colors.LightGreen + "B=" + Colors.LightGray
 					+ (resident.getPermissions().residentBuild ? "f" : "-")
 					+ (resident.getPermissions().allyBuild ? "a" : "-")
-					+ Colors.LightGreen + "D=" + Colors.LightGray
+					+ Colors.LightGreen + " D=" + Colors.LightGray
+					+ (resident.getPermissions().residentDestroy ? "f" : "-")
+					+ (resident.getPermissions().allyDestroy ? "a" : "-")
+					+ Colors.LightGreen + " S=" + Colors.LightGray
 					+ (resident.getPermissions().residentDestroy ? "f" : "-")
 					+ (resident.getPermissions().allyDestroy ? "a" : "-"));
 
@@ -95,13 +98,17 @@ public class TownyFormatter {
 		} catch (TownyException e) {
 		}
 		
-		// Permissions: B=rao D=---
+		// Permissions: B=rao D=--- S=ra-
 		out.add(Colors.Green + "Permissions: "
 				+ Colors.LightGreen + "B=" + Colors.LightGray
 				+ (town.getPermissions().residentBuild ? "r" : "-")
 				+ (town.getPermissions().allyBuild ? "a" : "-")
 				+ (town.getPermissions().outsiderBuild ? "o" : "-")
-				+ Colors.LightGreen + "D=" + Colors.LightGray
+				+ Colors.LightGreen + " D=" + Colors.LightGray
+				+ (town.getPermissions().residentDestroy ? "r" : "-")
+				+ (town.getPermissions().allyDestroy ? "a" : "-")
+				+ (town.getPermissions().outsiderDestroy ? "o" : "-")
+				+ Colors.LightGreen + " S=" + Colors.LightGray
 				+ (town.getPermissions().residentDestroy ? "r" : "-")
 				+ (town.getPermissions().allyDestroy ? "a" : "-")
 				+ (town.getPermissions().outsiderDestroy ? "o" : "-"));

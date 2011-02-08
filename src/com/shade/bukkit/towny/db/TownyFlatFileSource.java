@@ -155,14 +155,9 @@ public class TownyFlatFileSource extends TownyDataSource {
 	
 	@Override
 	public boolean loadWorldList() {
-		if (plugin != null) {
-			for (World world : plugin.getServer().getWorlds())
-				try {
-					universe.newWorld(world.getName());
-				} catch (AlreadyRegisteredException e) {
-				}
-			return true;
-		} else {
+		if (plugin != null)
+			return loadServerWorldsList();
+		else {
 			String line;
 			BufferedReader fin;
 

@@ -12,8 +12,10 @@ public class Resident extends TownBlockOwner {
 		setName(name);
 		permissions.allyBuild = true;
 		permissions.allyDestroy = true;
+		permissions.allySwitch = true;
 		permissions.residentBuild = true;
 		permissions.residentDestroy = true;
+		permissions.residentSwitch = true;
 	}
 
 	public void setLastOnline(long lastOnline) {

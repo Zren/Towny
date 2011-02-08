@@ -484,9 +484,18 @@ public class TownyPlayerListener extends PlayerListener {
 			try {
 				if (split[0].equalsIgnoreCase("claim")) {
 					Coord coord = Coord.parseCoord(player);
-					residentClaim(resident, world, coord);
+					residentClaim(resident, new WorldCoord(world, Coord.parseCoord(player)));
 
 					plugin.sendMsg(player, "Successfully claimed (" + coord + ").");
+
+					plugin.updateCache(coord);
+					plugin.getTownyUniverse().getDataSource().saveResident(resident);
+					plugin.getTownyUniverse().getDataSource().saveWorld(world);
+				} else if (split[0].equalsIgnoreCase("unclaim")) {
+					Coord coord = Coord.parseCoord(player);
+					residentUnclaim(resident, new WorldCoord(world, Coord.parseCoord(player)));
+
+					plugin.sendMsg(player, "Successfully unclaimed (" + coord + ").");
 
 					plugin.updateCache(coord);
 					plugin.getTownyUniverse().getDataSource().saveResident(resident);
@@ -507,14 +516,13 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	
-	//TODO: use WorldCoord
-	public boolean residentClaim(Resident resident, TownyWorld world, Coord coord) throws TownyException, IConomyException {
+	public boolean residentClaim(Resident resident, WorldCoord worldCoord) throws TownyException, IConomyException {
 		if (plugin.getTownyUniverse().isWarTime())
 			throw new TownyException("You cannot do this when the world is at war.");
 		
 		if (resident.hasTown())
 			try {
-				TownBlock townBlock = world.getTownBlock(coord);
+				TownBlock townBlock = worldCoord.getTownBlock();
 				Town town = townBlock.getTown();
 				if (resident.getTown() != town)
 					throw new TownyException("Selected area is not part of your town.");
@@ -554,6 +562,25 @@ public class TownyPlayerListener extends PlayerListener {
 			}
 		else
 			throw new TownyException("You must belong to a town in order to claim plots.");
+	}
+	
+	public boolean residentUnclaim(Resident resident, WorldCoord worldCoord) throws TownyException {
+		if (plugin.getTownyUniverse().isWarTime())
+			throw new TownyException("You cannot do this when the world is at war.");
+		
+		try {
+			TownBlock townBlock = worldCoord.getTownBlock();
+			Resident owner = townBlock.getResident();
+			if (resident == owner) {
+				townBlock.setResident(null);
+				townBlock.setForSale(true);
+				plugin.getTownyUniverse().getDataSource().saveResident(resident);
+				return true;
+			} else
+				throw new TownyException("You do not own the selected area.");
+		} catch (NotRegisteredException e) {
+			throw new TownyException("This place is not owned by anyone.");
+		}
 	}
 	
 	public void setPlotForSale(Resident resident, WorldCoord worldCoord, boolean forSale) throws TownyException {
@@ -622,13 +649,13 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/town", "here", "Shortcut to the town's status of your location."));
 		player.sendMessage(ChatTools.formatCommand("", "/town", "list", ""));
 		player.sendMessage(ChatTools.formatCommand("", "/town", "leave", ""));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "claim", "'/town claim ?' for help"));
-		player.sendMessage(ChatTools.formatCommand("", "/town", "unclaim", "'/town unclaim ?' for help"));
 		player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to town's spawn."));
 		player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "claim", "'/town claim ?' for help"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "unclaim", "'/town unclaim ?' for help"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add [resident] .. []", "Add online residents."));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add+ [resident]", "Add resident"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick [resident] .. []", ""));
+		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "add+ [resident]", "Add resident"));
 		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "kick+ [resident]", "Kick resident"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "set [] .. []", "'/town set' for help"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "assistant [add/remove] [player]", ""));
@@ -664,10 +691,10 @@ public class TownyPlayerListener extends PlayerListener {
 				newTown(player, split[1], split[2]);
 		} else if (split[0].equalsIgnoreCase("leave"))
 			townLeave(player);
-		else if (split[0].equalsIgnoreCase("spawn"))
-			plugin.getTownyUniverse().townSpawn(player, false);
-		
-		else if (split[0].equalsIgnoreCase("withdraw")) {
+		else if (split[0].equalsIgnoreCase("spawn")) {
+			if (plugin.checkEssentialsTeleport(player))
+				plugin.getTownyUniverse().townSpawn(player, false);
+		} else if (split[0].equalsIgnoreCase("withdraw")) {
 			if (split.length == 2)
 				try {
 					townWithdraw(player, Integer.parseInt(split[1]));
@@ -1121,9 +1148,8 @@ public class TownyPlayerListener extends PlayerListener {
 				
 				resident = plugin.getTownyUniverse().getResident(player.getName());
 				town = resident.getTown();
-				if (!resident.isMayor())
-					if (!town.hasAssistant(resident))
-						throw new TownyException("You are not the mayor or an assistant.");
+				if (!resident.isMayor() && !town.hasAssistant(resident))
+					throw new TownyException("You are not the mayor or an assistant.");
 				world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
 				
 				String[] newSplit = new String[split.length - 1];
@@ -1391,11 +1417,6 @@ public class TownyPlayerListener extends PlayerListener {
 	 * @param split
 	 */
 
-	/*
-	 * board [message ... ] mayor [mayor] *[town] homeblock spawn perm
-	 * [resident/outsider/ally] [build/destroy] [on/off] pvp [on/off] taxes [$]
-	 */
-
 	public void townSet(Player player, String[] split) {
 		if (split.length == 0) {
 			player.sendMessage(ChatTools.formatTitle("/town set"));
@@ -1529,7 +1550,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatTitle("/... set perm"));
 			player.sendMessage(ChatTools.formatCommand("", "", "[on/off]", "Toggle all permissions"));
 			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [on/off]", "Toggle specifics"));
-			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [build/destroy] [on/off]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [build/destroy/switch] [on/off]", ""));
 			player.sendMessage(ChatTools.formatCommand("Eg", "/town set", "ally off", ""));
 			player.sendMessage(ChatTools.formatCommand("Eg", "/resident set", "resident build on", ""));
 			player.sendMessage("Use 'friend' instead of 'resident' for plot permissions.");
@@ -1547,12 +1568,15 @@ public class TownyPlayerListener extends PlayerListener {
 					if (split[0].equalsIgnoreCase("resident")) {
 						perm.residentBuild = b;
 						perm.residentDestroy = b;
+						perm.residentSwitch = b;
 					} else if (split[0].equalsIgnoreCase("outsider")) {
 						perm.outsiderBuild = b;
 						perm.outsiderDestroy = b;
+						perm.outsiderSwitch = b;
 					} else if (split[0].equalsIgnoreCase("ally")) {
 						perm.allyBuild = b;
 						perm.allyDestroy = b;
+						perm.allySwitch = b;
 					}
 				} catch (Exception e) {
 				}
@@ -1564,7 +1588,7 @@ public class TownyPlayerListener extends PlayerListener {
 					if (arg0.equalsIgnoreCase("friend"))
 						arg0 = "resident";
 					if ((arg0.equalsIgnoreCase("resident") || arg0.equalsIgnoreCase("outsider") || arg0.equalsIgnoreCase("ally"))
-							&& (split[1].equalsIgnoreCase("build") || split[1].equalsIgnoreCase("destroy")))
+							&& (split[1].equalsIgnoreCase("build") || split[1].equalsIgnoreCase("destroy") || split[1].equalsIgnoreCase("switch")))
 						s = split[0] + split[1];
 					perm.set(s, b);
 				} catch (Exception e) {
@@ -2443,7 +2467,7 @@ public class TownyPlayerListener extends PlayerListener {
 		/*
 		 * [New] Town: 100 | Nation: 500
 		 * Town [Elden]:
-		 *     [Price] Plot: 100
+		 *     [Price] Plot: 100 | Outpost: 250
 		 *     [Upkeep] Resident: 20 | Plot: 50
 		 * Nation [Albion]:
 		 *     [Upkeep] Town: 100 | Neutrality: 100 
@@ -2465,7 +2489,9 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 		player.sendMessage(Colors.Red + "Town ["+plugin.getTownyUniverse().getFormatter().getFormattedName(town)+"]");
 		player.sendMessage(Colors.Rose + "    [Price] "
-				+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotPrice()));
+				+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotPrice())
+				+ Colors.Gray + " | "
+				+ Colors.Green + "Outpost: " + Colors.LightGreen + Integer.toString(TownySettings.getOutpostCost()));
 		player.sendMessage(Colors.Rose + "    [Upkeep] "
 				+ Colors.Green + "Resident: " + Colors.LightGreen + Integer.toString(town.getTaxes())
 				+ Colors.Gray + " | "
@@ -2635,7 +2661,7 @@ public class TownyPlayerListener extends PlayerListener {
 			name = TownySettings.getNPCPrefix() + ++i;
 			if (!plugin.getTownyUniverse().hasResident(name))
 				return name;
-			if (i > 1000)
+			if (i > 100000)
 				throw new TownyException("Too many npc's registered.");
 		} while (true);
 	}

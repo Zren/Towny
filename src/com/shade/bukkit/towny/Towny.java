@@ -54,9 +54,15 @@ import com.shade.bukkit.util.Colors;
  * Make the formatting/wording for [nation] .. [nation] etc, better.
  * Some way to distinguish home block.
  * Re-register a player after res delete
- * Comply with the updated API onCommand.
- * Move commands to onCommand (at least console type ones)
+ * Comply with the updated API onCommand. Move commands to onCommand (at least console type ones).
  * Organise PlayerListener. Functions. Functions EVERYWHERE!
+ * Use unclaim/claim selections with the /plot command
+ * 
+ * Permissions:
+ * towny.worldbuilder
+ * towny.claim
+ * towny.newtown
+ * towny.newnation
  * 
  * 
  * --- Cool Concepts ---
@@ -320,5 +326,28 @@ public class Towny extends JavaPlugin {
 			return false;
 		else
 			return modes.contains(mode); 
+	}
+
+	public boolean checkEssentialsTeleport(Player player) {
+		Plugin test = getServer().getPluginManager().getPlugin("Essentials");
+		if (test == null)
+			return true;
+		
+		/*
+		Class User = getClassLoader().loadClass("org.bukkit.earth2me.essentials.User");
+		Object user = User.getMethod("get", Player.class, Server.class).invoke(player, getServer());
+		
+		
+		if (test != null)
+			try {
+				User user = User.get(player, plugin.getServer());
+				user.teleportCooldown();
+				user.charge(new Commandtp());
+			} catch (Exception e) {
+				plugin.sendErrorMsg(player, "Error: " + e.getMessage());
+			}
+		*/
+			
+		return true;
 	}
 }

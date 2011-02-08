@@ -83,9 +83,15 @@ public abstract class TownyDataSource {
 	abstract public boolean saveWorld(TownyWorld world);
 
 	public boolean loadWorldList() {
+		return loadServerWorldsList();
+	}
+	
+	public boolean loadServerWorldsList() {
 		for (World world : plugin.getServer().getWorlds())
 			try {
-				universe.newWorld(world.getName());
+				String[] split = world.getName().split("/");
+				String worldName = split[split.length-1];
+				universe.newWorld(worldName);
 			} catch (AlreadyRegisteredException e) {
 			}
 		return true;
