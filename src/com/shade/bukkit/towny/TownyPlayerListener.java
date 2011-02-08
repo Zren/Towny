@@ -1152,7 +1152,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "", "Claim this town block"));
 			player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "outpost", "Claim area not attrached to town"));
 			// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "auto", "Automatically expand town area till max"));
-			player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "rect [radius]", "Attempt to claim around you."));
+			player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "rect [radius]", "Claim around you"));
 			player.sendMessage(ChatTools.formatCommand("Mayor", "/town claim", "rect auto", "Detemine the maximum radius"));
 		} else {
 			Resident resident;
@@ -1172,19 +1172,19 @@ public class TownyPlayerListener extends PlayerListener {
 
 				int blockCost = 0;
 				List<WorldCoord> selection;
-				String[] newSplit = StringMgmt.remFirstArg(split);
 				boolean attachedToEdge = true;
 				
-				if (newSplit.length == 1 && newSplit[0].equalsIgnoreCase("outpost")) {
+				if (split.length == 1 && split[0].equalsIgnoreCase("outpost")) {
 					if (TownySettings.isAllowingOutposts()) {
 						selection = new ArrayList<WorldCoord>();
 						selection.add(new WorldCoord(world, Coord.parseCoord(player)));
 						blockCost = TownySettings.getOutpostCost();
 						attachedToEdge = false;
+						System.out.println("adsfasdf");
 					} else
 						throw new TownyException("Outposts are not available.");
 				} else {
-					selection = selectWorldCoordArea(town, new WorldCoord(world, Coord.parseCoord(player)), newSplit);
+					selection = selectWorldCoordArea(town, new WorldCoord(world, Coord.parseCoord(player)), split);
 					blockCost = TownySettings.getClaimPrice();
 				}
 				
@@ -1235,13 +1235,11 @@ public class TownyPlayerListener extends PlayerListener {
 						throw new TownyException("You are not the mayor or an assistant.");
 				world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
 				
-				String[] newSplit = StringMgmt.remFirstArg(split);
-				
 				List<WorldCoord> selection;
-				if (newSplit.length == 1 && newSplit[0].equalsIgnoreCase("all"))
+				if (split.length == 1 && split[0].equalsIgnoreCase("all"))
 					townUnclaimAll(town);
 				else {
-					selection = selectWorldCoordArea(town, new WorldCoord(world, Coord.parseCoord(player)), newSplit);
+					selection = selectWorldCoordArea(town, new WorldCoord(world, Coord.parseCoord(player)), split);
 					selection = filterOwnedBlocks(town, selection);
 					
 					for (WorldCoord worldCoord : selection)
