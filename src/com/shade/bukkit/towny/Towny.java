@@ -47,7 +47,6 @@ import com.shade.bukkit.util.Colors;
  * Log town/nation messages with timestamps. On login, see if there's been any events. Make command: /town log [page] to see messages.
  * Update cache when adding/removing people
  * Replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
- * when a town/nation is destroyed. What happens to the money? (give to Shade :D jk)
  * When adding allying another nation, ask that nation and add this nation to their ally list.
  * Make the formatting/wording for [nation] .. [nation] etc, better.
  * Some way to distinguish home block.
@@ -56,6 +55,11 @@ import com.shade.bukkit.util.Colors;
  * Organise PlayerListener. Functions. Functions EVERYWHERE!
  * Use unclaim/claim selections with the /plot command
  * SortedList<Integer> townLevels to efficiently find the keys for the level hashmap.
+ * 
+ * When a town/nation is deleted, the money leftover will be put in the war pot.
+ * At the begining of war, all towns/nations enter the buyin.
+ * Need new TownyObject. 
+ * Iconomy name: towny-war-spoils
  * 
  * Permissions:
  * towny.claim
