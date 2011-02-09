@@ -120,9 +120,10 @@ public class War {
 	public void damage(Town attacker, TownBlock townBlock) throws NotRegisteredException {
 		WorldCoord worldCoord = townBlock.getWorldCoord();
 		int hp = warZone.get(worldCoord) - 1;
-		if (hp > 0)
+		if (hp > 0) {
 			warZone.put(worldCoord, hp);
-		else
+			universe.sendTownMessage(townBlock.getTown(), Colors.Red + "["+townBlock.getTown().getName()+"]("+townBlock.getCoord().toString()+") HP: "+hp);
+		} else
 			remove(attacker, townBlock);
 	}
 	

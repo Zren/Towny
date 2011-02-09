@@ -550,7 +550,7 @@ public class TownySettings {
 		if (ratio == 0)
 			return town.getBonusBlocks() + (Integer)getTownLevel(town).get(TownySettings.TownLevel.TOWN_BLOCK_LIMIT);
 		else
-			return town.getNumResidents()*ratio;
+			return town.getBonusBlocks() + town.getNumResidents()*ratio;
 	}
 
 	public static int getTownBlockSize() {

@@ -309,8 +309,7 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void sendTownBoard(Player player, Town town) {
-		for (String line : ChatTools.color(Colors.Gold + "[" + town.getName()
-				+ "] " + Colors.Yellow + town.getTownBoard()))
+		for (String line : ChatTools.color(Colors.Gold + "[" + town.getName() + "] " + Colors.Yellow + town.getTownBoard()))
 			player.sendMessage(line);
 	}
 

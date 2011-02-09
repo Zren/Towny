@@ -36,6 +36,9 @@ public class TownyEntityListener extends EntityListener {
 
 		// Check Town PvP status
 		try {
+			if (universe.isWarTime())
+				throw new Exception();
+			
 			TownyWorld world = universe.getWorld(a.getWorld().getName());
 			Coord key = Coord.parseCoord(a);
 			TownBlock townblock = world.getTownBlock(key);

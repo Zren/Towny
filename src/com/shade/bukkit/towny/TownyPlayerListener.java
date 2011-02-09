@@ -665,7 +665,7 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/town", "leave", ""));
 		player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to town's spawn."));
 		player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
-		player.sendMessage(ChatTools.formatCommand("Resident", "/nation", "deposit [$]", ""));
+		player.sendMessage(ChatTools.formatCommand("Resident", "/town", "deposit [$]", ""));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "withdraw [$]", ""));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "claim", "'/town claim ?' for help"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "unclaim", "'/town unclaim ?' for help"));
@@ -880,6 +880,8 @@ public class TownyPlayerListener extends PlayerListener {
 			if (TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getNewTownPrice()))
 				throw new TownyException("You can't afford to settle a new town here.");
 
+			newTown(universe, world, name, resident, key, player.getLocation());
+			/*
 			world.newTownBlock(key);
 			universe.newTown(name);
 			Town town = universe.getTown(name);
@@ -897,14 +899,36 @@ public class TownyPlayerListener extends PlayerListener {
 			universe.getDataSource().saveTownList();
 
 			plugin.updateCache();
+			*/
 			
-			universe.sendGlobalMessage(TownySettings.getNewTownMsg(player.getName(), town.getName()));
+			universe.sendGlobalMessage(TownySettings.getNewTownMsg(player.getName(), name));
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 			// TODO: delete town data that might have been done
 		} catch (IConomyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		}
+	}
+	
+	public Town newTown(TownyUniverse universe, TownyWorld world, String name, Resident resident, Coord key, Location spawn) throws TownyException {
+		world.newTownBlock(key);
+		universe.newTown(name);
+		Town town = universe.getTown(name);
+		town.addResident(resident);
+		town.setMayor(resident);
+		TownBlock townBlock = world.getTownBlock(key);
+		townBlock.setTown(town);
+		town.setHomeBlock(townBlock);
+		town.setSpawn(spawn);
+		world.addTown(town);
+
+		universe.getDataSource().saveResident(resident);
+		universe.getDataSource().saveTown(town);
+		universe.getDataSource().saveWorld(world);
+		universe.getDataSource().saveTownList();
+		
+		plugin.updateCache();
+		return town;
 	}
 
 	public void townLeave(Player player) {
@@ -1865,22 +1889,36 @@ public class TownyPlayerListener extends PlayerListener {
 			if (TownySettings.isUsingIConomy() && !town.pay(TownySettings.getNewNationPrice()))
 				throw new TownyException("You can't afford to start a new nation.");
 
-			universe.newNation(name);
+			newNation(universe, name, town);
+			/*universe.newNation(name);
 			Nation nation = universe.getNation(name);
 			nation.addTown(town);
 			nation.setCapital(town);
 
 			universe.getDataSource().saveTown(town);
 			universe.getDataSource().saveNation(nation);
-			universe.getDataSource().saveNationList();
+			universe.getDataSource().saveNationList();*/
 
-			universe.sendGlobalMessage(TownySettings.getNewNationMsg(player.getName(), nation.getName()));
+			universe.sendGlobalMessage(TownySettings.getNewNationMsg(player.getName(), name));
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 			// TODO: delete town data that might have been done
 		} catch (IConomyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		}
+	}
+	
+	public Nation newNation(TownyUniverse universe, String name, Town town) throws AlreadyRegisteredException, NotRegisteredException {
+		universe.newNation(name);
+		Nation nation = universe.getNation(name);
+		nation.addTown(town);
+		nation.setCapital(town);
+
+		universe.getDataSource().saveTown(town);
+		universe.getDataSource().saveNation(nation);
+		universe.getDataSource().saveNationList();
+		
+		return nation;
 	}
 	
 	public void nationLeave(Player player) {
@@ -2360,6 +2398,8 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.getTownyUniverse().sendUniverseTree(player);
 		else if (split[0].equalsIgnoreCase("seed") && TownySettings.getDebug())
 			seedTowny();
+		else if (split[0].equalsIgnoreCase("warseed") && TownySettings.getDebug())
+			warSeed(player);
 		else
 			plugin.sendErrorMsg(player, "Invalid sub command.");
 	}
@@ -2367,6 +2407,18 @@ public class TownyPlayerListener extends PlayerListener {
 	
 
 	
+
+	private void warSeed(Player player) {
+		/*Resident r1 = plugin.getTownyUniverse().newResident("r1");
+		Resident r2 = plugin.getTownyUniverse().newResident("r2");
+		Resident r3 = plugin.getTownyUniverse().newResident("r3");
+		Coord key = Coord.parseCoord(player);
+		Town t1 = newTown(plugin.getTownyUniverse(), player.getWorld(), "t1", r1, key, player.getLocation());
+		Town t2 = newTown(plugin.getTownyUniverse(), player.getWorld(), "t2", r2, new Coord(key.getX() + 1, key.getZ()), player.getLocation());
+		Town t3 = newTown(plugin.getTownyUniverse(), player.getWorld(), "t3", r3, new Coord(key.getX(), key.getZ() + 1), player.getLocation());
+		Nation n1 = */
+		
+	}
 
 	/**
 	 * Send a map of the nearby townblocks status to player Command: /towny map

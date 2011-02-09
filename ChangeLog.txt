@@ -24,7 +24,10 @@ v0.12:
 	Some tax output during new day.
 	Let the daily interval be customizable.
 	Added command /town spawn [town] with settings and price.
-TODO: v0.13:
+v0.13:
+	Town PvP status is ignored during war time.
+	Fixed town bonus plots not being added to maximum when using ratio.
+TODO:	
 	Builds on Essentials for Town Spawn teleports and teleport cost.
 	Ability to convert from hMod database. Not really recommended.
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
