@@ -3,9 +3,7 @@ package com.shade.bukkit.towny;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -76,10 +74,8 @@ public class TownyUniverse extends TownyObject {
 	public void toggleDailyTimer(boolean on) {
 		if (on && dailyTimer == null) {
 			dailyTimer = new Timer();
-			Calendar tomorrow = new GregorianCalendar();
-			tomorrow.add(Calendar.DATE, TownySettings.getDayInterval());
-			Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0);
-			dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), result.getTime(), TownySettings.getDayInterval());
+			long timeTillNextDay = TownySettings.getDayInterval() - System.currentTimeMillis() % TownySettings.getDayInterval();
+			dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), timeTillNextDay, TownySettings.getDayInterval());
 		} else if (!on && dailyTimer != null) {
 			dailyTimer.cancel();
 			dailyTimer = null;
@@ -737,7 +733,7 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void collectTownCosts() throws IConomyException {
-		for (Town town : towns.values());
+		//for (Town town : towns.values());
 	}
 	
 	public void collectNationCosts() throws IConomyException {

@@ -47,7 +47,6 @@ import com.shade.bukkit.util.Colors;
  * Log town/nation messages with timestamps. On login, see if there's been any events. Make command: /town log [page] to see messages.
  * Update cache when adding/removing people
  * Replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
- * deposit for town/nation
  * when a town/nation is destroyed. What happens to the money? (give to Shade :D jk)
  * When adding allying another nation, ask that nation and add this nation to their ally list.
  * Make the formatting/wording for [nation] .. [nation] etc, better.
@@ -59,7 +58,6 @@ import com.shade.bukkit.util.Colors;
  * SortedList<Integer> townLevels to efficiently find the keys for the level hashmap.
  * 
  * Permissions:
- * towny.worldbuilder
  * towny.claim
  * towny.newtown
  * towny.newnation

@@ -705,8 +705,25 @@ public class TownyPlayerListener extends PlayerListener {
 		} else if (split[0].equalsIgnoreCase("leave"))
 			townLeave(player);
 		else if (split[0].equalsIgnoreCase("spawn")) {
-			if (plugin.checkEssentialsTeleport(player))
-				plugin.getTownyUniverse().townSpawn(player, false);
+			if (split.length == 1) {
+				if (plugin.checkEssentialsTeleport(player))
+					plugin.getTownyUniverse().townSpawn(player, false);
+			} else
+				try {
+					boolean isTownyAdmin = plugin.isTownyAdmin(player);
+					if (!TownySettings.isAllowingTownSpawnTravel() && !isTownyAdmin)
+						throw new TownyException("Town spawn travel is forbidden.");
+					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+					Town town = plugin.getTownyUniverse().getTown(split[1]);
+					if (!isTownyAdmin && !resident.pay(TownySettings.getTownSpawnTravelPrice()))
+						throw new TownyException("Cannot afford to teleport to "+town.getName()+".");
+					if (plugin.checkEssentialsTeleport(player))
+						player.teleportTo(town.getSpawn());
+				} catch (TownyException e) {
+					plugin.sendErrorMsg(player, e.getMessage());
+				} catch (IConomyException e) {
+					plugin.sendErrorMsg(player, e.getMessage());
+				}
 		} else if (split[0].equalsIgnoreCase("withdraw")) {
 			if (split.length == 2)
 				try {
@@ -775,7 +792,9 @@ public class TownyPlayerListener extends PlayerListener {
 			resident = plugin.getTownyUniverse().getResident(player.getName());
 			town = resident.getTown();
 			
-			resident.pay(amount, town);
+			if (!resident.pay(amount, town))
+				throw new TownyException("You don't have that much.");
+			
 			plugin.getTownyUniverse().sendTownMessage(town, resident.getName() + " deposited " + amount + " into the town bank.");
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
@@ -1801,7 +1820,9 @@ public class TownyPlayerListener extends PlayerListener {
 			resident = plugin.getTownyUniverse().getResident(player.getName());
 			nation = resident.getTown().getNation();
 			
-			resident.pay(amount, nation);
+			if (!resident.pay(amount, nation))
+				throw new TownyException("You don't have that much.");
+			
 			plugin.getTownyUniverse().sendNationMessage(nation, resident.getName() + " deposited " + amount + " to the nation bank.");
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
@@ -1811,8 +1832,7 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	/**
-	 * Send a list of all nations in the universe to player Command: /nation
-	 * list
+	 * Send a list of all nations in the universe to player Command: /nation list
 	 * 
 	 * @param player
 	 */
@@ -2340,8 +2360,6 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.getTownyUniverse().sendUniverseTree(player);
 		else if (split[0].equalsIgnoreCase("seed") && TownySettings.getDebug())
 			seedTowny();
-		else if (split[0].equalsIgnoreCase("newday") && TownySettings.getDebug())
-			plugin.getTownyUniverse().newDay();
 		else
 			plugin.sendErrorMsg(player, "Invalid sub command.");
 	}
@@ -2638,6 +2656,10 @@ public class TownyPlayerListener extends PlayerListener {
 			} catch (IOException e) {
 				plugin.sendErrorMsg(player, "Error: " + e.getMessage());
 			}
+		else if (split[0].equalsIgnoreCase("newday"))
+			plugin.getTownyUniverse().newDay();
+		else
+			plugin.sendErrorMsg(player, "Invalid sub command.");
 	}
 
 	@SuppressWarnings("static-access")
@@ -2690,6 +2712,7 @@ public class TownyPlayerListener extends PlayerListener {
 		//TODO: player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "npc rename [old name] [new name]", ""));
 		//TODO: player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "npc list", ""));
 		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "reload", "reload Towny"));
+		player.sendMessage(ChatTools.formatCommand("", "/townyadmin", "newday", "Run the new day code"));
 	}
 
 	public void adminSet(Player player, String[] split) {

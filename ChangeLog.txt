@@ -23,6 +23,8 @@ v0.12:
 	Added command /townyadmin backup to force a backup at any time.
 	Fixed bugs.
 	Some tax output during new day.
+	Let the daily interval be customizable.
+	Added command /town spawn [town] with settings and price.
 TODO: v0.13:
 	Builds on Essentials for Town Spawn teleports and teleport cost.
 	Ability to convert from hMod database. Not really recommended.

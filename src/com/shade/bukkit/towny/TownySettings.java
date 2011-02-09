@@ -68,7 +68,6 @@ public class TownySettings {
 		MSG_PLOT_FOR_SALE,
 		UNCLAIMED_PLOT_NAME,
 		NPC_PREFIX
-		//MSG_WILD_MUST_BUILD_TOWN
 	};
 	// Integer
 	enum Int {
@@ -92,8 +91,8 @@ public class TownySettings {
 		HEALTH_REGEN_SPEED,
 		TOWN_LIMIT,
 		PRICE_CLAIM_TOWNBLOCK,
-		PRICE_OUTPOST
-		//WILD_BUILD_TIME_LIMIT
+		PRICE_OUTPOST,
+		PRICE_TOWN_SPAWN_TRAVEL
 	};
 	// Boolean
 	enum Bool {
@@ -111,7 +110,8 @@ public class TownySettings {
 		DEBUG_MODE,
 		MOB_REMOVAL,
 		HEALTH_REGEN,
-		ALLOW_OUTPOSTS
+		ALLOW_OUTPOSTS,
+		ALLOW_TOWN_SPAWN_TRAVEL
 	};
 	// Nation Level
 	enum NationLevel {
@@ -221,6 +221,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.TOWN_LIMIT, 3000);
 		configInt.put(TownySettings.Int.PRICE_CLAIM_TOWNBLOCK, 25);
 		configInt.put(TownySettings.Int.PRICE_OUTPOST, 500);
+		configInt.put(TownySettings.Int.PRICE_TOWN_SPAWN_TRAVEL, 10);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -237,6 +238,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.MOB_REMOVAL, false);
 		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
 		configBool.put(TownySettings.Bool.ALLOW_OUTPOSTS, true);
+		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -804,6 +806,14 @@ public class TownySettings {
 
 	public static int getDayInterval() {
 		return getInt(TownySettings.Int.DAY_INTERVAL);
+	}
+	
+	public static boolean isAllowingTownSpawnTravel() {
+		return getBoolean(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL);
+	}
+	
+	public static int getTownSpawnTravelPrice() {
+		return getInt(TownySettings.Int.PRICE_TOWN_SPAWN_TRAVEL);
 	}
 	
 }
