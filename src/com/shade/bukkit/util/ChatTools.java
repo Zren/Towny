@@ -4,22 +4,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Useful function for use with the Minecraft Server chatbox.
+ * 
+ * @version 2.0
+ * @author Shade (xshade.ca)
+ *
+ */
+
 public class ChatTools {
 	public static final int lineLength = 54;
 
-	public static List<String> list(Object[] args) {
+	public static List<String> listArr(Object[] args) {
 		return list(Arrays.asList(args));
 	}
 	
-	public static List<String> list(Object[] args, String prefix) {
+	public static List<String> listArr(Object[] args, String prefix) {
 		return list(Arrays.asList(args), prefix);
 	}
 
-	public static List<String> list(List<Object> args) {
+	@SuppressWarnings("rawtypes")
+	public static List<String> list(List args) {
 		return list(args, "");
 	}
 	
-	public static List<String> list(List<Object> args, String prefix) {
+	@SuppressWarnings("rawtypes")
+	public static List<String> list(List args, String prefix) {
 		if (args.size() > 0) {
 			String line = "";
 			for (int i = 0; i < args.size() - 1; i++)
@@ -37,8 +47,7 @@ public class ChatTools {
 		out.add("");
 
 		for (String s : tokens) {
-			if (stripColour(out.get(out.size() - 1)).length()
-					+ stripColour(s).length() + 1 > lineLength)
+			if (stripColour(out.get(out.size() - 1)).length() + stripColour(s).length() + 1 > lineLength)
 				out.add("");
 			out.set(out.size() - 1, out.get(out.size() - 1) + s + " ");
 		}
@@ -51,13 +60,12 @@ public class ChatTools {
 
 		String c = "f";
 		for (int i = 0; i < out.size(); i++) {
-			if (!out.get(i).startsWith("§"))
+			if (!out.get(i).startsWith("§") && !c.equalsIgnoreCase("f"))
 				out.set(i, "§" + c + out.get(i));
 
 			for (int index = 0; index < lineLength; index++)
 				try {
-					if (out.get(i).substring(index, index + 1)
-							.equalsIgnoreCase("\u00A7"))
+					if (out.get(i).substring(index, index + 1).equalsIgnoreCase("\u00A7"))
 						c = out.get(i).substring(index + 1, index + 2);
 				} catch (Exception e) {
 				}
@@ -102,7 +110,7 @@ public class ChatTools {
 	public static void main(String[] args) {
 		String[] players = { "dude", "bowie", "blarg", "sonbitch", "songoku",
 				"pacman", "link", "stacker", "hacker", "newb" };
-		for (String line : ChatTools.list(players))
+		for (String line : ChatTools.listArr(players))
 			System.out.println(line);
 
 		String testLine = "Loren Ipsum blarg voila tssssssh, boom wakka wakka §apacman on a boat bitch. From the boat union. Beata lingiushtically §1nootchie lolk erness.";

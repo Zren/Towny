@@ -1,6 +1,7 @@
 package com.shade.bukkit.towny;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Nation extends TownyIConomyObject {
@@ -300,5 +301,22 @@ public class Nation extends TownyIConomyObject {
 		} else
 			throw new TownyException("iConomy has not been turned on.");
 			
+	}
+	
+	@Override
+	public List<String> getTreeString(int depth) {
+		List<String> out = new ArrayList<String>();
+		out.add(getTreeDepth(depth) + "Nation ("+getName()+")");
+		out.add(getTreeDepth(depth+1) + "Capital: " + getCapital().getName());
+		if (getAssistants().size() > 0)
+			out.add(getTreeDepth(depth+1) + "Assistants (" + getAssistants().size() + "): " + Arrays.toString(getAssistants().toArray(new Resident[0])));
+		if (getAllies().size() > 0)
+			out.add(getTreeDepth(depth+1) + "Allies (" + getAllies().size() + "): " + Arrays.toString(getAllies().toArray(new Nation[0])));
+		if (getEnemies().size() > 0)
+			out.add(getTreeDepth(depth+1) + "Enemies (" + getEnemies().size() + "): " + Arrays.toString(getEnemies().toArray(new Nation[0])));
+		out.add(getTreeDepth(depth+1) + "Towns (" + getTowns().size() + "):");
+		for (Town town : getTowns())
+			out.addAll(town.getTreeString(depth+2));
+		return out;
 	}
 }

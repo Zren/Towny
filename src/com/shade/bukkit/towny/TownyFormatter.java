@@ -69,7 +69,7 @@ public class TownyFormatter {
 		// James, Carry, Mason
 		List<Resident> friends = resident.getFriends();
 		out.add(Colors.Green + "Friends " + Colors.LightGreen + "[" + friends.size() + "]" + Colors.Green + ":" + Colors.White + " ");
-		out.addAll(ChatTools.list(getFormattedNames(friends.toArray(new Resident[0]))));
+		out.addAll(ChatTools.listArr(getFormattedNames(friends.toArray(new Resident[0]))));
 
 		return out;
 	}
@@ -128,7 +128,7 @@ public class TownyFormatter {
 		
 		// Assistants: Sammy, Ginger
 		if (town.getAssistants().size() > 0)
-			out.addAll(ChatTools.list(getFormattedNames(town.getAssistants().toArray(new Resident[0])), Colors.Green + "Assistants:" + Colors.White + " "));
+			out.addAll(ChatTools.listArr(getFormattedNames(town.getAssistants().toArray(new Resident[0])), Colors.Green + "Assistants:" + Colors.White + " "));
 		// Nation: Azur Empire
 		try {
 			out.add(Colors.Green + "Nation: " + Colors.LightGreen
@@ -138,7 +138,7 @@ public class TownyFormatter {
 
 		// Residents [12]: James, Carry, Mason
 		
-		out.addAll(ChatTools.list(getFormattedNames(town.getResidents().toArray(new Resident[0])),
+		out.addAll(ChatTools.listArr(getFormattedNames(town.getResidents().toArray(new Resident[0])),
 				Colors.Green + "Residents " + Colors.LightGreen + "[" + town.getNumResidents() + "]" + Colors.Green + ":" + Colors.White + " "));
 
 		return out;
@@ -163,16 +163,16 @@ public class TownyFormatter {
 			out.add(Colors.Green + "King: " + Colors.LightGreen + getFormattedName(nation.getCapital().getMayor()));
 		// Assistants: Mayor Rockefel, Sammy, Ginger
 		if (nation.getAssistants().size() > 0)
-			out.addAll(ChatTools.list(getFormattedNames(nation.getAssistants().toArray(new Resident[0])),
+			out.addAll(ChatTools.listArr(getFormattedNames(nation.getAssistants().toArray(new Resident[0])),
 					Colors.Green + "Assistants:" + Colors.White + " "));
 		// Towns [44]: James City, Carry Grove, Mason Town
-		out.addAll(ChatTools.list(getFormattedNames(nation.getTowns().toArray(new Town[0])),
+		out.addAll(ChatTools.listArr(getFormattedNames(nation.getTowns().toArray(new Town[0])),
 				Colors.Green + "Towns " + Colors.LightGreen + "[" + nation.getNumTowns() + "]" + Colors.Green + ":" + Colors.White + " "));
 		// Allies [4]: James Nation, Carry Territory, Mason Country
-		out.addAll(ChatTools.list(getFormattedNames(nation.getAllies().toArray(new Nation[0])),
+		out.addAll(ChatTools.listArr(getFormattedNames(nation.getAllies().toArray(new Nation[0])),
 				Colors.Green + "Allies " + Colors.LightGreen + "[" + nation.getAllies().size() + "]" + Colors.Green + ":" + Colors.White + " "));
 		// Enemies [4]: James Nation, Carry Territory, Mason Country
-		out.addAll(ChatTools.list(getFormattedNames(nation.getEnemies().toArray(new Nation[0])),
+		out.addAll(ChatTools.listArr(getFormattedNames(nation.getEnemies().toArray(new Nation[0])),
 				Colors.Green + "Enemies " + Colors.LightGreen + "[" + nation.getEnemies().size() + "]" + Colors.Green + ":" + Colors.White + " "));
 
 		return out;

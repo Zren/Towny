@@ -1,6 +1,7 @@
 package com.shade.bukkit.towny;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -382,5 +383,21 @@ public class Town extends TownBlockOwner implements Walled {
 		} else
 			throw new TownyException("iConomy has not been turned on.");
 			
+	}
+	
+	@Override
+	public List<String> getTreeString(int depth) {
+		List<String> out = new ArrayList<String>();
+		out.add(getTreeDepth(depth) + "Town ("+getName()+")");
+		out.add(getTreeDepth(depth+1) + "Mayor: " + getMayor().getName());
+		out.add(getTreeDepth(depth+1) + "Home: " + homeBlock);
+		out.add(getTreeDepth(depth+1) + "Bonus: " + bonusBlocks);
+		out.add(getTreeDepth(depth+1) + "TownBlocks (" + getTownBlocks().size() + "): " + Arrays.toString(getTownBlocks().toArray(new TownBlock[0])));
+		if (getAssistants().size() > 0)
+			out.add(getTreeDepth(depth+1) + "Assistants (" + getAssistants().size() + "): " + Arrays.toString(getAssistants().toArray(new Resident[0])));
+		out.add(getTreeDepth(depth+1) + "Residents (" + getResidents().size() + "):");
+		for (Resident resident : getResidents())
+			out.addAll(resident.getTreeString(depth+2));
+		return out;
 	}
 }

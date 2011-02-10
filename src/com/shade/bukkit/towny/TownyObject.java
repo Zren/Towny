@@ -1,5 +1,9 @@
 package com.shade.bukkit.towny;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class TownyObject {
 	private String name;
 
@@ -9,6 +13,16 @@ public abstract class TownyObject {
 
 	public String getName() {
 		return name;
+	}
+	
+	public List<String> getTreeString(int depth) {
+		return new ArrayList<String>();
+	}
+	
+	public String getTreeDepth(int depth) {
+		char[] fill = new char[depth*4];
+		Arrays.fill(fill, ' ');
+		return new String(fill);
 	}
 	
 	@Override

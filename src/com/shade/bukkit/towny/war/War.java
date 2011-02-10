@@ -259,32 +259,51 @@ public class War {
 	}
 	
 	public void sendStats(Player player) {
-		player.sendMessage(ChatTools.formatTitle("War Stats"));
-		player.sendMessage(Colors.Green + "  Nations: " + Colors.LightGreen + warringNations.size());
-		player.sendMessage(Colors.Green + "  Towns: " + Colors.LightGreen + warringTowns.size() +" / " + townScores.size());
-		player.sendMessage(Colors.Green + "  WarZone: " + Colors.LightGreen + warZone.size() + " Town blocks");
+		for (String line : getStats())
+			player.sendMessage(line);
+	}
+	
+	public List<String> getStats() {
+		List<String> output = new ArrayList<String>();
+		output.add(ChatTools.formatTitle("War Stats"));
+		output.add(Colors.Green + "  Nations: " + Colors.LightGreen + warringNations.size());
+		output.add(Colors.Green + "  Towns: " + Colors.LightGreen + warringTowns.size() +" / " + townScores.size());
+		output.add(Colors.Green + "  WarZone: " + Colors.LightGreen + warZone.size() + " Town blocks");
+		return output;
 	}
 	
 	public void sendScores(Player player) {
 		sendScores(player, 10);
 	}
-	
 	public void sendScores(Player player, int maxListing) {
-		player.sendMessage(ChatTools.formatTitle("War - Top Scores"));
+		for (String line : getScores(maxListing))
+			player.sendMessage(line);
+	}
+	
+	/**
+	 * 
+	 * @param maxListing Maximum lines to return. Value of -1 return all.
+	 * @return A list of the current scores per town sorted in descending order.
+	 */
+	
+	public List<String> getScores(int maxListing) {
+		List<String> output = new ArrayList<String>();
+		output.add(ChatTools.formatTitle("War - Top Scores"));
 		KeyValueTable kvTable = new KeyValueTable(townScores);
 		kvTable.sortByValue();
 		kvTable.revese();
 		int n = 0;
 		for (KeyValue kv : kvTable.getKeyValues()) {
 			n++;
-			if (n > maxListing)
+			if (maxListing != -1 && n > maxListing)
 				break;
 			Town town = (Town)kv.key;
-			player.sendMessage(String.format(
+			output.add(String.format(
 					Colors.Blue + "%40s "+Colors.Gold+"|"+Colors.LightGray+" %4d",
 					universe.getFormatter().getFormattedName(town),
 					(Integer)kv.value));
 		}
+		return output;
 	}
 	
 	public boolean isWarringNation(Nation nation) {

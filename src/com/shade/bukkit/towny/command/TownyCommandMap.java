@@ -17,7 +17,12 @@ public class TownyCommandMap extends TownyCommand {
 		subCommands.register("", "", helpCommand);
 		subCommands.register("?", "", helpCommand);
 		subCommands.register("help", "", helpCommand);
+		subCommands.register("map", "", new TownyMapCommand());
+		subCommands.register("prices", "", new TownyPricesCommand());
 		subCommands.register("tree", "", new TownyTreeCommand());
+		subCommands.register("universe", "", new TownyUniverseCommand());
+		subCommands.register("version", "", new TownyVersionCommand());
+		subCommands.register("war", "", new TownyWarCommand());
 	}
 
 	@Override

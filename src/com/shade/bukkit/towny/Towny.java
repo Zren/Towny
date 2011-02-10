@@ -55,7 +55,7 @@ import com.shade.bukkit.util.Colors;
  * Organise PlayerListener. Functions. Functions EVERYWHERE!
  * Use unclaim/claim selections with the /plot command
  * SortedList<Integer> townLevels to efficiently find the keys for the level hashmap.
- * Claim circle [radius]
+ * Claim circle [radius] 
  * 
  * When a town/nation is deleted, the money leftover will be put in the war pot.
  * At the begining of war, all towns/nations enter the buyin.
@@ -196,6 +196,7 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_INTERACT, blockListener, Priority.Normal, this);
 
 		getServer().getPluginManager().registerEvent( Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent( Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
 	}
 	
 	private void firstRun() {

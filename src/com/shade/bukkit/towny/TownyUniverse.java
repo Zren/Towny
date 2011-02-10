@@ -3,6 +3,7 @@ package com.shade.bukkit.towny;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.Timer;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -44,14 +46,17 @@ public class TownyUniverse extends TownyObject {
 	// each player every second.
 	
 	public TownyUniverse() {
+		setName("");
 		rootFolder = "";
 	}
 	
 	public TownyUniverse(String rootFolder) {
+		setName("");
 		this.rootFolder = rootFolder;
 	}
 	
 	public TownyUniverse(Towny plugin) {
+		setName("");
 		this.plugin = plugin;
 	}
 	
@@ -351,6 +356,22 @@ public class TownyUniverse extends TownyObject {
 	public Collection<TownyWorld> getWorlds() {
 		return worlds.values();
 	}
+	
+	public Collection<Town> getTownsWithoutNation() {
+		List<Town> townFilter = new ArrayList<Town>();
+		for (Town town : getTowns())
+			if (!town.hasNation())
+				townFilter.add(town);
+		return townFilter;
+	}
+	
+	public Collection<Resident> getResidentsWithoutTown() {
+		List<Resident> residentFilter = new ArrayList<Resident>();
+		for (Resident resident : getResidents())
+			if (!resident.hasTown())
+				residentFilter.add(resident);
+		return residentFilter;
+	}
 
 	public Collection<Resident> getActiveResidents() {
 		List<Resident> activeResidents = new ArrayList<Resident>();
@@ -459,13 +480,30 @@ public class TownyUniverse extends TownyObject {
 		return true;
 	}
 
+	/*
 	public TownyWorld getWorld(String name) throws NotRegisteredException {
 		TownyWorld world = worlds.get(name.toLowerCase());
 		if (world == null)
 			throw new NotRegisteredException();
 		return world;
 	}
+	*/
 
+	public TownyWorld getWorld(String name) throws NotRegisteredException {
+		TownyWorld world = worlds.get(name.toLowerCase());
+		if (world == null) {
+			try {
+				newWorld(name);
+			} catch (AlreadyRegisteredException e) {
+				throw new NotRegisteredException("Not registered, but already registered when trying to register.");
+			}
+			world = worlds.get(name.toLowerCase());
+			if (world == null)
+				throw new NotRegisteredException();
+		}
+		return world;
+	}
+	
 	public boolean isAlly(String a, String b) {
 		try {
 			Resident residentA = getResident(a);
@@ -665,45 +703,8 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public void sendUniverseTree(CommandSender sender) {
-		sender.sendMessage("|-Universe");
-		for (TownyWorld world : getWorlds()) {
-			sender.sendMessage("|---World: " + world.getName());
-			for (TownBlock townBlock : world.getTownBlocks())
-				try {
-					sender.sendMessage("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
-							+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
-							+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
-				} catch (TownyException e) {
-				}
-			for (Resident resident : getResidents()) {
-				try {
-					sender.sendMessage("|---Resident: " + resident.getName()
-							+ " " + (resident.hasTown() ? resident.getTown().getName() : "")
-							+ (resident.hasNation() ? resident.getTown().getNation().getName() : ""));
-				} catch (TownyException e) {
-				}
-				for (TownBlock townBlock : resident.getTownBlocks())
-					try {
-						sender.sendMessage("|------TownBlock: " + townBlock.getX() + "," + townBlock.getZ() + " "
-								+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
-								+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
-					} catch (TownyException e) {
-					}
-			}
-			for (Town town : getTowns()) {
-				try {
-					sender.sendMessage("|---Town: " + town.getName() + " " + (town.hasNation() ? town.getNation().getName() : ""));
-				} catch (TownyException e) {
-				}
-				for (TownBlock townBlock : town.getTownBlocks())
-					try {
-						sender.sendMessage("|------TownBlock: "  + "," + townBlock.getZ() + " "
-								+ "Town: " + (townBlock.hasTown() ? townBlock.getTown().getName() : "None") + " : "
-								+ "Owner: " + (townBlock.hasResident() ? townBlock.getResident().getName() : "None"));
-					} catch (TownyException e) {
-					}
-			}
-		}
+		for (String line : getTreeString(0))
+			sender.sendMessage(line);
 	}
 
 	public void removeTownBlock(TownBlock townBlock) {
@@ -744,5 +745,42 @@ public class TownyUniverse extends TownyObject {
 					sendNationMessage(nation, "Nation couldn't afford it's neutral state.");
 				}
 		
+	}
+	
+	public List<TownBlock> getAllTownBlocks() {
+		List<TownBlock> townBlocks = new ArrayList<TownBlock>();
+		for (TownyWorld world : getWorlds())
+			townBlocks.addAll(world.getTownBlocks());
+		return townBlocks;
+	}
+	
+	@Override
+	public List<String> getTreeString(int depth) {
+		List<String> out = new ArrayList<String>();
+		out.add(getTreeDepth(depth) + "Universe ("+getName()+")");
+		if (plugin != null) {
+			out.add(getTreeDepth(depth+1) + "Server ("+plugin.getServer().getName()+")");
+			out.add(getTreeDepth(depth+2) + "Version: " + plugin.getServer().getVersion());
+			out.add(getTreeDepth(depth+2) + "Players: " + plugin.getServer().getOnlinePlayers().length + "/" + plugin.getServer().getMaxPlayers());
+			out.add(getTreeDepth(depth+2) + "Worlds (" + plugin.getServer().getWorlds().size() + "): " + Arrays.toString(plugin.getServer().getWorlds().toArray(new World[0])));
+		}
+		out.add(getTreeDepth(depth+1) + "Worlds (" + getWorlds().size() + "):");
+		for (TownyWorld world : getWorlds())
+			out.addAll(world.getTreeString(depth+2));
+		
+		out.add(getTreeDepth(depth+1) + "Nations (" + getNations().size() + "):");
+		for (Nation nation : getNations())
+			out.addAll(nation.getTreeString(depth+2));
+		
+		Collection<Town> townsWithoutNation = getTownsWithoutNation();
+		out.add(getTreeDepth(depth+1) + "Towns (" + townsWithoutNation.size() + "):");
+		for (Town town : townsWithoutNation)
+			out.addAll(town.getTreeString(depth+2));
+		
+		Collection<Resident> residentsWithoutTown = getResidentsWithoutTown();
+		out.add(getTreeDepth(depth+1) + "Residents (" + residentsWithoutTown.size() + "):");
+		for (Resident resident : residentsWithoutTown)
+			out.addAll(resident.getTreeString(depth+2));
+		return out;
 	}
 }

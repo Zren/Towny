@@ -262,7 +262,7 @@ public class TownyBlockListener extends BlockListener {
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone destroy rights
 			if (plugin.hasPermission(player, "towny.wild.destroy"))
-				cacheSwitch(player, pos, true);
+				cacheDestroy(player, pos, true);
 			else if (!TownySettings.getUnclaimedZoneDestroyRights()) {
 				// TODO: Have permission to destroy here
 				if (sendMsg)
@@ -360,7 +360,7 @@ public class TownyBlockListener extends BlockListener {
 		} catch (NotRegisteredException e) {
 			// Unclaimed Zone Build Rights
 			if (plugin.hasPermission(player, "towny.wild.build"))
-				cacheSwitch(player, pos, true);
+				cacheBuild(player, pos, true);
 			else if (!TownySettings.getUnclaimedZoneBuildRights()) {
 				// TODO: Have permission to build here
 				if (sendMsg)

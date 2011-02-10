@@ -107,4 +107,12 @@ public class TownyWorld extends TownyObject {
 	public void removeTownBlock(Coord coord) {
 		townBlocks.remove(coord);
 	}
+	
+	@Override
+	public List<String> getTreeString(int depth) {
+		List<String> out = new ArrayList<String>();
+		out.add(getTreeDepth(depth) + "World ("+getName()+")");
+		out.add(getTreeDepth(depth+1) + "TownBlocks: " + getTownBlocks());
+		return out;
+	}
 }

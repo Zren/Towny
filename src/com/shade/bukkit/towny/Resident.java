@@ -1,6 +1,7 @@
 package com.shade.bukkit.towny;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Resident extends TownBlockOwner {
@@ -117,5 +118,16 @@ public class Resident extends TownBlockOwner {
 
 	public long getRegistered() {
 		return registered;
+	}
+	
+	@Override
+	public List<String> getTreeString(int depth) {
+		List<String> out = new ArrayList<String>();
+		out.add(getTreeDepth(depth) + "Resident ("+getName()+")");
+		out.add(getTreeDepth(depth+1) + "Registered: " + getRegistered());
+		out.add(getTreeDepth(depth+1) + "Last Online: " + getLastOnline());
+		if (getFriends().size() > 0)
+			out.add(getTreeDepth(depth+1) + "Friends (" + getFriends().size() + "): " + Arrays.toString(getFriends().toArray(new Resident[0])));
+		return out;
 	}
 }

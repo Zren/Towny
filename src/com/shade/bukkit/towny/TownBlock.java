@@ -144,4 +144,9 @@ public class TownBlock {
 		setResident(null);
 		setWorld(null);
 	}
+	
+	@Override
+	public String toString() {
+		return getWorld().getName() + " ("+getCoord()+")";
+	}
 }

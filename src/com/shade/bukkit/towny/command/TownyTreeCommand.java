@@ -1,6 +1,12 @@
 package com.shade.bukkit.towny.command;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+/**
+ * Show the current universe in the console.
+ * Command: /towny tree
+ */
 
 public class TownyTreeCommand extends TownyCommand {
 
@@ -10,7 +16,12 @@ public class TownyTreeCommand extends TownyCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-		universe.sendUniverseTree(sender);
+		if (sender instanceof Player) {
+			Player player = (Player)sender;
+			consoleUseOnly(player);
+		} else
+			// Console
+			universe.sendUniverseTree(sender);
 		return true;
 	}
 }

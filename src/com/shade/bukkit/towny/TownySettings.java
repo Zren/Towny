@@ -234,7 +234,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.USING_ICONOMY, true);
 		configBool.put(TownySettings.Bool.MODIFY_CHAT_NAME, true);
 		configBool.put(TownySettings.Bool.DELETE_OLD_RESIDENTS, false);
-		configBool.put(TownySettings.Bool.DEBUG_MODE, true);
+		configBool.put(TownySettings.Bool.DEBUG_MODE, false);
 		configBool.put(TownySettings.Bool.MOB_REMOVAL, false);
 		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
 		configBool.put(TownySettings.Bool.ALLOW_OUTPOSTS, true);

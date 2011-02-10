@@ -18,18 +18,27 @@ v0.12:
 		towny.wild.switch
 		towny.wild.build
 		towny.wild.destroy
-	onMoveChunkTransitions update. Added unowned plot name as well as a homeblock and for sale notfier.
+	onMoveChunkTransitions update. Added unowned plot name as well as a homeblock and for sale notifier.
 	Added command /townyadmin backup to force a backup at any time.
 	Fixed bugs.
 	Some tax output during new day.
 	Let the daily interval be customizable.
 	Added command /town spawn [town] with settings and price.
 v0.13:
+	Some debug stuff for war.
 	Town PvP status is ignored during war time.
 	Fixed town bonus plots not being added to maximum when using ratio.
+v0.14:
+	Moved debug commands to townyadmin command. Made tree command not debug only.
+	Fixed error updating cache with build and destroy in the wild.
+	Registered onDeath listener (had that code for ages FML)
+	Did some work on the towny tree output.
+	Moved /towny commands to onCommand
+	The /towny prices now can select individual towns with /towny prices [town]. 
+	
+	
+	
 TODO:	
 	Builds on Essentials for Town Spawn teleports and teleport cost.
 	Ability to convert from hMod database. Not really recommended.
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
-	
-	
