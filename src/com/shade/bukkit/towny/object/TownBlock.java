@@ -1,4 +1,7 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
+
+import com.shade.bukkit.towny.AlreadyRegisteredException;
+import com.shade.bukkit.towny.NotRegisteredException;
 
 public class TownBlock {
 	// TODO: Admin only or possibly a group check

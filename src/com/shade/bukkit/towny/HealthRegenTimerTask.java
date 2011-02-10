@@ -3,6 +3,10 @@ package com.shade.bukkit.towny;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
+import com.shade.bukkit.towny.object.Coord;
+import com.shade.bukkit.towny.object.TownBlock;
+import com.shade.bukkit.towny.object.TownyWorld;
+
 public class HealthRegenTimerTask extends TownyTimerTask {
 
 private Server server;

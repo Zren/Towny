@@ -1,8 +1,15 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.shade.bukkit.towny.AlreadyRegisteredException;
+import com.shade.bukkit.towny.EmptyNationException;
+import com.shade.bukkit.towny.IConomyException;
+import com.shade.bukkit.towny.NotRegisteredException;
+import com.shade.bukkit.towny.TownyException;
+import com.shade.bukkit.towny.TownySettings;
 
 public class Nation extends TownyIConomyObject {
 	private List<Resident> assistants = new ArrayList<Resident>();

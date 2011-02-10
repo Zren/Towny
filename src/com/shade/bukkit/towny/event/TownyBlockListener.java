@@ -1,4 +1,4 @@
-package com.shade.bukkit.towny.events;
+package com.shade.bukkit.towny.event;
 
 import java.util.Arrays;
 
@@ -10,16 +10,16 @@ import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import com.shade.bukkit.towny.Coord;
 import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.PlayerCache;
-import com.shade.bukkit.towny.Resident;
-import com.shade.bukkit.towny.Town;
-import com.shade.bukkit.towny.TownBlock;
 import com.shade.bukkit.towny.Towny;
 import com.shade.bukkit.towny.TownyException;
 import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.towny.TownyUniverse;
+import com.shade.bukkit.towny.object.Coord;
+import com.shade.bukkit.towny.object.Resident;
+import com.shade.bukkit.towny.object.Town;
+import com.shade.bukkit.towny.object.TownBlock;
 
 //TODO: Admin/Group Build Rights
 //TODO: algorithm is updating coord twice when updating permissions 

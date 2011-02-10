@@ -1,5 +1,7 @@
 package com.shade.bukkit.towny;
 
+import com.shade.bukkit.towny.object.Coord;
+
 public class CachedPermission {
 	private Coord lastTownBlock;
 	private Boolean buildPermission, destroyPermission;

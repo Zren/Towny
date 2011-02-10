@@ -2,6 +2,8 @@ package com.shade.bukkit.towny;
 
 import java.io.IOException;
 
+import com.shade.bukkit.towny.object.Resident;
+
 public class DailyTimerTask extends TownyTimerTask {
 	public DailyTimerTask(TownyUniverse universe) {
 		super(universe);

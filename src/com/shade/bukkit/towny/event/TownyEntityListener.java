@@ -1,4 +1,4 @@
-package com.shade.bukkit.towny.events;
+package com.shade.bukkit.towny.event;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -6,12 +6,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 
-import com.shade.bukkit.towny.Coord;
-import com.shade.bukkit.towny.TownBlock;
 import com.shade.bukkit.towny.Towny;
 import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.towny.TownyUniverse;
-import com.shade.bukkit.towny.TownyWorld;
+import com.shade.bukkit.towny.object.Coord;
+import com.shade.bukkit.towny.object.TownBlock;
+import com.shade.bukkit.towny.object.TownyWorld;
 
 public class TownyEntityListener extends EntityListener {
 	private final Towny plugin;

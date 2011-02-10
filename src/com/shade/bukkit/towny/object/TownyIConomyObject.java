@@ -1,8 +1,10 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
 
 import org.bukkit.plugin.Plugin;
 
 import com.nijikokun.bukkit.iConomy.iConomy;
+import com.shade.bukkit.towny.IConomyException;
+import com.shade.bukkit.towny.Towny;
 
 ;
 

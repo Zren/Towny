@@ -28,9 +28,11 @@ import com.earth2me.essentials.commands.Commandtp;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.shade.bukkit.towny.command.TownyCommand;
 import com.shade.bukkit.towny.command.TownyCommandMap;
-import com.shade.bukkit.towny.events.TownyBlockListener;
-import com.shade.bukkit.towny.events.TownyEntityListener;
-import com.shade.bukkit.towny.events.TownyPlayerListener;
+import com.shade.bukkit.towny.event.TownyBlockListener;
+import com.shade.bukkit.towny.event.TownyEntityListener;
+import com.shade.bukkit.towny.event.TownyPlayerListener;
+import com.shade.bukkit.towny.object.Coord;
+import com.shade.bukkit.towny.object.TownyIConomyObject;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 

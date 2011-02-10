@@ -2,14 +2,14 @@ package com.shade.bukkit.towny.war;
 
 import org.bukkit.entity.Player;
 
-import com.shade.bukkit.towny.Coord;
-import com.shade.bukkit.towny.Nation;
 import com.shade.bukkit.towny.NotRegisteredException;
-import com.shade.bukkit.towny.Resident;
-import com.shade.bukkit.towny.TownBlock;
 import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.towny.TownyTimerTask;
-import com.shade.bukkit.towny.WorldCoord;
+import com.shade.bukkit.towny.object.Coord;
+import com.shade.bukkit.towny.object.Nation;
+import com.shade.bukkit.towny.object.Resident;
+import com.shade.bukkit.towny.object.TownBlock;
+import com.shade.bukkit.towny.object.WorldCoord;
 
 public class WarTimerTask extends TownyTimerTask {
 	War warEvent;

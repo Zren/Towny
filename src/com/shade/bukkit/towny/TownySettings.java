@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.shade.bukkit.towny.object.Nation;
+import com.shade.bukkit.towny.object.Resident;
+import com.shade.bukkit.towny.object.Town;
+import com.shade.bukkit.towny.object.TownyObject;
+import com.shade.bukkit.towny.object.WorldCoord;
 import com.shade.util.KeyValueFile;
 import com.shade.util.StringMgmt;
 

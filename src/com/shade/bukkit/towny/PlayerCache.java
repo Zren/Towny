@@ -2,6 +2,8 @@ package com.shade.bukkit.towny;
 
 import org.bukkit.entity.Player;
 
+import com.shade.bukkit.towny.object.Coord;
+
 public class PlayerCache {
 	private Coord lastTownBlock;
 	private Boolean buildPermission, destroyPermission, switchPermission;

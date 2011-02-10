@@ -5,13 +5,13 @@ import java.io.IOException;
 import org.bukkit.World;
 
 import com.shade.bukkit.towny.AlreadyRegisteredException;
-import com.shade.bukkit.towny.Nation;
-import com.shade.bukkit.towny.Resident;
-import com.shade.bukkit.towny.Town;
 import com.shade.bukkit.towny.Towny;
 import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.towny.TownyUniverse;
-import com.shade.bukkit.towny.TownyWorld;
+import com.shade.bukkit.towny.object.Nation;
+import com.shade.bukkit.towny.object.Resident;
+import com.shade.bukkit.towny.object.Town;
+import com.shade.bukkit.towny.object.TownyWorld;
 
 /*
  * --- : Loading process : ---

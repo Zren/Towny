@@ -1,4 +1,4 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,13 @@ import java.util.List;
 
 import org.bukkit.Location;
 
+import com.shade.bukkit.towny.AlreadyRegisteredException;
+import com.shade.bukkit.towny.EmptyNationException;
+import com.shade.bukkit.towny.EmptyTownException;
+import com.shade.bukkit.towny.IConomyException;
+import com.shade.bukkit.towny.NotRegisteredException;
+import com.shade.bukkit.towny.TownyException;
+import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.wallgen.WallSection;
 import com.shade.bukkit.wallgen.Walled;
 

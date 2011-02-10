@@ -1,4 +1,4 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;

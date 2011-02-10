@@ -1,7 +1,10 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.shade.bukkit.towny.AlreadyRegisteredException;
+import com.shade.bukkit.towny.NotRegisteredException;
 
 public class TownBlockOwner extends TownyIConomyObject {
 	protected List<TownBlock> townBlocks = new ArrayList<TownBlock>();

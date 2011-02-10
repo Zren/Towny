@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nijikokun.bukkit.iConomy.iConomy;
+import com.shade.bukkit.towny.object.Nation;
+import com.shade.bukkit.towny.object.Resident;
+import com.shade.bukkit.towny.object.Town;
+import com.shade.bukkit.towny.object.TownyIConomyObject;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 

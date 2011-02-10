@@ -1,5 +1,7 @@
 package com.shade.bukkit.towny;
 
+import com.shade.bukkit.towny.object.Town;
+
 public class EmptyTownException extends Exception {
 	private static final long serialVersionUID = 5058583908170407803L;
 	private EmptyNationException emptyNationException;

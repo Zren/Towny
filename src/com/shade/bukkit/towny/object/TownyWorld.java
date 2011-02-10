@@ -1,9 +1,12 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
+
+import com.shade.bukkit.towny.AlreadyRegisteredException;
+import com.shade.bukkit.towny.NotRegisteredException;
 
 public class TownyWorld extends TownyObject {
 	private List<Town> towns = new ArrayList<Town>();

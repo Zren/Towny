@@ -1,8 +1,13 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.shade.bukkit.towny.AlreadyRegisteredException;
+import com.shade.bukkit.towny.EmptyTownException;
+import com.shade.bukkit.towny.NotRegisteredException;
+import com.shade.bukkit.towny.TownyException;
 
 public class Resident extends TownBlockOwner {
 	private List<Resident> friends = new ArrayList<Resident>();

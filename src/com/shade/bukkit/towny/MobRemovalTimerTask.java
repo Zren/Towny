@@ -8,6 +8,10 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Entity;
 
+import com.shade.bukkit.towny.object.Coord;
+import com.shade.bukkit.towny.object.TownBlock;
+import com.shade.bukkit.towny.object.TownyWorld;
+
 public class MobRemovalTimerTask extends TownyTimerTask {
 	private Server server;
 	

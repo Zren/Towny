@@ -1,4 +1,6 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
+
+import com.shade.bukkit.towny.NotRegisteredException;
 
 
 //TODO: have toString() include the worlds?
