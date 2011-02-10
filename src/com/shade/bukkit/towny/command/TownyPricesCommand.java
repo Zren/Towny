@@ -11,6 +11,7 @@ import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.Resident;
 import com.shade.bukkit.towny.Town;
 import com.shade.bukkit.towny.TownySettings;
+import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
 public class TownyPricesCommand extends TownyCommand {
@@ -64,12 +65,13 @@ public class TownyPricesCommand extends TownyCommand {
 	public List<String> getTownyPrices(Town town) {
 		List<String> output = new ArrayList<String>();
 		
-		output.add(Colors.Gold + "[New] "
+		output.add(ChatTools.formatTitle("Prices"));
+		output.add(Colors.Yellow + "[New] "
 				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(TownySettings.getNewTownPrice())
 				+ Colors.Gray + " | "
 				+ Colors.Green + "Nation: " + Colors.LightGreen + Integer.toString(TownySettings.getNewNationPrice()));
 		if (town != null) {
-			output.add(Colors.Gold + "Town ["+universe.getFormatter().getFormattedName(town)+"]");
+			output.add(Colors.Yellow + "Town ["+universe.getFormatter().getFormattedName(town)+"]");
 			output.add(Colors.Rose + "    [Price] "
 					+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotPrice())
 					+ Colors.Gray + " | "
@@ -85,7 +87,7 @@ public class TownyPricesCommand extends TownyCommand {
 			} catch (NotRegisteredException e) {
 			}
 			if (nation != null) {
-				output.add(Colors.Gold + "Nation ["+universe.getFormatter().getFormattedName(nation)+"]");
+				output.add(Colors.Yellow + "Nation ["+universe.getFormatter().getFormattedName(nation)+"]");
 				output.add(Colors.Rose + "    [Upkeep] "
 					+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(nation.getTaxes())
 					+ Colors.Gray + " | "

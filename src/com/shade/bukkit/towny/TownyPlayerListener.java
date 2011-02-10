@@ -2345,26 +2345,6 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 
 	}
-
-	/**
-	 * Send a list of all towny commands to player Command: /towny ?
-	 * 
-	 * @param player
-	 */
-
-	public void showTownyHelp(Player player) {
-		player.sendMessage(ChatTools.formatTitle("/towny"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "", "General help for Towny"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "map", "Displays a map of the nearby townblocks"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "universe", "Displays stats"));
-		player.sendMessage(ChatTools.formatCommand("", "/towny", "prices", "Display the prices used with iConomy"));
-		if (TownySettings.getDebug()) {
-			player.sendMessage(ChatTools.formatCommand("Debug", "/towny", "seed", "Create tons of empty objects"));
-			player.sendMessage(ChatTools.formatCommand("Debug", "/towny", "tree", "Print univese to console"));
-			player.sendMessage(ChatTools.formatCommand("Debug", "/towny", "newday", "Run the new day code"));
-		}
-	}
 	
 	/*public void parseTownyCommand(Player player, String[] split) {
 		if (split.length == 0)

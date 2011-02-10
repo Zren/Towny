@@ -14,7 +14,7 @@ public class TownyCommandMap extends TownyCommand {
 		subCommands = new SimpleCommandMap(server);
 		
 		TownyHelpCommand helpCommand = new TownyHelpCommand();
-		subCommands.register("", "", helpCommand);
+		subCommands.register("", "", new TownyPluginHelpCommand());
 		subCommands.register("?", "", helpCommand);
 		subCommands.register("help", "", helpCommand);
 		subCommands.register("map", "", new TownyMapCommand());
