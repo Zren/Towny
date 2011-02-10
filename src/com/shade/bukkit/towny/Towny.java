@@ -22,6 +22,9 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.commands.Commandtp;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.shade.bukkit.towny.command.TownyCommand;
 import com.shade.bukkit.towny.command.TownyCommandMap;
@@ -162,7 +165,7 @@ public class Towny extends JavaPlugin {
 			townyUniverse.getDataSource().saveAll();
 		
 		if (getTownyUniverse().isWarTime())
-			getTownyUniverse().getWarEvent().end();
+			getTownyUniverse().getWarEvent().toggleEnd();
 		townyUniverse.toggleDailyTimer(false);
 		townyUniverse.toggleMobRemoval(false);
 		townyUniverse.toggleHealthRegen(false);
@@ -332,12 +335,15 @@ public class Towny extends JavaPlugin {
 			return modes.contains(mode); 
 	}
 
+	@SuppressWarnings("static-access")
 	public boolean checkEssentialsTeleport(Player player) {
 		Plugin test = getServer().getPluginManager().getPlugin("Essentials");
 		if (test == null)
 			return true;
 		
-		/*
+		Essentials essentials = (Essentials)test;
+		essentials.loadClasses();
+		
 		try {
 			User user = User.get(player, getServer());
 			user.teleportCooldown();
@@ -346,7 +352,7 @@ public class Towny extends JavaPlugin {
 			sendErrorMsg(player, "Error: " + e.getMessage());
 			return false;
 		}
-		*/
+		
 			
 		return true;
 	}

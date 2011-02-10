@@ -3,6 +3,7 @@ package com.shade.util;
 import java.util.Comparator;
 import java.util.Hashtable;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Sorting {
 	public static void main(String[] args) {
 		Hashtable<Object,Object> table = new Hashtable<Object,Object>();
@@ -18,7 +19,7 @@ public class Sorting {
 		kvTable.sortByValue();print(kvTable);
 	}
 	
-	public static void print(KeyValueTable table) {
+	public static void print(KeyValueTable<?,?> table) {
 		for (KeyValue index : table.getKeyValues())
 			System.out.print("[" + index.key + " : " + index.value + "]\n");
 		System.out.print("\n");

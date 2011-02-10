@@ -1,9 +1,10 @@
 package com.shade.util;
 
-public class KeyValue {
-	public Object key, value;
+public class KeyValue<K,V> {
+	public K key;
+	public V value;
 	
-	public KeyValue(Object key, Object value) {
+	public KeyValue(K key, V value) {
 		this.key = key;
 		this.value = value;
 	}

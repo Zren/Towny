@@ -1,32 +1,31 @@
 package com.shade.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
-public class KeyValueTable {
-	private List<KeyValue> keyValues = new ArrayList<KeyValue>();
+public class KeyValueTable<K,V> {
+	private List<KeyValue<K,V>> keyValues = new ArrayList<KeyValue<K,V>>();
 	
-	public List<KeyValue> getKeyValues() {
+	public List<KeyValue<K,V>> getKeyValues() {
 		return keyValues;
 	}
 
-	public void setKeyValues(List<KeyValue> keyValues) {
+	public void setKeyValues(List<KeyValue<K,V>> keyValues) {
 		this.keyValues = keyValues;
 	}
 
-	public KeyValueTable(Hashtable<?,?> table) {
-		this(Arrays.asList(table.keySet().toArray()), new ArrayList<Object>(table.values()));
+	public KeyValueTable(Hashtable<K,V> table) {
+		this(new ArrayList<K>(table.keySet()), new ArrayList<V>(table.values()));
 	}
 	
-	public KeyValueTable(List<Object> keys, List<Object> values)  {
+	public KeyValueTable(List<K> keys, List<V> values)  {
 		//if (keys.size() != values.size())
 		//	throw new Exception();
 		
 		for (int i = 0; i < keys.size(); i++)
-			keyValues.add(new KeyValue(keys.get(i), values.get(i)));
+			keyValues.add(new KeyValue<K,V>(keys.get(i), values.get(i)));
 	}
 	
 	public void sortByKey() {

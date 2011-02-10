@@ -7,11 +7,14 @@ import java.util.Timer;
 
 import org.bukkit.entity.Player;
 
+import com.shade.bukkit.towny.IConomyException;
 import com.shade.bukkit.towny.Nation;
 import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.Town;
 import com.shade.bukkit.towny.TownBlock;
 import com.shade.bukkit.towny.Towny;
+import com.shade.bukkit.towny.TownyException;
+import com.shade.bukkit.towny.TownyIConomyObject;
 import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.towny.TownyUniverse;
 import com.shade.bukkit.towny.WorldCoord;
@@ -32,6 +35,7 @@ public class War {
 	private TownyUniverse universe;
 	private boolean warTime = false;
 	private Timer warTimer = new Timer();
+	private WarSpoils warSpoils = new WarSpoils();
 	
 	public War(Towny plugin, int startDelay) {
 		this.plugin = plugin;
@@ -83,12 +87,33 @@ public class War {
 		
 		//Announce
 		
+		// Seed spoils of war
+		try {
+			warSpoils.pay(TownySettings.getBaseSpoilsOfWar());
+		} catch (IConomyException e) {
+		}
+		
 		//Gather all nations at war
 		for (Nation nation : universe.getNations())
 			if (!nation.isNeutral())
 				add(nation);
 		warTimer.scheduleAtFixedRate(new WarTimerTask(this), 0, 1000);
 		checkEnd();
+	}
+	
+	public void end() {
+		for (Player player : universe.getOnlinePlayers())
+			sendStats(player);
+		try {
+			Nation winningNation = getWinningNation();
+			int winnings = getWarSpoils().getIConomyBalance() / 2; // Transactions might leave 1 coin. (OH noez!)
+			getWarSpoils().pay(winnings, winningNation);
+			universe.sendGlobalMessage(winningNation.getName() + " won " + winnings + " " + TownyIConomyObject.getIConomyCurrency() + ".");
+			KeyValue<Town,Integer> winningTownScore = getWinningTownScore();
+			universe.sendGlobalMessage(winningTownScore.key.getName() + " won " + winnings + " " + TownyIConomyObject.getIConomyCurrency() + " with the score " + winningTownScore.value);
+		} catch (IConomyException e) {
+		} catch (TownyException e) {
+		}
 	}
 	
 	public void add(Nation nation) {
@@ -225,7 +250,7 @@ public class War {
 	
 	public void checkEnd() {
 		if (warringNations.size() <= 1)
-			end();
+			toggleEnd();
 	}
 	
 	public void checkTown(Town town) {
@@ -254,7 +279,7 @@ public class War {
 		return n;
 	}
 	
-	public void end() {
+	public void toggleEnd() {
 		warTime = false;
 	}
 	
@@ -269,6 +294,10 @@ public class War {
 		output.add(Colors.Green + "  Nations: " + Colors.LightGreen + warringNations.size());
 		output.add(Colors.Green + "  Towns: " + Colors.LightGreen + warringTowns.size() +" / " + townScores.size());
 		output.add(Colors.Green + "  WarZone: " + Colors.LightGreen + warZone.size() + " Town blocks");
+		try {
+			output.add(Colors.Green + "  Spoils of War: " + Colors.LightGreen + warSpoils.getIConomyBalance() + " " + TownyIConomyObject.getIConomyCurrency());
+		} catch (IConomyException e) {
+		}
 		return output;
 	}
 	
@@ -289,11 +318,11 @@ public class War {
 	public List<String> getScores(int maxListing) {
 		List<String> output = new ArrayList<String>();
 		output.add(ChatTools.formatTitle("War - Top Scores"));
-		KeyValueTable kvTable = new KeyValueTable(townScores);
+		KeyValueTable<Town,Integer> kvTable = new KeyValueTable<Town,Integer>(townScores);
 		kvTable.sortByValue();
 		kvTable.revese();
 		int n = 0;
-		for (KeyValue kv : kvTable.getKeyValues()) {
+		for (KeyValue<Town,Integer> kv : kvTable.getKeyValues()) {
 			n++;
 			if (maxListing != -1 && n > maxListing)
 				break;
@@ -308,5 +337,26 @@ public class War {
 	
 	public boolean isWarringNation(Nation nation) {
 		return warringNations.contains(nation);
+	}
+
+	public Nation getWinningNation() throws TownyException {
+		if (warringNations.size() == 1)
+			return warringNations.get(0);
+		else
+			throw new TownyException();
+	}
+	
+	public KeyValue<Town,Integer> getWinningTownScore() throws TownyException {
+		KeyValueTable<Town,Integer> kvTable = new KeyValueTable<Town,Integer>(townScores);
+		kvTable.sortByValue();
+		kvTable.revese();
+		if (kvTable.getKeyValues().size() > 0)
+			return kvTable.getKeyValues().get(0);
+		else
+			throw new TownyException();
+	}
+	
+	public WarSpoils getWarSpoils() {
+		return warSpoils;
 	}
 }

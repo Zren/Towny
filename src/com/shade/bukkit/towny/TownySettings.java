@@ -92,7 +92,11 @@ public class TownySettings {
 		TOWN_LIMIT,
 		PRICE_CLAIM_TOWNBLOCK,
 		PRICE_OUTPOST,
-		PRICE_TOWN_SPAWN_TRAVEL
+		PRICE_TOWN_SPAWN_TRAVEL,
+		WARTIME_BASE_SPOILS,
+		WARTIME_DEATH_PRICE,
+		DEATH_PRICE,
+		WARTIME_TOWN_BLOCK_LOSS_PRICE
 	};
 	// Boolean
 	enum Bool {
@@ -222,6 +226,10 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.PRICE_CLAIM_TOWNBLOCK, 25);
 		configInt.put(TownySettings.Int.PRICE_OUTPOST, 500);
 		configInt.put(TownySettings.Int.PRICE_TOWN_SPAWN_TRAVEL, 10);
+		configInt.put(TownySettings.Int.WARTIME_BASE_SPOILS, 100);
+		configInt.put(TownySettings.Int.WARTIME_DEATH_PRICE, 200);
+		configInt.put(TownySettings.Int.DEATH_PRICE, 10);
+		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_LOSS_PRICE, 100);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -816,4 +824,19 @@ public class TownySettings {
 		return getInt(TownySettings.Int.PRICE_TOWN_SPAWN_TRAVEL);
 	}
 	
+	public static int getBaseSpoilsOfWar() {
+		return getInt(TownySettings.Int.WARTIME_BASE_SPOILS);
+	}
+	
+	public static int getWartimeDeathPrice() {
+		return getInt(TownySettings.Int.WARTIME_DEATH_PRICE);
+	}
+	
+	public static int getDeathPrice() {
+		return getInt(TownySettings.Int.DEATH_PRICE);
+	}
+	
+	public static int getWartimeTownLossPrice() {
+		return getInt(TownySettings.Int.WARTIME_TOWN_BLOCK_LOSS_PRICE);
+	}
 }

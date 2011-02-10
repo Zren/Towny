@@ -11,7 +11,7 @@ public class StartWarTimerTask extends TownyTimerTask {
 
 	@Override
 	public void run() {
-		universe.getWarEvent().start();		
+		universe.getWarEvent().start();
 	}
 
 }

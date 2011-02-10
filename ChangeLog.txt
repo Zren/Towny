@@ -37,10 +37,19 @@ v0.14:
 	The /towny prices now can select individual towns with /towny prices [town].
 	Changed which events were called. Join -> Login. Death -> Respawn.
 	Automatic town spawn on respawn.
+v0.15:
+	Use github if you want the source. 700Kb -> 400Kb
+	Base spoils of war provided by server.
+	Deleting towns/nations will put any leftover money in the banks into the spoils of war for the next war.
+	Winning nation receives half the spoils of war. Town with the highest score receives the other half.
+	Builds on Essentials for Town Spawn teleports and teleport cost.
 	
+	Price for death during war. If a resident can't pay, its provided by the town. If the town is broke, town is removed from war.
+	Price for death for if not at war. Non player deaths will give the money to spoils of war pot.
+	Price for losing a townblock during war. If town is broke, town is removed from war.
 	
 	
 TODO:	
-	Builds on Essentials for Town Spawn teleports and teleport cost.
+	
 	Ability to convert from hMod database. Not really recommended.
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc

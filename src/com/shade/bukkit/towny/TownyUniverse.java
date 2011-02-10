@@ -19,6 +19,7 @@ import com.shade.bukkit.towny.db.TownyDataSource;
 import com.shade.bukkit.towny.db.TownyFlatFileSource;
 import com.shade.bukkit.towny.db.TownyHModFlatFileSource;
 import com.shade.bukkit.towny.war.War;
+import com.shade.bukkit.towny.war.WarSpoils;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 import com.shade.util.FileMgmt;
@@ -263,6 +264,11 @@ public class TownyUniverse extends TownyObject {
 		sendGlobalMessage(lines.toArray(new String[0]));
 	}
 
+	public void sendGlobalMessage(String line) {
+		for (Player player : getOnlinePlayers())
+			player.sendMessage(line);
+	}
+	
 	public void sendMessage(Player player, String[] lines) {
 		for (String line : lines)
 			player.sendMessage(line);
@@ -651,7 +657,7 @@ public class TownyUniverse extends TownyObject {
 	
 	public void endWarEvent() {
 		if (isWarTime())
-			warEvent.end();
+			warEvent.toggleEnd();
 		// Automatically makes warEvent null
 	}
 	
@@ -675,6 +681,10 @@ public class TownyUniverse extends TownyObject {
 	public void removeNation(Nation nation) {
 		List<Town> toSave = new ArrayList<Town>(nation.getTowns());
 		nation.clear();
+		try {
+			nation.pay(nation.getIConomyBalance(), new WarSpoils());
+		} catch (IConomyException e) {
+		}
 		nations.remove(nation.getName().toLowerCase());
 		for (Town town : toSave)
 			getDataSource().saveTown(town);
@@ -687,6 +697,10 @@ public class TownyUniverse extends TownyObject {
 			town.clear();
 		} catch (EmptyNationException e) {
 			removeNation(e.getNation());
+		}
+		try {
+			town.pay(town.getIConomyBalance(), new WarSpoils());
+		} catch (IConomyException e) {
 		}
 		towns.remove(town.getName().toLowerCase());
 		for (Resident resident : toSave)
@@ -785,4 +799,6 @@ public class TownyUniverse extends TownyObject {
 			out.addAll(resident.getTreeString(depth+2));
 		return out;
 	}
+
+	
 }
