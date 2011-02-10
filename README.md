@@ -5,9 +5,13 @@ Towny is a plugin for Bukkit (originally from but discontinued from hMod) that a
 Compiling
 ---------
 Towny uses 5 libraries to compile.
+
 Bukkit : https://github.com/Bukkit/Bukkit : http://bamboo.lukegb.com/browse/BUKKIT-BUKKITMAIN/
+
 CraftBukkit : This will be only needed as long as I need to hack the list of entities.
+
 iConomy : by Nijikokun
+
 Permissions : by Nijikokun
 
 
