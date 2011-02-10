@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
@@ -59,9 +58,9 @@ public class TownyPlayerListener extends PlayerListener {
 			} catch (NotRegisteredException e) {
 			}
 	}
-
+	
 	@Override
-	public void onPlayerLogin(PlayerLoginEvent event) {
+	public void onPlayerJoin(PlayerEvent event) {
 		Player player = event.getPlayer();
 		try {
 			plugin.getTownyUniverse().onLogin(player);
