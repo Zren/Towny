@@ -90,7 +90,9 @@ public class War {
 		// Seed spoils of war
 		try {
 			warSpoils.pay(TownySettings.getBaseSpoilsOfWar());
+			plugin.sendMsg("[War] Seeding spoils of war with " + TownySettings.getBaseSpoilsOfWar());
 		} catch (IConomyException e) {
+			plugin.sendErrorMsg("[War] Could not seed spoils of war.");
 		}
 		
 		//Gather all nations at war
@@ -110,7 +112,7 @@ public class War {
 			getWarSpoils().pay(winnings, winningNation);
 			universe.sendGlobalMessage(winningNation.getName() + " won " + winnings + " " + TownyIConomyObject.getIConomyCurrency() + ".");
 			KeyValue<Town,Integer> winningTownScore = getWinningTownScore();
-			universe.sendGlobalMessage(winningTownScore.key.getName() + " won " + winnings + " " + TownyIConomyObject.getIConomyCurrency() + " with the score " + winningTownScore.value);
+			universe.sendGlobalMessage(winningTownScore.key.getName() + " won " + winnings + " " + TownyIConomyObject.getIConomyCurrency() + " with the score " + winningTownScore.value + ".");
 		} catch (IConomyException e) {
 		} catch (TownyException e) {
 		}
@@ -154,6 +156,14 @@ public class War {
 	
 	public void remove(Town attacker, TownBlock townBlock) throws NotRegisteredException {
 		townScored(attacker, TownySettings.getWarPointsForTownBlock());
+		try {
+			if (!townBlock.getTown().pay(TownySettings.getWartimeTownBlockLossPrice(), attacker)) {
+				remove(townBlock.getTown());
+				plugin.getTownyUniverse().sendTownMessage(townBlock.getTown(), "Your town rand out of funds to support yourself in war.");
+			} else
+				plugin.getTownyUniverse().sendTownMessage(townBlock.getTown(), "Your town lost "+TownySettings.getWartimeTownBlockLossPrice()+" "+TownyIConomyObject.getIConomyCurrency()+".");
+		} catch (IConomyException e) {
+		}
 		if (townBlock.getTown().isHomeBlock(townBlock))
 			remove(townBlock.getTown());
 		else
@@ -226,8 +236,8 @@ public class War {
 			remove(townBlock.getWorldCoord());
 		warringTowns.remove(town);
 		try {
-		if (!townsLeft(town.getNation()))
-			remove(town.getNation());
+			if (!townsLeft(town.getNation()))
+				remove(town.getNation());
 		} catch (NotRegisteredException e) {
 		}
 	}

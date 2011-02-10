@@ -1915,10 +1915,10 @@ public class TownyPlayerListener extends PlayerListener {
 			
 			Town town = universe.getTown(capitalName);
 			if (town.hasNation())
-				throw new TownyException("Target already belongs to a nation.");
+				throw new TownyException("Target town already belongs to a nation.");
 			
 			if (TownySettings.isUsingIConomy() && !town.pay(TownySettings.getNewNationPrice()))
-				throw new TownyException("You can't afford to start a new nation.");
+				throw new TownyException("The town can't afford to start a new nation.");
 
 			newNation(universe, name, town);
 			/*universe.newNation(name);

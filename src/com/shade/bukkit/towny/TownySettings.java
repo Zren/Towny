@@ -114,13 +114,15 @@ public class TownySettings {
 		UNCLAIMED_ZONE_SWITCH,
 		SHOW_TOWN_NOTIFICATIONS,
 		USING_ICONOMY,
+		USING_ESSENTIALS,
 		MODIFY_CHAT_NAME,
 		DELETE_OLD_RESIDENTS,
 		DEBUG_MODE,
 		MOB_REMOVAL,
 		HEALTH_REGEN,
 		ALLOW_OUTPOSTS,
-		ALLOW_TOWN_SPAWN_TRAVEL
+		ALLOW_TOWN_SPAWN_TRAVEL,
+		DEV_MODE
 	};
 	// Nation Level
 	enum NationLevel {
@@ -245,6 +247,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_SWITCH, true);
 		configBool.put(TownySettings.Bool.SHOW_TOWN_NOTIFICATIONS, true);
 		configBool.put(TownySettings.Bool.USING_ICONOMY, true);
+		configBool.put(TownySettings.Bool.USING_ESSENTIALS, true);
 		configBool.put(TownySettings.Bool.MODIFY_CHAT_NAME, true);
 		configBool.put(TownySettings.Bool.DELETE_OLD_RESIDENTS, false);
 		configBool.put(TownySettings.Bool.DEBUG_MODE, false);
@@ -252,6 +255,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
 		configBool.put(TownySettings.Bool.ALLOW_OUTPOSTS, true);
 		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL, true);
+		configBool.put(TownySettings.Bool.DEV_MODE, false);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -585,6 +589,10 @@ public class TownySettings {
 	public static boolean isUsingIConomy() {
 		return getBoolean(TownySettings.Bool.USING_ICONOMY);
 	}
+	
+	public static boolean isUsingEssentials() {
+		return getBoolean(TownySettings.Bool.USING_ESSENTIALS);
+	}
 
 	public static int getNewTownPrice() {
 		return getInt(TownySettings.Int.PRICE_NEW_TOWN);
@@ -841,7 +849,11 @@ public class TownySettings {
 		return getInt(TownySettings.Int.DEATH_PRICE);
 	}
 	
-	public static int getWartimeTownLossPrice() {
+	public static int getWartimeTownBlockLossPrice() {
 		return getInt(TownySettings.Int.WARTIME_TOWN_BLOCK_LOSS_PRICE);
+	}
+	
+	public static boolean isDevMode() {
+		return getBoolean(TownySettings.Bool.DEV_MODE);
 	}
 }

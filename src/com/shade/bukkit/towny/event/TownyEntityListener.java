@@ -71,7 +71,7 @@ public class TownyEntityListener extends EntityListener {
 			Player player = (Player)entity;
 			if (TownySettings.getDebug())
 				System.out.println("[Towny] Debug: onPlayerDeath: " + player.getName() + "[ID: " + entity.getEntityId() + "]");
-			plugin.getTownyUniverse().townSpawn(player, true);
+			
 		}
     }
 }

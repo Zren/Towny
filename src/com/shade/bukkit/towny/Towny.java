@@ -24,12 +24,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
-import com.earth2me.essentials.commands.Commandtp;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.shade.bukkit.towny.command.TownyCommand;
 import com.shade.bukkit.towny.command.TownyCommandMap;
 import com.shade.bukkit.towny.event.TownyBlockListener;
 import com.shade.bukkit.towny.event.TownyEntityListener;
+import com.shade.bukkit.towny.event.TownyEntityMonitorListener;
 import com.shade.bukkit.towny.event.TownyPlayerListener;
 import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.TownyIConomyObject;
@@ -93,6 +93,7 @@ public class Towny extends JavaPlugin {
 	private final TownyPlayerListener playerListener = new TownyPlayerListener(this);
 	private final TownyBlockListener blockListener = new TownyBlockListener(this);
 	private final TownyEntityListener entityListener = new TownyEntityListener(this);
+	private final TownyEntityMonitorListener entityMonitorListener = new TownyEntityMonitorListener(this);
 	private TownyUniverse townyUniverse;
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
@@ -203,6 +204,7 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_INTERACT, blockListener, Priority.Normal, this);
 
 		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityMonitorListener, Priority.Monitor, this);
 		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
 	}
 	
@@ -256,6 +258,11 @@ public class Towny extends JavaPlugin {
 			player.sendMessage(line);
 		if (TownySettings.getDebug())
 			System.out.println("[Towny] UserError: " + player.getName() + ": " + msg);
+		if (TownySettings.isDevMode()) {
+			Player townyDev = getServer().getPlayer("Shadeness");
+			for (String line : ChatTools.color(Colors.Gold + "[Towny] Console: " + Colors.Rose + msg))
+				townyDev.sendMessage(line);
+		}
 	}
 	
 	public void sendErrorMsg(String msg) {
@@ -352,7 +359,7 @@ public class Towny extends JavaPlugin {
 		try {
 			User user = User.get(player, getServer());
 			user.teleportCooldown();
-			user.charge(new Commandtp());
+			essentials.charge(user, "tp");
 		} catch (Exception e) {
 			sendErrorMsg(player, "Error: " + e.getMessage());
 			return false;
@@ -367,5 +374,9 @@ public class Towny extends JavaPlugin {
 			return Permissions.Security.permission(player, node);
 		else
 			return false;
+	}
+
+	public void sendMsg(String msg) {
+		System.out.println("[Towny] " + msg);
 	}
 }
