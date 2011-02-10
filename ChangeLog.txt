@@ -36,6 +36,7 @@ v0.14:
 	Moved /towny commands to onCommand
 	The /towny prices now can select individual towns with /towny prices [town].
 	Changed which events were called. Join -> Login. Death -> Respawn.
+	Automatic town spawn on respawn.
 	
 	
 	

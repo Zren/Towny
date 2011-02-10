@@ -392,7 +392,7 @@ public class Town extends TownBlockOwner implements Walled {
 		out.add(getTreeDepth(depth+1) + "Mayor: " + getMayor().getName());
 		out.add(getTreeDepth(depth+1) + "Home: " + homeBlock);
 		out.add(getTreeDepth(depth+1) + "Bonus: " + bonusBlocks);
-		out.add(getTreeDepth(depth+1) + "TownBlocks (" + getTownBlocks().size() + "): " + Arrays.toString(getTownBlocks().toArray(new TownBlock[0])));
+		out.add(getTreeDepth(depth+1) + "TownBlocks (" + getTownBlocks().size() + "): " /*+ getTownBlocks()*/);
 		if (getAssistants().size() > 0)
 			out.add(getTreeDepth(depth+1) + "Assistants (" + getAssistants().size() + "): " + Arrays.toString(getAssistants().toArray(new Resident[0])));
 		out.add(getTreeDepth(depth+1) + "Residents (" + getResidents().size() + "):");

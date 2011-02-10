@@ -112,7 +112,7 @@ public class TownyWorld extends TownyObject {
 	public List<String> getTreeString(int depth) {
 		List<String> out = new ArrayList<String>();
 		out.add(getTreeDepth(depth) + "World ("+getName()+")");
-		out.add(getTreeDepth(depth+1) + "TownBlocks: " + getTownBlocks());
+		out.add(getTreeDepth(depth+1) + "TownBlocks (" + getTownBlocks().size() + "): " /*+ getTownBlocks()*/);
 		return out;
 	}
 }

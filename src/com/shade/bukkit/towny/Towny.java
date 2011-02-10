@@ -41,7 +41,6 @@ import com.shade.bukkit.util.Colors;
  * TODO
  * 
  * Commenting
- * Unclaim townblocks
  * flatfile-old data source and replace getDataSource() with a manager class
  * Log nation/town chat
  * Log town/nation messages with timestamps. On login, see if there's been any events. Make command: /town log [page] to see messages.
@@ -49,7 +48,6 @@ import com.shade.bukkit.util.Colors;
  * Replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
  * When adding allying another nation, ask that nation and add this nation to their ally list.
  * Make the formatting/wording for [nation] .. [nation] etc, better.
- * Some way to distinguish home block.
  * Re-register a player after res delete
  * Comply with the updated API onCommand. Move commands to onCommand (at least console type ones).
  * Organise PlayerListener. Functions. Functions EVERYWHERE!
@@ -190,7 +188,7 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, entityListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Priority.Normal, this);
 
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
