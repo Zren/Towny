@@ -1,7 +1,7 @@
 package com.shade.bukkit.towny;
 
 public class TownyPermission {
-	boolean residentBuild, residentDestroy, residentSwitch,
+	public boolean residentBuild, residentDestroy, residentSwitch,
 		outsiderBuild, outsiderDestroy, outsiderSwitch,
 		allyBuild, allyDestroy, allySwitch;
 

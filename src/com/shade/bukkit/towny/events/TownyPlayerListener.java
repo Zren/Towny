@@ -1,4 +1,4 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.events;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +17,25 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import com.nijikokun.bukkit.iConomy.iConomy;
+import com.shade.bukkit.towny.AlreadyRegisteredException;
+import com.shade.bukkit.towny.Coord;
+import com.shade.bukkit.towny.EmptyNationException;
+import com.shade.bukkit.towny.EmptyTownException;
+import com.shade.bukkit.towny.IConomyException;
+import com.shade.bukkit.towny.Nation;
+import com.shade.bukkit.towny.NotRegisteredException;
+import com.shade.bukkit.towny.Resident;
+import com.shade.bukkit.towny.Town;
+import com.shade.bukkit.towny.TownBlock;
+import com.shade.bukkit.towny.TownBlockOwner;
+import com.shade.bukkit.towny.Towny;
+import com.shade.bukkit.towny.TownyException;
+import com.shade.bukkit.towny.TownyIConomyObject;
+import com.shade.bukkit.towny.TownyPermission;
+import com.shade.bukkit.towny.TownySettings;
+import com.shade.bukkit.towny.TownyUniverse;
+import com.shade.bukkit.towny.TownyWorld;
+import com.shade.bukkit.towny.WorldCoord;
 import com.shade.bukkit.towny.command.TownyMapCommand;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;

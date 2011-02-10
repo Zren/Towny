@@ -1,4 +1,4 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.events;
 
 import java.util.Arrays;
 
@@ -9,6 +9,17 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
+
+import com.shade.bukkit.towny.Coord;
+import com.shade.bukkit.towny.NotRegisteredException;
+import com.shade.bukkit.towny.PlayerCache;
+import com.shade.bukkit.towny.Resident;
+import com.shade.bukkit.towny.Town;
+import com.shade.bukkit.towny.TownBlock;
+import com.shade.bukkit.towny.Towny;
+import com.shade.bukkit.towny.TownyException;
+import com.shade.bukkit.towny.TownySettings;
+import com.shade.bukkit.towny.TownyUniverse;
 
 //TODO: Admin/Group Build Rights
 //TODO: algorithm is updating coord twice when updating permissions 
@@ -196,14 +207,14 @@ public class TownyBlockListener extends BlockListener {
 				if (resident == owner)
 					cacheSwitch(player, pos, true);
 				else if (owner.hasFriend(resident)) {
-					if (owner.permissions.residentSwitch)
+					if (owner.getPermissions().residentSwitch)
 						cacheSwitch(player, pos, true);
 					else {
 						if (sendMsg)
 							plugin.sendErrorMsg(player, "Owner doesn't allow friends to toggle switches.");
 						cacheSwitch(player, pos, false);
 					}
-				} else if (owner.permissions.allySwitch)
+				} else if (owner.getPermissions().allySwitch)
 					// Exit out and use town permissions
 					throw new TownyException();
 				else {
@@ -293,15 +304,15 @@ public class TownyBlockListener extends BlockListener {
 				if (resident == owner)
 					cacheDestroy(player, pos, true);
 				else if (owner.hasFriend(resident)) {
-					if (owner.permissions.residentDestroy)
+					if (owner.getPermissions().residentDestroy)
 						cacheDestroy(player, pos, true);
 					else {
 						if (sendMsg)
 							plugin.sendErrorMsg(player, "Owner doesn't allow friends to destroy here.");
 						cacheDestroy(player, pos, false);
 					}
-				} else if (owner.permissions.allyDestroy)
-					// Exit out and use town permissions
+				} else if (owner.getPermissions().allyDestroy)
+					// Exit out and use town getPermissions()
 					throw new TownyException();
 				else {
 					if (sendMsg)
@@ -391,14 +402,14 @@ public class TownyBlockListener extends BlockListener {
 				if (resident == owner)
 					cacheBuild(player, pos, true);
 				else if (owner.hasFriend(resident)) {
-					if (owner.permissions.residentBuild)
+					if (owner.getPermissions().residentBuild)
 						cacheBuild(player, pos, true);
 					else {
 						if (sendMsg)
 							plugin.sendErrorMsg(player, "Owner doesn't allow friends to build here.");
 						cacheBuild(player, pos, false);
 					}
-				} else if (owner.permissions.allyBuild)
+				} else if (owner.getPermissions().allyBuild)
 					// Exit out and use town permissions
 					throw new TownyException();
 				else {

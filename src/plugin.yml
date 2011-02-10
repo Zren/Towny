@@ -1,6 +1,6 @@
 name: Towny
 main: com.shade.bukkit.towny.Towny
-version: '2.0.15'
+version: '2.0.16'
 commands:
     towny:
         description: Basic towny commands

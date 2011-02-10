@@ -43,7 +43,7 @@ v0.15:
 	Deleting towns/nations will put any leftover money in the banks into the spoils of war for the next war.
 	Winning nation receives half the spoils of war. Town with the highest score receives the other half.
 	Builds on Essentials for Town Spawn teleports and teleport cost.
-	
+v0.16:
 	Price for death during war. If a resident can't pay, its provided by the town. If the town is broke, town is removed from war.
 	Price for death for if not at war. Non player deaths will give the money to spoils of war pot.
 	Price for losing a townblock during war. If town is broke, town is removed from war.
