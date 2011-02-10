@@ -13,7 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import com.nijikokun.bukkit.iConomy.iConomy;
 import com.shade.bukkit.towny.command.TownyMapCommand;
@@ -59,7 +61,7 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerJoin(PlayerEvent event) {
+	public void onPlayerLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
 		try {
 			plugin.getTownyUniverse().onLogin(player);
@@ -67,12 +69,23 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.sendErrorMsg(player, x.getError());
 		}
 	}
-
+	
 	@Override
 	public void onPlayerQuit(PlayerEvent event) {
 		plugin.getTownyUniverse().onLogout(event.getPlayer());
 		
 		plugin.deleteCache(event.getPlayer());
+	}
+	
+	@Override
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		Player player = event.getPlayer();
+		if (TownySettings.getDebug())
+			System.out.println("[Towny] Debug: onPlayerDeath: " + player.getName());
+		try {
+			event.setRespawnLocation(plugin.getTownyUniverse().getTownSpawnLocation(player, true));
+		} catch (TownyException e) {
+		}
 	}
 
 	@Override

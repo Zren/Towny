@@ -150,9 +150,11 @@ public class TownyUniverse extends TownyObject {
 			Town town = resident.getTown();
 			player.teleportTo(town.getSpawn());
 		} catch (TownyException x) {
-			if (forceTeleport)
+			if (forceTeleport) {
 				player.teleportTo(player.getWorld().getSpawnLocation());
-			else
+				if (TownySettings.getDebug())
+					System.out.println("[Towny] Debug: onTownSpawn: [forced] "+player.getName());
+			} else
 				plugin.sendErrorMsg(player, x.getError());
 		}
 	}

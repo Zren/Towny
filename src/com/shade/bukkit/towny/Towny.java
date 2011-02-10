@@ -190,13 +190,14 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, entityListener, Priority.Normal, this);
 
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_INTERACT, blockListener, Priority.Normal, this);
 
-		getServer().getPluginManager().registerEvent( Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent( Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
 	}
 	
 	private void firstRun() {

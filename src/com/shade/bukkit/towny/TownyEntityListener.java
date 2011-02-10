@@ -12,7 +12,7 @@ public class TownyEntityListener extends EntityListener {
 	public TownyEntityListener(Towny instance) {
 		plugin = instance;
 	}
-
+	
 	@Override
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 		Entity attacker = event.getDamager();
@@ -59,11 +59,11 @@ public class TownyEntityListener extends EntityListener {
 	@Override
 	public void onEntityDeath(EntityDeathEvent event) {
 		Entity entity =  event.getEntity();
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: onDeath: " + entity.getEntityId());
 		
 		if (entity instanceof Player) {
 			Player player = (Player)entity;
+			if (TownySettings.getDebug())
+				System.out.println("[Towny] Debug: onPlayerDeath: " + player.getName() + "[ID: " + entity.getEntityId() + "]");
 			plugin.getTownyUniverse().townSpawn(player, true);
 		}
     }

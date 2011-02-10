@@ -18,6 +18,9 @@ private Server server;
 			return;
 		
 		for (Player player : server.getOnlinePlayers()) {
+			if (player.getHealth() <= 0)
+				continue;
+			
 			Coord coord = Coord.parseCoord(player);
 			try {
 				TownyWorld world = universe.getWorld(player.getWorld().getName());

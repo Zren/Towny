@@ -34,7 +34,8 @@ v0.14:
 	Registered onDeath listener (had that code for ages FML)
 	Did some work on the towny tree output.
 	Moved /towny commands to onCommand
-	The /towny prices now can select individual towns with /towny prices [town]. 
+	The /towny prices now can select individual towns with /towny prices [town].
+	Changed which events were called. Join -> Login. Death -> Respawn.
 	
 	
 	
