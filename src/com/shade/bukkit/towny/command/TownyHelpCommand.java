@@ -23,8 +23,9 @@ public class TownyHelpCommand extends TownyCommand {
 		output.add(ChatTools.formatCommand("", "/towny", "", "General help for Towny"));
 		output.add(ChatTools.formatCommand("", "/towny", "map", "Displays a map of the nearby townblocks"));
 		output.add(ChatTools.formatCommand("", "/towny", "prices", "Display the prices used with iConomy"));
-		output.add(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
+		output.add(ChatTools.formatCommand("", "/towny", "top", "Display highscores"));
 		output.add(ChatTools.formatCommand("", "/towny", "universe", "Displays stats"));
+		output.add(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
 		output.add(ChatTools.formatCommand("", "/towny", "war", "'/towny war' for more info"));
 	}
 	

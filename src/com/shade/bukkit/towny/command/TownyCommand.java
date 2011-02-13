@@ -4,7 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.shade.bukkit.towny.TownyUniverse;
+import com.shade.bukkit.towny.object.TownyUniverse;
 
 public abstract class TownyCommand extends Command {
 	

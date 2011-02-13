@@ -1,15 +1,13 @@
 package com.shade.bukkit.towny;
 
-import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.TownBlock;
+import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.TownyWorld;
 
 public class MobRemovalTimerTask extends TownyTimerTask {
@@ -19,34 +17,30 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 		super(universe);
 		this.server = server;
 	}
-
+	
+	
 	@Override
 	public void run() {
 		int numRemoved = 0;
+		int livingEntities = 0;
 		
-		for (World world : server.getWorlds())
-			for (Object e : getWorldEntities(world))
-				if (TownySettings.getMobRemovalEntities().contains(e.getClass().getName())) {
-					Entity entity = (Entity)e;
-					Location loc = entity.getLocation();
+		for (World world : server.getWorlds()) {
+			livingEntities += world.getLivingEntities().size();
+			for (LivingEntity livingEntity : world.getLivingEntities())
+				if (TownySettings.getMobRemovalEntities().contains(livingEntity.toString())) {
+					Location loc = livingEntity.getLocation();
 					Coord coord = Coord.parseCoord(loc);
 					try {
 						TownyWorld townyWorld = universe.getWorld(world.getName());
 						TownBlock townBlock = townyWorld.getTownBlock(coord);
 						if (!townBlock.getTown().hasMobs()) {
-							entity.teleportTo(new Location(world, loc.getX(), -50, loc.getZ()));
+							livingEntity.teleportTo(new Location(world, loc.getX(), -50, loc.getZ()));
 							numRemoved++;
 						}
 					} catch (TownyException x) {
 					}
 				}
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: MobRemoval (Removed: "+numRemoved+")");
+		}
+		universe.getPlugin().sendDebugMsg("MobRemoval (Removed: "+numRemoved+") (Total Living: "+livingEntities+")");
 	}
-	
-	@SuppressWarnings("rawtypes")
-	public final List getWorldEntities(World world) {
-		CraftWorld w = (CraftWorld)world;
-        return w.getHandle().b;
-    }
 }

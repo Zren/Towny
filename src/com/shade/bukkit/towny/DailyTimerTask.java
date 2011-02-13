@@ -3,6 +3,7 @@ package com.shade.bukkit.towny;
 import java.io.IOException;
 
 import com.shade.bukkit.towny.object.Resident;
+import com.shade.bukkit.towny.object.TownyUniverse;
 
 public class DailyTimerTask extends TownyTimerTask {
 	public DailyTimerTask(TownyUniverse universe) {
@@ -27,8 +28,6 @@ public class DailyTimerTask extends TownyTimerTask {
 			for (Resident resident : universe.getResidents())
 				if (System.currentTimeMillis() - resident.getLastOnline() > TownySettings.getMaxInactivePeriod())
 					universe.removeResident(resident);
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: New Day");
 		
 		try {
 			universe.getDataSource().backup();
@@ -36,8 +35,7 @@ public class DailyTimerTask extends TownyTimerTask {
 			System.out.println("[Towny] Error: Could not create backup.");
 			System.out.print(e.getStackTrace());
 		}
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: New Day");
+		universe.getPlugin().sendDebugMsg("New Day");
 	}
 
 }

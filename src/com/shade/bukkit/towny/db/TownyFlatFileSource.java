@@ -19,11 +19,11 @@ import com.shade.bukkit.towny.AlreadyRegisteredException;
 import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.Towny;
 import com.shade.bukkit.towny.TownyException;
-import com.shade.bukkit.towny.TownyUniverse;
 import com.shade.bukkit.towny.object.Nation;
 import com.shade.bukkit.towny.object.Resident;
 import com.shade.bukkit.towny.object.Town;
 import com.shade.bukkit.towny.object.TownBlock;
+import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.TownyWorld;
 import com.shade.util.FileMgmt;
 import com.shade.util.KeyValueFile;
@@ -221,6 +221,10 @@ public class TownyFlatFileSource extends TownyDataSource {
 							resident.addFriend(friend);
 					}
 				}
+				
+				line = kvFile.get("protectionStatus");
+				if (line != null)
+					resident.setPermissions(line);
 
 				line = kvFile.get("townBlocks");
 				if (line != null)
@@ -628,8 +632,9 @@ public class TownyFlatFileSource extends TownyDataSource {
 				fout.write(friend.getName() + ",");
 			fout.write(newLine);
 			// TownBlocks
-			fout.write("townBlocks="
-					+ utilSaveTownBlocks(resident.getTownBlocks()) + newLine);
+			fout.write("townBlocks=" + utilSaveTownBlocks(resident.getTownBlocks()) + newLine);
+			// Plot Protection
+			fout.write("protectionStatus=" + resident.getPermissions().toString() + newLine);
 			fout.close();
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());

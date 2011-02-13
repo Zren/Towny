@@ -25,7 +25,6 @@ import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.Towny;
 import com.shade.bukkit.towny.TownyException;
 import com.shade.bukkit.towny.TownySettings;
-import com.shade.bukkit.towny.TownyUniverse;
 import com.shade.bukkit.towny.command.TownyMapCommand;
 import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.Nation;
@@ -35,6 +34,7 @@ import com.shade.bukkit.towny.object.TownBlock;
 import com.shade.bukkit.towny.object.TownBlockOwner;
 import com.shade.bukkit.towny.object.TownyIConomyObject;
 import com.shade.bukkit.towny.object.TownyPermission;
+import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.TownyWorld;
 import com.shade.bukkit.towny.object.WorldCoord;
 import com.shade.bukkit.util.ChatTools;
@@ -68,8 +68,8 @@ public class TownyPlayerListener extends PlayerListener {
 					colour = Colors.LightBlue;
 				else
 					colour = Colors.White;
-				formatedName = colour + plugin.getTownyUniverse().getFormatter().getNamePrefix(resident)
-					+ "%1$s" + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident) + Colors.White;
+				formatedName = (colour.equals(Colors.White) ? "" : colour) + plugin.getTownyUniverse().getFormatter().getNamePrefix(resident)
+					+ "%1$s" + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident) + (colour.equals(Colors.White) ? "" : Colors.White);
 				String formatString = event.getFormat();
 				int index = formatString.indexOf("%1$s");
 				formatString = formatString.substring(0, index) + formatedName + formatString.substring(index+4);
@@ -98,8 +98,7 @@ public class TownyPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: onPlayerDeath: " + player.getName());
+		plugin.sendDebugMsg("onPlayerDeath: " + player.getName());
 		try {
 			event.setRespawnLocation(plugin.getTownyUniverse().getTownSpawnLocation(player, true));
 		} catch (TownyException e) {
@@ -213,8 +212,7 @@ public class TownyPlayerListener extends PlayerListener {
 			if (sendToMsg)
 				player.sendMessage(toMsg);
 			
-			if (TownySettings.getDebug())
-				System.out.println("[Towny] Debug: onPlayerMoveChunk: " + fromWild + " ^ " + toWild + " " + fromTown + " = " + toTown);
+			plugin.sendDebugMsg("onPlayerMoveChunk: " + fromWild + " ^ " + toWild + " " + fromTown + " = " + toTown);
 		}
 		
 	}
@@ -253,8 +251,7 @@ public class TownyPlayerListener extends PlayerListener {
 		else
 			return;
 
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: onCommand took " + (System.currentTimeMillis() - start) + "ms");
+		plugin.sendDebugMsg("onCommand took " + (System.currentTimeMillis() - start) + "ms");
 		event.setCancelled(true);
 	}
 	
@@ -636,7 +633,7 @@ public class TownyPlayerListener extends PlayerListener {
 				if (resident.getTown() != town)
 					throw new TownyException("Selected area is not part of your town.");
 
-				if (town.isMayor(resident))
+				if (town.isMayor(resident) || town.hasAssistant(resident))
 					townBlock.setForSale(forSale);
 				else
 					try {
@@ -742,11 +739,11 @@ public class TownyPlayerListener extends PlayerListener {
 			} else
 				try {
 					boolean isTownyAdmin = plugin.isTownyAdmin(player);
-					if (!TownySettings.isAllowingTownSpawnTravel() && !isTownyAdmin)
+					if (!TownySettings.isAllowingTownSpawnTravel() && !isTownyAdmin && !plugin.hasPermission(player, "towny.spawntp"))
 						throw new TownyException("Town spawn travel is forbidden.");
 					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
 					Town town = plugin.getTownyUniverse().getTown(split[1]);
-					if (!isTownyAdmin && !resident.pay(TownySettings.getTownSpawnTravelPrice()))
+					if (!isTownyAdmin && TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getTownSpawnTravelPrice()))
 						throw new TownyException("Cannot afford to teleport to "+town.getName()+".");
 					if (plugin.checkEssentialsTeleport(player))
 						player.teleportTo(town.getSpawn());
@@ -1281,11 +1278,9 @@ public class TownyPlayerListener extends PlayerListener {
 					blockCost = TownySettings.getClaimPrice();
 				}
 				
-				if (TownySettings.getDebug())
-					System.out.println("[Towny] Debug: townClaim: Pre-Filter Selection " + Arrays.toString(selection.toArray(new WorldCoord[0])));
+				plugin.sendDebugMsg("townClaim: Pre-Filter Selection " + Arrays.toString(selection.toArray(new WorldCoord[0])));
 				selection = removeTownOwnedBlocks(selection);
-				if (TownySettings.getDebug())
-					System.out.println("[Towny] Debug: townClaim: Post-Filter Selection " + Arrays.toString(selection.toArray(new WorldCoord[0])));
+				plugin.sendDebugMsg("townClaim: Post-Filter Selection " + Arrays.toString(selection.toArray(new WorldCoord[0])));
 				checkIfSelectionIsValid(town, selection, attachedToEdge, blockCost, false);
 				
 				try {
@@ -1403,8 +1398,7 @@ public class TownyPlayerListener extends PlayerListener {
 		if (owner instanceof Town) {
 			Town town = (Town)owner;
 			int available = TownySettings.getMaxTownBlocks(town) - town.getTownBlocks().size();
-			if (TownySettings.getDebug())
-				System.out.println("[Towny] Debug: Claim Check Available: " + available);
+			plugin.sendDebugMsg("Claim Check Available: " + available);
 			if (available - selection.size() < 0)
 				throw new TownyException("Not enough available town blocks to claim this selection.");
 		}
@@ -1661,12 +1655,15 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatCommand("", "", "[on/off]", "Toggle all permissions"));
 			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [on/off]", "Toggle specifics"));
 			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [build/destroy/switch] [on/off]", ""));
-			player.sendMessage(ChatTools.formatCommand("Eg", "/town set", "ally off", ""));
-			player.sendMessage(ChatTools.formatCommand("Eg", "/resident set", "resident build on", ""));
+			player.sendMessage(ChatTools.formatCommand("Eg", "/town set perm", "ally off", ""));
+			player.sendMessage(ChatTools.formatCommand("Eg", "/resident set perm", "friend build on", ""));
 			player.sendMessage("Use 'friend' instead of 'resident' for plot permissions.");
 			player.sendMessage("Resident plots don't make use of outsider permissions.");
 		} else {
 			TownyPermission perm = townBlockOwner.getPermissions();
+			String arg0 = split[0];
+			if (arg0.equalsIgnoreCase("friend"))
+				arg0 = "resident";
 			if (split.length == 1)
 				try {
 					perm.setAll(parseOnOff(split[0]));
@@ -1694,12 +1691,9 @@ public class TownyPlayerListener extends PlayerListener {
 				try {
 					boolean b = parseOnOff(split[2]);
 					String s = "";
-					String arg0 = split[0];
-					if (arg0.equalsIgnoreCase("friend"))
-						arg0 = "resident";
 					if ((arg0.equalsIgnoreCase("resident") || arg0.equalsIgnoreCase("outsider") || arg0.equalsIgnoreCase("ally"))
 							&& (split[1].equalsIgnoreCase("build") || split[1].equalsIgnoreCase("destroy") || split[1].equalsIgnoreCase("switch")))
-						s = split[0] + split[1];
+						s = arg0 + split[1];
 					perm.set(s, b);
 				} catch (Exception e) {
 				}
@@ -1768,7 +1762,7 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("Resident", "/nation", "deposit [$]", ""));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "withdraw [$]", ""));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "[add/kick] [town] .. [town]", ""));
-		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove]", "Leave your nation"));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove] [resident]", ""));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "set [] .. []", ""));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "ally [add/remove] [nation]", "Set you alliance."));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "enemy [add/remove] [nation]", "Set you enemys."));
@@ -2497,16 +2491,22 @@ public class TownyPlayerListener extends PlayerListener {
 		Runtime run = Runtime.getRuntime();
 		player.sendMessage(ChatTools.formatTitle("Towny Admin Panel"));
 		player.sendMessage(Colors.Blue + "[" + Colors.LightBlue + "Towny" + Colors.Blue + "] "
-				+ Colors.Green + " WarTime: " + Colors.LightGreen + plugin.getTownyUniverse().isWarTime());
+				+ Colors.Green + "WarTime: " + Colors.LightGreen + plugin.getTownyUniverse().isWarTime()
+				+ Colors.Gray + " | "
+				+ Colors.Green + "Health Regen: " + (plugin.getTownyUniverse().isHealthRegenRunning() ? Colors.LightGreen + "On" : Colors.Rose + "Off")
+				+ Colors.Gray + " | "
+				+ Colors.Green + "Mob Removal: " + (plugin.getTownyUniverse().isMobRemovalRunning() ? Colors.LightGreen + "On" : Colors.Rose + "Off")
+				+ Colors.Gray + " | "
+				+ Colors.Green + "Daily: " + (plugin.getTownyUniverse().isDailyTimerRunning() ? Colors.LightGreen + "On" : Colors.Rose + "Off"));
 		try {
 			TownyIConomyObject.checkIConomy();
 			player.sendMessage(Colors.Blue + "[" + Colors.LightBlue + "iConomy" + Colors.Blue + "] "
-					+ Colors.Green + " Economy: " + Colors.LightGreen + getTotalEconomy() + " " + iConomy.currency + Colors.Gray + " | "
+					+ Colors.Green + "Economy: " + Colors.LightGreen + getTotalEconomy() + " " + iConomy.currency + Colors.Gray + " | "
 					+ Colors.Green + "Bank Accounts: " + Colors.LightGreen + iConomy.db.accounts.returnMap().size());
 		} catch (Exception e) {
 		}
 		player.sendMessage(Colors.Blue + "[" + Colors.LightBlue + "Server" + Colors.Blue + "] "
-				+ Colors.Green + " Memory: " + Colors.LightGreen + MemMgmt.getMemSize(run.totalMemory()) + Colors.Gray + " | "
+				+ Colors.Green + "Memory: " + Colors.LightGreen + MemMgmt.getMemSize(run.totalMemory()) + Colors.Gray + " | "
 				+ Colors.Green + "Threads: " + Colors.LightGreen + Thread.getAllStackTraces().keySet().size() + Colors.Gray + " | "
 				+ Colors.Green + "Time: " + Colors.LightGreen + plugin.getTownyUniverse().getFormatter().getTime());
 		player.sendMessage(Colors.Yellow + MemMgmt.getMemoryBar(50, run));
@@ -2573,7 +2573,14 @@ public class TownyPlayerListener extends PlayerListener {
 				} catch (TownyException e) {
 					plugin.sendErrorMsg(player, e.getError());
 				}
-		} else {
+		} else if (split[0].equalsIgnoreCase("devmode"))
+			try {
+				plugin.setSetting(TownySettings.Bool.DEV_MODE, parseOnOff(split[1]));
+				plugin.sendMsg(player, "Turned DevMode " + (TownySettings.isDevMode() ? Colors.Green + "on" : Colors.Red + "off"));
+			} catch (Exception e) {
+				plugin.sendErrorMsg(player, "Must specify if it's [on/off]");
+			}
+		else {
 			plugin.sendErrorMsg(player, "Invalid administrative property.");
 			return;
 		}

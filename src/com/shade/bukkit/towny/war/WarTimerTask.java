@@ -27,8 +27,7 @@ public class WarTimerTask extends TownyTimerTask {
 			warEvent.getWarTimer().cancel();
 			universe.setWarEvent(null);
 			universe.getPlugin().updateCache();
-			if (TownySettings.getDebug())
-				System.out.println("[Towny] [War] Debug: End");
+			universe.getPlugin().sendDebugMsg("War ended.");
 			return;
 		}
 		
@@ -69,7 +68,6 @@ public class WarTimerTask extends TownyTimerTask {
 			}
 		}
 		
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] [War] Debug: # Players: " + numPlayers);
+		universe.getPlugin().sendDebugMsg("# Players: " + numPlayers);
 	}
 }

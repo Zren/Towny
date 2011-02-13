@@ -21,7 +21,7 @@ import com.shade.util.StringMgmt;
 
 public class TownySettings {
 	// String[]
-	enum StrArr {
+	public enum StrArr {
 		SAVE_DATABASES,
 		RESIDENT_COMMANDS,
 		TOWN_COMMANDS,
@@ -34,11 +34,12 @@ public class TownySettings {
 		MOB_REMOVAL_ENTITIES
 	};
 	// Integer[]
-	enum IntArr {
-		SWITCH_IDS
+	public enum IntArr {
+		SWITCH_IDS,
+		UNCLAIMED_ZONE_IGNORE
 	};
 	// String
-	enum Str {
+	public enum Str {
 		LOAD_DATABASE,
 		DEFAULT_TOWN_NAME,
 		DEFAULT_MAYOR_PREFIX,
@@ -75,7 +76,7 @@ public class TownySettings {
 		NPC_PREFIX
 	};
 	// Integer
-	enum Int {
+	public enum Int {
 		INACTIVE_AFTER_TIME,
 		DELETED_AFTER_TIME,
 		DAY_INTERVAL,
@@ -101,10 +102,12 @@ public class TownySettings {
 		WARTIME_BASE_SPOILS,
 		WARTIME_DEATH_PRICE,
 		DEATH_PRICE,
-		WARTIME_TOWN_BLOCK_LOSS_PRICE
+		WARTIME_TOWN_BLOCK_LOSS_PRICE,
+		PRICE_TOWN_UPKEEP,
+		PRICE_NATION_UPKEEP
 	};
 	// Boolean
-	enum Bool {
+	public enum Bool {
 		FIRST_RUN,
 		FRIENDLY_FIRE,
 		TOWN_CREATION_ADMIN_ONLY,
@@ -125,7 +128,7 @@ public class TownySettings {
 		DEV_MODE
 	};
 	// Nation Level
-	enum NationLevel {
+	public enum NationLevel {
 		NAME_PREFIX,
 		NAME_POSTFIX,
 		CAPITAL_PREFIX,
@@ -134,7 +137,7 @@ public class TownySettings {
 		KING_POSTFIX
 	};
 	// Town Level
-	enum TownLevel {
+	public enum TownLevel {
 		NAME_PREFIX,
 		NAME_POSTFIX,
 		MAYOR_PREFIX,
@@ -171,10 +174,13 @@ public class TownySettings {
 		configStrArr.put(TownySettings.StrArr.TOWN_CHAT_COMMANDS, new String[]{"/tc"});
 		configStrArr.put(TownySettings.StrArr.NATION_CHAT_COMMANDS, new String[]{"/nc"});
 		configStrArr.put(TownySettings.StrArr.MOB_REMOVAL_ENTITIES, new String[]{
-				"EntityZombie", "EntitySkeleton", "EntityCreeper", "EntitySpider", "EntitySquid", "EntityGhast", "EntityPigZombie"
+				"CraftSlime", "CraftGhast", "CraftChicken", "CraftCow", "CraftPig",
+				"CraftSheep","CraftCreeper", "CraftGiant", "CraftSkeleton", 
+				"CraftSpider", "CraftZombie", "CraftSquid", "CraftPigZombie"
 		});
 		// Integer[]
 		configIntArr.put(TownySettings.IntArr.SWITCH_IDS, new Integer[]{64,69,70,71,72,77});
+		configIntArr.put(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE, new Integer[]{14,15,16,21,56,65,66,73,74,89});
 		// String
 		configStr.put(TownySettings.Str.LOAD_DATABASE, "flatfile");
 		configStr.put(TownySettings.Str.DEFAULT_TOWN_NAME, "");
@@ -237,6 +243,8 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.WARTIME_DEATH_PRICE, 200);
 		configInt.put(TownySettings.Int.DEATH_PRICE, 10);
 		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_LOSS_PRICE, 100);
+		configInt.put(TownySettings.Int.PRICE_TOWN_UPKEEP, 10);
+		configInt.put(TownySettings.Int.PRICE_NATION_UPKEEP, 100);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -251,7 +259,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.MODIFY_CHAT_NAME, true);
 		configBool.put(TownySettings.Bool.DELETE_OLD_RESIDENTS, false);
 		configBool.put(TownySettings.Bool.DEBUG_MODE, false);
-		configBool.put(TownySettings.Bool.MOB_REMOVAL, false);
+		configBool.put(TownySettings.Bool.MOB_REMOVAL, true);
 		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
 		configBool.put(TownySettings.Bool.ALLOW_OUTPOSTS, true);
 		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL, true);
@@ -732,7 +740,7 @@ public class TownySettings {
 	}
 	
 	public static String[] getCouldntPayTaxesMsg(TownyObject obj, String reaction) {
-		return parseString(String.format(getString(TownySettings.Str.MSG_COULDNT_PAY_TAXES), reaction));
+		return parseString(String.format(getString(TownySettings.Str.MSG_COULDNT_PAY_TAXES), obj.getName(), reaction));
 	}
 	
 	public static String[] getDelResidentMsg(Resident resident) {
@@ -799,6 +807,10 @@ public class TownySettings {
 		return getIntArr(TownySettings.IntArr.SWITCH_IDS);
 	}
 	
+	public static Integer[] getUnclaimedZoneIgnoreIds() {
+		return getIntArr(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE);
+	}
+	
 	/************************************************************/
 	
 	//TODO: better way to set values besides passing the filepath as a param
@@ -855,5 +867,13 @@ public class TownySettings {
 	
 	public static boolean isDevMode() {
 		return getBoolean(TownySettings.Bool.DEV_MODE);
+	}
+
+	public static int getTownUpkeepCost() {
+		return getInt(TownySettings.Int.PRICE_TOWN_UPKEEP);
+	}
+	
+	public static int getNationUpkeepCost() {
+		return getInt(TownySettings.Int.PRICE_NATION_UPKEEP);
 	}
 }

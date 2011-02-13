@@ -1,4 +1,4 @@
-package com.shade.bukkit.towny;
+package com.shade.bukkit.towny.object;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,15 +15,21 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.shade.bukkit.towny.AlreadyRegisteredException;
+import com.shade.bukkit.towny.DailyTimerTask;
+import com.shade.bukkit.towny.EmptyNationException;
+import com.shade.bukkit.towny.EmptyTownException;
+import com.shade.bukkit.towny.HealthRegenTimerTask;
+import com.shade.bukkit.towny.IConomyException;
+import com.shade.bukkit.towny.MobRemovalTimerTask;
+import com.shade.bukkit.towny.NotRegisteredException;
+import com.shade.bukkit.towny.Towny;
+import com.shade.bukkit.towny.TownyException;
+import com.shade.bukkit.towny.TownyFormatter;
+import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.towny.db.TownyDataSource;
 import com.shade.bukkit.towny.db.TownyFlatFileSource;
 import com.shade.bukkit.towny.db.TownyHModFlatFileSource;
-import com.shade.bukkit.towny.object.Nation;
-import com.shade.bukkit.towny.object.Resident;
-import com.shade.bukkit.towny.object.Town;
-import com.shade.bukkit.towny.object.TownBlock;
-import com.shade.bukkit.towny.object.TownyObject;
-import com.shade.bukkit.towny.object.TownyWorld;
 import com.shade.bukkit.towny.war.War;
 import com.shade.bukkit.towny.war.WarSpoils;
 import com.shade.bukkit.util.ChatTools;
@@ -103,6 +109,18 @@ public class TownyUniverse extends TownyObject {
 			healthRegenTimer = null;
 		}
 	}
+	
+	public boolean isMobRemovalRunning() {
+		return mobRemoveTimer != null;
+	}
+	
+	public boolean isDailyTimerRunning() {
+		return dailyTimer != null;
+	}
+	
+	public boolean isHealthRegenRunning() {
+		return healthRegenTimer != null;
+	}
 
 	public void onLogin(Player player) throws AlreadyRegisteredException, NotRegisteredException {
 		Resident resident;
@@ -159,8 +177,7 @@ public class TownyUniverse extends TownyObject {
 		} catch (TownyException x) {
 			if (forceTeleport) {
 				player.teleportTo(player.getWorld().getSpawnLocation());
-				if (TownySettings.getDebug())
-					System.out.println("[Towny] Debug: onTownSpawn: [forced] "+player.getName());
+				plugin.sendDebugMsg("onTownSpawn: [forced] "+player.getName());
 			} else
 				plugin.sendErrorMsg(player, x.getError());
 		}
@@ -229,6 +246,11 @@ public class TownyUniverse extends TownyObject {
 		towns.put(newName.toLowerCase(), town);
 		towns.remove(oldName.toLowerCase());
 		town.setName(newName);
+		try {
+			Town oldTown = new Town(oldName);
+			oldTown.pay(oldTown.getIConomyBalance(), town);
+		} catch (IConomyException e) {
+		}
 		getDataSource().saveTown(town);
 		getDataSource().saveTownList();
 	}
@@ -243,6 +265,11 @@ public class TownyUniverse extends TownyObject {
 		nations.put(newName.toLowerCase(), nation);
 		nations.remove(oldName.toLowerCase());
 		nation.setName(newName);
+		try {
+			Nation oldNation = new Nation(oldName);
+			oldNation.pay(oldNation.getIConomyBalance(), nation);
+		} catch (IConomyException e) {
+		}
 		getDataSource().saveNation(nation);
 		getDataSource().saveNationList();
 	}
@@ -351,27 +378,27 @@ public class TownyUniverse extends TownyObject {
 		return players;
 	}
 
-	public Collection<Resident> getResidents() {
-		return residents.values();
+	public List<Resident> getResidents() {
+		return (List<Resident>) residents.values();
 	}
 
 	public Set<String> getResidentKeys() {
 		return residents.keySet();
 	}
 
-	public Collection<Town> getTowns() {
-		return towns.values();
+	public List<Town> getTowns() {
+		return (List<Town>) towns.values();
 	}
 
-	public Collection<Nation> getNations() {
-		return nations.values();
+	public List<Nation> getNations() {
+		return (List<Nation>) nations.values();
 	}
 
-	public Collection<TownyWorld> getWorlds() {
-		return worlds.values();
+	public List<TownyWorld> getWorlds() {
+		return (List<TownyWorld>) worlds.values();
 	}
 	
-	public Collection<Town> getTownsWithoutNation() {
+	public List<Town> getTownsWithoutNation() {
 		List<Town> townFilter = new ArrayList<Town>();
 		for (Town town : getTowns())
 			if (!town.hasNation())
@@ -379,7 +406,7 @@ public class TownyUniverse extends TownyObject {
 		return townFilter;
 	}
 	
-	public Collection<Resident> getResidentsWithoutTown() {
+	public List<Resident> getResidentsWithoutTown() {
 		List<Resident> residentFilter = new ArrayList<Resident>();
 		for (Resident resident : getResidents())
 			if (!resident.hasTown())
@@ -387,7 +414,7 @@ public class TownyUniverse extends TownyObject {
 		return residentFilter;
 	}
 
-	public Collection<Resident> getActiveResidents() {
+	public List<Resident> getActiveResidents() {
 		List<Resident> activeResidents = new ArrayList<Resident>();
 		for (Resident resident : getResidents())
 			if (isActiveResident(resident))
@@ -755,7 +782,11 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void collectTownCosts() throws IConomyException {
-		//for (Town town : towns.values());
+		for (Town town : towns.values())
+			if (!town.pay(TownySettings.getTownUpkeepCost())) {
+				removeTown(town);
+				sendGlobalMessage(town.getName() + " couldn't afford to remain a town.");
+			}
 	}
 	
 	public void collectNationCosts() throws IConomyException {
@@ -806,5 +837,14 @@ public class TownyUniverse extends TownyObject {
 		return out;
 	}
 
-	
+	public boolean areAllAllies(List<Nation> possibleAllies) {
+		if (possibleAllies.size() <= 1)
+			return true;
+		else {
+			for (int i = 0; i < possibleAllies.size() - 1; i++)
+				if (!possibleAllies.get(i).hasAlly(possibleAllies.get(i+1)))
+					return false;
+			return true;
+		}
+	}
 }

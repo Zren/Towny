@@ -54,6 +54,7 @@ public class TownyPricesCommand extends TownyCommand {
 
 	/*
 	 * [New] Town: 100 | Nation: 500
+	 * [Upkeep] Town: 10 | Nation: 100
 	 * Town [Elden]:
 	 *     [Price] Plot: 100 | Outpost: 250
 	 *     [Upkeep] Resident: 20 | Plot: 50
@@ -70,6 +71,10 @@ public class TownyPricesCommand extends TownyCommand {
 				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(TownySettings.getNewTownPrice())
 				+ Colors.Gray + " | "
 				+ Colors.Green + "Nation: " + Colors.LightGreen + Integer.toString(TownySettings.getNewNationPrice()));
+		output.add(Colors.Yellow + "[Upkeep] "
+				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(TownySettings.getTownUpkeepCost())
+				+ Colors.Gray + " | "
+				+ Colors.Green + "Nation: " + Colors.LightGreen + Integer.toString(TownySettings.getNationUpkeepCost()));
 		if (town != null) {
 			output.add(Colors.Yellow + "Town ["+universe.getFormatter().getFormattedName(town)+"]");
 			output.add(Colors.Rose + "    [Price] "

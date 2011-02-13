@@ -12,11 +12,11 @@ import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.Towny;
 import com.shade.bukkit.towny.TownyException;
 import com.shade.bukkit.towny.TownySettings;
-import com.shade.bukkit.towny.TownyUniverse;
 import com.shade.bukkit.towny.object.Nation;
 import com.shade.bukkit.towny.object.Town;
 import com.shade.bukkit.towny.object.TownBlock;
 import com.shade.bukkit.towny.object.TownyIConomyObject;
+import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.WorldCoord;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
@@ -107,12 +107,15 @@ public class War {
 		for (Player player : universe.getOnlinePlayers())
 			sendStats(player);
 		try {
-			Nation winningNation = getWinningNation();
-			int winnings = getWarSpoils().getIConomyBalance() / 2; // Transactions might leave 1 coin. (OH noez!)
-			getWarSpoils().pay(winnings, winningNation);
-			universe.sendGlobalMessage(winningNation.getName() + " won " + winnings + " " + TownyIConomyObject.getIConomyCurrency() + ".");
+			
+			int halfWinnings = getWarSpoils().getIConomyBalance() / 2; // Transactions might leave 1 coin. (OH noez!)
+			int nationWinnings = halfWinnings / warringNations.size(); // Again, might leave residue.
+			for (Nation winningNation : warringNations) {
+				getWarSpoils().pay(nationWinnings, winningNation);
+				universe.sendGlobalMessage(winningNation.getName() + " won " + nationWinnings + " " + TownyIConomyObject.getIConomyCurrency() + ".");
+			}
 			KeyValue<Town,Integer> winningTownScore = getWinningTownScore();
-			universe.sendGlobalMessage(winningTownScore.key.getName() + " won " + winnings + " " + TownyIConomyObject.getIConomyCurrency() + " with the score " + winningTownScore.value + ".");
+			universe.sendGlobalMessage(winningTownScore.key.getName() + " won " + halfWinnings + " " + TownyIConomyObject.getIConomyCurrency() + " with the score " + winningTownScore.value + ".");
 		} catch (IConomyException e) {
 		} catch (TownyException e) {
 		}
@@ -141,7 +144,7 @@ public class War {
 
 	public void townScored(Town town, int n) {
 		townScores.put(town, townScores.get(town) + n);
-		universe.sendGlobalMessage(TownySettings.getWarTimeScoreMsg(town, n));
+		universe.sendTownMessage(town, TownySettings.getWarTimeScoreMsg(town, n));
 	}
 	
 	public void damage(Town attacker, TownBlock townBlock) throws NotRegisteredException {
@@ -149,13 +152,16 @@ public class War {
 		int hp = warZone.get(worldCoord) - 1;
 		if (hp > 0) {
 			warZone.put(worldCoord, hp);
-			universe.sendTownMessage(townBlock.getTown(), Colors.Red + "["+townBlock.getTown().getName()+"]("+townBlock.getCoord().toString()+") HP: "+hp);
+			if (hp % 10 == 0)
+				universe.sendTownMessage(townBlock.getTown(), Colors.Gray + "["+townBlock.getTown().getName()+"]("+townBlock.getCoord().toString()+") HP: "+hp);
 		} else
 			remove(attacker, townBlock);
 	}
 	
 	public void remove(Town attacker, TownBlock townBlock) throws NotRegisteredException {
 		townScored(attacker, TownySettings.getWarPointsForTownBlock());
+		townBlock.getTown().addBonusBlocks(-1);
+		attacker.addBonusBlocks(1);
 		try {
 			if (!townBlock.getTown().pay(TownySettings.getWartimeTownBlockLossPrice(), attacker)) {
 				remove(townBlock.getTown());
@@ -168,6 +174,8 @@ public class War {
 			remove(townBlock.getTown());
 		else
 			remove(townBlock.getWorldCoord());
+		plugin.getTownyUniverse().getDataSource().saveTown(townBlock.getTown());
+		plugin.getTownyUniverse().getDataSource().saveTown(attacker);
 	}
 	
 	public void remove(TownBlock townBlock) throws NotRegisteredException {
@@ -261,6 +269,8 @@ public class War {
 	public void checkEnd() {
 		if (warringNations.size() <= 1)
 			toggleEnd();
+		else if (plugin.getTownyUniverse().areAllAllies(warringNations))
+			toggleEnd();
 	}
 	
 	public void checkTown(Town town) {
@@ -347,13 +357,6 @@ public class War {
 	
 	public boolean isWarringNation(Nation nation) {
 		return warringNations.contains(nation);
-	}
-
-	public Nation getWinningNation() throws TownyException {
-		if (warringNations.size() == 1)
-			return warringNations.get(0);
-		else
-			throw new TownyException();
 	}
 	
 	public KeyValue<Town,Integer> getWinningTownScore() throws TownyException {

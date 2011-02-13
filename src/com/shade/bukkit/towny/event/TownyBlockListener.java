@@ -12,14 +12,15 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.PlayerCache;
+import com.shade.bukkit.towny.PlayerCache.TownBlockStatus;
 import com.shade.bukkit.towny.Towny;
 import com.shade.bukkit.towny.TownyException;
 import com.shade.bukkit.towny.TownySettings;
-import com.shade.bukkit.towny.TownyUniverse;
 import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.Resident;
 import com.shade.bukkit.towny.object.Town;
 import com.shade.bukkit.towny.object.TownBlock;
+import com.shade.bukkit.towny.object.TownyUniverse;
 
 //TODO: Admin/Group Build Rights
 //TODO: algorithm is updating coord twice when updating permissions 
@@ -60,8 +61,7 @@ public class TownyBlockListener extends BlockListener {
 
 			onBlockBreakEvent(event, true);
 
-			if (TownySettings.getDebug())
-				System.out.println("[Towny] Debug: onBlockBreakEvent took " + (System.currentTimeMillis() - start) + "ms");
+			plugin.sendDebugMsg("onBlockBreakEvent took " + (System.currentTimeMillis() - start) + "ms");
 		}
 	}
 
@@ -94,8 +94,7 @@ public class TownyBlockListener extends BlockListener {
 
 		onBlockPlaceEvent(event, true);
 
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: onBlockPlacedEvent took " + (System.currentTimeMillis() - start) + "ms");
+		plugin.sendDebugMsg("onBlockPlacedEvent took " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	public void onBlockPlaceEvent(BlockPlaceEvent event, boolean firstCall) {
@@ -128,8 +127,7 @@ public class TownyBlockListener extends BlockListener {
 
 		onBlockInteractEvent(event, true);
 
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: onBlockInteractEvent took " + (System.currentTimeMillis() - start) + "ms");
+		plugin.sendDebugMsg("onBlockInteractEvent took " + (System.currentTimeMillis() - start) + "ms");
 	}
 	
 	
@@ -453,13 +451,88 @@ public class TownyBlockListener extends BlockListener {
 		}
 	}
 	
+	public void updateTownBlockStatus(Player player, Coord pos) {
+		if (plugin.isTownyAdmin(player)) {
+			cacheStatus(player, pos, TownBlockStatus.ADMIN);
+			return;
+		}
+		
+		TownyUniverse universe = plugin.getTownyUniverse();
+		TownBlock townBlock;
+		Town town;
+		try {
+			townBlock = universe.getWorld(player.getWorld().getName()).getTownBlock(pos);
+			town = townBlock.getTown();
+		} catch (NotRegisteredException e) {
+			// Unclaimed Zone switch rights
+			cacheStatus(player, pos, TownBlockStatus.UNCLAIMED_ZONE);
+			return;
+		}
+
+		try {
+			Resident resident = universe.getResident(player.getName());
+			
+			// War Time switch rights
+			if (universe.isWarTime())
+				try {
+					if (!resident.getTown().getNation().isNeutral() && !town.getNation().isNeutral()) {
+						cacheStatus(player, pos, TownBlockStatus.WARTIME);
+						return;
+					}	
+				} catch (NotRegisteredException e) {
+				}
+			
+			// Resident Plot switch rights
+			try {
+				Resident owner = townBlock.getResident();
+				if (resident == owner)
+					cacheStatus(player, pos, TownBlockStatus.PLOT_OWNER);
+				else if (owner.hasFriend(resident))
+					cacheStatus(player, pos, TownBlockStatus.PLOT_FRIEND);
+				else
+					// Exit out and use town permissions
+					throw new TownyException();
+
+				return;
+			} catch (NotRegisteredException x) {
+			} catch (TownyException x) {
+			}
+
+			// Town resident destroy rights
+			if (!resident.hasTown())
+				throw new TownyException();
+
+			if (resident.getTown() != town) {
+				// Allied destroy rights
+				if (universe.isAlly(resident.getTown(), town))
+					cacheStatus(player, pos, TownBlockStatus.TOWN_ALLY);
+				else
+					cacheStatus(player, pos, TownBlockStatus.OUTSIDER);
+			} else if (resident.isMayor() || resident.getTown().hasAssistant(resident))
+				cacheStatus(player, pos, TownBlockStatus.TOWN_OWNER);
+			else
+				cacheStatus(player, pos, TownBlockStatus.TOWN_RESIDENT);
+		} catch (TownyException e) {
+			// Outsider destroy rights
+			cacheStatus(player, pos, TownBlockStatus.OUTSIDER);
+		}
+	}
+	
+	private void cacheStatus(Player player, Coord coord, TownBlockStatus townBlockStatus) {
+		PlayerCache cache = getCache(player);
+		cache.updateCoord(coord);
+		cache.setStatus(townBlockStatus);
+
+		plugin.sendDebugMsg(player.getName() + " (" + coord.toString() + ") Cached Status: " + townBlockStatus);
+	}
+
+
 	public void cacheBuild(Player player, Coord coord, boolean buildRight) {
 		PlayerCache cache = getCache(player);
 		cache.updateCoord(coord);
 		cache.setBuildPermission(buildRight);
 
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: " + player.getName() + " (" + coord.toString() + ") Cached Build: " + buildRight);
+		plugin.sendDebugMsg(player.getName() + " (" + coord.toString() + ") Cached Build: " + buildRight);
 	}
 
 	public void cacheDestroy(Player player, Coord coord, boolean destroyRight) {
@@ -467,8 +540,7 @@ public class TownyBlockListener extends BlockListener {
 		cache.updateCoord(coord);
 		cache.setDestroyPermission(destroyRight);
 
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: " + player.getName() + " (" + coord.toString() + ") Cached Destroy: " + destroyRight);
+		plugin.sendDebugMsg(player.getName() + " (" + coord.toString() + ") Cached Destroy: " + destroyRight);
 	}
 	
 	public void cacheSwitch(Player player, Coord coord, boolean switchRight) {
@@ -476,8 +548,7 @@ public class TownyBlockListener extends BlockListener {
 		cache.updateCoord(coord);
 		cache.setSwitchPermission(switchRight);
 
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] Debug: " + player.getName() + " (" + coord.toString() + ") Cached Switch: " + switchRight);
+		plugin.sendDebugMsg(player.getName() + " (" + coord.toString() + ") Cached Switch: " + switchRight);
 	}
 	
 	public PlayerCache getCache(Player player) {

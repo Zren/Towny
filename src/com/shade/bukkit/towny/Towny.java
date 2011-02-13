@@ -33,6 +33,7 @@ import com.shade.bukkit.towny.event.TownyEntityMonitorListener;
 import com.shade.bukkit.towny.event.TownyPlayerListener;
 import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.TownyIConomyObject;
+import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
@@ -112,9 +113,7 @@ public class Towny extends JavaPlugin {
 		pdfFile.getVersion();
 		
 		townyUniverse = new TownyUniverse(this);
-		
 		townyUniverse.loadSettings();
-		Coord.setCellSize(TownySettings.getTownBlockSize());
 		
 		System.out.println("[Towny] Database: [Load] " + TownySettings.getLoadDatabase() + " [Save] " + TownySettings.getSaveDatabase());
 		if (!townyUniverse.loadDatabase(TownySettings.getLoadDatabase())) {
@@ -146,6 +145,13 @@ public class Towny extends JavaPlugin {
 			else
 				System.out.println("[Towny] Permission system not enabled. Towny Admins not loaded.");
 		
+		test = getServer().getPluginManager().getPlugin("iConomy");
+		if (test == null)
+			setSetting(TownySettings.Bool.USING_ICONOMY, false);
+		test = getServer().getPluginManager().getPlugin("Essentials");
+		if (test == null)
+			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
+		
 		onLoad();
 		
 		if (TownySettings.isFirstRun()) {
@@ -153,6 +159,8 @@ public class Towny extends JavaPlugin {
 			TownySettings.setBoolean(getDataFolder().getPath() + "/settings/config.properties", TownySettings.Bool.FIRST_RUN, false);
 			townyUniverse.loadSettings();
 		}
+		
+		
 
 		System.out.println("[Towny] Version: " + version + " - Mod Enabled");
 		
@@ -179,10 +187,14 @@ public class Towny extends JavaPlugin {
 		playerCache.clear();
 		playerMode.clear();
 		
+		townyUniverse = null;
+		
 		System.out.println("[Towny] Version: " + version + " - Mod Disabled");
 	}
 	
 	public void onLoad() {
+		townyUniverse.loadSettings();
+		Coord.setCellSize(TownySettings.getTownBlockSize());
 		TownyIConomyObject.setPlugin(this);
 		TownyCommand.setUniverse(townyUniverse);
 		townyUniverse.toggleDailyTimer(true);
@@ -256,17 +268,25 @@ public class Towny extends JavaPlugin {
 	public void sendErrorMsg(Player player, String msg) {
 		for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Rose + msg))
 			player.sendMessage(line);
-		if (TownySettings.getDebug())
-			System.out.println("[Towny] UserError: " + player.getName() + ": " + msg);
-		if (TownySettings.isDevMode()) {
-			Player townyDev = getServer().getPlayer("Shadeness");
-			for (String line : ChatTools.color(Colors.Gold + "[Towny] Console: " + Colors.Rose + msg))
-				townyDev.sendMessage(line);
-		}
+		sendDevMsg(msg);
 	}
 	
 	public void sendErrorMsg(String msg) {
 		System.out.println("[Towny] Error: " + msg);
+	}
+	
+	public void sendDevMsg(String msg) {
+		if (TownySettings.isDevMode()) {
+			Player townyDev = getServer().getPlayer("Shadeness");
+			for (String line : ChatTools.color(Colors.Gold + "[Towny] DevMode: " + Colors.Rose + msg))
+				townyDev.sendMessage(line);
+		}
+	}
+	
+	public void sendDebugMsg(String msg) {
+		if (TownySettings.getDebug())
+			System.out.println("[Towny] Debug: " + msg);
+		sendDevMsg(msg);
 	}
 
 	public void sendErrorMsg(Player player, String[] msg) {
@@ -378,5 +398,16 @@ public class Towny extends JavaPlugin {
 
 	public void sendMsg(String msg) {
 		System.out.println("[Towny] " + msg);
+	}
+	
+	public String getConfigPath() {
+		return getDataFolder().getPath() + "/settings/config.properties";
+	}
+	
+	public void setSetting(Object key, Object value) {
+		if (key instanceof TownySettings.Bool && value instanceof Boolean)
+			TownySettings.setBoolean(getConfigPath(), (TownySettings.Bool)key, (Boolean)value);
+		
+		//TODO: the rest
 	}
 }

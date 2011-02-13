@@ -78,4 +78,28 @@ public class PlayerCache {
 		destroyPermission = null;
 		switchPermission = null;
 	}
+	
+	public enum TownBlockStatus {
+		UNKOWN,
+		ADMIN,
+		UNCLAIMED_ZONE,
+		WARTIME,
+		OUTSIDER,
+		PLOT_OWNER,
+		PLOT_FRIEND,
+		PLOT_ALLY,
+		TOWN_OWNER,
+		TOWN_RESIDENT,
+		TOWN_ALLY
+	};
+	
+	private TownBlockStatus townBlockStatus = TownBlockStatus.UNKOWN;
+
+	public void setStatus(TownBlockStatus townBlockStatus) {
+		this.townBlockStatus = townBlockStatus;
+	}
+	
+	public TownBlockStatus getStatus() {
+		return townBlockStatus;
+	}
 }

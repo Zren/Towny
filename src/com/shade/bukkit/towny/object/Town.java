@@ -16,7 +16,7 @@ import com.shade.bukkit.towny.TownySettings;
 import com.shade.bukkit.wallgen.WallSection;
 import com.shade.bukkit.wallgen.Walled;
 
-public class Town extends TownBlockOwner implements Walled {
+public class Town extends TownBlockOwner implements Walled, ResidentList {
 	private List<Resident> residents = new ArrayList<Resident>();
 	private List<Resident> assistants = new ArrayList<Resident>();
 	private List<WallSection> wallSections = new ArrayList<WallSection>();
@@ -67,8 +67,7 @@ public class Town extends TownBlockOwner implements Walled {
 		if (hasNation())
 			return nation;
 		else
-			throw new NotRegisteredException(
-					"Town doesn't belong to any nation.");
+			throw new NotRegisteredException("Town doesn't belong to any nation.");
 	}
 
 	public void setNation(Nation nation) throws AlreadyRegisteredException {
@@ -83,6 +82,7 @@ public class Town extends TownBlockOwner implements Walled {
 		this.nation = nation;
 	}
 
+	@Override
 	public List<Resident> getResidents() {
 		return residents;
 	}
@@ -172,7 +172,11 @@ public class Town extends TownBlockOwner implements Walled {
 	public int getBonusBlocks() {
 		return bonusBlocks;
 	}
-
+	
+	public void addBonusBlocks(int bonusBlocks) {
+		this.bonusBlocks += bonusBlocks;
+	}
+	
 	public void setHomeBlock(TownBlock homeBlock) throws TownyException {
 		if (homeBlock == null) {
 			this.homeBlock = null;

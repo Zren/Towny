@@ -16,6 +16,9 @@ public class KeyValueTable<K,V> {
 		this.keyValues = keyValues;
 	}
 
+	public KeyValueTable() {
+	}
+	
 	public KeyValueTable(Hashtable<K,V> table) {
 		this(new ArrayList<K>(table.keySet()), new ArrayList<V>(table.values()));
 	}
@@ -26,6 +29,14 @@ public class KeyValueTable<K,V> {
 		
 		for (int i = 0; i < keys.size(); i++)
 			keyValues.add(new KeyValue<K,V>(keys.get(i), values.get(i)));
+	}
+	
+	public void put(K key, V value) {
+		keyValues.add(new KeyValue<K,V>(key, value));
+	}
+	
+	public void add(KeyValue<K,V> keyValue) {
+		keyValues.add(keyValue);
 	}
 	
 	public void sortByKey() {

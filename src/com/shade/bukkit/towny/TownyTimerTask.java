@@ -2,6 +2,8 @@ package com.shade.bukkit.towny;
 
 import java.util.TimerTask;
 
+import com.shade.bukkit.towny.object.TownyUniverse;
+
 public class TownyTimerTask extends TimerTask {
 	protected TownyUniverse universe;
 

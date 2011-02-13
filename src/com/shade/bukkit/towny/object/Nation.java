@@ -11,7 +11,7 @@ import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.TownyException;
 import com.shade.bukkit.towny.TownySettings;
 
-public class Nation extends TownyIConomyObject {
+public class Nation extends TownyIConomyObject implements ResidentList {
 	private List<Resident> assistants = new ArrayList<Resident>();
 	private List<Town> towns = new ArrayList<Town>();
 	private List<Nation> allies = new ArrayList<Nation>();
@@ -307,7 +307,14 @@ public class Nation extends TownyIConomyObject {
 				throw new TownyException("There is not enough money in the bank.");
 		} else
 			throw new TownyException("iConomy has not been turned on.");
-			
+	}
+	
+	@Override
+	public List<Resident> getResidents() {
+		List<Resident> out = new ArrayList<Resident>();
+		for (Town town : getTowns())
+			out.addAll(town.getResidents());
+		return out;
 	}
 	
 	@Override

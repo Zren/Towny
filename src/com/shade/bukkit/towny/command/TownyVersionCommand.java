@@ -18,9 +18,7 @@ public class TownyVersionCommand extends TownyCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-		String output = Colors.Green + "Towny version: " + Colors.LightGreen + universe.getPlugin().getVersion()
-			+ Colors.Gray + " | "
-			+ Colors.Green + "CraftBukkit: " + Colors.LightGreen + universe.getPlugin().getServer().getVersion();
+		String output = Colors.Green + "Towny version: " + Colors.LightGreen + universe.getPlugin().getVersion();
 		if (sender instanceof Player) {
 			Player player = (Player)sender;
 			player.sendMessage(output);

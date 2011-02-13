@@ -8,9 +8,9 @@ import org.bukkit.event.entity.EntityListener;
 
 import com.shade.bukkit.towny.Towny;
 import com.shade.bukkit.towny.TownySettings;
-import com.shade.bukkit.towny.TownyUniverse;
 import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.TownBlock;
+import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.TownyWorld;
 
 public class TownyEntityListener extends EntityListener {
@@ -33,8 +33,7 @@ public class TownyEntityListener extends EntityListener {
 			if (preventDamageCall(a, b))
 				event.setCancelled(true);
 			
-			if (TownySettings.getDebug())
-				System.out.println("[Towny] Debug: onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
+			plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
 		}
 	}
 
@@ -69,9 +68,7 @@ public class TownyEntityListener extends EntityListener {
 		
 		if (entity instanceof Player) {
 			Player player = (Player)entity;
-			if (TownySettings.getDebug())
-				System.out.println("[Towny] Debug: onPlayerDeath: " + player.getName() + "[ID: " + entity.getEntityId() + "]");
-			
+			plugin.sendDebugMsg("onPlayerDeath: " + player.getName() + "[ID: " + entity.getEntityId() + "]");
 		}
     }
 }

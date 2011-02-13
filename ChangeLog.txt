@@ -47,7 +47,21 @@ v0.16:
 	Price for death during war. If a resident can't pay, its provided by the town. If the town is broke, town is removed from war.
 	Price for death for if not at war. Non player deaths will give the money to spoils of war pot.
 	Price for losing a townblock during war. If town is broke, town is removed from war.
-	
+	War works, it has a fair amount of message spam that will be streamlined as soon as I know the mechanics work.
+v0.17:
+	Mob removal
+	Reload not actually reloading.
+v0.18:
+	Fixed set perm using friend as an alias for resident.
+	Town and nation banks get moved when renaming.
+	Ignore protection in wilderness for particular blocks. (unclaimed_zone_ignore)
+	Automatically change config if a optional plugin isn't installed.
+	Town assistants can now set plots for sale.
+	During war. The death of a mayor or king will remove the town/nation from war.
+	Resident perms load now.
+	Added command "/towny top" to show a few highscore lists.
+	Added permission:
+		towny.spawntp (To let a player use /town spawn [town] even when ALLOW_TOWN_SPAWN_TRAVEL=false) 
 	
 TODO:	
 	

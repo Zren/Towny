@@ -1,10 +1,10 @@
 package com.shade.bukkit.invite;
 
 import com.shade.bukkit.towny.TownyException;
-import com.shade.bukkit.towny.TownyUniverse;
 import com.shade.bukkit.towny.object.Nation;
 import com.shade.bukkit.towny.object.Resident;
 import com.shade.bukkit.towny.object.Town;
+import com.shade.bukkit.towny.object.TownyUniverse;
 
 public class NationInvite extends Invite {
 	private String invitorName, nationName;
