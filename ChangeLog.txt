@@ -63,7 +63,10 @@ v0.18:
 	Resident perms load on boot now.
 	Added command "/towny top" to show a few highscore lists.
 	Added permission:
-		towny.spawntp (To let a player use /town spawn [town] even when ALLOW_TOWN_SPAWN_TRAVEL=false) 
+		towny.spawntp (To let a player use /town spawn [town] even when ALLOW_TOWN_SPAWN_TRAVEL=false)
+v0.19:
+	Forgot to override with build and switch for wild ignore blocks.
+	Moved all timers to Bukkits Scheduler.
 	
 TODO:	
 	

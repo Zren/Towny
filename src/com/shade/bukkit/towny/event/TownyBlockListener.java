@@ -151,6 +151,9 @@ public class TownyBlockListener extends BlockListener {
 		try {
 			PlayerCache cache = getCache(player);
 			cache.updateCoord(worldCoord);
+			TownBlockStatus status = cache.getStatus();
+			if (status == TownBlockStatus.UNCLAIMED_ZONE && TownySettings.isUnclaimedZoneIgnoreId(event.getBlock().getTypeId()))
+				return;
 			if (!cache.getBuildPermission()) { // If build cache is empty, throws null pointer
 				event.setBuild(false);
 				event.setCancelled(true);
@@ -199,6 +202,9 @@ public class TownyBlockListener extends BlockListener {
 			try {
 				PlayerCache cache = getCache(player);
 				cache.updateCoord(worldCoord);
+				TownBlockStatus status = cache.getStatus();
+				if (status == TownBlockStatus.UNCLAIMED_ZONE && TownySettings.isUnclaimedZoneIgnoreId(event.getBlock().getTypeId()))
+					return;
 				if (!cache.getSwitchPermission())
 					event.setCancelled(true);
 				if (cache.hasBlockErrMsg())
