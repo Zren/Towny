@@ -3,27 +3,29 @@ package com.shade.util;
 import java.util.List;
 
 public class StringMgmt {
-	public static String join(List<String> arr) {
+	@SuppressWarnings("rawtypes")
+	public static String join(List arr) {
 		return join(arr, " ");
 	}
 	
-	public static String join(List<String> arr, String separator) {
+	@SuppressWarnings("rawtypes")
+	public static String join( List arr, String separator) {
 		if (arr == null || arr.size() == 0)
 			return "";
-		String out = arr.get(0);
+		String out = arr.get(0).toString();
 		for (int i = 1; i < arr.size(); i++)
 			out += separator + arr.get(i);
 		return out;
 	}
 	
-	public static String join(String[] arr) {
+	public static String join(Object[] arr) {
 		return join(arr, " ");
 	}
 	
-	public static String join(String[] arr, String separator) {
+	public static String join(Object[] arr, String separator) {
 		if (arr.length == 0)
 			return "";
-		String out = arr[0];
+		String out = arr[0].toString();
 		for (int i = 1; i < arr.length; i++)
 			out += separator + arr[i];
 		return out;

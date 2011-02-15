@@ -110,11 +110,16 @@ public class TownyPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		Location from = event.getFrom();
 		Location to = event.getTo();
-
-		Coord fromCoord = Coord.parseCoord(from);
-		Coord toCoord = Coord.parseCoord(to);
-		if (!fromCoord.equals(toCoord))
-			onPlayerMoveChunk(player, fromCoord, toCoord, from, to);
+		
+		try {
+			TownyWorld fromWorld = plugin.getTownyUniverse().getWorld(from.getWorld().getName());
+			WorldCoord fromCoord = new WorldCoord(fromWorld, Coord.parseCoord(from));
+			WorldCoord toCoord = new WorldCoord(from.getWorld().equals(to.getWorld()) ? fromWorld : plugin.getTownyUniverse().getWorld(to.getWorld().getName()), Coord.parseCoord(to));
+			if (!fromCoord.equals(toCoord))
+				onPlayerMoveChunk(player, fromCoord, toCoord, from, to);
+		} catch (NotRegisteredException e) {
+			plugin.sendErrorMsg(player, e.getError());
+		}
 	}
 
 	@Override
@@ -122,7 +127,7 @@ public class TownyPlayerListener extends PlayerListener {
 		onPlayerMove(event);
 	}
 
-	public void onPlayerMoveChunk(Player player, Coord from, Coord to, Location fromLoc, Location toLoc) {
+	public void onPlayerMoveChunk(Player player, WorldCoord from, WorldCoord to, Location fromLoc, Location toLoc) {
 		TownyUniverse universe = plugin.getTownyUniverse();
 		
 		plugin.getCache(player).updateCoord(to);
@@ -525,7 +530,7 @@ public class TownyPlayerListener extends PlayerListener {
 
 			try {
 				if (split[0].equalsIgnoreCase("claim")) {
-					Coord coord = Coord.parseCoord(player);
+					WorldCoord coord = new WorldCoord(world, Coord.parseCoord(player));
 					residentClaim(resident, new WorldCoord(world, Coord.parseCoord(player)));
 
 					plugin.sendMsg(player, "Successfully claimed (" + coord + ").");
@@ -534,7 +539,7 @@ public class TownyPlayerListener extends PlayerListener {
 					plugin.getTownyUniverse().getDataSource().saveResident(resident);
 					plugin.getTownyUniverse().getDataSource().saveWorld(world);
 				} else if (split[0].equalsIgnoreCase("unclaim")) {
-					Coord coord = Coord.parseCoord(player);
+					WorldCoord coord = new WorldCoord(world, Coord.parseCoord(player));
 					residentUnclaim(resident, new WorldCoord(world, Coord.parseCoord(player)));
 
 					plugin.sendMsg(player, "Successfully unclaimed (" + coord + ").");

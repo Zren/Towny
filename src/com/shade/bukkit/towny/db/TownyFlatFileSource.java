@@ -94,7 +94,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 			try {
 				fin.close();
 			} catch (IOException ioe) {
-				System.out.println(ioe.getStackTrace());
+				ioe.printStackTrace();
 			}
 			return false;
 		}
@@ -121,7 +121,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 			try {
 				fin.close();
 			} catch (IOException ioe) {
-				System.out.println(ioe.getStackTrace());
+				ioe.printStackTrace();
 			}
 			return false;
 		}
@@ -148,7 +148,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 			try {
 				fin.close();
 			} catch (IOException ioe) {
-				System.out.println(ioe.getStackTrace());
+				ioe.printStackTrace();
 			}
 			return false;
 		}
@@ -179,7 +179,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 				try {
 					fin.close();
 				} catch (IOException ioe) {
-					System.out.println(ioe.getStackTrace());
+					ioe.printStackTrace();
 				}
 				return false;
 			}

@@ -34,6 +34,7 @@ import com.shade.bukkit.towny.event.TownyPlayerListener;
 import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.TownyIConomyObject;
 import com.shade.bukkit.towny.object.TownyUniverse;
+import com.shade.bukkit.towny.object.WorldCoord;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
@@ -316,7 +317,12 @@ public class Towny extends JavaPlugin {
 	}
 	
 	public void newCache(Player player) {
-		playerCache.put(player.getName().toLowerCase(), new PlayerCache(player));
+		try {
+			playerCache.put(player.getName().toLowerCase(), new PlayerCache(getTownyUniverse().getWorld(player.getWorld().getName()), player));
+		} catch (NotRegisteredException e) {
+			sendErrorMsg(player, "Could not create permission cache for this world.");
+		}
+		
 	}
 	
 	public void deleteCache(Player player) {
@@ -330,15 +336,19 @@ public class Towny extends JavaPlugin {
 		return playerCache.get(player.getName().toLowerCase());
 	}
 	
-	public void updateCache(Coord coord) {
+	public void updateCache(WorldCoord worldCoord) {
 		for (Player player : getServer().getOnlinePlayers())
-			if (Coord.parseCoord(player).equals(coord))
-				getCache(player).setLastTownBlock(coord); //Automatically resets permissions.
+			if (Coord.parseCoord(player).equals(worldCoord))
+				getCache(player).setLastTownBlock(worldCoord); //Automatically resets permissions.
 	}
 	
 	public void updateCache() {
 		for (Player player : getServer().getOnlinePlayers())
-			getCache(player).setLastTownBlock(Coord.parseCoord(player));
+			try {
+				getCache(player).setLastTownBlock(new WorldCoord(getTownyUniverse().getWorld(player.getWorld().getName()), Coord.parseCoord(player)));
+			} catch (NotRegisteredException e) {
+				deleteCache(player);
+			}
 	}
 	
 	public boolean isTownyAdmin(Player player) {

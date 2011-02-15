@@ -1,5 +1,7 @@
 package com.shade.bukkit.towny.object;
 
+import com.shade.bukkit.towny.TownySettings;
+
 public class TownyPermission {
 	public boolean residentBuild, residentDestroy, residentSwitch,
 		outsiderBuild, outsiderDestroy, outsiderSwitch,
@@ -74,5 +76,52 @@ public class TownyPermission {
 		if (allySwitch)
 			out += (out.length() > 0 ? "," : "") + "allySwitch";
 		return out;
+	}
+	
+	public enum ActionType {
+		BUILD,
+		DESTROY,
+		SWITCH;
+		
+		@Override
+		public String toString() {
+			return super.toString().toLowerCase();
+		}
+	};
+	
+	public boolean getResident(ActionType type) {
+		switch (type) {
+			case BUILD: return residentBuild;
+			case DESTROY: return residentDestroy;
+			case SWITCH: return residentSwitch;
+			default: throw new UnsupportedOperationException();
+		}
+	}
+	
+	public boolean getOutsider(ActionType type) {
+		switch (type) {
+			case BUILD: return outsiderBuild;
+			case DESTROY: return outsiderDestroy;
+			case SWITCH: return outsiderSwitch;
+			default: throw new UnsupportedOperationException();
+		}
+	}
+	
+	public boolean getAlly(ActionType type) {
+		switch (type) {
+			case BUILD: return allyBuild;
+			case DESTROY: return allyDestroy;
+			case SWITCH: return allySwitch;
+			default: throw new UnsupportedOperationException();
+		}
+	}
+	
+	public static boolean getUnclaimedZone(ActionType type) {
+		switch (type) {
+			case BUILD: return TownySettings.getUnclaimedZoneBuildRights();
+			case DESTROY: return TownySettings.getUnclaimedZoneDestroyRights();
+			case SWITCH: return TownySettings.getUnclaimedZoneSwitchRights();
+			default: throw new UnsupportedOperationException();
+		}
 	}
 }

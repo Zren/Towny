@@ -379,7 +379,7 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public List<Resident> getResidents() {
-		return (List<Resident>) residents.values();
+		return new ArrayList<Resident>(residents.values());
 	}
 
 	public Set<String> getResidentKeys() {
@@ -387,15 +387,15 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public List<Town> getTowns() {
-		return (List<Town>) towns.values();
+		return new ArrayList<Town>(towns.values());
 	}
 
 	public List<Nation> getNations() {
-		return (List<Nation>) nations.values();
+		return new ArrayList<Nation>(nations.values());
 	}
 
 	public List<TownyWorld> getWorlds() {
-		return (List<TownyWorld>) worlds.values();
+		return new ArrayList<TownyWorld>(worlds.values());
 	}
 	
 	public List<Town> getTownsWithoutNation() {

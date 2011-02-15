@@ -3,17 +3,20 @@ package com.shade.bukkit.towny;
 import org.bukkit.entity.Player;
 
 import com.shade.bukkit.towny.object.Coord;
+import com.shade.bukkit.towny.object.TownyWorld;
+import com.shade.bukkit.towny.object.WorldCoord;
 
 public class PlayerCache {
-	private Coord lastTownBlock;
+	private WorldCoord lastTownBlock;
 	private Boolean buildPermission, destroyPermission, switchPermission;
+	private String blockErrMsg;
 	//TODO: cache last entity attacked
 
-	public PlayerCache(Player player) {
-		this(Coord.parseCoord(player));
+	public PlayerCache(TownyWorld world, Player player) {
+		this(new WorldCoord(world, Coord.parseCoord(player)));
 	}
 	
-	public PlayerCache(Coord lastTownBlock) {
+	public PlayerCache(WorldCoord lastTownBlock) {
 		this.setLastTownBlock(lastTownBlock);
 	}
 
@@ -22,12 +25,12 @@ public class PlayerCache {
 	 * @param lastTownBlock
 	 */
 	
-	public void setLastTownBlock(Coord lastTownBlock) {
+	public void setLastTownBlock(WorldCoord lastTownBlock) {
 		reset();
 		this.lastTownBlock = lastTownBlock;
 	}
 
-	public Coord getLastTownBlock() {
+	public WorldCoord getLastTownBlock() {
 		return lastTownBlock;
 	}
 
@@ -64,7 +67,7 @@ public class PlayerCache {
 			return switchPermission;
 	}
 	
-	public boolean updateCoord(Coord pos) {
+	public boolean updateCoord(WorldCoord pos) {
 		if (!getLastTownBlock().equals(pos)) {
 			setLastTownBlock(pos);
 			return true;
@@ -77,13 +80,14 @@ public class PlayerCache {
 		buildPermission = null;
 		destroyPermission = null;
 		switchPermission = null;
+		blockErrMsg = null;
 	}
 	
 	public enum TownBlockStatus {
 		UNKOWN,
 		ADMIN,
 		UNCLAIMED_ZONE,
-		WARTIME,
+		WARZONE,
 		OUTSIDER,
 		PLOT_OWNER,
 		PLOT_FRIEND,
@@ -99,7 +103,24 @@ public class PlayerCache {
 		this.townBlockStatus = townBlockStatus;
 	}
 	
-	public TownBlockStatus getStatus() {
-		return townBlockStatus;
+	public TownBlockStatus getStatus() throws NullPointerException {
+		if (townBlockStatus == null)
+			throw new NullPointerException();
+		else
+			return townBlockStatus;
+	}
+
+	public void setBlockErrMsg(String blockErrMsg) {
+		this.blockErrMsg = blockErrMsg;
+	}
+
+	public String getBlockErrMsg() {
+		String temp = blockErrMsg;
+		setBlockErrMsg(null); // Delete error msg after reading it.
+		return temp;
+	}
+	
+	public boolean hasBlockErrMsg() {
+		return blockErrMsg != null;
 	}
 }

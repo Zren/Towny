@@ -9,6 +9,7 @@ import com.shade.bukkit.towny.object.Nation;
 import com.shade.bukkit.towny.object.Resident;
 import com.shade.bukkit.towny.object.Town;
 import com.shade.bukkit.towny.object.TownyIConomyObject;
+import com.shade.bukkit.towny.object.TownyObject;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
@@ -202,7 +203,17 @@ public class TownyFormatter {
 		return "";
 	}
 	
-	public String getFormattedName(Resident resident) {
+	public String getFormattedName(TownyObject obj) {
+		if (obj instanceof Resident)
+			return getFormattedResidentName((Resident) obj);
+		else if (obj instanceof Town)
+			return getFormattedTownName((Town) obj);
+		else if (obj instanceof Nation)
+			return getFormattedNationName((Nation) obj);
+		return obj.getName();
+	}
+	
+	public String getFormattedResidentName(Resident resident) {
 		if (resident == null)
 			return "null";
 		if (resident.isKing())
@@ -212,13 +223,13 @@ public class TownyFormatter {
 		return resident.getName();
 	}
 
-	public String getFormattedName(Town town) {
+	public String getFormattedTownName(Town town) {
 		if (town.isCapital())
 			return TownySettings.getCapitalPrefix(town) + town.getName() + TownySettings.getCapitalPostfix(town);
 		return TownySettings.getTownPrefix(town) + town.getName() + TownySettings.getTownPostfix(town);
 	}
 
-	public String getFormattedName(Nation nation) {
+	public String getFormattedNationName(Nation nation) {
 		return TownySettings.getNationPrefix() + nation.getName() + TownySettings.getNationPostfix();
 	}
 

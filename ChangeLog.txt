@@ -54,11 +54,13 @@ v0.17:
 v0.18:
 	Fixed set perm using friend as an alias for resident.
 	Town and nation banks get moved when renaming.
+	Rewrote block permissions to cache the status of the current TownBlock (Wilderness, WarZone, etc).
 	Ignore protection in wilderness for particular blocks. (unclaimed_zone_ignore)
-	Automatically change config if a optional plugin isn't installed.
+	Automatically change config if an optional plugin isn't installed.
 	Town assistants can now set plots for sale.
 	During war. The death of a mayor or king will remove the town/nation from war.
-	Resident perms load now.
+	Defeating a townblock during war will give your town +1 bonus, and the enemy town -1 bonus.
+	Resident perms load on boot now.
 	Added command "/towny top" to show a few highscore lists.
 	Added permission:
 		towny.spawntp (To let a player use /town spawn [town] even when ALLOW_TOWN_SPAWN_TRAVEL=false) 

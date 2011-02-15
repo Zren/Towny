@@ -3,6 +3,7 @@ package com.shade.bukkit.towny;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -149,8 +150,8 @@ public class TownySettings {
 	
 	private static final ConcurrentHashMap<TownySettings.StrArr,String[]> configStrArr
 		= new ConcurrentHashMap<TownySettings.StrArr,String[]>();
-	private static final ConcurrentHashMap<TownySettings.IntArr,Integer[]> configIntArr
-		= new ConcurrentHashMap<TownySettings.IntArr,Integer[]>();
+	private static final ConcurrentHashMap<TownySettings.IntArr,List<Integer>> configIntArr
+		= new ConcurrentHashMap<TownySettings.IntArr,List<Integer>>();
 	private static final ConcurrentHashMap<TownySettings.Str,String> configStr
 		= new ConcurrentHashMap<TownySettings.Str,String>();
 	private static final ConcurrentHashMap<TownySettings.Int,Integer> configInt
@@ -179,8 +180,8 @@ public class TownySettings {
 				"CraftSpider", "CraftZombie", "CraftSquid", "CraftPigZombie"
 		});
 		// Integer[]
-		configIntArr.put(TownySettings.IntArr.SWITCH_IDS, new Integer[]{64,69,70,71,72,77});
-		configIntArr.put(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE, new Integer[]{14,15,16,21,56,65,66,73,74,89});
+		configIntArr.put(TownySettings.IntArr.SWITCH_IDS,  new ArrayList<Integer>(Arrays.asList(new Integer[]{64,69,70,71,72,77})));
+		configIntArr.put(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE, new ArrayList<Integer>(Arrays.asList(new Integer[]{14,15,16,21,56,65,66,73,74,89})));
 		// String
 		configStr.put(TownySettings.Str.LOAD_DATABASE, "flatfile");
 		configStr.put(TownySettings.Str.DEFAULT_TOWN_NAME, "");
@@ -321,7 +322,9 @@ public class TownySettings {
                         int townBlockLimit = Integer.parseInt(tokens[5]);
                         newTownLevel(numResidents, tokens[1], tokens[2], tokens[3], tokens[4], townBlockLimit);
 						if (getDebug())
-							System.out.println("[Towny] Debug: Added town level: "+numResidents+" "+Arrays.toString(getTownLevel(numResidents).values().toArray()));
+							// Used to know the actual values registered
+							// System.out.println("[Towny] Debug: Added town level: "+numResidents+" "+Arrays.toString(getTownLevel(numResidents).values().toArray()));
+							System.out.println("[Towny] Debug: Added town level: "+numResidents+" "+Arrays.toString(tokens));
                     } catch (Exception e) {
                     	System.out.println("[Towny] Input Error: Town level ignored: " + line);
                     }
@@ -351,9 +354,11 @@ public class TownySettings {
                         int numResidents = Integer.parseInt(tokens[0]);
                         newNationLevel(numResidents, tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]);
 						if (getDebug())
-							System.out.println("[Towny] Debug: Added town level: "+numResidents+" "+Arrays.toString(getNationLevel(numResidents).values().toArray()));
+							// Used to know the actual values registered
+							// System.out.println("[Towny] Debug: Added nation level: "+numResidents+" "+Arrays.toString(getNationLevel(numResidents).values().toArray()));
+							System.out.println("[Towny] Debug: Added nation level: "+numResidents+" "+Arrays.toString(tokens));
                     } catch (Exception e) {
-                    	System.out.println("[Towny] Input Error: Town level ignored: " + line);
+                    	System.out.println("[Towny] Input Error: Nation level ignored: " + line);
                     }
             }
         fin.close();
@@ -412,6 +417,17 @@ public class TownySettings {
 			String line = kvFile.getString(key.toString().toLowerCase(), StringMgmt.join(getStrArr(key), ","));
 			configStrArr.put(key, line.split(","));
 		}
+		for (TownySettings.IntArr key : TownySettings.IntArr.values()) {
+			String line = kvFile.getString(key.toString().toLowerCase(), StringMgmt.join(getIntArr(key), ","));
+			String[] tokens = line.split(",");
+			List<Integer> nums = new ArrayList<Integer>();
+			for (String token : tokens)
+				try {
+					nums.add(Integer.parseInt(token));
+				} catch (NumberFormatException e) {
+				}
+			configIntArr.put(key, nums);
+		}
 		for (TownySettings.Str key : TownySettings.Str.values())
 			configStr.put(key, kvFile.getString(key.toString().toLowerCase(), getString(key)));
 		for (TownySettings.Int key : TownySettings.Int.values())
@@ -432,7 +448,7 @@ public class TownySettings {
 		return configStr.get(key);
 	}
 	
-	public static Integer[] getIntArr(TownySettings.IntArr key) {
+	public static List<Integer> getIntArr(TownySettings.IntArr key) {
 		return configIntArr.get(key);
 	}
 	
@@ -803,12 +819,20 @@ public class TownySettings {
 		return getInt(TownySettings.Int.PRICE_OUTPOST);
 	} 
 	
-	public static Integer[] getSwitchIds() {
+	public static List<Integer> getSwitchIds() {
 		return getIntArr(TownySettings.IntArr.SWITCH_IDS);
 	}
 	
-	public static Integer[] getUnclaimedZoneIgnoreIds() {
+	public static List<Integer> getUnclaimedZoneIgnoreIds() {
 		return getIntArr(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE);
+	}
+	
+	public static boolean isUnclaimedZoneIgnoreId(int id) {
+		return getIntArr(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE).contains(id);
+	}
+	
+	public static boolean isSwitchId(int id) {
+		return getIntArr(TownySettings.IntArr.SWITCH_IDS).contains(id);
 	}
 	
 	/************************************************************/
