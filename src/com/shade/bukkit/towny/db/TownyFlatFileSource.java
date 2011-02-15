@@ -687,11 +687,10 @@ public class TownyFlatFileSource extends TownyDataSource {
 			// Mobs
 			fout.write("mobs=" + Boolean.toString(town.hasMobs()) + newLine);
 			// TownBlocks
-			fout.write("townBlocks=" + utilSaveTownBlocks(town.getTownBlocks())
-					+ newLine);
+			fout.write("townBlocks=" + utilSaveTownBlocks(town.getTownBlocks()) + newLine);
 			// Home Block
-			fout.write("homeBlock=" + town.getHomeBlock().getWorld().getName()
-					+ "," + Integer.toString(town.getHomeBlock().getX()) + ","
+			fout.write("homeBlock=" + town.getHomeBlock().getWorld().getName() + ","
+					+ Integer.toString(town.getHomeBlock().getX()) + ","
 					+ Integer.toString(town.getHomeBlock().getZ()) + newLine);
 			// Spawn
 			fout.write("spawn=" + town.getSpawn().getWorld().getName() + ","
