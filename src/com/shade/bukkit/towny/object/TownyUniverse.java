@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -34,6 +33,7 @@ import com.shade.bukkit.towny.war.War;
 import com.shade.bukkit.towny.war.WarSpoils;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
+import com.shade.bukkit.util.MinecraftTools;
 import com.shade.util.FileMgmt;
 
 public class TownyUniverse extends TownyObject {
@@ -45,18 +45,14 @@ public class TownyUniverse extends TownyObject {
 	// private List<Election> elections;
 	private TownyFormatter formatter = new TownyFormatter(); //TODO : MAke static
 	private TownyDataSource dataSource;
-	private Timer dailyTimer = null;
-	private Timer mobRemoveTimer = null;
-	private Timer healthRegenTimer = null;
+	//private Timer dailyTimer = null;
+	//private Timer mobRemoveTimer = null;
+	//private Timer healthRegenTimer = null;
+	private int dailyTask = -1;
+	private int mobRemoveTask = -1;
+	private int healthRegenTask = -1;
 	private War warEvent;
 	private String rootFolder;
-	
-	
-	// TODO: lastOnline, an onEnable check to see if a new day has stated to
-	// collect taxes.
-	// TODO: Timer to start/stop war time, collect taxes, delete old users.
-	// TODO: Timer/Thread like Minigames that turns on during war time. Checks
-	// each player every second.
 	
 	public TownyUniverse() {
 		setName("");
@@ -74,52 +70,64 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public void newDay() {
-		if (dailyTimer == null)
+		if (!isDailyTimerRunning())
 			toggleDailyTimer(true);
-		dailyTimer.schedule(new DailyTimerTask(this), 0);
+		//dailyTimer.schedule(new DailyTimerTask(this), 0);
+		if (getPlugin().getServer().getScheduler().scheduleAsyncDelayedTask(getPlugin(), new DailyTimerTask(this)) == -1)
+			plugin.sendErrorMsg("Could not schedule newDay.");
 	}
 	
 	public void toggleMobRemoval(boolean on) {
-		if (on && mobRemoveTimer == null) {
-			mobRemoveTimer = new Timer();
-			mobRemoveTimer.scheduleAtFixedRate(new MobRemovalTimerTask(this, plugin.getServer()), 0, TownySettings.getMobRemovalSpeed());
-		} else if (!on && mobRemoveTimer != null) {
-			mobRemoveTimer.cancel();
-			mobRemoveTimer = null;
-		}
+		if (on && !isMobRemovalRunning()) {
+			//mobRemoveTimer = new Timer();
+			//mobRemoveTimer.scheduleAtFixedRate(new MobRemovalTimerTask(this, plugin.getServer()), 0, TownySettings.getMobRemovalSpeed());
+			mobRemoveTask = getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(getPlugin(), new MobRemovalTimerTask(this, plugin.getServer()), 0, MinecraftTools.convertToTicks(TownySettings.getMobRemovalSpeed()));
+			if (mobRemoveTask == -1)
+				plugin.sendErrorMsg("Could not schedule mob removal loop.");
+		} else if (!on && isMobRemovalRunning())
+			//mobRemoveTimer.cancel();
+			//mobRemoveTimer = null;
+			getPlugin().getServer().getScheduler().cancelTask(mobRemoveTask);
 	}
 	
 	public void toggleDailyTimer(boolean on) {
-		if (on && dailyTimer == null) {
-			dailyTimer = new Timer();
+		if (on && !isDailyTimerRunning()) {
+			//dailyTimer = new Timer();
 			long timeTillNextDay = TownySettings.getDayInterval() - System.currentTimeMillis() % TownySettings.getDayInterval();
-			dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), timeTillNextDay, TownySettings.getDayInterval());
-		} else if (!on && dailyTimer != null) {
-			dailyTimer.cancel();
-			dailyTimer = null;
-		}
+			//dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), timeTillNextDay, TownySettings.getDayInterval());
+			dailyTask = getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(getPlugin(), new DailyTimerTask(this), MinecraftTools.convertToTicks(timeTillNextDay), MinecraftTools.convertToTicks(TownySettings.getDayInterval()));
+			if (dailyTask == -1)
+				plugin.sendErrorMsg("Could not schedule new day loop.");
+		} else if (!on && isDailyTimerRunning())
+			//dailyTimer.cancel();
+			//dailyTimer = null;
+			getPlugin().getServer().getScheduler().cancelTask(dailyTask);
 	}
 	
 	public void toggleHealthRegen(boolean on) {
-		if (on && healthRegenTimer == null) {
-			healthRegenTimer = new Timer();
-			healthRegenTimer.scheduleAtFixedRate(new HealthRegenTimerTask(this, plugin.getServer()), 0, TownySettings.getHealthRegenSpeed());
-		} else if (!on && healthRegenTimer != null) {
-			healthRegenTimer.cancel();
-			healthRegenTimer = null;
-		}
+		if (on && !isHealthRegenRunning()) {
+			//healthRegenTimer = new Timer();
+			//healthRegenTimer.scheduleAtFixedRate(new HealthRegenTimerTask(this, plugin.getServer()), 0, TownySettings.getHealthRegenSpeed());
+			dailyTask = getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(getPlugin(), new HealthRegenTimerTask(this, plugin.getServer()), 0, MinecraftTools.convertToTicks(TownySettings.getHealthRegenSpeed()));
+			if (dailyTask == -1)
+				plugin.sendErrorMsg("Could not schedule health regen loop.");
+		} else if (!on && isHealthRegenRunning())
+			getPlugin().getServer().getScheduler().cancelTask(healthRegenTask);
 	}
 	
 	public boolean isMobRemovalRunning() {
-		return mobRemoveTimer != null;
+		return mobRemoveTask != -1;
+		//return mobRemoveTimer != null;
 	}
 	
 	public boolean isDailyTimerRunning() {
-		return dailyTimer != null;
+		return dailyTask != -1;
+		//return dailyTimer != null;
 	}
 	
 	public boolean isHealthRegenRunning() {
-		return healthRegenTimer != null;
+		return healthRegenTask != -1;
+		//return healthRegenTimer != null;
 	}
 
 	public void onLogin(Player player) throws AlreadyRegisteredException, NotRegisteredException {
@@ -692,6 +700,11 @@ public class TownyUniverse extends TownyObject {
 		if (isWarTime())
 			warEvent.toggleEnd();
 		// Automatically makes warEvent null
+	}
+	
+	public void clearWarEvent() {
+		getWarEvent().cancleTasks(getPlugin().getServer().getScheduler());
+		setWarEvent(null);
 	}
 	
 	//TODO: throw error if null

@@ -24,8 +24,7 @@ public class WarTimerTask extends TownyTimerTask {
 		//TODO: check if war has ended and end gracefully
 		if (!warEvent.isWarTime()) {
 			warEvent.end();
-			warEvent.getWarTimer().cancel();
-			universe.setWarEvent(null);
+			universe.clearWarEvent();
 			universe.getPlugin().updateCache();
 			universe.getPlugin().sendDebugMsg("War ended.");
 			return;
@@ -34,40 +33,40 @@ public class WarTimerTask extends TownyTimerTask {
 		int numPlayers = 0;
 		for (Player player : universe.getOnlinePlayers()) {
 			numPlayers += 1;
-			System.out.println("[Towny] [War] Debug: "+player.getName()+": ");
+			plugin.sendDebugMsg("[War] "+player.getName()+": ");
 			try {
 				Resident resident = universe.getResident(player.getName());
 				if (resident.hasNation()) {
 					Nation nation = resident.getTown().getNation();
-					System.out.println("[Towny] [War] Debug: hasNation");
+					plugin.sendDebugMsg("[War]   hasNation");
 					if (nation.isNeutral())
 						continue;
-					System.out.println("[Towny] [War] Debug: notNeutral");
+					plugin.sendDebugMsg("[War]   notNeutral");
 					if (!warEvent.isWarringNation(nation))
 						continue;
-					System.out.println("[Towny] [War] Debug: warringNation");
+					plugin.sendDebugMsg("[War]   warringNation");
 					//TODO: Cache player coord & townblock
 					
 					WorldCoord worldCoord = new WorldCoord(universe.getWorld(player.getWorld().getName()), Coord.parseCoord(player));
 					if (!warEvent.isWarZone(worldCoord))
 						continue;
-					System.out.println("[Towny] [War] Debug: warZone");
+					plugin.sendDebugMsg("[War]   warZone");
 					if (player.getLocation().getBlockY() < TownySettings.getMinWarHeight())
 						continue;
-					System.out.println("[Towny] [War] Debug: aboveMinHeight");
+					plugin.sendDebugMsg("[War]   aboveMinHeight");
 					TownBlock townBlock = worldCoord.getTownBlock(); //universe.getWorld(player.getWorld().getName()).getTownBlock(worldCoord);
-					if (townBlock.getTown().getNation().hasAlly(nation))
+					if (nation == townBlock.getTown().getNation() || townBlock.getTown().getNation().hasAlly(nation))
 						continue;
-					System.out.println("[Towny] [War] Debug: notAlly");
+					plugin.sendDebugMsg("[War]   notAlly");
 					//Enemy nation
 					warEvent.damage(resident.getTown(), townBlock);
-					System.out.println("[Towny] [War] Debug: damaged");
+					System.out.println("[War]   damaged");
 				}
 			} catch(NotRegisteredException e) {
 				continue;
 			}
 		}
 		
-		universe.getPlugin().sendDebugMsg("# Players: " + numPlayers);
+		plugin.sendDebugMsg("[War] # Players: " + numPlayers);
 	}
 }

@@ -3,9 +3,9 @@ package com.shade.bukkit.towny.war;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Timer;
 
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.shade.bukkit.towny.IConomyException;
 import com.shade.bukkit.towny.NotRegisteredException;
@@ -20,6 +20,7 @@ import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.WorldCoord;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
+import com.shade.bukkit.util.MinecraftTools;
 import com.shade.bukkit.util.ServerBroadCastTimerTask;
 import com.shade.util.KeyValue;
 import com.shade.util.KeyValueTable;
@@ -34,7 +35,8 @@ public class War {
 	private Towny plugin;
 	private TownyUniverse universe;
 	private boolean warTime = false;
-	private Timer warTimer = new Timer();
+	//private Timer warTimer = new Timer();
+	private List<Integer> warTaskIds = new ArrayList<Integer>();
 	private WarSpoils warSpoils = new WarSpoils();
 	
 	public War(Towny plugin, int startDelay) {
@@ -44,12 +46,32 @@ public class War {
 		setupDelay(startDelay);
 	}
 
+	/*
 	public void setWarTimer(Timer warTimer) {
 		this.warTimer = warTimer;
 	}
 
 	public Timer getWarTimer() {
 		return warTimer;
+	}
+	*/
+	
+	public void addTaskId(int id) {
+		warTaskIds.add(id);
+	}
+	
+	public void clearTaskIds() {
+		warTaskIds.clear();
+	}
+	
+	public void cancleTasks(BukkitScheduler scheduler) {
+		for (Integer id : getTaskIds())
+			scheduler.cancelTask(id);
+		clearTaskIds();
+	}
+	
+	public List<Integer> getTaskIds() {
+		return new ArrayList<Integer>(warTaskIds);
 	}
 	
 	public Towny getPlugin() {
@@ -64,13 +86,28 @@ public class War {
 		if (delay <= 0)
 			start();
 		else {
-			for (Long t : TimeMgmt.getCountdownDelays(delay, TimeMgmt.defaultCountdownDelays))
+			for (Long t : TimeMgmt.getCountdownDelays(delay, TimeMgmt.defaultCountdownDelays)) {
 				//Schedule the warnings leading up to the start of the war event
-				warTimer.schedule(
-						new ServerBroadCastTimerTask(plugin,
-								String.format("War starts in %s", TimeMgmt.formatCountdownTime(t))),
-								(delay-t)*1000);
-			warTimer.schedule(new StartWarTimerTask(universe), delay*1000);
+				//warTimer.schedule(
+				//		new ServerBroadCastTimerTask(plugin,
+				//				String.format("War starts in %s", TimeMgmt.formatCountdownTime(t))),
+				//				(delay-t)*1000);
+				int id = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(getPlugin(),
+						new ServerBroadCastTimerTask(plugin, String.format("War starts in %s", TimeMgmt.formatCountdownTime(t))),
+						MinecraftTools.convertToTicks((delay-t)*1000));
+				if (id == -1) {
+					plugin.sendErrorMsg("Could not schedule a countdown message for war event.");
+					end();
+				} else
+					addTaskId(id);
+			}
+			//warTimer.schedule(new StartWarTimerTask(universe), delay*1000);
+			int id = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(getPlugin(), new StartWarTimerTask(universe), MinecraftTools.convertToTicks(delay*1000));
+			if (id == -1) {
+				plugin.sendErrorMsg("Could not schedule setup delay for war event.");
+				end();
+			} else
+				addTaskId(id);
 		}
 	}
 
@@ -99,7 +136,13 @@ public class War {
 		for (Nation nation : universe.getNations())
 			if (!nation.isNeutral())
 				add(nation);
-		warTimer.scheduleAtFixedRate(new WarTimerTask(this), 0, 1000);
+		//warTimer.scheduleAtFixedRate(new WarTimerTask(this), 0, 1000);
+		int id = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(getPlugin(), new WarTimerTask(this), 0, MinecraftTools.convertToTicks(1000));
+		if (id == -1) {
+			plugin.sendErrorMsg("Could not schedule war event loop.");
+			end();
+		} else
+			addTaskId(id);
 		checkEnd();
 	}
 	
@@ -234,7 +277,7 @@ public class War {
 		warringTowns.remove(town);
 		try {
 			if (!townsLeft(town.getNation()))
-				remove(town.getNation());
+				eliminate(town.getNation());
 		} catch (NotRegisteredException e) {
 		}
 	}
@@ -245,7 +288,7 @@ public class War {
 		warringTowns.remove(town);
 		try {
 			if (!townsLeft(town.getNation()))
-				remove(town.getNation());
+				eliminate(town.getNation());
 		} catch (NotRegisteredException e) {
 		}
 	}

@@ -67,6 +67,7 @@ v0.18:
 v0.19:
 	Forgot to override with build and switch for wild ignore blocks.
 	Moved all timers to Bukkits Scheduler.
+	Bug fixes for war.
 	
 TODO:	
 	
