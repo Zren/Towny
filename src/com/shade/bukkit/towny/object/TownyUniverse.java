@@ -803,13 +803,18 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public void collectNationCosts() throws IConomyException {
-		for (Nation nation : nations.values())
+		for (Nation nation : nations.values()) {
+			if (!nation.pay(TownySettings.getNationUpkeepCost())) {
+				removeNation(nation);
+				sendGlobalMessage(nation.getName() + " couldn't afford to remain a nation.");
+			}
 			if (nation.isNeutral())
 				if (!nation.pay(TownySettings.getNationNeutralityCost())) {
 					nation.setNeutral(false);
 					getDataSource().saveNation(nation);
 					sendNationMessage(nation, "Nation couldn't afford it's neutral state.");
 				}
+		}
 		
 	}
 	

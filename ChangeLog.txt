@@ -70,6 +70,10 @@ v0.19:
 	Bug fixes for war.
 v0.20:
 	Quick fix for town notifications.
+v0.21:
+	Added add+/remove+ to select offline residents.
+v0.22:
+	Nation server upkeep is now taken. 
 	
 TODO:	
 	
