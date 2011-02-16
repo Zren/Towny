@@ -1388,7 +1388,10 @@ public class TownyPlayerListener extends PlayerListener {
 		List<WorldCoord> out = new ArrayList<WorldCoord>();
 		
 		if (args.length == 0)
-			out.add(pos);
+			if (pos.getWorld().isClaimable())
+				out.add(pos);
+			else
+				throw new TownyException("This world is not claimable.");
 		else if (args[0].equalsIgnoreCase("rect")) {
 			if (args.length < 2) {
 				//show help
@@ -1414,7 +1417,8 @@ public class TownyPlayerListener extends PlayerListener {
 				
 				for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++)
 					for (int x = pos.getX() - r; x <= pos.getX() + r; x++)
-						out.add(new WorldCoord(pos.getWorld(), x, z));
+						if (pos.getWorld().isClaimable())
+							out.add(new WorldCoord(pos.getWorld(), x, z));
 			}
 		} else if (args[0].equalsIgnoreCase("auto"))
 			//TODO

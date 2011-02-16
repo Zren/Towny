@@ -39,17 +39,17 @@ public class TownyEntityListener extends EntityListener {
 
 	public boolean preventDamageCall(Player a, Player b) {
 		TownyUniverse universe = plugin.getTownyUniverse();
-
-		// Check Town PvP status
+		
 		try {
-			if (universe.isWarTime())
-				throw new Exception();
-			
+			// World PvP
 			TownyWorld world = universe.getWorld(a.getWorld().getName());
+			if (!world.isPvP())
+				return true;
+			
+			// Check Town PvP status
 			Coord key = Coord.parseCoord(a);
 			TownBlock townblock = world.getTownBlock(key);
-
-			if (!townblock.getTown().isPVP())
+			if (!townblock.getTown().isPVP() && !universe.isWarTime())
 				return true;
 		} catch (Exception e) {
 		}
