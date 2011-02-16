@@ -27,6 +27,7 @@ public class TownySettings {
 		RESIDENT_COMMANDS,
 		TOWN_COMMANDS,
 		NATION_COMMANDS,
+		WORLD_COMMANDS,
 		PLOT_COMMANDS,
 		TOWNY_COMMANDS,
 		TOWNY_ADMIN_COMMANDS,
@@ -169,6 +170,7 @@ public class TownySettings {
 		configStrArr.put(TownySettings.StrArr.RESIDENT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/resident","/r","/player"})));
 		configStrArr.put(TownySettings.StrArr.TOWN_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/town","/t"})));
 		configStrArr.put(TownySettings.StrArr.NATION_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/nation","/n"})));
+		configStrArr.put(TownySettings.StrArr.WORLD_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/townyworld","/tw"})));
 		configStrArr.put(TownySettings.StrArr.PLOT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/plot"})));
 		configStrArr.put(TownySettings.StrArr.TOWNY_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/towny"})));
 		configStrArr.put(TownySettings.StrArr.TOWNY_ADMIN_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/townyadmin","/ta"})));
@@ -499,6 +501,10 @@ public class TownySettings {
 	
 	public static List<String> getNationCommands() {
 		return getStrArr(TownySettings.StrArr.NATION_COMMANDS);
+	}
+	
+	public static List<String> getWorldCommands() {
+		return getStrArr(TownySettings.StrArr.WORLD_COMMANDS);
 	}
 	
 	public static List<String> getPlotCommands() {

@@ -273,7 +273,8 @@ public class Towny extends JavaPlugin {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("towny"))
+		String command = cmd.getName().toLowerCase();
+		if (command.equals("towny"))
 			return new TownyCommandMap(getServer()).execute(sender, commandLabel, args);
 		return false;	
 	}

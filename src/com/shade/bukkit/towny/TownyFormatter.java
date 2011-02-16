@@ -10,6 +10,7 @@ import com.shade.bukkit.towny.object.Resident;
 import com.shade.bukkit.towny.object.Town;
 import com.shade.bukkit.towny.object.TownyIConomyObject;
 import com.shade.bukkit.towny.object.TownyObject;
+import com.shade.bukkit.towny.object.TownyWorld;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
 
@@ -180,6 +181,21 @@ public class TownyFormatter {
 		out.addAll(ChatTools.listArr(getFormattedNames(nation.getEnemies().toArray(new Nation[0])),
 				Colors.Green + "Enemies " + Colors.LightGreen + "[" + nation.getEnemies().size() + "]" + Colors.Green + ":" + Colors.White + " "));
 
+		return out;
+	}
+	
+	public List<String> getStatus(TownyWorld world) {
+		List<String> out = new ArrayList<String>();
+		
+		// ___[ World ]___
+		out.add(ChatTools.formatTitle(getFormattedName(world)));
+		
+		// PvP: Off
+		out.add("PvP: " + (world.isPvP() ? "On" : "Off"));
+		
+		// Claimable: No
+		out.add("Claimable: " + (world.isClaimable() ? "Yes" : "No"));
+		
 		return out;
 	}
 

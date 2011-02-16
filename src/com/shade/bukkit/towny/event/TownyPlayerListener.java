@@ -3,6 +3,7 @@ package com.shade.bukkit.towny.event;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -39,6 +40,7 @@ import com.shade.bukkit.towny.object.TownyWorld;
 import com.shade.bukkit.towny.object.WorldCoord;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
+import com.shade.bukkit.util.MinecraftTools;
 import com.shade.util.MemMgmt;
 import com.shade.util.StringMgmt;
 
@@ -240,6 +242,8 @@ public class TownyPlayerListener extends PlayerListener {
 			parseTownCommand(player, newSplit);
 		else if (TownySettings.getNationCommands().contains(split[0]))
 			parseNationCommand(player, newSplit);
+		else if (TownySettings.getWorldCommands().contains(split[0]))
+			parseWorldCommand(player, newSplit);
 		else if (TownySettings.getPlotCommands().contains(split[0]))
 			parsePlotCommand(player, newSplit);
 		/*else if (TownySettings.getTownyCommands().contains(split[0]))
@@ -2407,43 +2411,99 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 
 	}
+
+	public void showWorldHelp(Player player) {
+		player.sendMessage(ChatTools.formatTitle("/townyworld"));
+		player.sendMessage(ChatTools.formatCommand("", "/townyworld", "", "Current world's status"));
+		player.sendMessage(ChatTools.formatCommand("", "/townyworld", "[world]", "Target worlds's status"));
+		player.sendMessage(ChatTools.formatCommand("", "/townyworld", "list", "List all worlds"));
+		player.sendMessage(ChatTools.formatCommand("Admin", "/townyworld", "set [] .. []", ""));
+	}
 	
-	/*public void parseTownyCommand(Player player, String[] split) {
+	public void parseWorldCommand(Player player, String[] split) {
 		if (split.length == 0)
-			showHelp(player);
+			try {
+				TownyWorld world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
+				plugin.getTownyUniverse().sendMessage(player, plugin.getTownyUniverse().getStatus(world));
+			} catch (NotRegisteredException x) {
+				plugin.sendErrorMsg(player, "This area isn't recognized by Towny.");
+			}
 		else if (split[0].equalsIgnoreCase("?"))
-			showTownyHelp(player);
-		else if (split[0].equalsIgnoreCase("map"))
-			showMap(player);
-		else if (split[0].equalsIgnoreCase("version"))
-			showTownyVersion(player);
-		else if (split[0].equalsIgnoreCase("universe"))
-			showUniverseStats(player);
-		else if (split[0].equalsIgnoreCase("prices"))
-			showTownyPrices(player);
-		else if (split[0].equalsIgnoreCase("war")) {
-			if (split.length < 2 || split[1].equalsIgnoreCase("?")) {
-				player.sendMessage(ChatTools.formatTitle("/towny war"));
-				player.sendMessage(ChatTools.formatCommand("", "/towny war", "stats", ""));
-				player.sendMessage(ChatTools.formatCommand("", "/towny war", "scores", ""));
-			} else
-				if (plugin.getTownyUniverse().isWarTime()) {
-					if (split[1].equalsIgnoreCase("stats"))
-						plugin.getTownyUniverse().getWarEvent().sendStats(player);
-					else if (split[1].equalsIgnoreCase("scores"))
-						plugin.getTownyUniverse().getWarEvent().sendScores(player);
-					else
-						plugin.sendErrorMsg(player, "Invalid sub command.");
-				} else //TODO: Remove smartassery
-					plugin.sendErrorMsg(player, "The world isn't currently going to hell.");
-		} else
-			plugin.sendErrorMsg(player, "Invalid sub command.");
-	}*/
-
+			showWorldHelp(player);
+		else if (split[0].equalsIgnoreCase("list"))
+			listWorlds(player);
+		else if (split[0].equalsIgnoreCase("set"))
+			worldSet(player, StringMgmt.remFirstArg(split));
+		else
+			try {
+				TownyWorld world = plugin.getTownyUniverse().getWorld(split[0]);
+				plugin.getTownyUniverse().sendMessage(player, plugin.getTownyUniverse().getStatus(world));
+			} catch (NotRegisteredException x) {
+				plugin.sendErrorMsg(player, split[0] + " is not registered.");
+			}
+	}
 	
-
+	public void listWorlds(Player player) {
+		player.sendMessage(ChatTools.formatTitle("Worlds"));
+		ArrayList<String> formatedList = new ArrayList<String>();
+		HashMap<String,Integer> playersPerWorld = MinecraftTools.getPlayersPerWorld(plugin.getServer());
+		for (TownyWorld world : plugin.getTownyUniverse().getWorlds()) {
+			int numPlayers = playersPerWorld.containsKey(world.getName()) ? playersPerWorld.get(world.getName()) : 0;
+			formatedList.add(Colors.LightBlue + world.getName() + Colors.Blue + " [" + numPlayers + "]" + Colors.White);
+		}
+		for (String line : ChatTools.list(formatedList))
+			player.sendMessage(line);
+	}
 	
+	public void worldSet(Player player, String[] split) {
+		if (split.length == 0) {
+			player.sendMessage(ChatTools.formatTitle("/townyworld set"));
+			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "claimable [on/off]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "pvp [on/off]", ""));
+		} else {
+			TownyWorld world;
+			if (!plugin.isTownyAdmin(player)) {
+			}
+			try {
+				if (!plugin.isTownyAdmin(player))
+					throw new TownyException("This command is admin only.");
+				world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
+			} catch (TownyException x) {
+				plugin.sendErrorMsg(player, x.getError());
+				return;
+			}
 
+			if (split[0].equalsIgnoreCase("claimable")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set claimable on");
+				else
+					try {
+						boolean choice = parseOnOff(split[1]);
+						world.setClaimable(choice);
+						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s claimability to " + split[1]);
+					} catch (Exception e) {
+						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
+					}
+			} else if (split[0].equalsIgnoreCase("pvp")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set pvp off");
+				else
+					try {
+						boolean choice = parseOnOff(split[1]);
+						world.setClaimable(choice);
+						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s PvP " + split[1]);
+					} catch (Exception e) {
+						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
+					}
+			} else {
+				plugin.sendErrorMsg(player, "Invalid world property.");
+				return;
+			}
+
+			plugin.getTownyUniverse().getDataSource().saveWorld(world);
+		}
+	}
+	
 	private void warSeed(Player player) {
 		/*Resident r1 = plugin.getTownyUniverse().newResident("r1");
 		Resident r2 = plugin.getTownyUniverse().newResident("r2");

@@ -10,6 +10,7 @@ import com.shade.bukkit.towny.NotRegisteredException;
 
 public class TownyWorld extends TownyObject {
 	private List<Town> towns = new ArrayList<Town>();
+	private boolean isClaimable, isPvP;
 
 	private Hashtable<Coord, TownBlock> townBlocks = new Hashtable<Coord, TownBlock>();
 
@@ -18,6 +19,8 @@ public class TownyWorld extends TownyObject {
 
 	public TownyWorld(String name) {
 		setName(name);
+		isClaimable = true;
+		isPvP = true;
 	}
 
 	public List<Town> getTowns() {
@@ -117,5 +120,21 @@ public class TownyWorld extends TownyObject {
 		out.add(getTreeDepth(depth) + "World ("+getName()+")");
 		out.add(getTreeDepth(depth+1) + "TownBlocks (" + getTownBlocks().size() + "): " /*+ getTownBlocks()*/);
 		return out;
+	}
+
+	public void setPvP(boolean isPvP) {
+		this.isPvP = isPvP;
+	}
+
+	public boolean isPvP() {
+		return isPvP;
+	}
+
+	public void setClaimable(boolean isClaimable) {
+		this.isClaimable = isClaimable;
+	}
+
+	public boolean isClaimable() {
+		return isClaimable;
 	}
 }
