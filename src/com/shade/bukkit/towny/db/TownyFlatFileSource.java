@@ -404,7 +404,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 				}
 
 				line = kvFile.get("capital");
-				nation.setCapital(universe.getTown(line));
+				if (line != null)
+					nation.setCapital(universe.getTown(line));
 
 				line = kvFile.get("assistants");
 				if (line != null) {
@@ -481,6 +482,20 @@ public class TownyFlatFileSource extends TownyDataSource {
 							world.addTown(town);
 					}
 				}
+				
+				line = kvFile.get("claimable");
+				if (line != null)
+					try {
+						world.setClaimable(Boolean.parseBoolean(line));
+					} catch (Exception e) {
+					}
+					
+				line = kvFile.get("pvp");
+				if (line != null)
+					try {
+						world.setPvP(Boolean.parseBoolean(line));
+					} catch (Exception e) {
+					}
 
 				// loadTownBlocks(world);
 
@@ -753,11 +768,18 @@ public class TownyFlatFileSource extends TownyDataSource {
 		try {
 			String path = rootFolder + dataFolder + "/worlds/" + world.getName() + ".txt";
 			BufferedWriter fout = new BufferedWriter(new FileWriter(path));
+			
+			// Towns
 			fout.write("towns=");
 			for (Town town : world.getTowns())
 				fout.write(town.getName() + ",");
 			fout.write(newLine);
 
+			// PvP
+			fout.write("pvp=" + Boolean.toString(world.isPvP()) + newLine);
+			// Claimable
+			fout.write("claimable=" + Boolean.toString(world.isClaimable()) + newLine);
+			
 			fout.close();
 
 			// saveTownBlocks(world);
