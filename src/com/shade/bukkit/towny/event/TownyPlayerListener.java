@@ -114,7 +114,7 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
 			TownyWorld fromWorld = plugin.getTownyUniverse().getWorld(from.getWorld().getName());
 			WorldCoord fromCoord = new WorldCoord(fromWorld, Coord.parseCoord(from));
-			WorldCoord toCoord = new WorldCoord(from.getWorld().equals(to.getWorld()) ? fromWorld : plugin.getTownyUniverse().getWorld(to.getWorld().getName()), Coord.parseCoord(to));
+			WorldCoord toCoord = new WorldCoord((from.getWorld() == to.getWorld() ? fromWorld : plugin.getTownyUniverse().getWorld(to.getWorld().getName())), Coord.parseCoord(to));
 			if (!fromCoord.equals(toCoord))
 				onPlayerMoveChunk(player, fromCoord, toCoord, from, to);
 		} catch (NotRegisteredException e) {
@@ -150,7 +150,7 @@ public class TownyPlayerListener extends PlayerListener {
 			Town fromTown = null, toTown = null;
 			Resident fromResident = null, toResident = null;
 			try {
-				fromTownBlock = universe.getWorld(fromLoc.getWorld().getName()).getTownBlock(from);
+				fromTownBlock = from.getTownBlock();
 				try {
 					fromTown = fromTownBlock.getTown();
 				} catch (NotRegisteredException e) {
@@ -164,7 +164,7 @@ public class TownyPlayerListener extends PlayerListener {
 			}
 
 			try {
-				toTownBlock = universe.getWorld(toLoc.getWorld().getName()).getTownBlock(to);
+				toTownBlock = to.getTownBlock();
 				try {
 					toTown = toTownBlock.getTown();
 				} catch (NotRegisteredException e) {
@@ -447,13 +447,17 @@ public class TownyPlayerListener extends PlayerListener {
 
 			// TODO: Let admin's call a subfunction of this.
 			if (split[0].equalsIgnoreCase("add")) {
-				String[] names = new String[split.length - 1];
-				System.arraycopy(split, 1, names, 0, split.length - 1);
+				String[] names = StringMgmt.remFirstArg(split);
 				residentFriendAdd(player, resident, getOnlineResidents(player, names));
 			} else if (split[0].equalsIgnoreCase("remove")) {
-				String[] names = new String[split.length - 1];
-				System.arraycopy(split, 1, names, 0, split.length - 1);
+				String[] names = StringMgmt.remFirstArg(split);
 				residentFriendRemove(player, resident, getOnlineResidents(player, names));
+			} else if (split[0].equalsIgnoreCase("add+")) {
+				String[] names = StringMgmt.remFirstArg(split);
+				residentFriendAdd(player, resident, getResidents(player, names));
+			} else if (split[0].equalsIgnoreCase("remove+")) {
+				String[] names = StringMgmt.remFirstArg(split);
+				residentFriendRemove(player, resident, getResidents(player, names));
 			} else if (split[0].equalsIgnoreCase("clearlist"))
 				residentFriendRemove(player, resident, resident.getFriends());
 
@@ -785,9 +789,13 @@ public class TownyPlayerListener extends PlayerListener {
 			else if (split[0].equalsIgnoreCase("delete"))
 				townDelete(player, newSplit);
 			else if (split[0].equalsIgnoreCase("add"))
-				townAdd(player, newSplit);
+				townAdd(player, newSplit, true);
 			else if (split[0].equalsIgnoreCase("kick"))
-				townKick(player, newSplit);
+				townKick(player, newSplit, true);
+			else if (split[0].equalsIgnoreCase("add+"))
+				townAdd(player, newSplit, false);
+			else if (split[0].equalsIgnoreCase("kick+"))
+				townKick(player, newSplit, false);
 			else if (split[0].equalsIgnoreCase("claim"))
 				parseTownClaimCommand(player, newSplit);
 			else if (split[0].equalsIgnoreCase("unclaim"))
@@ -1003,7 +1011,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * @param names
 	 */
 
-	public void townAdd(Player player, String[] names) {
+	public void townAdd(Player player, String[] names, boolean matchOnline) {
 		Resident resident;
 		Town town;
 		try {
@@ -1017,7 +1025,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		townAddResidents(player, town, getOnlineResidents(player, names));
+		townAddResidents(player, town, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
 		
 		plugin.updateCache();
 	}
@@ -1040,6 +1048,18 @@ public class TownyPlayerListener extends PlayerListener {
 					plugin.sendErrorMsg(player, x.getError());
 				}
 		}
+		return invited;
+	}
+	
+	public List<Resident> getResidents(Player player, String[] names) {
+		List<Resident> invited = new ArrayList<Resident>();
+		for (String name : names)
+			try {
+				Resident target = plugin.getTownyUniverse().getResident(name);
+				invited.add(target);
+			} catch (TownyException x) {
+				plugin.sendErrorMsg(player, x.getError());
+			}
 		return invited;
 	}
 
@@ -1075,7 +1095,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * @param names
 	 */
 
-	public void townKick(Player player, String[] names) {
+	public void townKick(Player player, String[] names, boolean matchOnline) {
 		Resident resident;
 		Town town;
 		try {
@@ -1089,7 +1109,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		townKickResidents(player, resident, town, getOnlineResidents(player, names));
+		townKickResidents(player, resident, town, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
 		
 		plugin.updateCache();
 	}
@@ -1133,10 +1153,16 @@ public class TownyPlayerListener extends PlayerListener {
 			//TODO: assistant help
 		} else if (split[0].equalsIgnoreCase("add")) {
 			String[] newSplit = StringMgmt.remFirstArg(split);
-			townAssistantsAdd(player, newSplit);
+			townAssistantsAdd(player, newSplit, true);
 		} else if (split[0].equalsIgnoreCase("remove")) {
 			String[] newSplit = StringMgmt.remFirstArg(split);
-			townAssistantsRemove(player, newSplit);
+			townAssistantsRemove(player, newSplit, true);
+		} else if (split[0].equalsIgnoreCase("add+")) {
+			String[] newSplit = StringMgmt.remFirstArg(split);
+			townAssistantsAdd(player, newSplit, false);
+		} else if (split[0].equalsIgnoreCase("remove+")) {
+			String[] newSplit = StringMgmt.remFirstArg(split);
+			townAssistantsRemove(player, newSplit, false);
 		}
 	}
 	
@@ -1149,7 +1175,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * @param names
 	 */
 
-	public void townAssistantsAdd(Player player, String[] names) {
+	public void townAssistantsAdd(Player player, String[] names, boolean matchOnline) {
 		Resident resident;
 		Town town;
 		try {
@@ -1162,7 +1188,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		townAssistantsAdd(player, town, getOnlineResidents(player, names));
+		townAssistantsAdd(player, town, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
 	}
 
 	public void townAssistantsAdd(Player player, Town town, List<Resident> invited) {
@@ -1198,7 +1224,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * @param names
 	 */
 
-	public void townAssistantsRemove(Player player, String[] names) {
+	public void townAssistantsRemove(Player player, String[] names, boolean matchOnline) {
 		Resident resident;
 		Town town;
 		try {
@@ -1211,7 +1237,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		townAssistantsRemove(player, resident, town, getOnlineResidents(player, names));
+		townAssistantsRemove(player, resident, town, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
 	}
 
 	public void townAssistantsRemove(Player player, Resident resident, Town town, List<Resident> kicking) {
@@ -2088,10 +2114,16 @@ public class TownyPlayerListener extends PlayerListener {
 			//TODO: assistant help
 		} else if (split[0].equalsIgnoreCase("add")) {
 			String[] newSplit = StringMgmt.remFirstArg(split);
-			nationAssistantsAdd(player, newSplit);
+			nationAssistantsAdd(player, newSplit, true);
 		} else if (split[0].equalsIgnoreCase("remove")) {
 			String[] newSplit = StringMgmt.remFirstArg(split);
-			nationAssistantsRemove(player, newSplit);
+			nationAssistantsRemove(player, newSplit, true);
+		} else if (split[0].equalsIgnoreCase("add+")) {
+			String[] newSplit = StringMgmt.remFirstArg(split);
+			nationAssistantsAdd(player, newSplit, false);
+		} else if (split[0].equalsIgnoreCase("remove+")) {
+			String[] newSplit = StringMgmt.remFirstArg(split);
+			nationAssistantsRemove(player, newSplit, false);
 		}
 	}
 	
@@ -2104,7 +2136,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * @param names
 	 */
 
-	public void nationAssistantsAdd(Player player, String[] names) {
+	public void nationAssistantsAdd(Player player, String[] names, boolean matchOnline) {
 		Resident resident;
 		Nation nation;
 		try {
@@ -2117,7 +2149,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		nationAssistantsAdd(player, nation, plugin.getTownyUniverse().getResidents(names));
+		nationAssistantsAdd(player, nation, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
 	}
 
 	public void nationAssistantsAdd(Player player, Nation nation, List<Resident> invited) {
@@ -2153,7 +2185,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * @param names
 	 */
 
-	public void nationAssistantsRemove(Player player, String[] names) {
+	public void nationAssistantsRemove(Player player, String[] names, boolean matchOnline) {
 		Resident resident;
 		Nation nation;
 		try {
@@ -2166,7 +2198,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		nationAssistantsRemove(player, resident, nation, plugin.getTownyUniverse().getResidents(names));
+		nationAssistantsRemove(player, resident, nation, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
 	}
 
 	public void nationAssistantsRemove(Player player, Resident resident, Nation nation, List<Resident> kicking) {

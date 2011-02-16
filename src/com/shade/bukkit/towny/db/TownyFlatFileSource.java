@@ -82,7 +82,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 		try {
 			fin = new BufferedReader(new FileReader(rootFolder + dataFolder + "/residents.txt"));
 		} catch (FileNotFoundException e) {
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 		try {
@@ -109,7 +109,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 		try {
 			fin = new BufferedReader(new FileReader(rootFolder + dataFolder + "/towns.txt"));
 		} catch (FileNotFoundException e) {
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 		try {
@@ -136,7 +136,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 		try {
 			fin = new BufferedReader(new FileReader(rootFolder + dataFolder + "/nations.txt"));
 		} catch (FileNotFoundException e) {
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 		try {
@@ -167,7 +167,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 			try {
 				fin = new BufferedReader(new FileReader(rootFolder + dataFolder + "/worlds.txt"));
 			} catch (FileNotFoundException e) {
-				System.out.println(e.getStackTrace());
+				e.printStackTrace();
 				return false;
 			}
 			try {
@@ -541,7 +541,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 			}
 			fin.close();
 		} catch (Exception e) {
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -637,7 +637,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.write("protectionStatus=" + resident.getPermissions().toString() + newLine);
 			fout.close();
 		} catch (Exception e) {
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -650,7 +650,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 		try {
 			fout = new BufferedWriter(new FileWriter(path));
 		} catch (IOException e) {
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 		try {
@@ -704,7 +704,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 				fout.close();
 			} catch (IOException ioe) {
 			}
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 
@@ -742,7 +742,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 
 			fout.close();
 		} catch (Exception e) {
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -763,7 +763,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 			// saveTownBlocks(world);
 
 		} catch (Exception e) {
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			return false;
 		}
 		return true;

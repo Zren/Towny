@@ -68,6 +68,8 @@ v0.19:
 	Forgot to override with build and switch for wild ignore blocks.
 	Moved all timers to Bukkits Scheduler.
 	Bug fixes for war.
+v0.20:
+	Quick fix for town notifications.
 	
 TODO:	
 	

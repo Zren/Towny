@@ -70,6 +70,8 @@ import com.shade.bukkit.util.Colors;
  * Need new TownyObject. 
  * Iconomy name: towny-war-spoils
  * 
+ * Managed to claim 5 out of the 16 selected (x,z) .. (x1,z2).
+ * 
  * Permissions:
  * towny.claim
  * towny.newtown
@@ -105,6 +107,17 @@ public class Towny extends JavaPlugin {
 		super(pluginLoader, instance, desc, folder, plugin, cLoader);
 		version = this.getDescription().getVersion();
 	}
+	
+	public static void main(String[] args) {
+		TownyUniverse universe = new TownyUniverse("C:\\Users\\Admin\\Desktop\\Bukkit\\Server\\plugins\\Towny");
+		universe.loadSettings();
+		System.out.println("[Towny] Database: [" + TownySettings.getLoadDatabase() + "] ");
+		universe.setDataSource(TownySettings.getSaveDatabase());
+		universe.getDataSource().initialize(null, universe);
+		universe.getDataSource().loadAll();
+        for (String line : universe.getTreeString(0))
+        	System.out.println(line);
+	}
 
 	@Override
 	public void onEnable() {
@@ -114,7 +127,7 @@ public class Towny extends JavaPlugin {
 		pdfFile.getVersion();
 		
 		townyUniverse = new TownyUniverse(this);
-		townyUniverse.loadSettings();
+		loadSettings();
 		
 		System.out.println("[Towny] Database: [Load] " + TownySettings.getLoadDatabase() + " [Save] " + TownySettings.getSaveDatabase());
 		if (!townyUniverse.loadDatabase(TownySettings.getLoadDatabase())) {
@@ -122,6 +135,7 @@ public class Towny extends JavaPlugin {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
+		
 		try {
 			townyUniverse.setDataSource(TownySettings.getSaveDatabase());
 			townyUniverse.getDataSource().initialize(this, townyUniverse);
@@ -129,7 +143,7 @@ public class Towny extends JavaPlugin {
 				townyUniverse.getDataSource().backup();
 			} catch (IOException e) {
 				System.out.println("[Towny] Error: Could not create backup.");
-				System.out.println(e.getStackTrace());
+				e.printStackTrace();
 			}
 			
 			townyUniverse.getDataSource().saveAll();
@@ -161,8 +175,6 @@ public class Towny extends JavaPlugin {
 			townyUniverse.loadSettings();
 		}
 		
-		
-
 		System.out.println("[Towny] Version: " + version + " - Mod Enabled");
 		
 		// Re login anyone online. (In case of plugin reloading)
@@ -193,11 +205,15 @@ public class Towny extends JavaPlugin {
 		System.out.println("[Towny] Version: " + version + " - Mod Disabled");
 	}
 	
-	public void onLoad() {
+	public void loadSettings() {
 		townyUniverse.loadSettings();
 		Coord.setCellSize(TownySettings.getTownBlockSize());
 		TownyIConomyObject.setPlugin(this);
 		TownyCommand.setUniverse(townyUniverse);
+	}
+	
+	public void onLoad() {
+		loadSettings();
 		townyUniverse.toggleDailyTimer(true);
 		townyUniverse.toggleMobRemoval(TownySettings.isRemovingMobs());
 		townyUniverse.toggleHealthRegen(TownySettings.hasHealthRegen());
@@ -371,6 +387,18 @@ public class Towny extends JavaPlugin {
 	
 	public boolean hasPlayerMode(Player player, String mode) {
 		List<String> modes = getPlayerMode(player);
+		if (modes == null)
+			return false;
+		else
+			return modes.contains(mode); 
+	}
+	
+	public List<String> getPlayerMode(String name) {
+		return playerMode.get(name);
+	}
+	
+	public boolean hasPlayerMode(String name, String mode) {
+		List<String> modes = getPlayerMode(name);
 		if (modes == null)
 			return false;
 		else
