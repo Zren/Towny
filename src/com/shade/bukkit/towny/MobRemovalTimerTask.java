@@ -1,5 +1,8 @@
 package com.shade.bukkit.towny;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -12,10 +15,23 @@ import com.shade.bukkit.towny.object.TownyWorld;
 
 public class MobRemovalTimerTask extends TownyTimerTask {
 	private Server server;
+	@SuppressWarnings("rawtypes")
+	private List<Class> mobsToRemove = new ArrayList<Class>();
 	
 	public MobRemovalTimerTask(TownyUniverse universe, Server server) {
 		super(universe);
 		this.server = server;
+		for (String mob : TownySettings.getMobRemovalEntities())
+			try {
+				@SuppressWarnings("rawtypes")
+				Class c = Class.forName("org.bukkit.craftbukkit.entity."+mob);
+				if (c.isInstance(LivingEntity.class))
+					mobsToRemove.add(c);
+				else
+					throw new ClassNotFoundException();
+			} catch (ClassNotFoundException e) {
+				plugin.sendErrorMsg(mob + " is not an acceptable living entity.");
+			}
 	}
 	
 	
@@ -26,8 +42,9 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 		
 		for (World world : server.getWorlds()) {
 			livingEntities += world.getLivingEntities().size();
-			for (LivingEntity livingEntity : world.getLivingEntities())
-				if (TownySettings.getMobRemovalEntities().contains(livingEntity.toString())) {
+			for (LivingEntity livingEntity : new ArrayList<LivingEntity>(world.getLivingEntities()))
+				if (mobsToRemove.contains(livingEntity.getClass())) {
+				//if (TownySettings.getMobRemovalEntities().contains(livingEntity.toString())) {
 					Location loc = livingEntity.getLocation();
 					Coord coord = Coord.parseCoord(loc);
 					try {

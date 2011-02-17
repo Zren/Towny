@@ -1,4 +1,4 @@
-package com.shade.bukkit.util;
+package com.shade.bukkit.blockqueue;
 
 import java.util.LinkedList;
 
@@ -7,7 +7,7 @@ import org.bukkit.Server;
 public class BlockQueue {
 	private LinkedList<Object> queue = new LinkedList<Object>();
 	private static volatile BlockQueue instance;
-	private BlockThread thread;
+	private BlockWorker worker;
 
 	public synchronized void addWork(Object obj) {
 		queue.addLast(obj);
@@ -15,9 +15,8 @@ public class BlockQueue {
 	}
 
 	public synchronized Object getWork() throws InterruptedException {
-		while (queue.isEmpty()) {
+		while (queue.isEmpty())
 			wait();
-		}
 		return queue.removeFirst();
 	}
 
@@ -30,13 +29,20 @@ public class BlockQueue {
 
 	public static BlockQueue newInstance(Server server) {
 		instance = new BlockQueue();
-		instance.thread = new BlockThread(server, instance);
-		instance.thread.start();
+		instance.worker = new BlockWorker(server, instance);
+		
+		//TODO: Fix
+		//TODO: null = plugin
+		//TODO: null = plugin
+		//TODO: null = plugin
+		//TODO: null = plugin
+		//TODO: null = plugin
+		server.getScheduler().scheduleAsyncDelayedTask(null, instance.getWorker());
 
 		return instance;
 	}
 
-	public BlockThread getThread() {
-		return thread;
+	public BlockWorker getWorker() {
+		return worker;
 	}
 }

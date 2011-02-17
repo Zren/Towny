@@ -13,13 +13,14 @@ import com.shade.bukkit.towny.IConomyException;
 import com.shade.bukkit.towny.NotRegisteredException;
 import com.shade.bukkit.towny.TownyException;
 import com.shade.bukkit.towny.TownySettings;
+import com.shade.bukkit.wallgen.Wall;
 import com.shade.bukkit.wallgen.WallSection;
 import com.shade.bukkit.wallgen.Walled;
 
 public class Town extends TownBlockOwner implements Walled, ResidentList {
 	private List<Resident> residents = new ArrayList<Resident>();
 	private List<Resident> assistants = new ArrayList<Resident>();
-	private List<WallSection> wallSections = new ArrayList<WallSection>();
+	private Wall wall = new Wall();
 	private Resident mayor;
 	private int bonusBlocks, taxes, plotPrice, plotTax;
 	private Nation nation;
@@ -91,6 +92,7 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		return assistants;
 	}
 
+	@Override
 	public boolean hasResident(String name) {
 		for (Resident resident : residents)
 			if (resident.getName().equalsIgnoreCase(name))
@@ -347,29 +349,34 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 	}
 
 	@Override
+	public Wall getWall() {
+		return wall;
+	}
+	
+	@Override
 	public List<WallSection> getWallSections() {
-		return wallSections;
+		return getWall().getWallSections();
 	}
 
 	@Override
 	public void setWallSections(List<WallSection> wallSections) {
-		this.wallSections = wallSections;
+		getWall().setWallSections(wallSections);
 
 	}
 
 	@Override
 	public boolean hasWallSection(WallSection wallSection) {
-		return wallSections.contains(wallSection);
+		return getWall().hasWallSection(wallSection);
 	}
 
 	@Override
 	public void addWallSection(WallSection wallSection) {
-		wallSections.add(wallSection);
+		getWall().addWallSection(wallSection);
 	}
 
 	@Override
 	public void removeWallSection(WallSection wallSection) {
-		wallSections.remove(wallSection);
+		getWall().removeWallSection(wallSection);
 	}
 
 	public boolean isHomeBlock(TownBlock townBlock) {

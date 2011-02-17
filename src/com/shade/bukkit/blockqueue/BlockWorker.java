@@ -1,11 +1,10 @@
-package com.shade.bukkit.util;
+package com.shade.bukkit.blockqueue;
 
 import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public class BlockThread extends Thread {
+public class BlockWorker implements Runnable {
 	private BlockQueue blockQueue;
 	private Server server;
 	public static final Object NO_MORE_WORK = new Object();
@@ -13,11 +12,10 @@ public class BlockThread extends Thread {
 
 	private boolean running;
 
-	private Job currentJob;
+	private BlockJob currentJob;
 	private int blocks, skipped;
-	private World currentWorld;
 
-	public BlockThread(Server server, BlockQueue blockQueue) {
+	public BlockWorker(Server server, BlockQueue blockQueue) {
 		this.blockQueue = blockQueue;
 		this.setServer(server);
 		setRunning(true);
@@ -42,9 +40,9 @@ public class BlockThread extends Thread {
 				if (obj == END_JOB)
 					onJobFinish(currentJob);
 
-				if (obj instanceof Block) {
+				if (obj instanceof BlockWork) {
 					try {
-						buildBlock((Block) obj);
+						buildBlock((BlockWork) obj);
 					} catch (Exception e) {
 						skipped++;
 					}
@@ -52,8 +50,8 @@ public class BlockThread extends Thread {
 					blocks++;
 				}
 
-				if (obj instanceof Job) {
-					currentJob = (Job) obj;
+				if (obj instanceof BlockJob) {
+					currentJob = (BlockJob) obj;
 					blocks = 0;
 					skipped = 0;
 				}
@@ -62,22 +60,19 @@ public class BlockThread extends Thread {
 		}
 		;
 
-		System.out.println("[Blocker] BlockQueue Thread stoped.");
+		System.out.println("[Blocker] BlockQueue Thread stopped.");
 		blockQueue = null;
 	}
 
-	public void buildBlock(Block block) {
-		try {
-			sleep(25);
-		} catch (InterruptedException e) {
-		}
-
-		if (block.getTypeId() == currentJob.getWorld().getBlockTypeIdAt(
-				block.getX(), block.getY(), block.getZ()))
+	public void buildBlock(BlockWork blockWork) {
+		Block block = blockWork.getWorld().getBlockAt(blockWork.getX(), blockWork.getY(), blockWork.getZ());
+		
+		if (blockWork.getId() == block.getTypeId())
 			return;
 
 		// TODO: Set block
-
+		block.setTypeId(blockWork.getId());
+		block.setData(blockWork.getData());
 	}
 
 	public void setServer(Server server) {
@@ -88,20 +83,12 @@ public class BlockThread extends Thread {
 		return server;
 	}
 
-	public void onJobFinish(Job job) {
+	public void onJobFinish(BlockJob job) {
 		if (job.isNotify()) {
 			Player player = getServer().getPlayer(job.getBoss());
 			player.sendMessage("Generated: " + blocks + " Blocks");
 			if (skipped > 0)
 				player.sendMessage("Skipped: " + skipped + " Blocks");
 		}
-	}
-
-	public void setCurrentWorld(World currentWorld) {
-		this.currentWorld = currentWorld;
-	}
-
-	public World getCurrentWorld() {
-		return currentWorld;
 	}
 }

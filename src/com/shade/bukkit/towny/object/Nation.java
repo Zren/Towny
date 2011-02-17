@@ -333,4 +333,12 @@ public class Nation extends TownyIConomyObject implements ResidentList {
 			out.addAll(town.getTreeString(depth+2));
 		return out;
 	}
+
+	@Override
+	public boolean hasResident(String name) {
+		for (Town town : getTowns())
+			if (town.hasResident(name))
+				return true;
+		return false;
+	}
 }

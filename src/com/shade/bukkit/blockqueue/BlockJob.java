@@ -1,19 +1,17 @@
-package com.shade.bukkit.util;
+package com.shade.bukkit.blockqueue;
 
 import org.bukkit.World;
 
-class Job {
+class BlockJob {
 	private String boss;
 	private boolean notify;
-	private World world;
 
-	public Job(String boss, World world) {
-		this(boss, world, true);
+	public BlockJob(String boss, World world) {
+		this(boss, true);
 	}
 
-	public Job(String boss, World world, boolean notify) {
+	public BlockJob(String boss, boolean notify) {
 		this.setBoss(boss);
-		this.setWorld(world);
 		this.setNotify(notify);
 	}
 
@@ -31,13 +29,5 @@ class Job {
 
 	public boolean isNotify() {
 		return notify;
-	}
-
-	public void setWorld(World world) {
-		this.world = world;
-	}
-
-	public World getWorld() {
-		return world;
 	}
 }

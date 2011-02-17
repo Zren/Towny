@@ -195,8 +195,14 @@ public class War {
 		int hp = warZone.get(worldCoord) - 1;
 		if (hp > 0) {
 			warZone.put(worldCoord, hp);
-			if (hp % 10 == 0)
-				universe.sendTownMessage(townBlock.getTown(), Colors.Gray + "["+townBlock.getTown().getName()+"]("+townBlock.getCoord().toString()+") HP: "+hp);
+			if (hp % 10 == 0) {
+				universe.sendMessageTo(townBlock.getTown(),
+						Colors.Gray + "["+townBlock.getTown().getName()+"]("+townBlock.getCoord().toString()+") HP: "+hp,
+						"wardef");
+				universe.sendMessageTo(attacker,
+						Colors.Gray + "["+townBlock.getTown().getName()+"]("+townBlock.getCoord().toString()+") HP: "+hp,
+						"waratk");
+			}
 		} else
 			remove(attacker, townBlock);
 	}

@@ -79,9 +79,6 @@ public class TownySettings {
 	};
 	// Integer
 	public enum Int {
-		INACTIVE_AFTER_TIME,
-		DELETED_AFTER_TIME,
-		DAY_INTERVAL,
 		TOWN_BLOCK_SIZE,
 		TOWN_BLOCK_RATIO,
 		DEFAULT_MAX_TOWN_BLOCKS,
@@ -107,6 +104,12 @@ public class TownySettings {
 		WARTIME_TOWN_BLOCK_LOSS_PRICE,
 		PRICE_TOWN_UPKEEP,
 		PRICE_NATION_UPKEEP
+	};
+	// Long
+	public enum KeyLong {
+		INACTIVE_AFTER_TIME,
+		DELETED_AFTER_TIME,
+		DAY_INTERVAL
 	};
 	// Boolean
 	public enum Bool {
@@ -157,6 +160,8 @@ public class TownySettings {
 		= new ConcurrentHashMap<TownySettings.Str,String>();
 	private static final ConcurrentHashMap<TownySettings.Int,Integer> configInt
 		= new ConcurrentHashMap<TownySettings.Int,Integer>();
+	private static final ConcurrentHashMap<TownySettings.KeyLong,Long> configLong
+	= new ConcurrentHashMap<TownySettings.KeyLong,Long>();
 	private static final ConcurrentHashMap<TownySettings.Bool,Boolean> configBool
 		= new ConcurrentHashMap<TownySettings.Bool,Boolean>();
 	private static final ConcurrentHashMap<Integer,ConcurrentHashMap<TownySettings.NationLevel,Object>> configNationLevel
@@ -220,9 +225,6 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		// Integer
-		configInt.put(TownySettings.Int.INACTIVE_AFTER_TIME, 24 * 60 * 60 * 1000); // 1 Day
-		configInt.put(TownySettings.Int.DELETED_AFTER_TIME, 60 * 24 * 60 * 60 * 1000); // Two Months
-		configInt.put(TownySettings.Int.DAY_INTERVAL, 24 * 60 * 60 * 1000); // 24 Hours
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
 		configInt.put(TownySettings.Int.DEFAULT_MAX_TOWN_BLOCKS, 64);
@@ -248,6 +250,10 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_LOSS_PRICE, 100);
 		configInt.put(TownySettings.Int.PRICE_TOWN_UPKEEP, 10);
 		configInt.put(TownySettings.Int.PRICE_NATION_UPKEEP, 100);
+		// Long
+		configLong.put(TownySettings.KeyLong.INACTIVE_AFTER_TIME, 86400000L); // 24 Hours
+		configLong.put(TownySettings.KeyLong.DELETED_AFTER_TIME, 5184000000L); // Two Months
+		configLong.put(TownySettings.KeyLong.DAY_INTERVAL, 86400000L); // 24 Hours
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -434,12 +440,18 @@ public class TownySettings {
 			configStr.put(key, kvFile.getString(key.toString().toLowerCase(), getString(key)));
 		for (TownySettings.Int key : TownySettings.Int.values())
 			configInt.put(key, kvFile.getInt(key.toString().toLowerCase(), getInt(key)));
+		for (TownySettings.KeyLong key : TownySettings.KeyLong.values())
+			configLong.put(key, kvFile.getLong(key.toString().toLowerCase(), getLong(key)));
 		for (TownySettings.Bool key : TownySettings.Bool.values())
 			configBool.put(key, kvFile.getBoolean(key.toString().toLowerCase(), getBoolean(key)));
 	}
 	
 	public static Integer getInt(TownySettings.Int key) {
 		return configInt.get(key);
+	}
+	
+	public static Long getLong(TownySettings.KeyLong key) {
+		return configLong.get(key);
 	}
 	
 	public static Boolean getBoolean(TownySettings.Bool key) {
@@ -534,8 +546,8 @@ public class TownySettings {
 			return "/<unknown>";
 	}
 
-	public static  int getInactiveAfter() {
-		return 24 * 60 * 60 * 1000;
+	public static long getInactiveAfter() {
+		return getLong(TownySettings.KeyLong.INACTIVE_AFTER_TIME);
 	}
 
 	public static String getKingPrefix(Resident resident) {
@@ -656,8 +668,8 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.MODIFY_CHAT_NAME);
 	}
 
-	public static int getMaxInactivePeriod() {
-		return getInt(TownySettings.Int.DELETED_AFTER_TIME);
+	public static long getMaxInactivePeriod() {
+		return getLong(TownySettings.KeyLong.DELETED_AFTER_TIME);
 	}
 
 	public static boolean isDeletingOldResidents() {
@@ -867,8 +879,8 @@ public class TownySettings {
 		return getString(TownySettings.Str.UNCLAIMED_PLOT_NAME);
 	}
 
-	public static int getDayInterval() {
-		return getInt(TownySettings.Int.DAY_INTERVAL);
+	public static long getDayInterval() {
+		return getLong(TownySettings.KeyLong.DAY_INTERVAL);
 	}
 	
 	public static boolean isAllowingTownSpawnTravel() {

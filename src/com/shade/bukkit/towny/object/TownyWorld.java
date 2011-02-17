@@ -73,6 +73,14 @@ public class TownyWorld extends TownyObject {
 	public TownBlock getTownBlock(int x, int z) throws NotRegisteredException {
 		return getTownBlock(new Coord(x, z));
 	}
+	
+	public List<TownBlock> getTownBlocks(Town town) {
+		List<TownBlock> out = new ArrayList<TownBlock>();
+		for (TownBlock townBlock : town.getTownBlocks())
+			if (townBlock.getWorld() == this)
+				out.add(townBlock);
+		return out;
+	}
 
 	public Collection<TownBlock> getTownBlocks() {
 		return townBlocks.values();

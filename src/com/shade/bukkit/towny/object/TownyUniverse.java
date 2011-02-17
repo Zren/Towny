@@ -371,6 +371,14 @@ public class TownyUniverse extends TownyObject {
 		return plugin.getServer().getOnlinePlayers();
 	}
 
+	public List<Player> getOnlinePlayers(ResidentList residents) {
+		ArrayList<Player> players = new ArrayList<Player>();
+		for (Player player : getOnlinePlayers())
+			if (residents.hasResident(player.getName()))
+				players.add(player);
+		return players;
+	}
+	
 	public List<Player> getOnlinePlayers(Town town) {
 		ArrayList<Player> players = new ArrayList<Player>();
 		for (Player player : getOnlinePlayers())
@@ -868,5 +876,11 @@ public class TownyUniverse extends TownyObject {
 					return false;
 			return true;
 		}
+	}
+
+	public void sendMessageTo(ResidentList residents, String msg, String modeRequired) {
+		for (Player player : getOnlinePlayers(residents))
+			if (plugin.hasPlayerMode(player, modeRequired))
+				player.sendMessage(msg);
 	}
 }

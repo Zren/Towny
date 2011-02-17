@@ -31,6 +31,7 @@ import com.shade.bukkit.towny.event.TownyBlockListener;
 import com.shade.bukkit.towny.event.TownyEntityListener;
 import com.shade.bukkit.towny.event.TownyEntityMonitorListener;
 import com.shade.bukkit.towny.event.TownyPlayerListener;
+import com.shade.bukkit.towny.event.TownyPlayerLowListener;
 import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.TownyIConomyObject;
 import com.shade.bukkit.towny.object.TownyUniverse;
@@ -97,6 +98,7 @@ public class Towny extends JavaPlugin {
 	private final TownyPlayerListener playerListener = new TownyPlayerListener(this);
 	private final TownyBlockListener blockListener = new TownyBlockListener(this);
 	private final TownyEntityListener entityListener = new TownyEntityListener(this);
+	private final TownyPlayerLowListener playerLowListener = new TownyPlayerLowListener(this);
 	private final TownyEntityMonitorListener entityMonitorListener = new TownyEntityMonitorListener(this);
 	private TownyUniverse townyUniverse;
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
@@ -226,6 +228,7 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerLowListener, Priority.Low, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Priority.Normal, this);
 
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Normal, this);

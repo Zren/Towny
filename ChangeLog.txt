@@ -74,6 +74,11 @@ v0.21:
 	Added add+/remove+ to select offline residents.
 v0.22:
 	Nation server upkeep is now taken. 
+	Added command /townyworld (/tw) to manage worlds.
+	You can now set world PvP, and if a world is claimable.
+	The slightly spammy messages during war have been filtered to show every 10 damage. They can be viewed with the modes "wardef" and "waratk".
+	Added modes "tc" and "nc" to talk in a particular chat without typing /tc [msg], etc.
+	Created Long config values. "Deleted after time" was overflowing int.
 	
 TODO:	
 	

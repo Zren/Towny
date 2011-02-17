@@ -3,30 +3,15 @@ package com.shade.bukkit.wallgen;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 
 public class Wall {
-	private List<WallSection> sections = new ArrayList<WallSection>();
+	private List<WallSection> wallSections = new ArrayList<WallSection>();
 	private int blockType, height, walkwayHeight;
 
-	public boolean add(WallSection wallSection) {
-		return sections.add(wallSection);
-	}
-
 	public void clear() {
-		sections.clear();
-	}
-
-	public boolean remove(WallSection wallSection) {
-		return sections.remove(wallSection);
-	}
-
-	public List<WallSection> getSections() {
-		return sections;
-	}
-
-	public void setSections(List<WallSection> sections) {
-		this.sections = sections;
+		wallSections.clear();
 	}
 
 	public int getBlockType() {
@@ -57,5 +42,33 @@ public class Wall {
 		blockType = Material.COBBLESTONE.getId();
 		height = 2;
 		walkwayHeight = 0;
+	}
+
+	public List<WallSection> getWallSections() {
+		return wallSections;
+	}
+	
+	public WallSection getWallSection(Location point) {
+		for (WallSection wallSection : getWallSections())
+			if (wallSection.getPoint().equals(point))
+				return wallSection;
+		return null;
+	}
+
+	public void setWallSections(List<WallSection> wallSections) {
+		this.wallSections = wallSections;
+
+	}
+
+	public boolean hasWallSection(WallSection wallSection) {
+		return wallSections.contains(wallSection);
+	}
+	
+	public void addWallSection(WallSection wallSection) {
+		wallSections.add(wallSection);
+	}
+
+	public void removeWallSection(WallSection wallSection) {
+		wallSections.remove(wallSection);
 	}
 }
