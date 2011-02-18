@@ -322,7 +322,8 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/resident", "[resident]", "Target player's status"));
 		player.sendMessage(ChatTools.formatCommand("", "/resident", "list", "List all active players"));
 		player.sendMessage(ChatTools.formatCommand("", "/resident", "set [] .. []", "'/resident set' for help"));
-		player.sendMessage(ChatTools.formatCommand("", "/resident", "friend [add/remove] [resident]", ""));
+		player.sendMessage(ChatTools.formatCommand("", "/resident", "friend [add/remove] [resident]", "Online match"));
+		player.sendMessage(ChatTools.formatCommand("", "/resident", "friend [add+/remove+] [resident]", "Exact name"));
 		player.sendMessage(ChatTools.formatCommand("Admin", "/resident", "delete [resident]", ""));
 	}
 	
@@ -707,16 +708,23 @@ public class TownyPlayerListener extends PlayerListener {
 		player.sendMessage(ChatTools.formatCommand("", "/town", "spawn", "Teleport to town's spawn."));
 		player.sendMessage(ChatTools.formatCommand(newTownReq, "/town", "new [town] *[mayor]", "Create a new town."));
 		player.sendMessage(ChatTools.formatCommand("Resident", "/town", "deposit [$]", ""));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "mayor ?", "List commands for mayors."));
+		player.sendMessage(ChatTools.formatCommand("Admin", "/town", "delete [town]", ""));
+	}
+	
+	public void showTownMayorHelp(Player player) {
+		player.sendMessage(ChatTools.formatTitle("Town Mayor Help"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "withdraw [$]", ""));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "claim", "'/town claim ?' for help"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "unclaim", "'/town unclaim ?' for help"));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "[add/kick] [resident] .. []", "Online only"));
-		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "[add+/kick+] [resident]", "Offline only"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "[add/kick] [resident] .. []", "Online match"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "[add+/kick+] [resident]", "Exact name"));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "set [] .. []", "'/town set' for help"));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "assistant [add/remove] [player]", ""));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "assistant [add/remove] [player]", "Online match"));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "assistant [add+/remove+] [player]", "Exact"));
 		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "wall [type] [height]", ""));
 		// TODO: player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "wall remove", ""));
-		player.sendMessage(ChatTools.formatCommand("Mayor/Admin", "/town", "delete [town]", ""));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "delete", ""));
 	}
 
 	public void parseTownCommand(Player player, String[] split) {
@@ -788,6 +796,8 @@ public class TownyPlayerListener extends PlayerListener {
 			
 			if (split[0].equalsIgnoreCase("set"))
 				townSet(player, newSplit);
+			else if (split[0].equalsIgnoreCase("mayor"))
+				townMayor(player, newSplit);
 			else if (split[0].equalsIgnoreCase("assistant"))
 				townAssistant(player, newSplit);
 			else if (split[0].equalsIgnoreCase("delete"))
@@ -1004,6 +1014,11 @@ public class TownyPlayerListener extends PlayerListener {
 		
 		plugin.getTownyUniverse().sendTownMessage(town, resident.getName() + " left town");
 		plugin.sendMsg(player, "You left "+town.getName()+".");
+	}
+	
+	public void townMayor(Player player, String[] split) {
+		if (split.length == 0 || split[0].equalsIgnoreCase("?"))
+			showTownMayorHelp(player);
 	}
 	
 	/**
@@ -1791,22 +1806,29 @@ public class TownyPlayerListener extends PlayerListener {
 	 */
 
 	public void showNationHelp(Player player) {
-		String newNationReq = TownySettings.isNationCreationAdminOnly() ? "Admin" : "";
-
 		player.sendMessage(ChatTools.formatTitle("/nation"));
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "", "Your nation's status"));
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "[nation]", "Target nation's status"));
 		player.sendMessage(ChatTools.formatCommand("", "/nation", "list", "List all nations"));
-		player.sendMessage(ChatTools.formatCommand("Mayor", "/nation", "leave", "Leave your nation"));
 		player.sendMessage(ChatTools.formatCommand("Resident", "/nation", "deposit [$]", ""));
+		player.sendMessage(ChatTools.formatCommand("Mayor", "/nation", "leave", "Leave your nation"));
+		if (!TownySettings.isNationCreationAdminOnly())
+			player.sendMessage(ChatTools.formatCommand("Mayor", "/nation", "new [nation]", "Create a new nation"));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "king ?", "List the king commands"));
+		player.sendMessage(ChatTools.formatCommand("Admin", "/nation", "new [nation] *[capital]", "Create a new nation"));
+		player.sendMessage(ChatTools.formatCommand("Admin", "/nation", "delete [nation]", ""));
+	}
+	
+	public void showNationKingHelp(Player player) {
+		player.sendMessage(ChatTools.formatTitle("Nation King Help"));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "withdraw [$]", ""));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "[add/kick] [town] .. [town]", ""));
-		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove] [resident]", ""));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add/remove] [resident]", "Match"));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "assistant [add+/remove+] [resident]", "Exact"));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "set [] .. []", ""));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "ally [add/remove] [nation]", "Set you alliance."));
 		player.sendMessage(ChatTools.formatCommand("King", "/nation", "enemy [add/remove] [nation]", "Set you enemys."));
-		player.sendMessage(ChatTools.formatCommand(newNationReq, "/nation", "new [nation] *[capital]", "Create a new nation"));
-		player.sendMessage(ChatTools.formatCommand("King/Admin", "/nation", "delete [nation]", ""));
+		player.sendMessage(ChatTools.formatCommand("King", "/nation", "delete", ""));
 	}
 
 	public void parseNationCommand(Player player, String[] split) {
@@ -1861,7 +1883,9 @@ public class TownyPlayerListener extends PlayerListener {
 		} else {
 			String[] newSplit = StringMgmt.remFirstArg(split);
 			
-			if (split[0].equalsIgnoreCase("add"))
+			if (split[0].equalsIgnoreCase("king"))
+				nationKing(player, newSplit);
+			else if (split[0].equalsIgnoreCase("add"))
 				nationAdd(player, newSplit);
 			else if (split[0].equalsIgnoreCase("kick"))
 				nationKick(player, newSplit);
@@ -2027,6 +2051,11 @@ public class TownyPlayerListener extends PlayerListener {
 				plugin.sendErrorMsg(player, x.getError());
 				return;
 			}
+	}
+	
+	public void nationKing(Player player, String[] split) {
+		if (split.length == 0 || split[0].equalsIgnoreCase("?"))
+			showNationKingHelp(player);
 	}
 	
 	public void nationAdd(Player player, String[] names) {
@@ -2496,6 +2525,48 @@ public class TownyPlayerListener extends PlayerListener {
 						boolean choice = parseOnOff(split[1]);
 						world.setClaimable(choice);
 						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s PvP " + split[1]);
+					} catch (Exception e) {
+						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
+					}
+			} else if (split[0].equalsIgnoreCase("usedefault"))
+				world.setUsingDefault(true);
+			else if (split[0].equalsIgnoreCase("wildperm")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set wildperm build,destroy");
+				else
+					try {
+						boolean choice = parseOnOff(split[1]);
+						world.setClaimable(choice);
+						world.setUsingDefault(false);
+						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s wild permissions " + split[1]);
+					} catch (Exception e) {
+						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
+					}
+			} else if (split[0].equalsIgnoreCase("wildignore")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set wildignore 11,25,45,67");
+				else
+					try {
+						List<Integer> nums = new ArrayList<Integer>();
+						for (String s: split[1].split(","))
+							try {
+								nums.add(Integer.parseInt(s));
+							} catch (NumberFormatException e) {
+							}
+						world.setUnclaimedZoneIgnore(nums);
+						world.setUsingDefault(false);
+						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s wild ignore blocks to " + Arrays.toString(nums.toArray(new Integer[0])));
+					} catch (Exception e) {
+						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
+					}
+			} else if (split[0].equalsIgnoreCase("wildname")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /nation set wildname Wildy");
+				else
+					try {
+						world.setUnclaimedZoneName(split[1]);
+						world.setUsingDefault(false);
+						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s wild name to " + split[1]);
 					} catch (Exception e) {
 						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
 					}

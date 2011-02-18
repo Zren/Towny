@@ -12,6 +12,8 @@ import com.shade.bukkit.towny.object.Coord;
 import com.shade.bukkit.towny.object.TownBlock;
 import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.TownyWorld;
+import com.shade.util.JavaUtil;
+import com.shade.util.StringMgmt;
 
 public class MobRemovalTimerTask extends TownyTimerTask {
 	private Server server;
@@ -21,17 +23,34 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 	public MobRemovalTimerTask(TownyUniverse universe, Server server) {
 		super(universe);
 		this.server = server;
+		//mobsToRemove.add(org.bukkit.entity.Spider.class);
+		//mobsToRemove.add(org.bukkit.entity.Skeleton.class);
+		//mobsToRemove.add(org.bukkit.entity.Zombie.class);
+		//mobsToRemove.add(org.bukkit.entity.Creeper.class);
+		//mobsToRemove.add(org.bukkit.entity.Sheep.class);
 		for (String mob : TownySettings.getMobRemovalEntities())
 			try {
 				@SuppressWarnings("rawtypes")
-				Class c = Class.forName("org.bukkit.craftbukkit.entity."+mob);
-				if (c.isInstance(LivingEntity.class))
+				Class c = Class.forName("org.bukkit.entity."+mob);
+				if (JavaUtil.isSubInterface(LivingEntity.class, c))
 					mobsToRemove.add(c);
 				else
-					throw new ClassNotFoundException();
+					throw new Exception();
 			} catch (ClassNotFoundException e) {
+				plugin.sendErrorMsg(mob + " is not an acceptable class.");
+			} catch (Exception e) {
 				plugin.sendErrorMsg(mob + " is not an acceptable living entity.");
 			}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public boolean isRemovingEntity(LivingEntity livingEntity) {
+		for (Class c : mobsToRemove)
+			if (c.isInstance(livingEntity))
+				return true;
+			else if (c.getName().contains(livingEntity.toString()))
+				System.out.print(livingEntity.toString());
+		return false;
 	}
 	
 	
@@ -41,22 +60,24 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 		int livingEntities = 0;
 		
 		for (World world : server.getWorlds()) {
-			livingEntities += world.getLivingEntities().size();
-			for (LivingEntity livingEntity : new ArrayList<LivingEntity>(world.getLivingEntities()))
-				if (mobsToRemove.contains(livingEntity.getClass())) {
-				//if (TownySettings.getMobRemovalEntities().contains(livingEntity.toString())) {
+			List<LivingEntity> worldLivingEntities = new ArrayList<LivingEntity>(world.getLivingEntities());
+			livingEntities += worldLivingEntities.size();
+			for (LivingEntity livingEntity : worldLivingEntities)
+				if (isRemovingEntity(livingEntity)) {
 					Location loc = livingEntity.getLocation();
 					Coord coord = Coord.parseCoord(loc);
 					try {
 						TownyWorld townyWorld = universe.getWorld(world.getName());
 						TownBlock townBlock = townyWorld.getTownBlock(coord);
 						if (!townBlock.getTown().hasMobs()) {
+							universe.getPlugin().sendDebugMsg("MobRemoval Removed: " + livingEntity.toString());
 							livingEntity.teleportTo(new Location(world, loc.getX(), -50, loc.getZ()));
 							numRemoved++;
 						}
 					} catch (TownyException x) {
 					}
 				}
+			universe.getPlugin().sendDebugMsg(world.getName() + ": " + StringMgmt.join(worldLivingEntities));
 		}
 		universe.getPlugin().sendDebugMsg("MobRemoval (Removed: "+numRemoved+") (Total Living: "+livingEntities+")");
 	}

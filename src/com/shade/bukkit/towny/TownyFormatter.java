@@ -220,7 +220,9 @@ public class TownyFormatter {
 	}
 	
 	public String getFormattedName(TownyObject obj) {
-		if (obj instanceof Resident)
+		if (obj == null)
+			return "Null";
+		else if (obj instanceof Resident)
 			return getFormattedResidentName((Resident) obj);
 		else if (obj instanceof Town)
 			return getFormattedTownName((Town) obj);

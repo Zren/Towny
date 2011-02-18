@@ -79,6 +79,8 @@ v0.22:
 	The slightly spammy messages during war have been filtered to show every 10 damage. They can be viewed with the modes "wardef" and "waratk".
 	Added modes "tc" and "nc" to talk in a particular chat without typing /tc [msg], etc.
 	Created Long config values. "Deleted after time" was overflowing int.
+	Added to world options, isDefault (use default settings in config), as well as per world permissions, ignore ids, and unclaimed zone names.
+	Fixed MobRemoval.
 	
 TODO:	
 	

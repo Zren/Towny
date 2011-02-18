@@ -32,6 +32,10 @@ public class TownyPlayerLowListener extends PlayerListener {
 			parseTownChatCommand(player, event.getMessage());
 		else if (plugin.hasPlayerMode(player, "nc")) 
 			parseNationChatCommand(player, event.getMessage());
+		else
+			return;
+		
+		event.setCancelled(true);
 	}
 	
 	//TODO: Below is copy pasta :/

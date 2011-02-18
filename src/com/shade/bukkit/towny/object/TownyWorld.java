@@ -7,11 +7,14 @@ import java.util.List;
 
 import com.shade.bukkit.towny.AlreadyRegisteredException;
 import com.shade.bukkit.towny.NotRegisteredException;
+import com.shade.bukkit.towny.TownySettings;
 
 public class TownyWorld extends TownyObject {
 	private List<Town> towns = new ArrayList<Town>();
-	private boolean isClaimable, isPvP;
-
+	private boolean isClaimable = true, isPvP = true, usingDefault = true;
+	private List<Integer> unclaimedZoneIgnoreIds = null;
+	private Boolean unclaimedZoneBuild = null, unclaimedZoneDestroy = null, unclaimedZoneSwitch = null;
+	private String unclaimedZoneName = null;
 	private Hashtable<Coord, TownBlock> townBlocks = new Hashtable<Coord, TownBlock>();
 
 	// TODO: private List<TownBlock> adminTownBlocks = new
@@ -19,8 +22,6 @@ public class TownyWorld extends TownyObject {
 
 	public TownyWorld(String name) {
 		setName(name);
-		isClaimable = true;
-		isPvP = true;
 	}
 
 	public List<Town> getTowns() {
@@ -144,5 +145,76 @@ public class TownyWorld extends TownyObject {
 
 	public boolean isClaimable() {
 		return isClaimable;
+	}
+
+	public void setUsingDefault(boolean usingDefault) {
+		this.usingDefault = usingDefault;
+		if (usingDefault) {
+			setUnclaimedZoneBuild(null);
+			setUnclaimedZoneDestroy(null);
+			setUnclaimedZoneSwitch(null);
+			setUnclaimedZoneIgnore(null);
+			setUnclaimedZoneName(null);
+		}
+			
+	}
+
+	public boolean isUsingDefault() {
+		return usingDefault;
+	}
+	
+	public List<Integer> getUnclaimedZoneIgnoreIds() {
+		if (unclaimedZoneIgnoreIds == null || isUsingDefault())
+			return TownySettings.getUnclaimedZoneIgnoreIds();
+		else
+			return unclaimedZoneIgnoreIds;
+	}
+
+	public void setUnclaimedZoneIgnore(List<Integer> unclaimedZoneIgnoreIds) {
+		this.unclaimedZoneIgnoreIds = unclaimedZoneIgnoreIds;
+	}
+
+	public Boolean getUnclaimedZoneBuild() {
+		if (unclaimedZoneBuild == null || isUsingDefault())
+			return TownySettings.getUnclaimedZoneBuildRights();
+		else
+			return unclaimedZoneBuild;
+	}
+
+	public void setUnclaimedZoneBuild(Boolean unclaimedZoneBuild) {
+		this.unclaimedZoneBuild = unclaimedZoneBuild;
+	}
+
+	public Boolean getUnclaimedZoneDestroy() {
+		if (unclaimedZoneDestroy == null || isUsingDefault())
+			return TownySettings.getUnclaimedZoneDestroyRights();
+		else
+			return unclaimedZoneDestroy;
+	}
+
+	public void setUnclaimedZoneDestroy(Boolean unclaimedZoneDestroy) {
+		this.unclaimedZoneDestroy = unclaimedZoneDestroy;
+	}
+
+	public Boolean getUnclaimedZoneSwitch() {
+		if (unclaimedZoneSwitch == null || isUsingDefault())
+			return TownySettings.getUnclaimedZoneSwitchRights();
+		else
+			return unclaimedZoneSwitch;
+	}
+
+	public void setUnclaimedZoneSwitch(Boolean unclaimedZoneSwitch) {
+		this.unclaimedZoneSwitch = unclaimedZoneSwitch;
+	}
+
+	public String getUnclaimedZoneName() {
+		if (unclaimedZoneName == null || isUsingDefault())
+			return TownySettings.getUnclaimedZoneName();
+		else
+			return unclaimedZoneName;
+	}
+
+	public void setUnclaimedZoneName(String unclaimedZoneName) {
+		this.unclaimedZoneName = unclaimedZoneName;
 	}
 }

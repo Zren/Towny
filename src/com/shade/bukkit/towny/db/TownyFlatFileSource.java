@@ -27,6 +27,7 @@ import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.TownyWorld;
 import com.shade.util.FileMgmt;
 import com.shade.util.KeyValueFile;
+import com.shade.util.StringMgmt;
 
 // TODO: Make sure the lack of a particular value doesn't error out the entire file
 
@@ -496,6 +497,50 @@ public class TownyFlatFileSource extends TownyDataSource {
 						world.setPvP(Boolean.parseBoolean(line));
 					} catch (Exception e) {
 					}
+					
+				line = kvFile.get("usingDefault");
+				if (line != null)
+					try {
+						world.setUsingDefault(Boolean.parseBoolean(line));
+					} catch (Exception e) {
+					}
+					
+				line = kvFile.get("unclaimedZoneBuild");
+				if (line != null)
+					try {
+						world.setUnclaimedZoneBuild(Boolean.parseBoolean(line));
+					} catch (Exception e) {
+					}
+				line = kvFile.get("unclaimedZoneDestroy");
+				if (line != null)
+					try {
+						world.setUnclaimedZoneDestroy(Boolean.parseBoolean(line));
+					} catch (Exception e) {
+					}
+				line = kvFile.get("unclaimedZoneSwitch");
+				if (line != null)
+					try {
+						world.setUnclaimedZoneSwitch(Boolean.parseBoolean(line));
+					} catch (Exception e) {
+					}
+				line = kvFile.get("unclaimedZoneName");
+				if (line != null)
+					try {
+						world.setUnclaimedZoneName(line);
+					} catch (Exception e) {
+					}
+				line = kvFile.get("unclaimedZoneIgnoreIds");
+				if (line != null)
+					try {
+						List<Integer> nums = new ArrayList<Integer>();
+						for (String s: line.split(","))
+							try {
+								nums.add(Integer.parseInt(s));
+							} catch (NumberFormatException e) {
+							}
+						world.setUnclaimedZoneIgnore(nums);
+					} catch (Exception e) {
+					}
 
 				// loadTownBlocks(world);
 
@@ -779,6 +824,23 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.write("pvp=" + Boolean.toString(world.isPvP()) + newLine);
 			// Claimable
 			fout.write("claimable=" + Boolean.toString(world.isClaimable()) + newLine);
+			// Using Default
+			fout.write("usingDefault=" + Boolean.toString(world.isUsingDefault()) + newLine);
+			// Unclaimed Zone Build
+			if (world.getUnclaimedZoneBuild() != null)
+				fout.write("unclaimedZoneBuild=" + Boolean.toString(world.getUnclaimedZoneBuild()) + newLine);
+			// Unclaimed Zone Destroy
+			if (world.getUnclaimedZoneDestroy() != null)
+				fout.write("unclaimedZoneDestroy=" + Boolean.toString(world.getUnclaimedZoneDestroy()) + newLine);
+			// Unclaimed Zone Switch
+			if (world.getUnclaimedZoneSwitch() != null)
+				fout.write("unclaimedZoneSwitch=" + Boolean.toString(world.getUnclaimedZoneSwitch()) + newLine);
+			// Unclaimed Zone Name
+			if (world.getUnclaimedZoneName() != null)
+				fout.write("unclaimedZoneName=" + world.getUnclaimedZoneName() + newLine);
+			// Unclaimed Zone Name
+			if (world.getUnclaimedZoneIgnoreIds() != null)
+				fout.write("unclaimedZoneIgnoreIds=" + StringMgmt.join(world.getUnclaimedZoneIgnoreIds(), ",") + newLine);
 			
 			fout.close();
 

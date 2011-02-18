@@ -182,9 +182,7 @@ public class TownySettings {
 		configStrArr.put(TownySettings.StrArr.TOWN_CHAT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/tc"})));
 		configStrArr.put(TownySettings.StrArr.NATION_CHAT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/nc"})));
 		configStrArr.put(TownySettings.StrArr.MOB_REMOVAL_ENTITIES, new ArrayList<String>(Arrays.asList(new String[]{
-				"CraftSlime", "CraftGhast", "CraftChicken", "CraftCow", "CraftPig",
-				"CraftSheep","CraftCreeper", "CraftGiant", "CraftSkeleton", 
-				"CraftSpider", "CraftZombie", "CraftSquid", "CraftPigZombie"
+				"Monster", "WaterMob", "Flying", "Slime"
 		})));
 		// Integer[]
 		configIntArr.put(TownySettings.IntArr.SWITCH_IDS,  new ArrayList<Integer>(Arrays.asList(new Integer[]{64,69,70,71,72,77})));

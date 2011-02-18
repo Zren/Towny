@@ -1,6 +1,5 @@
 package com.shade.bukkit.towny.object;
 
-import com.shade.bukkit.towny.TownySettings;
 
 public class TownyPermission {
 	public boolean residentBuild, residentDestroy, residentSwitch,
@@ -116,11 +115,11 @@ public class TownyPermission {
 		}
 	}
 	
-	public static boolean getUnclaimedZone(ActionType type) {
+	public static boolean getUnclaimedZone(ActionType type, TownyWorld world) {
 		switch (type) {
-			case BUILD: return TownySettings.getUnclaimedZoneBuildRights();
-			case DESTROY: return TownySettings.getUnclaimedZoneDestroyRights();
-			case SWITCH: return TownySettings.getUnclaimedZoneSwitchRights();
+			case BUILD: return world.getUnclaimedZoneBuild();
+			case DESTROY: return world.getUnclaimedZoneDestroy();
+			case SWITCH: return world.getUnclaimedZoneSwitch();
 			default: throw new UnsupportedOperationException();
 		}
 	}

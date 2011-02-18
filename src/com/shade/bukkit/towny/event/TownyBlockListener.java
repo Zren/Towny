@@ -251,7 +251,7 @@ public class TownyBlockListener extends BlockListener {
 			if (status == TownBlockStatus.UNCLAIMED_ZONE)
 				if (plugin.hasPermission(player, "towny.wild." + actionType.toString()))
 					return true;
-				else if (!TownyPermission.getUnclaimedZone(actionType)) {
+				else if (!TownyPermission.getUnclaimedZone(actionType, pos.getWorld())) {
 					// TODO: Have permission to destroy here
 					cacheBlockErrMsg(player, "Not allowed to " + actionType.toString() + " in the wild.");
 					return false;
