@@ -411,17 +411,23 @@ public class Towny extends JavaPlugin {
 
 	@SuppressWarnings("static-access")
 	public boolean checkEssentialsTeleport(Player player) {
+		if (!TownySettings.isUsingEssentials())
+			return true;
+		
 		Plugin test = getServer().getPluginManager().getPlugin("Essentials");
 		if (test == null)
 			return true;
-		
 		Essentials essentials = (Essentials)test;
 		essentials.loadClasses();
+		
+		test = getServer().getPluginManager().getPlugin("EssentialsTele");
+		if (test == null)
+			return true;	
 		
 		try {
 			User user = User.get(player, getServer());
 			user.teleportCooldown();
-			essentials.charge(user, "tp");
+			user.charge("tp");
 		} catch (Exception e) {
 			sendErrorMsg(player, "Error: " + e.getMessage());
 			return false;

@@ -130,7 +130,8 @@ public class TownySettings {
 		HEALTH_REGEN,
 		ALLOW_OUTPOSTS,
 		ALLOW_TOWN_SPAWN_TRAVEL,
-		DEV_MODE
+		DEV_MODE,
+		WARTIME_REMOVE_ON_MONARCH_DEATH //TODO: Add to Wiki
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -271,6 +272,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.ALLOW_OUTPOSTS, true);
 		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL, true);
 		configBool.put(TownySettings.Bool.DEV_MODE, false);
+		configBool.put(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH, false);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -907,6 +909,11 @@ public class TownySettings {
 	
 	public static boolean isDevMode() {
 		return getBoolean(TownySettings.Bool.DEV_MODE);
+	}
+	
+
+	public static boolean isRemovingOnMonarchDeath() {
+		return getBoolean(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH);
 	}
 
 	public static int getTownUpkeepCost() {

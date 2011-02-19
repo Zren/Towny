@@ -14,5 +14,4 @@ iConomy : by Nijikokun
 
 Permissions : by Nijikokun
 
-
-(Soon)Essentials : by Zenexer
+EssentialsTele : by Zenexer

@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/iConomy.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/Permissions.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/Essentials.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/EssentialsTele.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

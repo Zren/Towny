@@ -71,6 +71,7 @@ v0.19:
 v0.20:
 	Quick fix for town notifications.
 v0.21:
+	Resident permissions are persistent.
 	Added add+/remove+ to select offline residents.
 v0.22:
 	Nation server upkeep is now taken. 
@@ -81,6 +82,10 @@ v0.22:
 	Created Long config values. "Deleted after time" was overflowing int.
 	Added to world options, isDefault (use default settings in config), as well as per world permissions, ignore ids, and unclaimed zone names.
 	Fixed MobRemoval.
+	Moved some help commands around.
+v0.23:
+	Updated Essentials extensibility to use the proper plugin.
+	Added option to disable removing a town/nation on monarch death.
 	
 TODO:	
 	

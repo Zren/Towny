@@ -53,7 +53,8 @@ public class TownyEntityMonitorListener extends EntityListener {
 			
 			deathPayment(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
 			
-			monarchDeath(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
+			if (TownySettings.isRemovingOnMonarchDeath())
+				monarchDeath(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
 		}
 	}
 	
