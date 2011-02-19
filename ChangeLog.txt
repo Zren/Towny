@@ -87,6 +87,8 @@ v0.23:
 	Updated Essentials extensibility to use the proper plugin.
 	Added option to disable removing a town/nation on monarch death.
 	Small grammar edit for when setting permissions.
+v0.24:
+	Fixed the logic error with loading permissions.
 	
 TODO:	
 	

@@ -48,6 +48,7 @@ public class TownyPermission {
 	}
 
 	public void load(String s) {
+		setAll(false);
 		String[] tokens = s.split(",");
 		for (String token : tokens)
 			set(token, true);
