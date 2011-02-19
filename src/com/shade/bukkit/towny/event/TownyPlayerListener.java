@@ -1751,7 +1751,13 @@ public class TownyPlayerListener extends PlayerListener {
 					perm.set(s, b);
 				} catch (Exception e) {
 				}
-			plugin.sendMsg(player, "Successfully changed permissions to " + townBlockOwner.getPermissions().toString() + ".");
+			String perms = townBlockOwner.getPermissions().toString();
+			if (perms.length() == 0)
+				perms = "deny all";
+			else
+				perms = "only allow ";
+			plugin.sendMsg(player, "Successfully changed permissions to " + perms + ".");
+			
 		}
 	}
 

@@ -419,10 +419,13 @@ public class Towny extends JavaPlugin {
 			return true;
 		Essentials essentials = (Essentials)test;
 		essentials.loadClasses();
+		sendDebugMsg("Using Essenitials");
+		
 		
 		test = getServer().getPluginManager().getPlugin("EssentialsTele");
 		if (test == null)
-			return true;	
+			return true;
+		sendDebugMsg("Using EssenitialsTele");
 		
 		try {
 			User user = User.get(player, getServer());
