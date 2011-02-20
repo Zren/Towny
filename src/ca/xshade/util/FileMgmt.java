@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class FileMgmt {
 	public static void checkFolders(String[] folders) {
@@ -44,6 +46,32 @@ public class FileMgmt {
 				out.write(buf, 0, len);
 			in.close();
 			out.close();
+		}
+	}
+	
+	public static void zipDirectory(File sourceFolder, File destination) throws IOException {
+		ZipOutputStream output = new ZipOutputStream(new FileOutputStream(destination));
+		recursiveZipDirectory(sourceFolder, output);
+		output.close();
+	}
+	
+	public static void recursiveZipDirectory(File sourceFolder, ZipOutputStream zipStream) throws IOException {
+		String[] dirList = sourceFolder.list();
+		byte[] readBuffer = new byte[2156];
+		int bytesIn = 0;
+		for (int i = 0; i < dirList.length; i++) {
+			File f = new File(sourceFolder, dirList[i]);
+			if (f.isDirectory()) {
+				recursiveZipDirectory(f, zipStream);
+				continue;
+			} else {
+				FileInputStream input = new FileInputStream(f);
+				ZipEntry anEntry = new ZipEntry(f.getPath());
+				zipStream.putNextEntry(anEntry);
+				while((bytesIn = input.read(readBuffer)) != -1)
+					zipStream.write(readBuffer, 0, bytesIn);
+				input.close();
+			}
 		}
 	}
 }

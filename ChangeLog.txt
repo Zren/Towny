@@ -92,8 +92,12 @@ v0.24:
 v0.25:
 	Finished TownyWorld commands.
 v0.26:
-	Mayor's can no longer leave the town (must choose a replacement first).
 	All damage within non PvP zones is negated.
+	Update for latest API change.
+v0.27:
+	Mayor's can no longer leave the town (must choose a replacement first).
+	Changed a few config names DATABASE_LOAD, DATABASE_SAVE
+	Flatfile backup is is now zipping the entire Towny folder. 3 options now in config flatfile_backup = [zip/folder/none].
 	
 TODO:	
 	

@@ -106,20 +106,27 @@ public class Towny extends JavaPlugin {
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
 	private Permissions permissions = null;
 	
+	public Towny() {
+		version = this.getDescription().getVersion();
+	}
+	
 	public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
 		super(pluginLoader, instance, desc, folder, plugin, cLoader);
 		version = this.getDescription().getVersion();
 	}
 	
 	public static void main(String[] args) {
-		TownyUniverse universe = new TownyUniverse("C:\\Users\\Admin\\Desktop\\Bukkit\\Server\\plugins\\Towny");
-		universe.loadSettings();
-		System.out.println("[Towny] Database: [" + TownySettings.getLoadDatabase() + "] ");
-		universe.setDataSource(TownySettings.getSaveDatabase());
-		universe.getDataSource().initialize(null, universe);
-		universe.getDataSource().loadAll();
-        for (String line : universe.getTreeString(0))
-        	System.out.println(line);
+		if (args.length > 0) {
+			TownyUniverse universe = new TownyUniverse(args[0]);
+			universe.loadSettings();
+			System.out.println("[Towny] Database: [" + TownySettings.getLoadDatabase() + "] ");
+			universe.setDataSource(TownySettings.getSaveDatabase());
+			universe.getDataSource().initialize(null, universe);
+			universe.getDataSource().loadAll();
+	        for (String line : universe.getTreeString(0))
+	        	System.out.println(line);
+		} else
+			System.out.println("Folder path to Towny required as argument.");
 	}
 
 	@Override

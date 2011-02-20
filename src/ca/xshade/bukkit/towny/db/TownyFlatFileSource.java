@@ -19,6 +19,7 @@ import ca.xshade.bukkit.towny.AlreadyRegisteredException;
 import ca.xshade.bukkit.towny.NotRegisteredException;
 import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownyException;
+import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.towny.object.Nation;
 import ca.xshade.bukkit.towny.object.Resident;
 import ca.xshade.bukkit.towny.object.Town;
@@ -64,12 +65,20 @@ public class TownyFlatFileSource extends TownyDataSource {
 	
 	@Override
 	public void backup() throws IOException {
-		long t = System.currentTimeMillis();
-		String newBackupFolder = rootFolder + "/backup/" + new SimpleDateFormat("yyyy-MM-dd HH-mm").format(t) + " - " + Long.toString(t);
-		FileMgmt.checkFolders(new String[]{ rootFolder,
-				rootFolder + "/backup",
-				newBackupFolder});
-		FileMgmt.copyDirectory(new File(rootFolder + dataFolder), new File(newBackupFolder));
+		String backupType = TownySettings.getFlatFileBackupType();
+		if (!backupType.equalsIgnoreCase("none")) {
+			long t = System.currentTimeMillis();
+			String newBackupFolder = rootFolder + "/backup/" + new SimpleDateFormat("yyyy-MM-dd HH-mm").format(t) + " - " + Long.toString(t);
+			FileMgmt.checkFolders(new String[]{ rootFolder,
+					rootFolder + "/backup",
+					newBackupFolder});
+			if (backupType.equalsIgnoreCase("folder"))
+				FileMgmt.copyDirectory(new File(rootFolder), new File(newBackupFolder));
+			else if (backupType.equalsIgnoreCase("zip"))
+				FileMgmt.zipDirectory(new File(rootFolder), new File(newBackupFolder + ".zip"));
+			else
+				throw new IOException("Unsupported flatfile backup type (" + backupType + ")");
+		}
 	}
 
 	/*

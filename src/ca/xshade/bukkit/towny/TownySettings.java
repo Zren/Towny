@@ -24,7 +24,7 @@ import ca.xshade.util.StringMgmt;
 public class TownySettings {
 	// String[]
 	public enum StrArr {
-		SAVE_DATABASES,
+		DATABASE_SAVE,
 		RESIDENT_COMMANDS,
 		TOWN_COMMANDS,
 		NATION_COMMANDS,
@@ -43,7 +43,7 @@ public class TownySettings {
 	};
 	// String
 	public enum Str {
-		LOAD_DATABASE,
+		DATABASE_LOAD,
 		DEFAULT_TOWN_NAME,
 		DEFAULT_MAYOR_PREFIX,
 		DEFAULT_MAYOR_POSTFIX,
@@ -77,7 +77,8 @@ public class TownySettings {
 		MSG_PLOT_FOR_SALE,
 		MSG_MAYOR_ABADON, //TODO
 		UNCLAIMED_PLOT_NAME,
-		NPC_PREFIX
+		NPC_PREFIX,
+		FLATFILE_BACKUP //TODO
 	};
 	// Integer
 	public enum Int {
@@ -174,7 +175,7 @@ public class TownySettings {
 	
 	static {
 		// String[]
-		configStrArr.put(TownySettings.StrArr.SAVE_DATABASES, new ArrayList<String>(Arrays.asList(new String[]{"flatfile"})));
+		configStrArr.put(TownySettings.StrArr.DATABASE_SAVE, new ArrayList<String>(Arrays.asList(new String[]{"flatfile"})));
 		configStrArr.put(TownySettings.StrArr.RESIDENT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/resident","/r","/player"})));
 		configStrArr.put(TownySettings.StrArr.TOWN_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/town","/t"})));
 		configStrArr.put(TownySettings.StrArr.NATION_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/nation","/n"})));
@@ -191,7 +192,7 @@ public class TownySettings {
 		configIntArr.put(TownySettings.IntArr.SWITCH_IDS,  new ArrayList<Integer>(Arrays.asList(new Integer[]{64,69,70,71,72,77})));
 		configIntArr.put(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE, new ArrayList<Integer>(Arrays.asList(new Integer[]{14,15,16,21,56,65,66,73,74,89})));
 		// String
-		configStr.put(TownySettings.Str.LOAD_DATABASE, "flatfile");
+		configStr.put(TownySettings.Str.DATABASE_LOAD, "flatfile");
 		configStr.put(TownySettings.Str.DEFAULT_TOWN_NAME, "");
 		configStr.put(TownySettings.Str.DEFAULT_MAYOR_PREFIX, "Mayor ");
 		configStr.put(TownySettings.Str.DEFAULT_MAYOR_POSTFIX, "");
@@ -226,6 +227,7 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_MAYOR_ABADON, "&6[Towny] &bYou would abandon your people? Choose another mayor with '/t set mayor' if your sure.");
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
+		configStr.put(TownySettings.Str.FLATFILE_BACKUP, "zip");
 		// Integer
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
@@ -587,11 +589,11 @@ public class TownySettings {
 	}
 
 	public static String getLoadDatabase() {
-		return getString(TownySettings.Str.LOAD_DATABASE);
+		return getString(TownySettings.Str.DATABASE_LOAD);
 	}
 
 	public static List<String> getSaveDatabases() {
-		return getStrArr(TownySettings.StrArr.SAVE_DATABASES);
+		return getStrArr(TownySettings.StrArr.DATABASE_SAVE);
 	}
 	
 	//TODO: Remove workaround
@@ -929,5 +931,9 @@ public class TownySettings {
 	
 	public static int getNationUpkeepCost() {
 		return getInt(TownySettings.Int.PRICE_NATION_UPKEEP);
+	}
+	
+	public static String getFlatFileBackupType() {
+		return getString(TownySettings.Str.FLATFILE_BACKUP);
 	}
 }
