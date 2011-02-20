@@ -1,5 +1,5 @@
 name: Towny
-main: com.shade.bukkit.towny.Towny
+main: ca.xshade.bukkit.towny.Towny
 version: '2.0.26'
 commands:
     towny:
