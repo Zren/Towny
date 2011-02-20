@@ -3,6 +3,7 @@ package ca.xshade.bukkit.towny.event;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 
@@ -20,24 +21,29 @@ public class TownyEntityListener extends EntityListener {
 		plugin = instance;
 	}
 	
+	
 	@Override
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		Entity attacker = event.getDamager();
-		Entity defender = event.getEntity();
+	public void onEntityDamage(EntityDamageEvent event) {
+		if (event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent)event;
+			Entity attacker = entityEvent.getDamager();
+			Entity defender = entityEvent.getEntity();
 
-		if (defender instanceof Player)
-			if (preventDamageCall(attacker, defender))
-				event.setCancelled(true);
-			else if (attacker instanceof Player) {
-				long start = System.currentTimeMillis();
-				
-				Player a = (Player) attacker;
-				Player b = (Player) defender;
-				if (preventFriendlyFire(a, b))
+			if (defender instanceof Player)
+				if (preventDamageCall(attacker, defender))
 					event.setCancelled(true);
-				
-				plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
-			}
+				else if (attacker instanceof Player) {
+					long start = System.currentTimeMillis();
+					
+					Player a = (Player) attacker;
+					Player b = (Player) defender;
+					if (preventFriendlyFire(a, b))
+						event.setCancelled(true);
+					
+					plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
+				}
+		}
+		
 	}
 
 	public boolean preventDamageCall(Entity a, Entity b) {

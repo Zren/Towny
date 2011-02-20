@@ -3,6 +3,7 @@ package ca.xshade.bukkit.towny.event;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityListener;
 
 import ca.xshade.bukkit.towny.IConomyException;
@@ -24,37 +25,40 @@ public class TownyEntityMonitorListener extends EntityListener {
 	}
 	
 	@Override
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		Entity attackerEntity = event.getDamager();
-		Entity defenderEntity = event.getEntity();
-		
-		if (defenderEntity instanceof Player) {
-			Player defenderPlayer = (Player) defenderEntity;
-			Player attackerPlayer = null;
-			if (defenderPlayer.getHealth() > 0)
-				return;
+	public void onEntityDamage(EntityDamageEvent event) {
+		if (event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent)event;
+			Entity attackerEntity = entityEvent.getDamager();
+			Entity defenderEntity = entityEvent.getEntity();
 			
-			Resident attackerResident = null;
-			Resident defenderResident = null;
-			
-			try {
-				defenderResident = plugin.getTownyUniverse().getResident(defenderPlayer.getName());
-			} catch (NotRegisteredException e) {
-				return;
-			}
-			
-			if (attackerEntity instanceof Player) {
-				attackerPlayer = (Player) attackerEntity;
+			if (defenderEntity instanceof Player) {
+				Player defenderPlayer = (Player) defenderEntity;
+				Player attackerPlayer = null;
+				if (defenderPlayer.getHealth() > 0)
+					return;
+				
+				Resident attackerResident = null;
+				Resident defenderResident = null;
+				
 				try {
-					attackerResident = plugin.getTownyUniverse().getResident(attackerPlayer.getName());
+					defenderResident = plugin.getTownyUniverse().getResident(defenderPlayer.getName());
 				} catch (NotRegisteredException e) {
+					return;
 				}
+				
+				if (attackerEntity instanceof Player) {
+					attackerPlayer = (Player) attackerEntity;
+					try {
+						attackerResident = plugin.getTownyUniverse().getResident(attackerPlayer.getName());
+					} catch (NotRegisteredException e) {
+					}
+				}
+				
+				deathPayment(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
+				
+				if (TownySettings.isRemovingOnMonarchDeath())
+					monarchDeath(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
 			}
-			
-			deathPayment(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
-			
-			if (TownySettings.isRemovingOnMonarchDeath())
-				monarchDeath(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
 		}
 	}
 	
