@@ -16,7 +16,6 @@ public class FileMgmt {
 			if (!(f.exists() && f.isDirectory()))
 				f.mkdir();
 		}
-		
 	}
 	
 	public static void checkFiles(String[] files) throws IOException {
@@ -54,6 +53,13 @@ public class FileMgmt {
 		recursiveZipDirectory(sourceFolder, output);
 		output.close();
 	}
+
+	public static void zipDirectories(File[] sourceFolders, File destination) throws IOException {
+		ZipOutputStream output = new ZipOutputStream(new FileOutputStream(destination));
+		for (File sourceFolder : sourceFolders)
+			recursiveZipDirectory(sourceFolder, output);
+		output.close();
+	}
 	
 	public static void recursiveZipDirectory(File sourceFolder, ZipOutputStream zipStream) throws IOException {
 		String[] dirList = sourceFolder.list();
@@ -74,4 +80,5 @@ public class FileMgmt {
 			}
 		}
 	}
+
 }

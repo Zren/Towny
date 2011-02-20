@@ -98,8 +98,7 @@ v0.27:
 	Mayor's can no longer leave the town (must choose a replacement first).
 	Changed a few config names DATABASE_LOAD, DATABASE_SAVE
 	Flatfile backup is is now zipping the entire Towny folder. 3 options now in config flatfile_backup = [zip/folder/none].
+	Ability to convert from hMod database. http://towny.xshade.ca/help/converting-from-hmod
 	
 TODO:	
-	
-	Ability to convert from hMod database. Not really recommended.
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc

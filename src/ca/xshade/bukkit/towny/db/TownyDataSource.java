@@ -1,6 +1,7 @@
 package ca.xshade.bukkit.towny.db;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import org.bukkit.World;
 
@@ -38,6 +39,24 @@ public abstract class TownyDataSource {
 	}
 	
 	public void backup() throws IOException {
+	}
+	
+	public boolean confirmContinuation(String msg) {
+		Boolean choice = null;
+		String input = null;
+		while (choice == null) {
+			System.out.println(msg);
+			System.out.print("    Continue (y/n): ");
+			Scanner in = new Scanner(System.in);
+			input = in.next();
+			input = input.toLowerCase();
+			if (input.equals("y") || input.equals("yes"))
+				return true;
+			else if (input.equals("n") || input.equals("no"))
+				return false;
+		}
+		System.out.println("[Towny] Error recieving input, exiting.");
+		return false;
 	}
 
 	public boolean loadAll() {
@@ -93,6 +112,7 @@ public abstract class TownyDataSource {
 				String worldName = split[split.length-1];
 				universe.newWorld(worldName);
 			} catch (AlreadyRegisteredException e) {
+				e.printStackTrace();
 			}
 		return true;
 	}

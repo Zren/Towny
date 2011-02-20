@@ -538,8 +538,7 @@ public class TownyUniverse extends TownyObject {
 		}
 
 		getDataSource().initialize(plugin, this);
-		getDataSource().loadAll();
-		return true;
+		return getDataSource().loadAll();
 	}
 
 	/*

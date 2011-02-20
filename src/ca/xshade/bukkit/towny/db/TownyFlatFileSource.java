@@ -37,6 +37,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	protected final String newLine = System.getProperty("line.separator");
 	protected String rootFolder = "";
 	protected String dataFolder = "/data";
+	protected String settingsFolder = "/settings";
 
 	@Override
 	public void initialize(Towny plugin, TownyUniverse universe) {
@@ -69,13 +70,13 @@ public class TownyFlatFileSource extends TownyDataSource {
 		if (!backupType.equalsIgnoreCase("none")) {
 			long t = System.currentTimeMillis();
 			String newBackupFolder = rootFolder + "/backup/" + new SimpleDateFormat("yyyy-MM-dd HH-mm").format(t) + " - " + Long.toString(t);
-			FileMgmt.checkFolders(new String[]{ rootFolder,
-					rootFolder + "/backup",
-					newBackupFolder});
-			if (backupType.equalsIgnoreCase("folder"))
-				FileMgmt.copyDirectory(new File(rootFolder), new File(newBackupFolder));
-			else if (backupType.equalsIgnoreCase("zip"))
-				FileMgmt.zipDirectory(new File(rootFolder), new File(newBackupFolder + ".zip"));
+			FileMgmt.checkFolders(new String[]{ rootFolder, rootFolder + "/backup" });
+			if (backupType.equalsIgnoreCase("folder")) {
+				FileMgmt.checkFolders(new String[]{newBackupFolder});
+				FileMgmt.copyDirectory(new File(rootFolder + dataFolder), new File(newBackupFolder));
+				FileMgmt.copyDirectory(new File(rootFolder + settingsFolder), new File(newBackupFolder));
+			} else if (backupType.equalsIgnoreCase("zip"))
+				FileMgmt.zipDirectories(new File[]{new File(rootFolder + dataFolder), new File(rootFolder + settingsFolder)}, new File(newBackupFolder + ".zip"));
 			else
 				throw new IOException("Unsupported flatfile backup type (" + backupType + ")");
 		}
@@ -87,6 +88,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 
 	@Override
 	public boolean loadResidentList() {
+		plugin.sendDebugMsg("Loading Resident List");
 		String line;
 		BufferedReader fin;
 
@@ -101,12 +103,11 @@ public class TownyFlatFileSource extends TownyDataSource {
 				if (!line.equals(""))
 					universe.newResident(line);
 			fin.close();
+		} catch (AlreadyRegisteredException e) {
+			e.printStackTrace();
+			confirmContinuation(e.getMessage() + " | Continuing will delete it's data.");
 		} catch (Exception e) {
-			try {
-				fin.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -114,6 +115,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 
 	@Override
 	public boolean loadTownList() {
+		plugin.sendDebugMsg("Loading Town List");
 		String line;
 		BufferedReader fin;
 
@@ -128,12 +130,11 @@ public class TownyFlatFileSource extends TownyDataSource {
 				if (!line.equals(""))
 					universe.newTown(line);
 			fin.close();
+		} catch (AlreadyRegisteredException e) {
+			e.printStackTrace();
+			confirmContinuation(e.getMessage() + " | Continuing will delete it's data.");
 		} catch (Exception e) {
-			try {
-				fin.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -141,6 +142,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 
 	@Override
 	public boolean loadNationList() {
+		plugin.sendDebugMsg("Loading Nation List");
 		String line;
 		BufferedReader fin;
 
@@ -155,20 +157,19 @@ public class TownyFlatFileSource extends TownyDataSource {
 				if (!line.equals(""))
 					universe.newNation(line);
 			fin.close();
+		} catch (AlreadyRegisteredException e) {
+			e.printStackTrace();
+			confirmContinuation(e.getMessage() + " | Continuing will delete it's data.");
 		} catch (Exception e) {
-			try {
-				fin.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
+			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 	
-	
 	@Override
 	public boolean loadWorldList() {
+		plugin.sendDebugMsg("Loading World List");
 		if (plugin != null)
 			return loadServerWorldsList();
 		else {
@@ -186,12 +187,12 @@ public class TownyFlatFileSource extends TownyDataSource {
 					if (!line.equals(""))
 						universe.newWorld(line);
 				fin.close();
+
+			} catch (AlreadyRegisteredException e) {
+				e.printStackTrace();
+				confirmContinuation(e.getMessage() + " | Continuing will delete it's data.");
 			} catch (Exception e) {
-				try {
-					fin.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
+				e.printStackTrace();
 				return false;
 			}
 			return true;

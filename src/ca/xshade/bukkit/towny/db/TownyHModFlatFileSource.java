@@ -57,6 +57,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 	
 	@Override
 	public boolean loadWorldList() {
+		plugin.sendDebugMsg("Loading World List");
 		if (plugin != null)
 			return loadServerWorldsList();
 		return false;
@@ -65,6 +66,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 	
 	@Override
 	public boolean loadWorlds() {
+		System.out.println("[Towny] [hMod Conversion] Town Blocks");
 		String line;
 		String[] tokens;
 		
@@ -97,11 +99,14 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 						} catch (NotRegisteredException e) {
 						}
 					} catch (NumberFormatException e) {
+						e.printStackTrace();
 					} catch (NotRegisteredException e) {
+						e.printStackTrace();
 					}
 			}
 			fin.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -112,6 +117,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 
 	@Override
 	public boolean loadResident(Resident resident) {
+		System.out.println("[Towny] [hMod Conversion] Resident: " + resident.getName());
 		String line;
 		String path = rootFolder + dataFolder + "/residents/" + resident.getName() + ".txt";
 		File fileResident = new File(path);
@@ -154,6 +160,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 
 	@Override
 	public boolean loadTown(Town town) {
+		System.out.println("[Towny] [hMod Conversion] Town: " + town.getName());
 		String line;
 		String[] tokens;
 		String path = rootFolder + dataFolder + "/towns/" + town.getName() + ".txt";
@@ -241,6 +248,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 
 	@Override
 	public boolean loadNation(Nation nation) {
+		System.out.println("[Towny] [hMod Conversion] Nation: " + nation.getName());
 		String line = "";
 		String[] tokens;
 		String path = rootFolder + dataFolder + "/nations/" + nation.getName() + ".txt";
