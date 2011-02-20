@@ -74,6 +74,7 @@ public class TownySettings {
 		MSG_COULDNT_PAY_TAXES,
 		MSG_BUY_RESIDENT_PLOT,
 		MSG_PLOT_FOR_SALE,
+		MSG_MAYOR_ABADON, //TODO
 		UNCLAIMED_PLOT_NAME,
 		NPC_PREFIX
 	};
@@ -221,6 +222,7 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_COULDNT_PAY_TAXES, "&6[Towny] &b%s couldn't pay taxes%s");
 		configStr.put(TownySettings.Str.MSG_BUY_RESIDENT_PLOT, "&6[Towny] &b%s bought %s's plot!");
 		configStr.put(TownySettings.Str.MSG_PLOT_FOR_SALE, "&6[Towny] &b%s put the plot (%s) up for sale!");
+		configStr.put(TownySettings.Str.MSG_MAYOR_ABADON, "&6[Towny] &bYou would abandon your people? Choose another mayor with '/t set mayor' if your sure.");
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		// Integer
@@ -815,6 +817,10 @@ public class TownySettings {
 	
 	public static String[] getPlotForSaleMsg(String who, WorldCoord worldCoord) {
 		return parseString(String.format(getString(TownySettings.Str.MSG_PLOT_FOR_SALE), who, worldCoord.toString()));
+	}
+	
+	public static String[] getMayorAbondonMsg() {
+		return parseString(getString(TownySettings.Str.MSG_MAYOR_ABADON));
 	}
 	
 	public static boolean hasTownLimit() {

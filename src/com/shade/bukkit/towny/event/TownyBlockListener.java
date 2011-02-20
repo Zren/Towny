@@ -108,7 +108,7 @@ public class TownyBlockListener extends BlockListener {
 			PlayerCache cache = getCache(player);
 			cache.updateCoord(worldCoord);
 			TownBlockStatus status = cache.getStatus();
-			if (status == TownBlockStatus.UNCLAIMED_ZONE && TownySettings.isUnclaimedZoneIgnoreId(event.getBlock().getTypeId()))
+			if (status == TownBlockStatus.UNCLAIMED_ZONE && worldCoord.getWorld().isUnclaimedZoneIgnoreId(event.getBlock().getTypeId()))
 				return;
 			if (!cache.getDestroyPermission())
 				event.setCancelled(true);

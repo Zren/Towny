@@ -89,6 +89,11 @@ v0.23:
 	Small grammar edit for when setting permissions.
 v0.24:
 	Fixed the logic error with loading permissions.
+v0.25:
+	Finished TownyWorld commands.
+v0.26:
+	Mayor's can no longer leave the town (must choose a replacement first).
+	All damage within non PvP zones is negated.
 	
 TODO:	
 	

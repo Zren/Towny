@@ -60,7 +60,7 @@ public class TownyPermission {
 		if (residentBuild)
 			out += "residentBuild";
 		if (residentDestroy)
-			out += (out.length() > 0 ? "," : "") + "residentDestroy";
+			out += (out.length() > 0 ? "," : "") + "residentDestroy"; // (out.length() > 0 ? "," : "")
 		if (residentSwitch)
 			out += (out.length() > 0 ? "," : "") + "residentSwitch";
 		if (outsiderBuild)
@@ -75,6 +75,8 @@ public class TownyPermission {
 			out += (out.length() > 0 ? "," : "") + "allyDestroy";
 		if (allySwitch)
 			out += (out.length() > 0 ? "," : "") + "allySwitch";
+		if (out.length() == 0)
+			out += "denyAll"; // Make the token not empty
 		return out;
 	}
 	

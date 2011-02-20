@@ -188,7 +188,7 @@ public class TownyPlayerListener extends PlayerListener {
 			if (fromWild ^ toWild || !fromWild && !toWild && fromTown != null && toTown != null && fromTown != toTown) {
 				sendToMsg = true;
 				if (toWild)
-					toMsg += Colors.Green + TownySettings.getUnclaimedZoneName();
+					toMsg += Colors.Green + to.getWorld().getUnclaimedZoneName();
 				else
 					toMsg += universe.getFormatter().getFormattedName(toTown);
 			}
@@ -2499,6 +2499,10 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatTitle("/townyworld set"));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "claimable [on/off]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "pvp [on/off]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "usedefault", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildperm [perm] .. [perm]", "build,destroy,switch"));
+			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildignore [id] [id] [id]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildname [name]", ""));
 		} else {
 			TownyWorld world;
 			if (!plugin.isTownyAdmin(player)) {
@@ -2514,7 +2518,7 @@ public class TownyPlayerListener extends PlayerListener {
 
 			if (split[0].equalsIgnoreCase("claimable")) {
 				if (split.length < 2)
-					plugin.sendErrorMsg(player, "Eg: /nation set claimable on");
+					plugin.sendErrorMsg(player, "Eg: /townyworld set claimable on");
 				else
 					try {
 						boolean choice = parseOnOff(split[1]);
@@ -2525,7 +2529,7 @@ public class TownyPlayerListener extends PlayerListener {
 					}
 			} else if (split[0].equalsIgnoreCase("pvp")) {
 				if (split.length < 2)
-					plugin.sendErrorMsg(player, "Eg: /nation set pvp off");
+					plugin.sendErrorMsg(player, "Eg: /townyworld set pvp off");
 				else
 					try {
 						boolean choice = parseOnOff(split[1]);
@@ -2538,11 +2542,13 @@ public class TownyPlayerListener extends PlayerListener {
 				world.setUsingDefault(true);
 			else if (split[0].equalsIgnoreCase("wildperm")) {
 				if (split.length < 2)
-					plugin.sendErrorMsg(player, "Eg: /nation set wildperm build,destroy");
+					plugin.sendErrorMsg(player, "Eg: /townyworld set wildperm build destroy");
 				else
 					try {
-						boolean choice = parseOnOff(split[1]);
-						world.setClaimable(choice);
+						List<String> perms = Arrays.asList(StringMgmt.remFirstArg(split));
+						world.setUnclaimedZoneBuild(perms.contains("build"));
+						world.setUnclaimedZoneDestroy(perms.contains("destroy"));
+						world.setUnclaimedZoneSwitch(perms.contains("switch"));
 						world.setUsingDefault(false);
 						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s wild permissions " + split[1]);
 					} catch (Exception e) {
@@ -2550,11 +2556,11 @@ public class TownyPlayerListener extends PlayerListener {
 					}
 			} else if (split[0].equalsIgnoreCase("wildignore")) {
 				if (split.length < 2)
-					plugin.sendErrorMsg(player, "Eg: /nation set wildignore 11,25,45,67");
+					plugin.sendErrorMsg(player, "Eg: /townyworld set wildignore 11,25,45,67");
 				else
 					try {
 						List<Integer> nums = new ArrayList<Integer>();
-						for (String s: split[1].split(","))
+						for (String s: StringMgmt.remFirstArg(split))
 							try {
 								nums.add(Integer.parseInt(s));
 							} catch (NumberFormatException e) {
@@ -2567,7 +2573,7 @@ public class TownyPlayerListener extends PlayerListener {
 					}
 			} else if (split[0].equalsIgnoreCase("wildname")) {
 				if (split.length < 2)
-					plugin.sendErrorMsg(player, "Eg: /nation set wildname Wildy");
+					plugin.sendErrorMsg(player, "Eg: /townyworld set wildname Wildy");
 				else
 					try {
 						world.setUnclaimedZoneName(split[1]);

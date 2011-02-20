@@ -169,6 +169,10 @@ public class TownyWorld extends TownyObject {
 		else
 			return unclaimedZoneIgnoreIds;
 	}
+	
+	public boolean isUnclaimedZoneIgnoreId(int id) {
+		return getUnclaimedZoneIgnoreIds().contains(id);
+	}
 
 	public void setUnclaimedZoneIgnore(List<Integer> unclaimedZoneIgnoreIds) {
 		this.unclaimedZoneIgnoreIds = unclaimedZoneIgnoreIds;

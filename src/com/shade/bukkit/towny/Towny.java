@@ -299,6 +299,8 @@ public class Towny extends JavaPlugin {
 	public void sendDevMsg(String msg) {
 		if (TownySettings.isDevMode()) {
 			Player townyDev = getServer().getPlayer("Shadeness");
+			if (townyDev == null)
+				return;
 			for (String line : ChatTools.color(Colors.Gold + "[Towny] DevMode: " + Colors.Rose + msg))
 				townyDev.sendMessage(line);
 		}

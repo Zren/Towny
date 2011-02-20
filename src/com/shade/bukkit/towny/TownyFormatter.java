@@ -13,6 +13,7 @@ import com.shade.bukkit.towny.object.TownyObject;
 import com.shade.bukkit.towny.object.TownyWorld;
 import com.shade.bukkit.util.ChatTools;
 import com.shade.bukkit.util.Colors;
+import com.shade.util.StringMgmt;
 
 //TODO: Make static
 //TODO: pull names from the config
@@ -190,11 +191,20 @@ public class TownyFormatter {
 		// ___[ World ]___
 		out.add(ChatTools.formatTitle(getFormattedName(world)));
 		
-		// PvP: Off
-		out.add("PvP: " + (world.isPvP() ? "On" : "Off"));
-		
-		// Claimable: No
-		out.add("Claimable: " + (world.isClaimable() ? "Yes" : "No"));
+		// Claimable: No | PvP: Off
+		out.add(Colors.Green + "Claimable: " + (world.isClaimable() ? Colors.LightGreen + "Yes" : Colors.Rose + "No")
+				+ Colors.Gray + " | "
+				+ Colors.Green + "PvP: " + (world.isPvP() ? Colors.Rose + "On" : Colors.LightGreen + "Off"));
+		// Using Default Settings: Yes
+		out.add(Colors.Green + "Using Default Settings: " + (world.isUsingDefault() ? Colors.LightGreen + "Yes" : Colors.Rose + "No"));
+		// Wilderness:
+		//     Build, Destroy, Switch
+		//     Ignored Blocks: 34, 45, 64
+		out.add(Colors.Green + world.getUnclaimedZoneName() + ":");
+		out.add("    " + (world.getUnclaimedZoneBuild() ? Colors.LightGreen : Colors.Rose) + "Build"
+				 + Colors.Gray + ", " + (world.getUnclaimedZoneDestroy() ? Colors.LightGreen : Colors.Rose) + "Destroy"
+				 + Colors.Gray + ", " + (world.getUnclaimedZoneSwitch() ? Colors.LightGreen : Colors.Rose) + "Switch");
+		out.add("    " + Colors.Green + "Ignored Blocks: " + Colors.LightGreen + StringMgmt.join(world.getUnclaimedZoneIgnoreIds(), ", "));
 		
 		return out;
 	}

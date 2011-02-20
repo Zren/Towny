@@ -2,7 +2,7 @@ package com.shade.bukkit.towny.object;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 /**
  * A class to hold and calculate coordinates in a grid according to the size defined in
@@ -64,8 +64,8 @@ public class Coord {
 				z / getCellSize() - (z < 0 ? 1 : 0));
 	}
 
-	public static Coord parseCoord(Player player) {
-		return parseCoord(player.getLocation());
+	public static Coord parseCoord(Entity entity) {
+		return parseCoord(entity.getLocation());
 	}
 
 	public static Coord parseCoord(Location loc) {

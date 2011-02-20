@@ -13,7 +13,6 @@ import com.shade.bukkit.towny.object.TownBlock;
 import com.shade.bukkit.towny.object.TownyUniverse;
 import com.shade.bukkit.towny.object.TownyWorld;
 import com.shade.util.JavaUtil;
-import com.shade.util.StringMgmt;
 
 public class MobRemovalTimerTask extends TownyTimerTask {
 	private Server server;
@@ -23,11 +22,6 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 	public MobRemovalTimerTask(TownyUniverse universe, Server server) {
 		super(universe);
 		this.server = server;
-		//mobsToRemove.add(org.bukkit.entity.Spider.class);
-		//mobsToRemove.add(org.bukkit.entity.Skeleton.class);
-		//mobsToRemove.add(org.bukkit.entity.Zombie.class);
-		//mobsToRemove.add(org.bukkit.entity.Creeper.class);
-		//mobsToRemove.add(org.bukkit.entity.Sheep.class);
 		for (String mob : TownySettings.getMobRemovalEntities())
 			try {
 				@SuppressWarnings("rawtypes")
@@ -77,7 +71,7 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 					} catch (TownyException x) {
 					}
 				}
-			universe.getPlugin().sendDebugMsg(world.getName() + ": " + StringMgmt.join(worldLivingEntities));
+			//universe.getPlugin().sendDebugMsg(world.getName() + ": " + StringMgmt.join(worldLivingEntities));
 		}
 		universe.getPlugin().sendDebugMsg("MobRemoval (Removed: "+numRemoved+") (Total Living: "+livingEntities+")");
 	}
