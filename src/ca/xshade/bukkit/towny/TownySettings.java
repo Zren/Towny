@@ -25,15 +25,15 @@ public class TownySettings {
 	// String[]
 	public enum StrArr {
 		DATABASE_SAVE,
-		RESIDENT_COMMANDS,
-		TOWN_COMMANDS,
-		NATION_COMMANDS,
-		WORLD_COMMANDS,
-		PLOT_COMMANDS,
-		TOWNY_COMMANDS,
-		TOWNY_ADMIN_COMMANDS,
-		TOWN_CHAT_COMMANDS,
-		NATION_CHAT_COMMANDS,
+		COMMANDS_RESIDENT,
+		COMMANDS_TOWN,
+		COMMANDS_NATION,
+		COMMANDS_WORLD,
+		COMMANDS_PLOT,
+		COMMANDS_TOWNY,
+		COMMANDS_TOWNY_ADMIN,
+		COMMANDS_TOWN_CHAT,
+		COMMANDS_NATION_CHAT,
 		MOB_REMOVAL_ENTITIES
 	};
 	// Integer[]
@@ -177,15 +177,15 @@ public class TownySettings {
 	static {
 		// String[]
 		configStrArr.put(TownySettings.StrArr.DATABASE_SAVE, new ArrayList<String>(Arrays.asList(new String[]{"flatfile"})));
-		configStrArr.put(TownySettings.StrArr.RESIDENT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/resident","/r","/player"})));
-		configStrArr.put(TownySettings.StrArr.TOWN_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/town","/t"})));
-		configStrArr.put(TownySettings.StrArr.NATION_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/nation","/n"})));
-		configStrArr.put(TownySettings.StrArr.WORLD_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/townyworld","/tw"})));
-		configStrArr.put(TownySettings.StrArr.PLOT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/plot"})));
-		configStrArr.put(TownySettings.StrArr.TOWNY_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/towny"})));
-		configStrArr.put(TownySettings.StrArr.TOWNY_ADMIN_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/townyadmin","/ta"})));
-		configStrArr.put(TownySettings.StrArr.TOWN_CHAT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/tc"})));
-		configStrArr.put(TownySettings.StrArr.NATION_CHAT_COMMANDS, new ArrayList<String>(Arrays.asList(new String[]{"/nc"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_RESIDENT, new ArrayList<String>(Arrays.asList(new String[]{"/resident","/r","/player"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_TOWN, new ArrayList<String>(Arrays.asList(new String[]{"/town","/t"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_NATION, new ArrayList<String>(Arrays.asList(new String[]{"/nation","/n"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_WORLD, new ArrayList<String>(Arrays.asList(new String[]{"/townyworld","/tw"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_PLOT, new ArrayList<String>(Arrays.asList(new String[]{"/plot"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_TOWNY, new ArrayList<String>(Arrays.asList(new String[]{"/towny"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_TOWNY_ADMIN, new ArrayList<String>(Arrays.asList(new String[]{"/townyadmin","/ta"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_TOWN_CHAT, new ArrayList<String>(Arrays.asList(new String[]{"/tc"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_NATION_CHAT, new ArrayList<String>(Arrays.asList(new String[]{"/nc"})));
 		configStrArr.put(TownySettings.StrArr.MOB_REMOVAL_ENTITIES, new ArrayList<String>(Arrays.asList(new String[]{
 				"Monster", "WaterMob", "Flying", "Slime"
 		})));
@@ -511,39 +511,39 @@ public class TownySettings {
 	}
 	
 	public static List<String> getResidentCommands() {
-		return getStrArr(TownySettings.StrArr.RESIDENT_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_RESIDENT);
 	}
 	
 	public static List<String> getTownCommands() {
-		return getStrArr(TownySettings.StrArr.TOWN_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_TOWN);
 	}
 	
 	public static List<String> getNationCommands() {
-		return getStrArr(TownySettings.StrArr.NATION_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_NATION);
 	}
 	
 	public static List<String> getWorldCommands() {
-		return getStrArr(TownySettings.StrArr.WORLD_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_WORLD);
 	}
 	
 	public static List<String> getPlotCommands() {
-		return getStrArr(TownySettings.StrArr.PLOT_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_PLOT);
 	}
 	
 	public static List<String> getTownyCommands() {
-		return getStrArr(TownySettings.StrArr.TOWNY_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_TOWNY);
 	}
 	
 	public static List<String> getTownyAdminCommands() {
-		return getStrArr(TownySettings.StrArr.TOWNY_ADMIN_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_TOWNY_ADMIN);
 	}
 	
 	public static List<String> getTownChatCommands() {
-		return getStrArr(TownySettings.StrArr.TOWN_CHAT_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_TOWN_CHAT);
 	}
 	
 	public static List<String> getNationChatCommands() {
-		return getStrArr(TownySettings.StrArr.NATION_CHAT_COMMANDS);
+		return getStrArr(TownySettings.StrArr.COMMANDS_NATION_CHAT);
 	}
 	
 	public static String getFirstCommand(List<String> commands) {

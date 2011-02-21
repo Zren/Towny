@@ -102,6 +102,12 @@ v0.28:
 	Ability to convert from hMod database. http://towny.xshade.ca/help/converting-from-hmod
 	Possible fix for permission persistency bug.
 	Logic error where town mayor and assistents where charged taxes.
+	New default aliases for commands seeing as how Essentials keeps stealing them all.
+		/resident = /player,/p,/res
+		/town (No alias)
+		/nation = /nat
+		Towny, Plot and Townyadmin (/ta) remain the same.
+	Changed command config keys from the suffix _COMMANDS to the prefix COMMANDS_ so as to group them all.
 	
 TODO:	
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
