@@ -451,6 +451,8 @@ public class TownySettings {
 			configLong.put(key, kvFile.getLong(key.toString().toLowerCase(), getLong(key)));
 		for (TownySettings.Bool key : TownySettings.Bool.values())
 			configBool.put(key, kvFile.getBoolean(key.toString().toLowerCase(), getBoolean(key)));
+		
+		kvFile.save();
 	}
 	
 	public static Integer getInt(TownySettings.Int key) {

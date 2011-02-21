@@ -102,6 +102,7 @@ v0.28:
 	Ability to convert from hMod database. http://towny.xshade.ca/help/converting-from-hmod
 	Possible fix for permission persistency bug.
 	Logic error where town mayor and assistents where charged taxes.
+v0.29:
 	New default aliases for commands seeing as how Essentials keeps stealing them all.
 		The commands /r, /t, and /n are still there, however there are second to Essentials (IE: they will work when it's not installed).
 		/resident = /player,/p,/res,/r
