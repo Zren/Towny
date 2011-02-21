@@ -103,9 +103,10 @@ v0.28:
 	Possible fix for permission persistency bug.
 	Logic error where town mayor and assistents where charged taxes.
 	New default aliases for commands seeing as how Essentials keeps stealing them all.
-		/resident = /player,/p,/res
-		/town (No alias)
-		/nation = /nat
+		The commands /r, /t, and /n are still there, however there are second to Essentials (IE: they will work when it's not installed).
+		/resident = /player,/p,/res,/r
+		/town = /t
+		/nation = /nat,/n
 		Towny, Plot and Townyadmin (/ta) remain the same.
 	Changed command config keys from the suffix _COMMANDS to the prefix COMMANDS_ so as to group them all.
 	

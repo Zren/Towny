@@ -177,9 +177,9 @@ public class TownySettings {
 	static {
 		// String[]
 		configStrArr.put(TownySettings.StrArr.DATABASE_SAVE, new ArrayList<String>(Arrays.asList(new String[]{"flatfile"})));
-		configStrArr.put(TownySettings.StrArr.COMMANDS_RESIDENT, new ArrayList<String>(Arrays.asList(new String[]{"/resident","/r","/player"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_RESIDENT, new ArrayList<String>(Arrays.asList(new String[]{"/resident","/r","/res","/p","/player"})));
 		configStrArr.put(TownySettings.StrArr.COMMANDS_TOWN, new ArrayList<String>(Arrays.asList(new String[]{"/town","/t"})));
-		configStrArr.put(TownySettings.StrArr.COMMANDS_NATION, new ArrayList<String>(Arrays.asList(new String[]{"/nation","/n"})));
+		configStrArr.put(TownySettings.StrArr.COMMANDS_NATION, new ArrayList<String>(Arrays.asList(new String[]{"/nation","/n","/nat"})));
 		configStrArr.put(TownySettings.StrArr.COMMANDS_WORLD, new ArrayList<String>(Arrays.asList(new String[]{"/townyworld","/tw"})));
 		configStrArr.put(TownySettings.StrArr.COMMANDS_PLOT, new ArrayList<String>(Arrays.asList(new String[]{"/plot"})));
 		configStrArr.put(TownySettings.StrArr.COMMANDS_TOWNY, new ArrayList<String>(Arrays.asList(new String[]{"/towny"})));
