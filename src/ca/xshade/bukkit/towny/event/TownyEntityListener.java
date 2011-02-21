@@ -24,6 +24,9 @@ public class TownyEntityListener extends EntityListener {
 	
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
+		if (event.isCancelled())
+			return;
+		
 		if (event instanceof EntityDamageByEntityEvent) {
 			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent)event;
 			Entity attacker = entityEvent.getDamager();

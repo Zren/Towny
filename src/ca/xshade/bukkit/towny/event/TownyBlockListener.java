@@ -54,6 +54,9 @@ public class TownyBlockListener extends BlockListener {
 	
 	@Override
 	public void onBlockDamage(BlockDamageEvent event) {
+		if (event.isCancelled())
+			return;
+		
 		if (event.getDamageLevel() == BlockDamageLevel.BROKEN) {
 			long start = System.currentTimeMillis();
 
@@ -91,7 +94,7 @@ public class TownyBlockListener extends BlockListener {
 	}
 	*/
 	
-	public void onBlockBreakEvent(BlockDamageEvent event, boolean firstCall) {
+	public void onBlockBreakEvent(BlockDamageEvent event, boolean firstCall) {	
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		WorldCoord worldCoord;
@@ -128,6 +131,9 @@ public class TownyBlockListener extends BlockListener {
 
 	@Override
 	public void onBlockPlace(BlockPlaceEvent event) {
+		if (event.isCancelled())
+			return;
+		
 		long start = System.currentTimeMillis();
 
 		onBlockPlaceEvent(event, true, null);
@@ -174,6 +180,9 @@ public class TownyBlockListener extends BlockListener {
 	
 	@Override
 	public void onBlockInteract(BlockInteractEvent event) {
+		if (event.isCancelled())
+			return;
+		
 		long start = System.currentTimeMillis();
 
 		onBlockInteractEvent(event, true, null);

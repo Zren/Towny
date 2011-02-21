@@ -28,6 +28,9 @@ public class TownyPlayerLowListener extends PlayerListener {
 
 	@Override
 	public void onPlayerChat(PlayerChatEvent event) {
+		if (event.isCancelled())
+			return;
+		
 		Player player = event.getPlayer();
 		if (plugin.hasPlayerMode(player, "tc"))
 			parseTownChatCommand(player, event.getMessage());
