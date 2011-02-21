@@ -44,11 +44,8 @@ public class TownyUniverse extends TownyObject {
 	private Hashtable<String, Nation> nations = new Hashtable<String, Nation>();
 	private Hashtable<String, TownyWorld> worlds = new Hashtable<String, TownyWorld>();
 	// private List<Election> elections;
-	private TownyFormatter formatter = new TownyFormatter(); //TODO : MAke static
+	private TownyFormatter formatter = new TownyFormatter(); //TODO : Make static
 	private TownyDataSource dataSource;
-	//private Timer dailyTimer = null;
-	//private Timer mobRemoveTimer = null;
-	//private Timer healthRegenTimer = null;
 	private int dailyTask = -1;
 	private int mobRemoveTask = -1;
 	private int healthRegenTask = -1;
@@ -656,26 +653,27 @@ public class TownyUniverse extends TownyObject {
 	public void collectTownTaxe(Town town) throws IConomyException {
 		//Resident Tax
 		for (Resident resident : town.getResidents())
-			if (!town.hasAssistant(resident) || !town.isMayor(resident)) {
-				if (!resident.pay(town.getTaxes(), town)) {
-					sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and was kicked from town."));
-					try {
-						town.removeResident(resident);
-					} catch (NotRegisteredException e) {
-					} catch (EmptyTownException e) {
-					}
-					getDataSource().saveResident(resident);
-					getDataSource().saveTown(town);
-				} else
-					try {
-						sendResidentMessage(resident, "Payed resident tax of " + town.getTaxes());
-					} catch (TownyException e1) {
-					}
-			} else
+			if (town.isMayor(resident) || town.hasAssistant(resident)) {
 				try {
 					sendResidentMessage(resident, "Town staff are exempt from taxes.");
 				} catch (TownyException e) {
 				}
+				continue;
+			} else if (!resident.pay(town.getTaxes(), town)) {
+				sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and was kicked from town."));
+				try {
+					town.removeResident(resident);
+				} catch (NotRegisteredException e) {
+				} catch (EmptyTownException e) {
+				}
+				getDataSource().saveResident(resident);
+				getDataSource().saveTown(town);
+			} else
+				try {
+					sendResidentMessage(resident, "Payed resident tax of " + town.getTaxes());
+				} catch (TownyException e1) {
+				}
+				
 		
 		//Plot Tax
 		Hashtable<Resident,Integer> townPlots = new Hashtable<Resident,Integer>();
@@ -684,14 +682,15 @@ public class TownyUniverse extends TownyObject {
 				continue;
 			try {
 				Resident resident = townBlock.getResident();
-				if (!town.hasAssistant(resident) || !town.isMayor(resident))
-					if (!resident.pay(town.getPlotTax(), town)) {
-						sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and lost ownership over a plot."));
-						townBlock.setResident(null);
-						getDataSource().saveResident(resident);
-						getDataSource().saveWorld(townBlock.getWorld());
-					} else
-						townPlots.put(resident, (townPlots.containsKey(resident) ? townPlots.get(resident) : 0) + 1);
+				if (town.isMayor(resident) || town.hasAssistant(resident))
+					continue;
+				if (!resident.pay(town.getPlotTax(), town)) {
+					sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and lost ownership over a plot."));
+					townBlock.setResident(null);
+					getDataSource().saveResident(resident);
+					getDataSource().saveWorld(townBlock.getWorld());
+				} else
+					townPlots.put(resident, (townPlots.containsKey(resident) ? townPlots.get(resident) : 0) + 1);
 			} catch (NotRegisteredException e) {
 			}
 		}
@@ -882,5 +881,25 @@ public class TownyUniverse extends TownyObject {
 		for (Player player : getOnlinePlayers(residents))
 			if (plugin.hasPlayerMode(player, modeRequired))
 				player.sendMessage(msg);
+	}
+	
+	public List<Resident> getOnlineResidents(Player player, String[] names) {
+		List<Resident> invited = new ArrayList<Resident>();
+		for (String name : names) {
+			List<Player> matches = plugin.getServer().matchPlayer(name);
+			if (matches.size() > 1) {
+				String line = "Multiple players selected";
+				for (Player p : matches)
+					line += ", " + p.getName();
+				plugin.sendErrorMsg(player, line);
+			} else if (matches.size() == 1)
+				try {
+					Resident target = plugin.getTownyUniverse().getResident(matches.get(0).getName());
+					invited.add(target);
+				} catch (TownyException x) {
+					plugin.sendErrorMsg(player, x.getError());
+				}
+		}
+		return invited;
 	}
 }

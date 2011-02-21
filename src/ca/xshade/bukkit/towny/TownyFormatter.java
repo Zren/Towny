@@ -205,7 +205,7 @@ public class TownyFormatter {
 		out.add("    " + (world.getUnclaimedZoneBuild() ? Colors.LightGreen : Colors.Rose) + "Build"
 				 + Colors.Gray + ", " + (world.getUnclaimedZoneDestroy() ? Colors.LightGreen : Colors.Rose) + "Destroy"
 				 + Colors.Gray + ", " + (world.getUnclaimedZoneSwitch() ? Colors.LightGreen : Colors.Rose) + "Switch");
-		out.add("    " + Colors.Green + "Ignored Blocks: " + Colors.LightGreen + StringMgmt.join(world.getUnclaimedZoneIgnoreIds(), ", "));
+		out.add("    " + Colors.Green + "Ignored Blocks:" + Colors.LightGreen + " " + StringMgmt.join(world.getUnclaimedZoneIgnoreIds(), ", "));
 		
 		return out;
 	}

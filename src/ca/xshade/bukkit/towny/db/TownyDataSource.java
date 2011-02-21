@@ -50,13 +50,23 @@ public abstract class TownyDataSource {
 			Scanner in = new Scanner(System.in);
 			input = in.next();
 			input = input.toLowerCase();
-			if (input.equals("y") || input.equals("yes"))
+			if (input.equals("y") || input.equals("yes")) {
+				in.close();
 				return true;
-			else if (input.equals("n") || input.equals("no"))
+			} else if (input.equals("n") || input.equals("no")) {
+				in.close();
 				return false;
+			}
 		}
 		System.out.println("[Towny] Error recieving input, exiting.");
 		return false;
+	}
+	
+	public void sendDebugMsg(String msg) {
+		if (plugin != null)
+			plugin.sendDebugMsg(msg);
+		else
+			System.out.println("[Towny] Debug: " + msg);
 	}
 
 	public boolean loadAll() {

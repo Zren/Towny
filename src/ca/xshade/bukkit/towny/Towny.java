@@ -1,7 +1,6 @@
 package ca.xshade.bukkit.towny;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,7 +17,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import ca.xshade.bukkit.towny.command.TownyCommand;
@@ -106,31 +103,10 @@ public class Towny extends JavaPlugin {
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
 	private Permissions permissions = null;
 	
-	public Towny() {
-		version = this.getDescription().getVersion();
-	}
-	
-	public Towny(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-		super(pluginLoader, instance, desc, folder, plugin, cLoader);
-		version = this.getDescription().getVersion();
-	}
-	
-	public static void main(String[] args) {
-		if (args.length > 0) {
-			TownyUniverse universe = new TownyUniverse(args[0]);
-			universe.loadSettings();
-			System.out.println("[Towny] Database: [" + TownySettings.getLoadDatabase() + "] ");
-			universe.setDataSource(TownySettings.getSaveDatabase());
-			universe.getDataSource().initialize(null, universe);
-			universe.getDataSource().loadAll();
-	        for (String line : universe.getTreeString(0))
-	        	System.out.println(line);
-		} else
-			System.out.println("Folder path to Towny required as argument.");
-	}
-
 	@Override
 	public void onEnable() {
+		version = this.getDescription().getVersion();
+		
 		registerEvents();
 		
 		PluginDescriptionFile pdfFile = this.getDescription();

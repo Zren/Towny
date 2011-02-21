@@ -408,7 +408,7 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 	public List<String> getTreeString(int depth) {
 		List<String> out = new ArrayList<String>();
 		out.add(getTreeDepth(depth) + "Town ("+getName()+")");
-		out.add(getTreeDepth(depth+1) + "Mayor: " + getMayor().getName());
+		out.add(getTreeDepth(depth+1) + "Mayor: " + (hasMayor() ? getMayor().getName() : "None"));
 		out.add(getTreeDepth(depth+1) + "Home: " + homeBlock);
 		out.add(getTreeDepth(depth+1) + "Bonus: " + bonusBlocks);
 		out.add(getTreeDepth(depth+1) + "TownBlocks (" + getTownBlocks().size() + "): " /*+ getTownBlocks()*/);

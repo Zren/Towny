@@ -454,10 +454,10 @@ public class TownyPlayerListener extends PlayerListener {
 			// TODO: Let admin's call a subfunction of this.
 			if (split[0].equalsIgnoreCase("add")) {
 				String[] names = StringMgmt.remFirstArg(split);
-				residentFriendAdd(player, resident, getOnlineResidents(player, names));
+				residentFriendAdd(player, resident, plugin.getTownyUniverse().getOnlineResidents(player, names));
 			} else if (split[0].equalsIgnoreCase("remove")) {
 				String[] names = StringMgmt.remFirstArg(split);
-				residentFriendRemove(player, resident, getOnlineResidents(player, names));
+				residentFriendRemove(player, resident, plugin.getTownyUniverse().getOnlineResidents(player, names));
 			} else if (split[0].equalsIgnoreCase("add+")) {
 				String[] names = StringMgmt.remFirstArg(split);
 				residentFriendAdd(player, resident, getResidents(player, names));
@@ -864,7 +864,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * 
 	 * @param player
 	 */
-
+	
 	public void showTownStatusHere(Player player) {
 		try {
 			TownyWorld world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
@@ -883,6 +883,7 @@ public class TownyPlayerListener extends PlayerListener {
 	 * @param coord
 	 * @throws TownyException
 	 */
+	
 	public void showTownStatusAtCoord(Player player, TownyWorld world, Coord coord) throws TownyException {
 		if (!world.hasTownBlock(coord))
 			throw new TownyException("This area (" + coord + ") hasn't been claimed.");
@@ -936,27 +937,7 @@ public class TownyPlayerListener extends PlayerListener {
 			if (TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getNewTownPrice()))
 				throw new TownyException("You can't afford to settle a new town here.");
 
-			newTown(universe, world, name, resident, key, player.getLocation());
-			/*
-			world.newTownBlock(key);
-			universe.newTown(name);
-			Town town = universe.getTown(name);
-			town.addResident(resident);
-			town.setMayor(resident);
-			TownBlock townBlock = world.getTownBlock(key);
-			townBlock.setTown(town);
-			town.setHomeBlock(townBlock);
-			town.setSpawn(player.getLocation());
-			world.addTown(town);
-
-			universe.getDataSource().saveResident(resident);
-			universe.getDataSource().saveTown(town);
-			universe.getDataSource().saveWorld(world);
-			universe.getDataSource().saveTownList();
-
-			plugin.updateCache();
-			*/
-			
+			newTown(universe, world, name, resident, key, player.getLocation());			
 			universe.sendGlobalMessage(TownySettings.getNewTownMsg(player.getName(), name));
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
@@ -1045,30 +1026,9 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		townAddResidents(player, town, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
+		townAddResidents(player, town, (matchOnline ? plugin.getTownyUniverse().getOnlineResidents(player, names) : getResidents(player, names)));
 		
 		plugin.updateCache();
-	}
-
-	// TODO: Move somewhere more useful
-	public List<Resident> getOnlineResidents(Player player, String[] names) {
-		List<Resident> invited = new ArrayList<Resident>();
-		for (String name : names) {
-			List<Player> matches = plugin.getServer().matchPlayer(name);
-			if (matches.size() > 1) {
-				String line = "Multiple players selected";
-				for (Player p : matches)
-					line += ", " + p.getName();
-				plugin.sendErrorMsg(player, line);
-			} else if (matches.size() == 1)
-				try {
-					Resident target = plugin.getTownyUniverse().getResident(matches.get(0).getName());
-					invited.add(target);
-				} catch (TownyException x) {
-					plugin.sendErrorMsg(player, x.getError());
-				}
-		}
-		return invited;
 	}
 	
 	public List<Resident> getResidents(Player player, String[] names) {
@@ -1129,7 +1089,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		townKickResidents(player, resident, town, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
+		townKickResidents(player, resident, town, (matchOnline ? plugin.getTownyUniverse().getOnlineResidents(player, names) : getResidents(player, names)));
 		
 		plugin.updateCache();
 	}
@@ -1208,7 +1168,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		townAssistantsAdd(player, town, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
+		townAssistantsAdd(player, town, (matchOnline ? plugin.getTownyUniverse().getOnlineResidents(player, names) : getResidents(player, names)));
 	}
 
 	public void townAssistantsAdd(Player player, Town town, List<Resident> invited) {
@@ -1257,7 +1217,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		townAssistantsRemove(player, resident, town, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
+		townAssistantsRemove(player, resident, town, (matchOnline ? plugin.getTownyUniverse().getOnlineResidents(player, names) : getResidents(player, names)));
 	}
 
 	public void townAssistantsRemove(Player player, Resident resident, Town town, List<Resident> kicking) {
@@ -1709,6 +1669,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatTitle("/... set perm"));
 			player.sendMessage(ChatTools.formatCommand("", "", "[on/off]", "Toggle all permissions"));
 			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [on/off]", "Toggle specifics"));
+			player.sendMessage(ChatTools.formatCommand("", "", "[build/destroy/switch] [on/off]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [build/destroy/switch] [on/off]", ""));
 			player.sendMessage(ChatTools.formatCommand("Eg", "/town set perm", "ally off", ""));
 			player.sendMessage(ChatTools.formatCommand("Eg", "/resident set perm", "friend build on", ""));
@@ -1738,6 +1699,18 @@ public class TownyPlayerListener extends PlayerListener {
 					} else if (split[0].equalsIgnoreCase("ally")) {
 						perm.allyBuild = b;
 						perm.allyDestroy = b;
+						perm.allySwitch = b;
+					} else if (split[0].equalsIgnoreCase("build")) {
+						perm.residentBuild = b;
+						perm.outsiderBuild = b;
+						perm.allyBuild = b;
+					} else if (split[0].equalsIgnoreCase("destroy")) {
+						perm.residentDestroy = b;
+						perm.outsiderDestroy = b;
+						perm.allyDestroy = b;
+					} else if (split[0].equalsIgnoreCase("switch")) {
+						perm.residentSwitch = b;
+						perm.outsiderSwitch = b;
 						perm.allySwitch = b;
 					}
 				} catch (Exception e) {
@@ -2193,7 +2166,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		nationAssistantsAdd(player, nation, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
+		nationAssistantsAdd(player, nation, (matchOnline ? plugin.getTownyUniverse().getOnlineResidents(player, names) : getResidents(player, names)));
 	}
 
 	public void nationAssistantsAdd(Player player, Nation nation, List<Resident> invited) {
@@ -2242,7 +2215,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
-		nationAssistantsRemove(player, resident, nation, (matchOnline ? getOnlineResidents(player, names) : getResidents(player, names)));
+		nationAssistantsRemove(player, resident, nation, (matchOnline ? plugin.getTownyUniverse().getOnlineResidents(player, names) : getResidents(player, names)));
 	}
 
 	public void nationAssistantsRemove(Player player, Resident resident, Nation nation, List<Resident> kicking) {

@@ -39,7 +39,8 @@ public class TownySettings {
 	// Integer[]
 	public enum IntArr {
 		SWITCH_IDS,
-		UNCLAIMED_ZONE_IGNORE
+		UNCLAIMED_ZONE_IGNORE,
+		ITEM_USE_IDS
 	};
 	// String
 	public enum Str {
@@ -191,6 +192,7 @@ public class TownySettings {
 		// Integer[]
 		configIntArr.put(TownySettings.IntArr.SWITCH_IDS,  new ArrayList<Integer>(Arrays.asList(new Integer[]{64,69,70,71,72,77})));
 		configIntArr.put(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE, new ArrayList<Integer>(Arrays.asList(new Integer[]{14,15,16,21,56,65,66,73,74,89})));
+		configIntArr.put(TownySettings.IntArr.ITEM_USE_IDS,  new ArrayList<Integer>(Arrays.asList(new Integer[]{259,325,326,327})));
 		// String
 		configStr.put(TownySettings.Str.DATABASE_LOAD, "flatfile");
 		configStr.put(TownySettings.Str.DEFAULT_TOWN_NAME, "");
@@ -854,12 +856,20 @@ public class TownySettings {
 		return getIntArr(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE);
 	}
 	
+	public static List<Integer> getItemUseIds() {
+		return getIntArr(TownySettings.IntArr.ITEM_USE_IDS);
+	}
+	
 	public static boolean isUnclaimedZoneIgnoreId(int id) {
 		return getIntArr(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE).contains(id);
 	}
 	
 	public static boolean isSwitchId(int id) {
 		return getIntArr(TownySettings.IntArr.SWITCH_IDS).contains(id);
+	}
+	
+	public static boolean isItemUseId(int id) {
+		return getIntArr(TownySettings.IntArr.ITEM_USE_IDS).contains(id);
 	}
 	
 	/************************************************************/

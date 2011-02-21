@@ -88,7 +88,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 
 	@Override
 	public boolean loadResidentList() {
-		plugin.sendDebugMsg("Loading Resident List");
+		sendDebugMsg("Loading Resident List");
 		String line;
 		BufferedReader fin;
 
@@ -115,7 +115,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 
 	@Override
 	public boolean loadTownList() {
-		plugin.sendDebugMsg("Loading Town List");
+		sendDebugMsg("Loading Town List");
 		String line;
 		BufferedReader fin;
 
@@ -142,7 +142,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 
 	@Override
 	public boolean loadNationList() {
-		plugin.sendDebugMsg("Loading Nation List");
+		sendDebugMsg("Loading Nation List");
 		String line;
 		BufferedReader fin;
 
@@ -169,7 +169,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	
 	@Override
 	public boolean loadWorldList() {
-		plugin.sendDebugMsg("Loading World List");
+		sendDebugMsg("Loading World List");
 		if (plugin != null)
 			return loadServerWorldsList();
 		else {

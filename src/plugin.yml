@@ -1,8 +1,19 @@
 name: Towny
 main: ca.xshade.bukkit.towny.Towny
-version: '2.0.27'
+version: 2.0.28
 author: Shade
 website: http://towny.xshade.ca
+description: Resident-Town-Nation heirarchy combined with a grid based protection system. Including a war event.
 commands:
+    resident:
+        description: Player specific commands
+    town:
+        description: Town specific commands
+    nation:
+        description: Nation specific commands
+    plot:
+        description: Residential plot commands.
     towny:
         description: Basic towny commands
+    townyadmin:
+        description: Administative towny commands
