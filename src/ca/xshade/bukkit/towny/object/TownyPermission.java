@@ -1,10 +1,10 @@
 package ca.xshade.bukkit.towny.object;
 
-
+//TODO: 12 permission so far. Anything else will expand it to include even more variables. Possibly change the data structure.
 public class TownyPermission {
-	public boolean residentBuild, residentDestroy, residentSwitch,
-		outsiderBuild, outsiderDestroy, outsiderSwitch,
-		allyBuild, allyDestroy, allySwitch;
+	public boolean residentBuild, residentDestroy, residentSwitch, residentItemUse,
+		outsiderBuild, outsiderDestroy, outsiderSwitch, outsiderItemUse,
+		allyBuild, allyDestroy, allySwitch, allyItemUse;
 
 	public TownyPermission() {
 		reset();
@@ -18,12 +18,15 @@ public class TownyPermission {
 		residentBuild = b;
 		residentDestroy = b;
 		residentSwitch = b;
+		residentItemUse = b;
 		outsiderBuild = b;
 		outsiderDestroy = b;
 		outsiderSwitch = b;
+		outsiderItemUse = b;
 		allyBuild = b;
 		allyDestroy = b;
 		allySwitch = b;
+		allyItemUse = b;
 	}
 
 	public void set(String s, boolean b) {
@@ -33,18 +36,24 @@ public class TownyPermission {
 			residentDestroy = b;
 		else if (s.equalsIgnoreCase("residentSwitch"))
 			residentSwitch = b;
+		else if (s.equalsIgnoreCase("residentItemUse"))
+			residentItemUse = b;
 		else if (s.equalsIgnoreCase("outsiderBuild"))
 			outsiderBuild = b;
 		else if (s.equalsIgnoreCase("outsiderDestroy"))
 			outsiderDestroy = b;
 		else if (s.equalsIgnoreCase("outsiderSwitch"))
 			outsiderSwitch = b;
+		else if (s.equalsIgnoreCase("outsiderItemUse"))
+			outsiderItemUse = b;
 		else if (s.equalsIgnoreCase("allyBuild"))
 			allyBuild = b;
 		else if (s.equalsIgnoreCase("allyDestroy"))
 			allyDestroy = b;
 		else if (s.equalsIgnoreCase("allySwitch"))
 			allySwitch = b;
+		else if (s.equalsIgnoreCase("allyItemUse"))
+			allyItemUse = b;
 	}
 
 	public void load(String s) {
@@ -60,21 +69,27 @@ public class TownyPermission {
 		if (residentBuild)
 			out += "residentBuild";
 		if (residentDestroy)
-			out += (out.length() > 0 ? "," : "") + "residentDestroy"; // (out.length() > 0 ? "," : "")
+			out += (out.length() > 0 ? "," : "") + "residentDestroy";
 		if (residentSwitch)
 			out += (out.length() > 0 ? "," : "") + "residentSwitch";
+		if (residentItemUse)
+			out += (out.length() > 0 ? "," : "") + "residentItemUse";
 		if (outsiderBuild)
 			out += (out.length() > 0 ? "," : "") + "outsiderBuild";
 		if (outsiderDestroy)
 			out += (out.length() > 0 ? "," : "") + "outsiderDestroy";
 		if (outsiderSwitch)
 			out += (out.length() > 0 ? "," : "") + "outsiderSwitches";
+		if (outsiderItemUse)
+			out += (out.length() > 0 ? "," : "") + "outsiderItemUse";
 		if (allyBuild)
 			out += (out.length() > 0 ? "," : "") + "allyBuild";
 		if (allyDestroy)
 			out += (out.length() > 0 ? "," : "") + "allyDestroy";
 		if (allySwitch)
 			out += (out.length() > 0 ? "," : "") + "allySwitch";
+		if (allyItemUse)
+			out += (out.length() > 0 ? "," : "") + "allyItemUse";
 		if (out.length() == 0)
 			out += "denyAll"; // Make the token not empty
 		return out;
@@ -83,7 +98,8 @@ public class TownyPermission {
 	public enum ActionType {
 		BUILD,
 		DESTROY,
-		SWITCH;
+		SWITCH,
+		ITEM_USE;
 		
 		@Override
 		public String toString() {
@@ -96,6 +112,7 @@ public class TownyPermission {
 			case BUILD: return residentBuild;
 			case DESTROY: return residentDestroy;
 			case SWITCH: return residentSwitch;
+			case ITEM_USE: return residentItemUse;
 			default: throw new UnsupportedOperationException();
 		}
 	}
@@ -105,6 +122,7 @@ public class TownyPermission {
 			case BUILD: return outsiderBuild;
 			case DESTROY: return outsiderDestroy;
 			case SWITCH: return outsiderSwitch;
+			case ITEM_USE: return outsiderItemUse;
 			default: throw new UnsupportedOperationException();
 		}
 	}
@@ -114,6 +132,7 @@ public class TownyPermission {
 			case BUILD: return allyBuild;
 			case DESTROY: return allyDestroy;
 			case SWITCH: return allySwitch;
+			case ITEM_USE: return allyItemUse;
 			default: throw new UnsupportedOperationException();
 		}
 	}
@@ -123,6 +142,7 @@ public class TownyPermission {
 			case BUILD: return world.getUnclaimedZoneBuild();
 			case DESTROY: return world.getUnclaimedZoneDestroy();
 			case SWITCH: return world.getUnclaimedZoneSwitch();
+			case ITEM_USE: return world.getUnclaimedZoneItemUse();
 			default: throw new UnsupportedOperationException();
 		}
 	}

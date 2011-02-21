@@ -43,9 +43,11 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		permissions.allyBuild = true;
 		permissions.allyDestroy = true;
 		permissions.allySwitch = true;
+		permissions.allyItemUse = true;
 		permissions.residentBuild = true;
 		permissions.residentDestroy = true;
 		permissions.residentSwitch = true;
+		permissions.residentItemUse = true;
 	}
 
 	public Resident getMayor() {
@@ -293,7 +295,7 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 			throw new TownyException("Town has not set a spawn location.");
 	}
 
-	private boolean hasSpawn() {
+	public boolean hasSpawn() {
 		return spawn != null;
 	}
 

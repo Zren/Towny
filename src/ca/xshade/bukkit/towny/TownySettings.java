@@ -124,6 +124,7 @@ public class TownySettings {
 		UNCLAIMED_ZONE_BUILD,
 		UNCLAIMED_ZONE_DESTROY,
 		UNCLAIMED_ZONE_SWITCH,
+		UNCLAIMED_ZONE_ITEM_USE,
 		SHOW_TOWN_NOTIFICATIONS,
 		USING_ICONOMY,
 		USING_ESSENTIALS,
@@ -269,6 +270,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_BUILD, false);
 		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_DESTROY, false);
 		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_SWITCH, true);
+		configBool.put(TownySettings.Bool.UNCLAIMED_ZONE_ITEM_USE, false);
 		configBool.put(TownySettings.Bool.SHOW_TOWN_NOTIFICATIONS, true);
 		configBool.put(TownySettings.Bool.USING_ICONOMY, true);
 		configBool.put(TownySettings.Bool.USING_ESSENTIALS, true);
@@ -661,6 +663,10 @@ public class TownySettings {
 	
 	public static boolean getUnclaimedZoneDestroyRights() {
 		return getBoolean(TownySettings.Bool.UNCLAIMED_ZONE_DESTROY);
+	}
+	
+	public static boolean getUnclaimedZoneItemUseRights() {
+		return getBoolean(TownySettings.Bool.UNCLAIMED_ZONE_ITEM_USE);
 	}
 
 	public static boolean getDebug() {

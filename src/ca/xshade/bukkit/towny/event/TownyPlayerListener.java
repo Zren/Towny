@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -22,6 +23,8 @@ import ca.xshade.bukkit.towny.EmptyNationException;
 import ca.xshade.bukkit.towny.EmptyTownException;
 import ca.xshade.bukkit.towny.IConomyException;
 import ca.xshade.bukkit.towny.NotRegisteredException;
+import ca.xshade.bukkit.towny.PlayerCache;
+import ca.xshade.bukkit.towny.PlayerCache.TownBlockStatus;
 import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownyException;
 import ca.xshade.bukkit.towny.TownySettings;
@@ -107,7 +110,57 @@ public class TownyPlayerListener extends PlayerListener {
 		} catch (TownyException e) {
 		}
 	}
+	
+	@Override
+	public void onPlayerItem(PlayerItemEvent event) {
+		if (event.isCancelled())
+			return;
+		
+		long start = System.currentTimeMillis();
+		
+		if (TownySettings.isItemUseId(event.getItem().getTypeId()))
+			onPlayerItemEvent(event, true);
+		
+		plugin.sendDebugMsg("onPlayerItemEvent took " + (System.currentTimeMillis() - start) + "ms");
+		
+	}
+	
+	public void onPlayerItemEvent(PlayerItemEvent event, boolean firstCall) {	
+		Player player = event.getPlayer();
+		
+		WorldCoord worldCoord;
+		try {
+			worldCoord = new WorldCoord(plugin.getTownyUniverse().getWorld(player.getWorld().getName()), Coord.parseCoord(player));
+		} catch (NotRegisteredException e1) {
+			plugin.sendErrorMsg(player, "This world has not been configured by Towny.");
+			event.setCancelled(true);
+			return;
+		}
 
+		// Check cached permissions first
+		try {
+			PlayerCache cache = plugin.getCache(player);
+			cache.updateCoord(worldCoord);
+			if (!cache.getItemUsePermission())
+				event.setCancelled(true);
+			if (cache.hasBlockErrMsg())
+				plugin.sendErrorMsg(player, cache.getBlockErrMsg());
+			return;
+		} catch (NullPointerException e) {
+			if (firstCall) {
+				// New or old destroy permission was null, update it
+				TownBlockStatus status = plugin.cacheStatus(player, worldCoord, plugin.getStatusCache(player, worldCoord));
+				plugin.cacheItemUse(player, worldCoord, getItemUsePermission(player, status, worldCoord));
+				onPlayerItemEvent(event, false);
+			} else
+				plugin.sendErrorMsg(player, "Error updating item use permissions cache.");
+		}
+	}
+	
+	public boolean getItemUsePermission(Player player, TownBlockStatus status, WorldCoord pos) {
+		return plugin.getPermission(player, status, pos, TownyPermission.ActionType.ITEM_USE);
+	}
+	
 	@Override
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
@@ -1694,10 +1747,11 @@ public class TownyPlayerListener extends PlayerListener {
 		// TODO: switches
 		if (split.length == 0 || split[0].equalsIgnoreCase("?")) {
 			player.sendMessage(ChatTools.formatTitle("/... set perm"));
-			player.sendMessage(ChatTools.formatCommand("", "", "[on/off]", "Toggle all permissions"));
-			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [on/off]", "Toggle specifics"));
-			player.sendMessage(ChatTools.formatCommand("", "", "[build/destroy/switch] [on/off]", ""));
-			player.sendMessage(ChatTools.formatCommand("", "", "[resident/ally/outsider] [build/destroy/switch] [on/off]", ""));
+			player.sendMessage(ChatTools.formatCommand("Level", "[resident/ally/outsider]", "", ""));
+			player.sendMessage(ChatTools.formatCommand("Type", "[build/destroy/switch/itemuse]", "", ""));
+			player.sendMessage(ChatTools.formatCommand("", "set perm", "[on/off]", "Toggle all permissions"));
+			player.sendMessage(ChatTools.formatCommand("", "set perm", "[level/type] [on/off]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "set perm", "[level] [type] [on/off]", ""));
 			player.sendMessage(ChatTools.formatCommand("Eg", "/town set perm", "ally off", ""));
 			player.sendMessage(ChatTools.formatCommand("Eg", "/resident set perm", "friend build on", ""));
 			player.sendMessage("Use 'friend' instead of 'resident' for plot permissions.");
@@ -1719,14 +1773,17 @@ public class TownyPlayerListener extends PlayerListener {
 						perm.residentBuild = b;
 						perm.residentDestroy = b;
 						perm.residentSwitch = b;
+						perm.residentItemUse = b;
 					} else if (split[0].equalsIgnoreCase("outsider")) {
 						perm.outsiderBuild = b;
 						perm.outsiderDestroy = b;
 						perm.outsiderSwitch = b;
+						perm.outsiderItemUse = b;
 					} else if (split[0].equalsIgnoreCase("ally")) {
 						perm.allyBuild = b;
 						perm.allyDestroy = b;
 						perm.allySwitch = b;
+						perm.allyItemUse = b;
 					} else if (split[0].equalsIgnoreCase("build")) {
 						perm.residentBuild = b;
 						perm.outsiderBuild = b;
@@ -1739,6 +1796,10 @@ public class TownyPlayerListener extends PlayerListener {
 						perm.residentSwitch = b;
 						perm.outsiderSwitch = b;
 						perm.allySwitch = b;
+					} else if (split[0].equalsIgnoreCase("itemuse")) {
+						perm.residentItemUse = b;
+						perm.outsiderItemUse = b;
+						perm.allyItemUse = b;
 					}
 				} catch (Exception e) {
 				}
@@ -1747,7 +1808,7 @@ public class TownyPlayerListener extends PlayerListener {
 					boolean b = parseOnOff(split[2]);
 					String s = "";
 					if ((arg0.equalsIgnoreCase("resident") || arg0.equalsIgnoreCase("outsider") || arg0.equalsIgnoreCase("ally"))
-							&& (split[1].equalsIgnoreCase("build") || split[1].equalsIgnoreCase("destroy") || split[1].equalsIgnoreCase("switch")))
+							&& (split[1].equalsIgnoreCase("build") || split[1].equalsIgnoreCase("destroy") || split[1].equalsIgnoreCase("switch") || split[1].equalsIgnoreCase("itemuse")))
 						s = arg0 + split[1];
 					perm.set(s, b);
 				} catch (Exception e) {
@@ -2501,7 +2562,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "claimable [on/off]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "pvp [on/off]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "usedefault", ""));
-			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildperm [perm] .. [perm]", "build,destroy,switch"));
+			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildperm [perm] .. [perm]", "build,destroy,switch,useitem"));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildignore [id] [id] [id]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildname [name]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "usingtowny [on/off]", ""));
@@ -2551,6 +2612,7 @@ public class TownyPlayerListener extends PlayerListener {
 						world.setUnclaimedZoneBuild(perms.contains("build"));
 						world.setUnclaimedZoneDestroy(perms.contains("destroy"));
 						world.setUnclaimedZoneSwitch(perms.contains("switch"));
+						world.setUnclaimedZoneItemUse(perms.contains("itemuse"));
 						world.setUsingDefault(false);
 						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s wild permissions " + split[1]);
 					} catch (Exception e) {

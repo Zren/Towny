@@ -118,6 +118,8 @@ v0.31:
 	Players are properly taxed when using /town spawn
 	Added option to ignore all interactions with towny in certain worlds.
 		/tw set usingtowny [on/off]
+v0.32:
+	Added new permission Item Use. Used to prevent using items (like buckets and lighters).
 	
 TODO:	
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc

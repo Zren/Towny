@@ -8,7 +8,7 @@ import ca.xshade.bukkit.towny.object.WorldCoord;
 
 public class PlayerCache {
 	private WorldCoord lastTownBlock;
-	private Boolean buildPermission, destroyPermission, switchPermission;
+	private Boolean buildPermission, destroyPermission, switchPermission, itemUsePermission;
 	private String blockErrMsg;
 	//TODO: cache last entity attacked
 
@@ -80,6 +80,7 @@ public class PlayerCache {
 		buildPermission = null;
 		destroyPermission = null;
 		switchPermission = null;
+		itemUsePermission = null;
 		blockErrMsg = null;
 	}
 	
@@ -123,5 +124,16 @@ public class PlayerCache {
 	
 	public boolean hasBlockErrMsg() {
 		return blockErrMsg != null;
+	}
+
+	public void setItemUsePermission(Boolean itemUsePermission) {
+		this.itemUsePermission = itemUsePermission;
+	}
+
+	public Boolean getItemUsePermission() throws NullPointerException {
+		if (itemUsePermission == null)
+			throw new NullPointerException();
+		else
+			return itemUsePermission;
 	}
 }

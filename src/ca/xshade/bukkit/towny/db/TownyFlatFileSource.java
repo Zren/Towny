@@ -364,15 +364,11 @@ public class TownyFlatFileSource extends TownyDataSource {
 							TownBlock homeBlock = world.getTownBlock(x, z);
 							town.setHomeBlock(homeBlock);
 						} catch (NumberFormatException e) {
-							System.out
-									.println("[Towny] "
-											+ town.getName()
-											+ " homeBlock tried to load invalid location.");
+							System.out.println("[Towny] [Warning] " + town.getName() + " homeBlock tried to load invalid location.");
 						} catch (NotRegisteredException e) {
-							System.out
-									.println("[Towny] "
-											+ town.getName()
-											+ " homeBlock tried to load invalid world.");
+							System.out.println("[Towny] [Warning] " + town.getName() + " homeBlock tried to load invalid world.");
+						} catch (TownyException e) {
+							System.out.println("[Towny] [Warning] " + town.getName() + " does not have a home block.");
 						}
 				}
 
@@ -389,6 +385,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 						} catch (NumberFormatException e) {
 						} catch (NotRegisteredException e) {
 						} catch (NullPointerException e) {
+						} catch (TownyException e) {
+							System.out.println("[Towny] [Warning] " + town.getName() + " does not have a spawn point.");
 						}
 				}
 
@@ -540,6 +538,12 @@ public class TownyFlatFileSource extends TownyDataSource {
 				if (line != null)
 					try {
 						world.setUnclaimedZoneSwitch(Boolean.parseBoolean(line));
+					} catch (Exception e) {
+					}
+				line = kvFile.get("unclaimedZoneItemUse");
+				if (line != null)
+					try {
+						world.setUnclaimedZoneItemUse(Boolean.parseBoolean(line));
 					} catch (Exception e) {
 					}
 				line = kvFile.get("unclaimedZoneName");
@@ -776,14 +780,16 @@ public class TownyFlatFileSource extends TownyDataSource {
 			// TownBlocks
 			fout.write("townBlocks=" + utilSaveTownBlocks(town.getTownBlocks()) + newLine);
 			// Home Block
-			fout.write("homeBlock=" + town.getHomeBlock().getWorld().getName() + ","
-					+ Integer.toString(town.getHomeBlock().getX()) + ","
-					+ Integer.toString(town.getHomeBlock().getZ()) + newLine);
+			if (town.hasHomeBlock())
+				fout.write("homeBlock=" + town.getHomeBlock().getWorld().getName() + ","
+						+ Integer.toString(town.getHomeBlock().getX()) + ","
+						+ Integer.toString(town.getHomeBlock().getZ()) + newLine);
 			// Spawn
-			fout.write("spawn=" + town.getSpawn().getWorld().getName() + ","
-					+ Double.toString(town.getSpawn().getX()) + ","
-					+ Double.toString(town.getSpawn().getY()) + ","
-					+ Double.toString(town.getSpawn().getZ()) + newLine);
+			if (town.hasSpawn())
+				fout.write("spawn=" + town.getSpawn().getWorld().getName() + ","
+						+ Double.toString(town.getSpawn().getX()) + ","
+						+ Double.toString(town.getSpawn().getY()) + ","
+						+ Double.toString(town.getSpawn().getZ()) + newLine);
 
 			fout.close();
 		} catch (Exception e) {
@@ -862,6 +868,9 @@ public class TownyFlatFileSource extends TownyDataSource {
 			// Unclaimed Zone Switch
 			if (world.getUnclaimedZoneSwitch() != null)
 				fout.write("unclaimedZoneSwitch=" + Boolean.toString(world.getUnclaimedZoneSwitch()) + newLine);
+			// Unclaimed Zone Item Use
+			if (world.getUnclaimedZoneItemUse() != null)
+				fout.write("unclaimedZoneItemUse=" + Boolean.toString(world.getUnclaimedZoneItemUse()) + newLine);
 			// Unclaimed Zone Name
 			if (world.getUnclaimedZoneName() != null)
 				fout.write("unclaimedZoneName=" + world.getUnclaimedZoneName() + newLine);

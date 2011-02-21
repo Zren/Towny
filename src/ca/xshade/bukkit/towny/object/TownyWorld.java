@@ -13,7 +13,7 @@ public class TownyWorld extends TownyObject {
 	private List<Town> towns = new ArrayList<Town>();
 	private boolean isClaimable = true, isPvP = true, usingDefault = true, isUsingTowny = true;
 	private List<Integer> unclaimedZoneIgnoreIds = null;
-	private Boolean unclaimedZoneBuild = null, unclaimedZoneDestroy = null, unclaimedZoneSwitch = null;
+	private Boolean unclaimedZoneBuild = null, unclaimedZoneDestroy = null, unclaimedZoneSwitch = null, unclaimedZoneItemUse = null;
 	private String unclaimedZoneName = null;
 	private Hashtable<Coord, TownBlock> townBlocks = new Hashtable<Coord, TownBlock>();
 
@@ -156,6 +156,7 @@ public class TownyWorld extends TownyObject {
 			setUnclaimedZoneBuild(null);
 			setUnclaimedZoneDestroy(null);
 			setUnclaimedZoneSwitch(null);
+			setUnclaimedZoneItemUse(null);
 			setUnclaimedZoneIgnore(null);
 			setUnclaimedZoneName(null);
 		}
@@ -231,5 +232,16 @@ public class TownyWorld extends TownyObject {
 
 	public boolean isUsingTowny() {
 		return isUsingTowny;
+	}
+
+	public void setUnclaimedZoneItemUse(Boolean unclaimedZoneItemUse) {
+		this.unclaimedZoneItemUse = unclaimedZoneItemUse;
+	}
+
+	public Boolean getUnclaimedZoneItemUse() {
+		if (unclaimedZoneItemUse == null || isUsingDefault())
+			return TownySettings.getUnclaimedZoneItemUseRights();
+		else
+			return unclaimedZoneItemUse;
 	}
 }
