@@ -60,6 +60,10 @@ public class TownyMapCommand extends TownyCommand {
 			plugin.sendErrorMsg(player, "You are not in a registered world.");
 			return;
 		}
+		if (!world.isUsingTowny()) {
+			plugin.sendErrorMsg(player, "This world is not using towny.");
+			return;
+		}
 		Coord pos = Coord.parseCoord(player);
 
 		player.sendMessage(ChatTools.formatTitle("Towny Map " + Colors.White + "(" + pos.toString() + ")"));

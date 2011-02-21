@@ -11,7 +11,7 @@ import ca.xshade.bukkit.towny.TownySettings;
 
 public class TownyWorld extends TownyObject {
 	private List<Town> towns = new ArrayList<Town>();
-	private boolean isClaimable = true, isPvP = true, usingDefault = true;
+	private boolean isClaimable = true, isPvP = true, usingDefault = true, isUsingTowny = true;
 	private List<Integer> unclaimedZoneIgnoreIds = null;
 	private Boolean unclaimedZoneBuild = null, unclaimedZoneDestroy = null, unclaimedZoneSwitch = null;
 	private String unclaimedZoneName = null;
@@ -144,7 +144,10 @@ public class TownyWorld extends TownyObject {
 	}
 
 	public boolean isClaimable() {
-		return isClaimable;
+		if (!isUsingTowny())
+			return false;
+		else
+			return isClaimable;
 	}
 
 	public void setUsingDefault(boolean usingDefault) {
@@ -220,5 +223,13 @@ public class TownyWorld extends TownyObject {
 
 	public void setUnclaimedZoneName(String unclaimedZoneName) {
 		this.unclaimedZoneName = unclaimedZoneName;
+	}
+
+	public void setUsingTowny(boolean isUsingTowny) {
+		this.isUsingTowny = isUsingTowny;
+	}
+
+	public boolean isUsingTowny() {
+		return isUsingTowny;
 	}
 }

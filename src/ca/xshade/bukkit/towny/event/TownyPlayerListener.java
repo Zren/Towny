@@ -143,11 +143,12 @@ public class TownyPlayerListener extends PlayerListener {
 			parseTownUnclaimCommand(player, new String[]{});
 		if (plugin.hasPlayerMode(player, "map"))
 			TownyMapCommand.showMap(player);
+
 		// claim: attempt to claim area
 		// claim remove: remove area from town
 
 		// Check if player has entered a new town/wilderness
-		if (TownySettings.getShowTownNotifications()) {
+		if (to.getWorld().isUsingTowny() && TownySettings.getShowTownNotifications()) {
 			boolean fromWild = false, toWild = false, toForSale = false, toHomeBlock = false;
 			TownBlock fromTownBlock, toTownBlock;
 			Town fromTown = null, toTown = null;
@@ -2503,6 +2504,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildperm [perm] .. [perm]", "build,destroy,switch"));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildignore [id] [id] [id]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "wildname [name]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyworld set", "usingtowny [on/off]", ""));
 		} else {
 			TownyWorld world;
 			if (!plugin.isTownyAdmin(player)) {
@@ -2579,6 +2581,20 @@ public class TownyPlayerListener extends PlayerListener {
 						world.setUnclaimedZoneName(split[1]);
 						world.setUsingDefault(false);
 						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s wild name to " + split[1]);
+					} catch (Exception e) {
+						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
+					}
+			} else if (split[0].equalsIgnoreCase("usingtowny")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /townyworld set usingtowny off");
+				else
+					try {
+						boolean choice = parseOnOff(split[1]);
+						world.setUsingTowny(choice);
+						if (world.isUsingTowny())
+							plugin.sendMsg(player, "This is now follows towny rules.");
+						else
+							plugin.sendMsg(player, "This world is exempt of all towny interactions.");
 					} catch (Exception e) {
 						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
 					}

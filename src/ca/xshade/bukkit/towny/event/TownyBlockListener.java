@@ -10,10 +10,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import ca.xshade.bukkit.towny.NotRegisteredException;
 import ca.xshade.bukkit.towny.PlayerCache;
+import ca.xshade.bukkit.towny.PlayerCache.TownBlockStatus;
 import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownyException;
 import ca.xshade.bukkit.towny.TownySettings;
-import ca.xshade.bukkit.towny.PlayerCache.TownBlockStatus;
 import ca.xshade.bukkit.towny.object.Coord;
 import ca.xshade.bukkit.towny.object.Resident;
 import ca.xshade.bukkit.towny.object.Town;
@@ -235,7 +235,8 @@ public class TownyBlockListener extends BlockListener {
 	}
 
 	public boolean getPermission(Player player, TownBlockStatus status, WorldCoord pos, TownyPermission.ActionType actionType) {
-		if (status == TownBlockStatus.ADMIN ||
+		if (status == TownBlockStatus.OFF_WORLD ||
+			status == TownBlockStatus.ADMIN ||
 			status == TownBlockStatus.WARZONE ||
 			status == TownBlockStatus.PLOT_OWNER ||
 			status == TownBlockStatus.TOWN_OWNER)
@@ -622,6 +623,9 @@ public class TownyBlockListener extends BlockListener {
 	public TownBlockStatus getStatusCache(Player player, WorldCoord worldCoord) {
 		if (plugin.isTownyAdmin(player))
 			return TownBlockStatus.ADMIN;
+		
+		if (!worldCoord.getWorld().isUsingTowny())
+			return TownBlockStatus.OFF_WORLD;
 		
 		TownyUniverse universe = plugin.getTownyUniverse();
 		TownBlock townBlock;

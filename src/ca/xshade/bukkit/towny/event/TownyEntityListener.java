@@ -50,8 +50,12 @@ public class TownyEntityListener extends EntityListener {
 		TownyUniverse universe = plugin.getTownyUniverse();
 		
 		try {
-			// World PvP
+			
 			TownyWorld world = universe.getWorld(a.getWorld().getName());
+			// World using Towny
+			if (!world.isUsingTowny())
+				return false;
+			// World PvP
 			if (!world.isPvP())
 				return true;
 			

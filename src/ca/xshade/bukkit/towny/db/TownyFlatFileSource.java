@@ -560,6 +560,12 @@ public class TownyFlatFileSource extends TownyDataSource {
 						world.setUnclaimedZoneIgnore(nums);
 					} catch (Exception e) {
 					}
+				line = kvFile.get("usingTowny");
+				if (line != null)
+					try {
+						world.setUsingTowny(Boolean.parseBoolean(line));
+					} catch (Exception e) {
+					}
 
 				// loadTownBlocks(world);
 
@@ -765,7 +771,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.write("pvp=" + Boolean.toString(town.isPVP()) + newLine);
 			// Mobs
 			fout.write("mobs=" + Boolean.toString(town.hasMobs()) + newLine);
-			// Mobs
+			// Public
 			fout.write("public=" + Boolean.toString(town.isPublic()) + newLine);
 			// TownBlocks
 			fout.write("townBlocks=" + utilSaveTownBlocks(town.getTownBlocks()) + newLine);
@@ -862,6 +868,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			// Unclaimed Zone Name
 			if (world.getUnclaimedZoneIgnoreIds() != null)
 				fout.write("unclaimedZoneIgnoreIds=" + StringMgmt.join(world.getUnclaimedZoneIgnoreIds(), ",") + newLine);
+			// Using Towny
+			fout.write("usingTowny=" + Boolean.toString(world.isUsingTowny()) + newLine);
 			
 			fout.close();
 
