@@ -114,6 +114,8 @@ v0.30:
 	Changed towny.spawntp -> towny.publicspawntp, this permission has to do with teleporting to other towns.
 	New permission towny.spawntp will be relative to your own town.
 	Town has new property: /town set public [on/off]. This will toggle if you allow non-residents to use your warp, and also hides you Homeblock location from the town status.
+v0.31:
+	Players are properly taxed when using /town spawn
 	
 TODO:	
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc

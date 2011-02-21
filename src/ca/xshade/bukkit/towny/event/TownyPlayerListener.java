@@ -753,16 +753,18 @@ public class TownyPlayerListener extends PlayerListener {
 				newTown(player, split[1], split[2]);
 		} else if (split[0].equalsIgnoreCase("leave"))
 			townLeave(player);
-		else if (split[0].equalsIgnoreCase("spawn")) {
-			if (split.length == 1) {
-				boolean isTownyAdmin = plugin.isTownyAdmin(player);
-				if (!TownySettings.isAllowingTownSpawn() && !isTownyAdmin && !plugin.hasPermission(player, "towny.spawntp"))
-					plugin.sendErrorMsg(player, "Town spawn travel is forbidden.");
-				else
+		else if (split[0].equalsIgnoreCase("spawn"))
+			try {
+				if (split.length == 1) {
+					boolean isTownyAdmin = plugin.isTownyAdmin(player);
+					if (!TownySettings.isAllowingTownSpawn() && !isTownyAdmin && !plugin.hasPermission(player, "towny.spawntp"))
+						throw new TownyException("Town spawn travel is forbidden.");
+					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+					if (!isTownyAdmin && TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getTownSpawnTravelPrice()))
+						throw new TownyException("Cannot afford to teleport to your town's spawn.");
 					if (plugin.checkEssentialsTeleport(player))
 						plugin.getTownyUniverse().townSpawn(player, false);
-			} else
-				try {
+				} else {
 					boolean isTownyAdmin = plugin.isTownyAdmin(player);
 					if (!TownySettings.isAllowingTownSpawnTravel() && !isTownyAdmin && !plugin.hasPermission(player, "towny.publicspawntp"))
 						throw new TownyException("Town spawn travel is forbidden.");
@@ -774,12 +776,13 @@ public class TownyPlayerListener extends PlayerListener {
 						throw new TownyException("That town is not public.");
 					if (plugin.checkEssentialsTeleport(player))
 						player.teleportTo(town.getSpawn());
-				} catch (TownyException e) {
-					plugin.sendErrorMsg(player, e.getMessage());
-				} catch (IConomyException e) {
-					plugin.sendErrorMsg(player, e.getMessage());
 				}
-		} else if (split[0].equalsIgnoreCase("withdraw")) {
+			} catch (TownyException e) {
+				plugin.sendErrorMsg(player, e.getMessage());
+			} catch (IConomyException e) {
+				plugin.sendErrorMsg(player, e.getMessage());
+			}
+		else if (split[0].equalsIgnoreCase("withdraw")) {
 			if (split.length == 2)
 				try {
 					townWithdraw(player, Integer.parseInt(split[1]));
