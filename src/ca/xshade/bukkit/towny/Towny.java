@@ -152,6 +152,9 @@ public class Towny extends JavaPlugin {
 		test = getServer().getPluginManager().getPlugin("Essentials");
 		if (test == null)
 			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
+		test = getServer().getPluginManager().getPlugin("EssentialsTele");
+		if (test == null)
+			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
 		
 		onLoad();
 		

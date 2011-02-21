@@ -340,6 +340,14 @@ public class TownyFlatFileSource extends TownyDataSource {
 					} catch (NumberFormatException nfe) {
 					} catch (Exception e) {
 					}
+				
+				line = kvFile.get("public");
+				if (line != null)
+					try {
+						town.setPublic(Boolean.parseBoolean(line));
+					} catch (NumberFormatException nfe) {
+					} catch (Exception e) {
+					}
 
 				line = kvFile.get("townBlocks");
 				if (line != null)
@@ -757,6 +765,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.write("pvp=" + Boolean.toString(town.isPVP()) + newLine);
 			// Mobs
 			fout.write("mobs=" + Boolean.toString(town.hasMobs()) + newLine);
+			// Mobs
+			fout.write("public=" + Boolean.toString(town.isPublic()) + newLine);
 			// TownBlocks
 			fout.write("townBlocks=" + utilSaveTownBlocks(town.getTownBlocks()) + newLine);
 			// Home Block

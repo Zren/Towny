@@ -25,7 +25,7 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 	private Resident mayor;
 	private int bonusBlocks, taxes, plotPrice, plotTax;
 	private Nation nation;
-	private boolean isPVP, hasMobs;
+	private boolean isPVP, hasMobs, isPublic;
 	private String townBoard = "/town set board [msg]";
 	private TownBlock homeBlock;
 	private TownyWorld world;
@@ -39,6 +39,7 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		plotPrice = 0;
 		isPVP = false;
 		hasMobs = false;
+		isPublic = true;
 		permissions.allyBuild = true;
 		permissions.allyDestroy = true;
 		permissions.allySwitch = true;
@@ -418,5 +419,13 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		for (Resident resident : getResidents())
 			out.addAll(resident.getTreeString(depth+2));
 		return out;
+	}
+
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
 	}
 }

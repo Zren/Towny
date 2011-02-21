@@ -102,7 +102,7 @@ public class TownyFormatter {
 			out.add(Colors.Green
 					+ "Town Size: " + Colors.LightGreen + town.getTownBlocks().size() + " / " + TownySettings.getMaxTownBlocks(town)
 					+ Colors.LightBlue + " [Bonus: " + town.getBonusBlocks() + "]"
-					+ Colors.LightGray + " [Home: " + (town.hasHomeBlock() ? town.getHomeBlock().getCoord().toString() : "None") + "]");
+					+ (town.isPublic() ? Colors.LightGray + " [Home: " + (town.hasHomeBlock() ? town.getHomeBlock().getCoord().toString() : "None") + "]" : ""));
 		} catch (TownyException e) {
 		}
 		

@@ -110,6 +110,10 @@ v0.29:
 		/nation = /nat,/n
 		Towny, Plot and Townyadmin (/ta) remain the same.
 	Changed command config keys from the suffix _COMMANDS to the prefix COMMANDS_ so as to group them all.
+v0.30:
+	Changed towny.spawntp -> towny.publicspawntp, this permission has to do with teleporting to other towns.
+	New permission towny.spawntp will be relative to your own town.
+	Town has new property: /town set public [on/off]. This will toggle if you allow non-residents to use your warp, and also hides you Homeblock location from the town status.
 	
 TODO:	
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc

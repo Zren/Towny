@@ -571,7 +571,6 @@ public class TownyPlayerListener extends PlayerListener {
 			}
 		}
 	}
-
 	
 	public boolean residentClaim(Resident resident, WorldCoord worldCoord) throws TownyException, IConomyException {
 		if (plugin.getTownyUniverse().isWarTime())
@@ -756,17 +755,23 @@ public class TownyPlayerListener extends PlayerListener {
 			townLeave(player);
 		else if (split[0].equalsIgnoreCase("spawn")) {
 			if (split.length == 1) {
-				if (plugin.checkEssentialsTeleport(player))
-					plugin.getTownyUniverse().townSpawn(player, false);
+				boolean isTownyAdmin = plugin.isTownyAdmin(player);
+				if (!TownySettings.isAllowingTownSpawn() && !isTownyAdmin && !plugin.hasPermission(player, "towny.spawntp"))
+					plugin.sendErrorMsg(player, "Town spawn travel is forbidden.");
+				else
+					if (plugin.checkEssentialsTeleport(player))
+						plugin.getTownyUniverse().townSpawn(player, false);
 			} else
 				try {
 					boolean isTownyAdmin = plugin.isTownyAdmin(player);
-					if (!TownySettings.isAllowingTownSpawnTravel() && !isTownyAdmin && !plugin.hasPermission(player, "towny.spawntp"))
+					if (!TownySettings.isAllowingTownSpawnTravel() && !isTownyAdmin && !plugin.hasPermission(player, "towny.publicspawntp"))
 						throw new TownyException("Town spawn travel is forbidden.");
 					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
 					Town town = plugin.getTownyUniverse().getTown(split[1]);
 					if (!isTownyAdmin && TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getTownSpawnTravelPrice()))
 						throw new TownyException("Cannot afford to teleport to "+town.getName()+".");
+					if (!isTownyAdmin && !town.isPublic())
+						throw new TownyException("That town is not public.");
 					if (plugin.checkEssentialsTeleport(player))
 						player.teleportTo(town.getSpawn());
 				} catch (TownyException e) {
@@ -978,8 +983,15 @@ public class TownyPlayerListener extends PlayerListener {
 			
 			resident = plugin.getTownyUniverse().getResident(player.getName());
 			town = resident.getTown();
+			
+			
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
+			return;
+		}
+		
+		if (resident.isMayor()) {
+			plugin.sendErrorMsg(player, TownySettings.getMayorAbondonMsg());
 			return;
 		}
 		
@@ -1550,6 +1562,7 @@ public class TownyPlayerListener extends PlayerListener {
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "plottax [$]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "plotprice [$]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "name [name]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/town set", "public [on/off]", ""));
 		} else {
 			Resident resident;
 			Town town;
@@ -1651,6 +1664,16 @@ public class TownyPlayerListener extends PlayerListener {
 					try {
 						town.setPVP(parseOnOff(split[1]));
 						plugin.sendMsg(player, "Successfully changed town's pvp setting.");
+						// TODO: send message to all with town
+					} catch (Exception e) {
+					}
+			} else if (split[0].equalsIgnoreCase("public")) {
+				if (split.length < 2)
+					plugin.sendErrorMsg(player, "Eg: /town set public [on/off]");
+				else
+					try {
+						town.setPVP(parseOnOff(split[1]));
+						plugin.sendMsg(player, "Successfully made town "+(town.isPublic() ? "" : "not ")+"public.");
 						// TODO: send message to all with town
 					} catch (Exception e) {
 					}

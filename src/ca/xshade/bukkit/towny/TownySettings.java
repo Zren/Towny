@@ -135,7 +135,8 @@ public class TownySettings {
 		ALLOW_OUTPOSTS,
 		ALLOW_TOWN_SPAWN_TRAVEL,
 		DEV_MODE,
-		WARTIME_REMOVE_ON_MONARCH_DEATH //TODO: Add to Wiki
+		WARTIME_REMOVE_ON_MONARCH_DEATH, //TODO: Add to Wiki
+		ALLOW_TOWN_SPAWN //TODO
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -236,7 +237,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.DEFAULT_MAX_TOWN_BLOCKS, 64);
 		configInt.put(TownySettings.Int.PRICE_NEW_TOWN, 250);
 		configInt.put(TownySettings.Int.PRICE_NEW_NATION, 1000);
-		configInt.put(TownySettings.Int.PRICE_NATION_NEUTRALITY, 100);
+		configInt.put(TownySettings.Int.PRICE_NATION_NEUTRALITY, 0);
 		configInt.put(TownySettings.Int.WARTIME_WARNING_DELAY, 30); // 30 seconds 
 		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_HP, 60); // 1 minute
 		configInt.put(TownySettings.Int.WARTIME_HOME_BLOCK_HP, 120); // 2 minutes
@@ -278,6 +279,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
 		configBool.put(TownySettings.Bool.ALLOW_OUTPOSTS, true);
 		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL, true);
+		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN, true);
 		configBool.put(TownySettings.Bool.DEV_MODE, false);
 		configBool.put(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH, false);
 		
@@ -902,6 +904,10 @@ public class TownySettings {
 
 	public static long getDayInterval() {
 		return getLong(TownySettings.KeyLong.DAY_INTERVAL);
+	}
+	
+	public static boolean isAllowingTownSpawn() {
+		return getBoolean(TownySettings.Bool.ALLOW_TOWN_SPAWN);
 	}
 	
 	public static boolean isAllowingTownSpawnTravel() {
