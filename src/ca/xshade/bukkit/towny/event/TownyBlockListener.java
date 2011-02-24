@@ -52,7 +52,7 @@ public class TownyBlockListener extends BlockListener {
 		if (event.isCancelled())
 			return;
 		
-		if (event.getDamageLevel() == BlockDamageLevel.BROKEN) {
+		if (event.getDamageLevel() == BlockDamageLevel.STOPPED) {
 			long start = System.currentTimeMillis();
 
 			onBlockBreakEvent(event, true);
