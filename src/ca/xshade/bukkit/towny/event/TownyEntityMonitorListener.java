@@ -55,6 +55,7 @@ public class TownyEntityMonitorListener extends EntityListener {
 				}
 				
 				deathPayment(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
+				wartimeDeathPoints(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
 				
 				if (TownySettings.isRemovingOnMonarchDeath())
 					monarchDeath(attackerPlayer, defenderPlayer, attackerResident, defenderResident);
@@ -62,6 +63,19 @@ public class TownyEntityMonitorListener extends EntityListener {
 		}
 	}
 	
+	private void wartimeDeathPoints(Player attackerPlayer, Player defenderPlayer, Resident attackerResident, Resident defenderResident) {
+		if (attackerPlayer != null && plugin.getTownyUniverse().isWarTime())
+			try {
+				if (attackerResident == null)
+					throw new NotRegisteredException();
+				
+				Town town = attackerResident.getTown();
+				if (TownySettings.getWarPointsForKill() > 0)
+					plugin.getTownyUniverse().getWarEvent().townScored(town, TownySettings.getWarPointsForKill());
+			} catch (NotRegisteredException e) {
+			}
+	}
+
 	private void monarchDeath(Player attackerPlayer, Player defenderPlayer, Resident attackerResident, Resident defenderResident) {
 		if (plugin.getTownyUniverse().isWarTime()) {
 			War warEvent = plugin.getTownyUniverse().getWarEvent();

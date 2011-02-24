@@ -16,10 +16,6 @@ public class Resident extends TownBlockOwner {
 
 	public Resident(String name) {
 		setName(name);
-		permissions.allyBuild = true;
-		permissions.allyDestroy = true;
-		permissions.allySwitch = true;
-		permissions.allyItemUse = true;
 		permissions.residentBuild = true;
 		permissions.residentDestroy = true;
 		permissions.residentSwitch = true;

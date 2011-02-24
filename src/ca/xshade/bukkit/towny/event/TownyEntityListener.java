@@ -1,5 +1,6 @@
 package ca.xshade.bukkit.towny.event;
 
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -51,13 +52,18 @@ public class TownyEntityListener extends EntityListener {
 
 	public boolean preventDamageCall(Entity a, Entity b) {
 		TownyUniverse universe = plugin.getTownyUniverse();
+
 		
 		try {
-			
 			TownyWorld world = universe.getWorld(a.getWorld().getName());
 			// World using Towny
 			if (!world.isUsingTowny())
 				return false;
+			
+			// PvE
+			if (!(a instanceof Player || a instanceof Arrow) && !TownySettings.isPvEWithinNonPvPZones())
+				return true;
+			
 			// World PvP
 			if (!world.isPvP())
 				return true;

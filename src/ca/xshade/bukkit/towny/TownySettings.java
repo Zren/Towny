@@ -95,6 +95,7 @@ public class TownySettings {
 		WARTIME_POINTS_TOWNBLOCK,
 		WARTIME_POINTS_TOWN,
 		WARTIME_POINTS_NATION,
+		WARTIME_POINTS_KILL,
 		WARTIME_MIN_HEIGHT,
 		MOB_REMOVAL_SPEED,
 		HEALTH_REGEN_SPEED,
@@ -137,7 +138,8 @@ public class TownySettings {
 		ALLOW_TOWN_SPAWN_TRAVEL,
 		DEV_MODE,
 		WARTIME_REMOVE_ON_MONARCH_DEATH, //TODO: Add to Wiki
-		ALLOW_TOWN_SPAWN //TODO
+		ALLOW_TOWN_SPAWN, //TODO
+		TOWN_MOB_DAMAGE //TODO
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -245,6 +247,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.WARTIME_POINTS_TOWNBLOCK, 1);
 		configInt.put(TownySettings.Int.WARTIME_POINTS_TOWN, 10);
 		configInt.put(TownySettings.Int.WARTIME_POINTS_NATION, 100);
+		configInt.put(TownySettings.Int.WARTIME_POINTS_KILL, 1);
 		configInt.put(TownySettings.Int.WARTIME_MIN_HEIGHT, 60);
 		configInt.put(TownySettings.Int.MOB_REMOVAL_SPEED, 5000); // 5 Seconds
 		configInt.put(TownySettings.Int.HEALTH_REGEN_SPEED, 3000); // 9 Seconds (20*3 = 3 minute)
@@ -284,6 +287,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN, true);
 		configBool.put(TownySettings.Bool.DEV_MODE, false);
 		configBool.put(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH, false);
+		configBool.put(TownySettings.Bool.TOWN_MOB_DAMAGE, false);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -781,6 +785,10 @@ public class TownySettings {
 	public static int getWarPointsForNation() {
 		return getInt(TownySettings.Int.WARTIME_POINTS_NATION);
 	}
+	
+	public static int getWarPointsForKill() {
+		return getInt(TownySettings.Int.WARTIME_POINTS_KILL);
+	}
 
 	public static String[] getWarTimeScoreMsg(Town town, int n) {
 		return parseString(String.format(getString(TownySettings.Str.MSG_WAR_SCORE), town.getName(), n));
@@ -944,6 +952,9 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.DEV_MODE);
 	}
 	
+	public static boolean isPvEWithinNonPvPZones() {
+		return getBoolean(TownySettings.Bool.TOWN_MOB_DAMAGE);
+	}
 
 	public static boolean isRemovingOnMonarchDeath() {
 		return getBoolean(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH);
