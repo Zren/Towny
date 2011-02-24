@@ -1,5 +1,7 @@
 package ca.xshade.bukkit.towny.object;
 
+import ca.xshade.bukkit.util.Colors;
+
 //TODO: 12 permission so far. Anything else will expand it to include even more variables. Possibly change the data structure.
 public class TownyPermission {
 	public boolean residentBuild, residentDestroy, residentSwitch, residentItemUse,
@@ -145,5 +147,25 @@ public class TownyPermission {
 			case ITEM_USE: return world.getUnclaimedZoneItemUse();
 			default: throw new UnsupportedOperationException();
 		}
+	}
+	
+	public String getColourString() {
+		return
+			Colors.LightGreen + "B=" + Colors.LightGray
+			+ (residentBuild ? "f" : "-")
+			+ (allyBuild ? "a" : "-")
+			+ (outsiderBuild ? "o" : "-")
+			+ Colors.LightGreen + " D=" + Colors.LightGray
+			+ (residentDestroy ? "f" : "-")
+			+ (allyDestroy ? "a" : "-")
+			+ (outsiderDestroy ? "o" : "-")
+			+ Colors.LightGreen + " S=" + Colors.LightGray
+			+ (residentDestroy ? "f" : "-")
+			+ (allyDestroy ? "a" : "-")
+			+ (outsiderSwitch ? "o" : "-")
+			+ Colors.LightGreen + " I=" + Colors.LightGray
+			+ (residentItemUse ? "f" : "-")
+			+ (allyItemUse ? "a" : "-")
+			+ (outsiderItemUse ? "o" : "-");
 	}
 }

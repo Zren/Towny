@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -107,6 +108,7 @@ public class Towny extends JavaPlugin {
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
 	private Permissions permissions = null;
+	private GroupManager groupManager = null;
 	
 	@Override
 	public void onEnable() {
@@ -144,22 +146,8 @@ public class Towny extends JavaPlugin {
 			return;
 		}
 		
-		Plugin test = getServer().getPluginManager().getPlugin("Permissions");
-		if(permissions == null)
-			if(test != null)
-				permissions = (Permissions)test;
-			else
-				System.out.println("[Towny] Permission system not enabled. Towny Admins not loaded.");
+		checkPlugins();
 		
-		test = getServer().getPluginManager().getPlugin("iConomy");
-		if (test == null)
-			setSetting(TownySettings.Bool.USING_ICONOMY, false);
-		test = getServer().getPluginManager().getPlugin("Essentials");
-		if (test == null)
-			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
-		test = getServer().getPluginManager().getPlugin("EssentialsTele");
-		if (test == null)
-			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
 		
 		onLoad();
 		
@@ -178,6 +166,28 @@ public class Towny extends JavaPlugin {
 			} catch (TownyException x) {
 				sendErrorMsg(player, x.getError());
 			}
+	}
+
+	private void checkPlugins() {
+		Plugin test = getServer().getPluginManager().getPlugin("GroupManager");
+		if(test != null)
+			groupManager = (GroupManager)test;
+		else {
+			test = getServer().getPluginManager().getPlugin("Permissions");
+			if(test != null)
+				permissions = (Permissions)test;
+			else
+				System.out.println("[Towny] Nither Permissions nor GroupManager was found. Towny Admins not loaded. Ops only.");
+		}		
+		test = getServer().getPluginManager().getPlugin("iConomy");
+		if (test == null)
+			setSetting(TownySettings.Bool.USING_ICONOMY, false);
+		test = getServer().getPluginManager().getPlugin("Essentials");
+		if (test == null)
+			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
+		test = getServer().getPluginManager().getPlugin("EssentialsTele");
+		if (test == null)
+			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
 	}
 
 	@Override
@@ -222,6 +232,7 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerLowListener, Priority.Low, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
 
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
@@ -435,7 +446,9 @@ public class Towny extends JavaPlugin {
 	}
 
 	public boolean hasPermission(Player player, String node) {
-		if (permissions != null)
+		if (groupManager != null)
+			return groupManager.getHandler().permission(player, node);
+		else if (permissions != null)
 			return Permissions.Security.permission(player, node);
 		else
 			return false;

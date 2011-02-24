@@ -124,7 +124,7 @@ v0.33:
 	Added points per kill during war.
 	Introducing . . . Pet Zombie mode. An amusing bug from the last release, hoping to prevent damage within towns from other players (PvP) has also prevented PvE. So in the config, there is now an option for your very own pet zombie mode (no_pve_within_non_pvp_towns)
 v0.34 (Craftbukkit 424+ & Minecraft 1.3):
-	Removed the effects of Item Use, as it's buggy and removes items. The code to set the permissions remains to no effect.
+	Added support for GroupManager directly.
 	
 	
 

@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -22,6 +23,8 @@ import ca.xshade.bukkit.towny.EmptyNationException;
 import ca.xshade.bukkit.towny.EmptyTownException;
 import ca.xshade.bukkit.towny.IConomyException;
 import ca.xshade.bukkit.towny.NotRegisteredException;
+import ca.xshade.bukkit.towny.PlayerCache;
+import ca.xshade.bukkit.towny.PlayerCache.TownBlockStatus;
 import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownyException;
 import ca.xshade.bukkit.towny.TownySettings;
@@ -108,7 +111,7 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 	}
 	
-	/*
+	
 	@Override
 	public void onPlayerItem(PlayerItemEvent event) {
 		if (event.isCancelled())
@@ -158,7 +161,7 @@ public class TownyPlayerListener extends PlayerListener {
 	public boolean getItemUsePermission(Player player, TownBlockStatus status, WorldCoord pos) {
 		return plugin.getPermission(player, status, pos, TownyPermission.ActionType.ITEM_USE);
 	}
-	*/
+	
 	
 	@Override
 	public void onPlayerMove(PlayerMoveEvent event) {
