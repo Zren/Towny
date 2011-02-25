@@ -85,15 +85,8 @@ import com.nijikokun.bukkit.Permissions.Permissions;
  * 
  * --- Cool Concepts ---
  * 
- * Town spawn will spawn a obsidian portal. When spawning, the portal activates for a few seconds.
  * In the wild, users who've registered less than X time are exempt to permissions. 
  * 
- * 
- * --- Timeline ---
- * 
- * Unclaim
- * Npc
- * Flatfile
  * 
  */
 public class Towny extends JavaPlugin {

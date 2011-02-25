@@ -29,6 +29,8 @@ public class TownyEntityListener extends EntityListener {
 			return;
 		
 		if (event instanceof EntityDamageByEntityEvent) {
+			long start = System.currentTimeMillis();
+			
 			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent)event;
 			Entity attacker = entityEvent.getDamager();
 			Entity defender = entityEvent.getEntity();
@@ -37,15 +39,12 @@ public class TownyEntityListener extends EntityListener {
 				if (preventDamageCall(attacker, defender))
 					event.setCancelled(true);
 				else if (attacker instanceof Player) {
-					long start = System.currentTimeMillis();
-					
 					Player a = (Player) attacker;
 					Player b = (Player) defender;
 					if (preventFriendlyFire(a, b))
 						event.setCancelled(true);
-					
-					plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
 				}
+			plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
 		}
 		
 	}
@@ -59,20 +58,22 @@ public class TownyEntityListener extends EntityListener {
 			// World using Towny
 			if (!world.isUsingTowny())
 				return false;
-			
-			// PvE
-			if (!(a instanceof Player || a instanceof Arrow) && !TownySettings.isPvEWithinNonPvPZones())
-				return true;
-			
+
 			// World PvP
 			if (!world.isPvP())
 				return true;
 			
+			// Wartime
+			if (universe.isWarTime())
+				return false;
+			
 			// Check Town PvP status
 			Coord key = Coord.parseCoord(a);
 			TownBlock townblock = world.getTownBlock(key);
-			if (!townblock.getTown().isPVP() && !universe.isWarTime())
+			if (!townblock.getTown().isPVP()
+					&& (a instanceof Player || a instanceof Arrow || !TownySettings.isPvEWithinNonPvPZones())) // PvE
 				return true;
+
 		} catch (Exception e) {
 		}
 		return false;
