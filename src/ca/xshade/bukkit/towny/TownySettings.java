@@ -139,7 +139,7 @@ public class TownySettings {
 		DEV_MODE,
 		WARTIME_REMOVE_ON_MONARCH_DEATH, //TODO: Add to Wiki
 		ALLOW_TOWN_SPAWN, //TODO
-		TOWN_MOB_DAMAGE //TODO
+		PVE_IN_NON_PVP_TOWNS //TODO
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -287,7 +287,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN, true);
 		configBool.put(TownySettings.Bool.DEV_MODE, false);
 		configBool.put(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH, false);
-		configBool.put(TownySettings.Bool.TOWN_MOB_DAMAGE, false);
+		configBool.put(TownySettings.Bool.PVE_IN_NON_PVP_TOWNS, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -953,7 +953,7 @@ public class TownySettings {
 	}
 	
 	public static boolean isPvEWithinNonPvPZones() {
-		return getBoolean(TownySettings.Bool.TOWN_MOB_DAMAGE);
+		return getBoolean(TownySettings.Bool.PVE_IN_NON_PVP_TOWNS);
 	}
 
 	public static boolean isRemovingOnMonarchDeath() {
