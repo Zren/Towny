@@ -1368,7 +1368,7 @@ public class TownyPlayerListener extends PlayerListener {
 				try {
 					int cost = blockCost * selection.size();
 					if (TownySettings.isUsingIConomy() && !town.pay(cost))
-						throw new TownyException("Town cannot afford to claim " + selection.size() + " town blocks costing " + cost + TownyIConomyObject.getIConomyCurrency());
+						throw new TownyException("Town cannot afford to claim " + selection.size() + " town blocks costing " + cost + TownyIConomyObject.getIConomyCurrency() + ". Add more money into the town bank.");
 				} catch (IConomyException e1) {
 					throw new TownyException("Iconomy Error");
 				}
@@ -2766,7 +2766,7 @@ public class TownyPlayerListener extends PlayerListener {
 			TownyIConomyObject.checkIConomy();
 			player.sendMessage(Colors.Blue + "[" + Colors.LightBlue + "iConomy" + Colors.Blue + "] "
 					+ Colors.Green + "Economy: " + Colors.LightGreen + getTotalEconomy() + " " + iConomy.currency + Colors.Gray + " | "
-					+ Colors.Green + "Bank Accounts: " + Colors.LightGreen + iConomy.db.accounts.returnMap().size());
+					+ Colors.Green + "Bank Accounts: " + Colors.LightGreen + iConomy.getDatabase().accounts.returnMap().size());
 		} catch (Exception e) {
 		}
 		player.sendMessage(Colors.Blue + "[" + Colors.LightBlue + "Server" + Colors.Blue + "] "
@@ -2781,11 +2781,11 @@ public class TownyPlayerListener extends PlayerListener {
 		int total = 0;
 		try {
 			@SuppressWarnings("static-access")
-			Map<String, String> map = iConomy.db.accounts.returnMap();
+			Map<String, String> map = iConomy.getDatabase().accounts.returnMap();
 			Set<String> keys = map.keySet();
 
 			for (String key : keys)
-				total += iConomy.db.get_balance(key);
+				total += iConomy.getDatabase().getBalance(key);
 		} catch (Exception e) {
 		}
 		return total;

@@ -5,6 +5,7 @@ import org.bukkit.plugin.Plugin;
 import ca.xshade.bukkit.towny.IConomyException;
 import ca.xshade.bukkit.towny.Towny;
 
+import com.nijikokun.bukkit.iConomy.Account;
 import com.nijikokun.bukkit.iConomy.iConomy;
 
 ;
@@ -21,20 +22,18 @@ public class TownyIConomyObject extends TownyObject {
 	}
 
 	public boolean pay(int n) throws IConomyException {
-		checkIConomy();
-		int balance = iConomy.db.get_balance(getIConomyName());
+		int balance = getIConomyBalance();
 
 		if (balance < n || balance - n < 0)
 			return false;
 
-		iConomy.db.set_balance(getIConomyName(), (balance - n));
+		iConomy.Bank.getAccount(getIConomyName()).setBalance(balance - n);
 		return true;
 	}
 
 	public void collect(int n) throws IConomyException {
-		checkIConomy();
-		int balance = iConomy.db.get_balance(getIConomyName());
-		iConomy.db.set_balance(getIConomyName(), (balance + n));
+		int balance = getIConomyBalance();
+		iConomy.Bank.getAccount(getIConomyName()).setBalance(balance + n);
 	}
 
 	public boolean pay(int n, TownyIConomyObject collector) throws IConomyException {
@@ -57,12 +56,15 @@ public class TownyIConomyObject extends TownyObject {
 
 	public int getIConomyBalance() throws IConomyException {
 		checkIConomy();
-		return iConomy.db.get_balance(getIConomyName());
+		return (int)getIConomyAccount().getBalance();
+	}
+	
+	public Account getIConomyAccount() throws IConomyException {
+		return iConomy.Bank.getAccount(getIConomyName());
 	}
 	
 	public boolean canPay(int n) throws IConomyException {
-		checkIConomy();
-		int balance = iConomy.db.get_balance(getIConomyName());
+		int balance = getIConomyBalance();
 
 		if (balance < n || balance - n < 0)
 			return false;
