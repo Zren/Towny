@@ -15,6 +15,7 @@ import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.towny.object.Coord;
 import ca.xshade.bukkit.towny.object.TownyPermission;
+import ca.xshade.bukkit.towny.object.TownyWorld;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 
 //TODO: Admin/Group Build Rights
@@ -78,7 +79,7 @@ public class TownyBlockListener extends BlockListener {
 			PlayerCache cache = plugin.getCache(player);
 			cache.updateCoord(worldCoord);
 			TownBlockStatus status = cache.getStatus();
-			if (status == TownBlockStatus.UNCLAIMED_ZONE && worldCoord.getWorld().isUnclaimedZoneIgnoreId(event.getBlock().getTypeId()))
+			if (status == TownBlockStatus.UNCLAIMED_ZONE && hasWildOverride(worldCoord.getWorld(), player, event.getBlock().getTypeId()))
 				return;
 			if (!cache.getDestroyPermission())
 				event.setCancelled(true);
@@ -125,7 +126,7 @@ public class TownyBlockListener extends BlockListener {
 			PlayerCache cache = plugin.getCache(player);
 			cache.updateCoord(worldCoord);
 			TownBlockStatus status = cache.getStatus();
-			if (status == TownBlockStatus.UNCLAIMED_ZONE && TownySettings.isUnclaimedZoneIgnoreId(event.getBlock().getTypeId()))
+			if (status == TownBlockStatus.UNCLAIMED_ZONE && hasWildOverride(worldCoord.getWorld(), player, event.getBlock().getTypeId()))
 				return;
 			if (!cache.getBuildPermission()) { // If build cache is empty, throws null pointer
 				event.setBuild(false);
@@ -210,4 +211,7 @@ public class TownyBlockListener extends BlockListener {
 		return plugin.getPermission(player, status, pos, TownyPermission.ActionType.SWITCH);
 	}
 	
+	public boolean hasWildOverride(TownyWorld world, Player player, int blockId) {
+		return world.isUnclaimedZoneIgnoreId(blockId) || plugin.hasPermission(player, "towny.wild.block." + blockId);
+	}
 }

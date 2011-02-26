@@ -1334,6 +1334,9 @@ public class TownyPlayerListener extends PlayerListener {
 				if (plugin.getTownyUniverse().isWarTime())
 					throw new TownyException("You cannot do this when the world is at war.");
 				
+				if (!plugin.hasPermission(player, "towny.town.claim"))
+					throw new TownyException("You do not have permission to expand your town.");
+				
 				resident = plugin.getTownyUniverse().getResident(player.getName());
 				town = resident.getTown();
 				if (!resident.isMayor() && !town.hasAssistant(resident))
@@ -2373,7 +2376,6 @@ public class TownyPlayerListener extends PlayerListener {
 		} else
 			plugin.sendErrorMsg(player, "None of those names were valid.");
 	}
-	
 	
 	public void nationEnemy(Player player, String[] names) {
 		Resident resident;
