@@ -132,6 +132,7 @@ v0.36:
 	Added new town/nation permissions along with config msgs for those without them.	
 	Town set public was actually editing the pvp setting.
 	Changed towny version command to /towny v, as bukkit highjacks the "version" token.
+v0.37:
 
 TODO:	
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc

@@ -1,0 +1,32 @@
+
+TODO:
+	Commenting
+	Replace getDataSource() with a manager class to allow multiple save formats at once.
+	Log nation/town chat
+	Log town/nation messages with timestamps. On login, see if there's been any events. Make command: /town log [page] to see messages.
+	Update cache when adding/removing people
+	Make the formatting/wording for [nation] .. [nation] etc, better.
+	Re-register a player after res delete
+	SortedList<Integer> townLevels to efficiently find the keys for the level hashmap.
+	Claim circle [radius] 
+	Managed to claim 5 out of the 16 selected (x,z) .. (x1,z2).
+
+Permissions TODO:
+	towny.claim
+
+
+Cool Concepts:
+	In the wild, users who've registered less than X time are exempt to permissions.
+	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-73637
+
+Probably need TODO something:
+	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-14#post-81114
+
+Bugs:
+	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-74896
+
+
+
+
+
+
