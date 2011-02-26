@@ -46,56 +46,12 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 /**
  * Towny Plugin for Bukkit
  * 
- * Website: https://sites.google.com/site/townymod/
+ * Website: towny.xshade.ca
  * Source: https://github.com/Zren/Towny
  * 
  * @author Shade
  */
 
-/*
- * TODO
- * 
- * Commenting
- * flatfile-old data source and replace getDataSource() with a manager class
- * Log nation/town chat
- * Log town/nation messages with timestamps. On login, see if there's been any events. Make command: /town log [page] to see messages.
- * Update cache when adding/removing people
- * Replace "/resident" with settings.getFirstCommand(settings.getResidentCommands()) etc in help messages
- * When adding allying another nation, ask that nation and add this nation to their ally list.
- * Make the formatting/wording for [nation] .. [nation] etc, better.
- * Re-register a player after res delete
- * Comply with the updated API onCommand. Move commands to onCommand (at least console type ones).
- * Organise PlayerListener. Functions. Functions EVERYWHERE!
- * Use unclaim/claim selections with the /plot command
- * SortedList<Integer> townLevels to efficiently find the keys for the level hashmap.
- * Claim circle [radius] 
- * 
- * When a town/nation is deleted, the money leftover will be put in the war pot.
- * At the begining of war, all towns/nations enter the buyin.
- * Need new TownyObject. 
- * Iconomy name: towny-war-spoils
- * 
- * Managed to claim 5 out of the 16 selected (x,z) .. (x1,z2).
- * 
- * --- Permissions TODO ---
- * Permissions:
- * towny.claim
- * towny.newnation
- * 
- * 
- * --- Cool Concepts ---
- * http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-73637
- * In the wild, users who've registered less than X time are exempt to permissions. 
- * 
- * --- Probably need TODO something ---
- * http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-14#post-81114
- * 
- * --- Bugs ---
- * http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-74896
- * 
- * 
- * 
- */
 public class Towny extends JavaPlugin {
 	private String version = "2.0.0";
 
