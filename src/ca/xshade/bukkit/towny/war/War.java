@@ -150,19 +150,29 @@ public class War {
 	public void end() {
 		for (Player player : universe.getOnlinePlayers())
 			sendStats(player);
+		int halfWinnings;
 		try {
-			
-			int halfWinnings = getWarSpoils().getIConomyBalance() / 2; // Transactions might leave 1 coin. (OH noez!)
-			int nationWinnings = halfWinnings / warringNations.size(); // Again, might leave residue.
-			for (Nation winningNation : warringNations) {
-				getWarSpoils().pay(nationWinnings, winningNation);
-				universe.sendGlobalMessage(winningNation.getName() + " won " + nationWinnings + " " + TownyIConomyObject.getIConomyCurrency() + ".");
+			// Transactions might leave 1 coin. (OH noez!)
+			halfWinnings = getWarSpoils().getIConomyBalance() / 2;
+				
+			try {
+				int nationWinnings = halfWinnings / warringNations.size(); // Again, might leave residue.
+				for (Nation winningNation : warringNations) {
+					getWarSpoils().pay(nationWinnings, winningNation);
+					universe.sendGlobalMessage(winningNation.getName() + " won " + nationWinnings + " " + TownyIConomyObject.getIConomyCurrency() + ".");
+				}
+			} catch (ArithmeticException e) {
+				// A war ended with 0 nations.
 			}
-			KeyValue<Town,Integer> winningTownScore = getWinningTownScore();
-			universe.sendGlobalMessage(winningTownScore.key.getName() + " won " + halfWinnings + " " + TownyIConomyObject.getIConomyCurrency() + " with the score " + winningTownScore.value + ".");
-		} catch (IConomyException e) {
-		} catch (TownyException e) {
-		}
+			
+			try {
+				KeyValue<Town,Integer> winningTownScore = getWinningTownScore();
+				universe.sendGlobalMessage(winningTownScore.key.getName() + " won " + halfWinnings + " " + TownyIConomyObject.getIConomyCurrency() + " with the score " + winningTownScore.value + ".");
+			} catch (TownyException e) {
+			}
+		} catch (IConomyException e1) {
+		} 
+		
 	}
 	
 	public void add(Nation nation) {

@@ -983,8 +983,8 @@ public class TownyPlayerListener extends PlayerListener {
 			if (universe.isWarTime())
 				throw new TownyException("You cannot do this when the world is at war.");
 			
-			if (TownySettings.isTownCreationAdminOnly() && !plugin.isTownyAdmin(player))
-				throw new TownyException("Only admins are allowed to create towns.");
+			if (TownySettings.isTownCreationAdminOnly() && !plugin.isTownyAdmin(player) && !plugin.hasPermission(player, "towny.newtown"))
+				throw new TownyException(TownySettings.getNotPermToNewTownLine());
 			
 			if (TownySettings.hasTownLimit() && universe.getTowns().size() >= TownySettings.getTownLimit())
 				throw new TownyException("The universe cannot hold any more towns.");
@@ -1731,7 +1731,7 @@ public class TownyPlayerListener extends PlayerListener {
 					plugin.sendErrorMsg(player, "Eg: /town set public [on/off]");
 				else
 					try {
-						town.setPVP(parseOnOff(split[1]));
+						town.setPublic(parseOnOff(split[1]));
 						plugin.sendMsg(player, "Successfully made town "+(town.isPublic() ? "" : "not ")+"public.");
 						// TODO: send message to all with town
 					} catch (Exception e) {
@@ -2037,8 +2037,8 @@ public class TownyPlayerListener extends PlayerListener {
 	public void newNation(Player player, String name, String capitalName) {
 		TownyUniverse universe = plugin.getTownyUniverse();
 		try {
-			if (TownySettings.isNationCreationAdminOnly() && !plugin.isTownyAdmin(player))
-				throw new TownyException("Only admins are allowed to create nations.");
+			if (TownySettings.isNationCreationAdminOnly() && !plugin.isTownyAdmin(player) && !plugin.hasPermission(player, "towny.newnation"))
+				throw new TownyException(TownySettings.getNotPermToNewNationLine());
 			
 			Town town = universe.getTown(capitalName);
 			if (town.hasNation())

@@ -22,16 +22,14 @@ public class TownBlockOwner extends TownyIConomyObject {
 		return townBlocks.contains(townBlock);
 	}
 
-	public void addTownBlock(TownBlock townBlock)
-			throws AlreadyRegisteredException {
+	public void addTownBlock(TownBlock townBlock) throws AlreadyRegisteredException {
 		if (hasTownBlock(townBlock))
 			throw new AlreadyRegisteredException();
 		else
 			townBlocks.add(townBlock);
 	}
 
-	public void removeTownBlock(TownBlock townBlock)
-			throws NotRegisteredException {
+	public void removeTownBlock(TownBlock townBlock) throws NotRegisteredException {
 		if (!hasTownBlock(townBlock))
 			throw new NotRegisteredException();
 		else

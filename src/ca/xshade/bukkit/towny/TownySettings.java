@@ -77,6 +77,8 @@ public class TownySettings {
 		MSG_BUY_RESIDENT_PLOT,
 		MSG_PLOT_FOR_SALE,
 		MSG_MAYOR_ABADON, //TODO
+		LINE_NOT_PERM_TO_NEW_TOWN, //TODO
+		LINE_NOT_PERM_TO_NEW_NATION, //TODO 
 		UNCLAIMED_PLOT_NAME,
 		NPC_PREFIX,
 		FLATFILE_BACKUP //TODO
@@ -231,6 +233,8 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_BUY_RESIDENT_PLOT, "&6[Towny] &b%s bought %s's plot!");
 		configStr.put(TownySettings.Str.MSG_PLOT_FOR_SALE, "&6[Towny] &b%s put the plot (%s) up for sale!");
 		configStr.put(TownySettings.Str.MSG_MAYOR_ABADON, "&6[Towny] &bYou would abandon your people? Choose another mayor with '/t set mayor' if your sure.");
+		configStr.put(TownySettings.Str.LINE_NOT_PERM_TO_NEW_TOWN, "&6[Towny] &bOnly admins are allowed to create towns.");
+		configStr.put(TownySettings.Str.LINE_NOT_PERM_TO_NEW_NATION, "&6[Towny] &bOnly admins are allowed to create nations.");
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		configStr.put(TownySettings.Str.FLATFILE_BACKUP, "zip");
@@ -489,7 +493,11 @@ public class TownySettings {
 	
 
 	public static String[] parseString(String str) {
-		return str.replaceAll("&", "\u00A7").split("@");
+		return parseSingleLineString(str).split("@");
+	}
+	
+	public static String parseSingleLineString(String str) {
+		return str.replaceAll("&", "\u00A7");
 	}
 
 	public static String[] getRegistrationMsg() {
@@ -844,6 +852,14 @@ public class TownySettings {
 	
 	public static String[] getMayorAbondonMsg() {
 		return parseString(getString(TownySettings.Str.MSG_MAYOR_ABADON));
+	}
+	
+	public static String getNotPermToNewTownLine() {
+		return parseSingleLineString(getString(TownySettings.Str.LINE_NOT_PERM_TO_NEW_TOWN));
+	}
+	
+	public static String getNotPermToNewNationLine() {
+		return parseSingleLineString(getString(TownySettings.Str.LINE_NOT_PERM_TO_NEW_NATION));
 	}
 	
 	public static boolean hasTownLimit() {

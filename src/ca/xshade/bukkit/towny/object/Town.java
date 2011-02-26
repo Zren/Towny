@@ -49,6 +49,20 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		permissions.residentSwitch = true;
 		permissions.residentItemUse = true;
 	}
+	
+	@Override
+	public void addTownBlock(TownBlock townBlock) throws AlreadyRegisteredException {
+		if (hasTownBlock(townBlock))
+			throw new AlreadyRegisteredException();
+		else {
+			townBlocks.add(townBlock);
+			if (townBlocks.size() == 1 && !hasHomeBlock())
+				try {
+					setHomeBlock(townBlock);
+				} catch (TownyException e) {
+				}
+		}
+	}
 
 	public Resident getMayor() {
 		return mayor;

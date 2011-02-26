@@ -25,7 +25,7 @@ public class TownyHelpCommand extends TownyCommand {
 		output.add(ChatTools.formatCommand("", "/towny", "prices", "Display the prices used with iConomy"));
 		output.add(ChatTools.formatCommand("", "/towny", "top", "Display highscores"));
 		output.add(ChatTools.formatCommand("", "/towny", "universe", "Displays stats"));
-		output.add(ChatTools.formatCommand("", "/towny", "version", "Displays the version of Towny"));
+		output.add(ChatTools.formatCommand("", "/towny", "v", "Displays the version of Towny"));
 		output.add(ChatTools.formatCommand("", "/towny", "war", "'/towny war' for more info"));
 	}
 	

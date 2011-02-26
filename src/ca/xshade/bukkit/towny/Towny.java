@@ -77,15 +77,22 @@ import com.nijikokun.bukkit.Permissions.Permissions;
  * 
  * Managed to claim 5 out of the 16 selected (x,z) .. (x1,z2).
  * 
+ * --- Permissions TODO ---
  * Permissions:
  * towny.claim
- * towny.newtown
  * towny.newnation
  * 
  * 
  * --- Cool Concepts ---
- * 
+ * http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-73637
  * In the wild, users who've registered less than X time are exempt to permissions. 
+ * 
+ * --- Probably need TODO something ---
+ * http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-14#post-81114
+ * 
+ * --- Bugs ---
+ * http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-74896
+ * 
  * 
  * 
  */

@@ -13,7 +13,7 @@ import ca.xshade.bukkit.util.Colors;
 public class TownyVersionCommand extends TownyCommand {
 	
 	public TownyVersionCommand() {
-		super("version");
+		super("v");
 	}
 
 	@Override
