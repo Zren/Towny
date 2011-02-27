@@ -3,11 +3,11 @@ package ca.xshade.bukkit.towny.event;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -27,6 +27,7 @@ import ca.xshade.bukkit.towny.PlayerCache;
 import ca.xshade.bukkit.towny.PlayerCache.TownBlockStatus;
 import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownyException;
+import ca.xshade.bukkit.towny.TownyFormatter;
 import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.towny.command.TownyMapCommand;
 import ca.xshade.bukkit.towny.object.Coord;
@@ -46,7 +47,8 @@ import ca.xshade.bukkit.util.MinecraftTools;
 import ca.xshade.util.MemMgmt;
 import ca.xshade.util.StringMgmt;
 
-import com.nijikokun.bukkit.iConomy.iConomy;
+import com.nijiko.coelho.iConomy.iConomy;
+import com.nijiko.coelho.iConomy.system.Account;
 
 /**
  * Handle events for all Player related events
@@ -280,9 +282,9 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 		
 	}
-
+	
 	@Override
-	public void onPlayerCommand(PlayerChatEvent event) {
+	public void onPlayerCommandPreprocess(PlayerChatEvent event) {
 		if (event.isCancelled())
 			return;
 
@@ -893,6 +895,9 @@ public class TownyPlayerListener extends PlayerListener {
 		Resident resident;
 		Town town;
 		try {
+			if (amount < 0)
+				throw new TownyException("Negative money is stupid. Weirdo."); //TODO
+			
 			resident = plugin.getTownyUniverse().getResident(player.getName());
 			town = resident.getTown();
 			
@@ -911,6 +916,9 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
 			resident = plugin.getTownyUniverse().getResident(player.getName());
 			town = resident.getTown();
+			
+			if (amount < 0)
+				throw new TownyException("Negative money is stupid. Weirdo."); //TODO
 			
 			if (!resident.pay(amount, town))
 				throw new TownyException("You don't have that much.");
@@ -983,7 +991,7 @@ public class TownyPlayerListener extends PlayerListener {
 			if (universe.isWarTime())
 				throw new TownyException("You cannot do this when the world is at war.");
 			
-			if (TownySettings.isTownCreationAdminOnly() && !plugin.isTownyAdmin(player) && !plugin.hasPermission(player, "towny.newtown"))
+			if (TownySettings.isTownCreationAdminOnly() && !plugin.isTownyAdmin(player) && !plugin.hasPermission(player, "towny.town.new"))
 				throw new TownyException(TownySettings.getNotPermToNewTownLine());
 			
 			if (TownySettings.hasTownLimit() && universe.getTowns().size() >= TownySettings.getTownLimit())
@@ -1334,7 +1342,7 @@ public class TownyPlayerListener extends PlayerListener {
 				if (plugin.getTownyUniverse().isWarTime())
 					throw new TownyException("You cannot do this when the world is at war.");
 				
-				if (!plugin.hasPermission(player, "towny.town.claim"))
+				if (!plugin.isTownyAdmin(player) && !plugin.hasPermission(player, "towny.town.claim"))
 					throw new TownyException("You do not have permission to expand your town.");
 				
 				resident = plugin.getTownyUniverse().getResident(player.getName());
@@ -1345,7 +1353,7 @@ public class TownyPlayerListener extends PlayerListener {
 				
 				
 
-				int blockCost = 0;
+				double blockCost = 0;
 				List<WorldCoord> selection;
 				boolean attachedToEdge = true;
 				
@@ -1355,7 +1363,6 @@ public class TownyPlayerListener extends PlayerListener {
 						selection.add(new WorldCoord(world, Coord.parseCoord(player)));
 						blockCost = TownySettings.getOutpostCost();
 						attachedToEdge = false;
-						System.out.println("adsfasdf");
 					} else
 						throw new TownyException("Outposts are not available.");
 				} else {
@@ -1369,7 +1376,7 @@ public class TownyPlayerListener extends PlayerListener {
 				checkIfSelectionIsValid(town, selection, attachedToEdge, blockCost, false);
 				
 				try {
-					int cost = blockCost * selection.size();
+					double cost = blockCost * selection.size();
 					if (TownySettings.isUsingIConomy() && !town.pay(cost))
 						throw new TownyException("Town cannot afford to claim " + selection.size() + " town blocks costing " + cost + TownyIConomyObject.getIConomyCurrency() + ". Add more money into the town bank.");
 				} catch (IConomyException e1) {
@@ -1477,7 +1484,7 @@ public class TownyPlayerListener extends PlayerListener {
 		return out;
 	}
 	
-	public void checkIfSelectionIsValid(TownBlockOwner owner, List<WorldCoord> selection, boolean attachedToEdge, int blockCost, boolean force) throws TownyException {
+	public void checkIfSelectionIsValid(TownBlockOwner owner, List<WorldCoord> selection, boolean attachedToEdge, double blockCost, boolean force) throws TownyException {
 		if (force)
 			return;
 		
@@ -1493,7 +1500,7 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 		
 		try {
-			int cost = blockCost * selection.size();
+			double cost = blockCost * selection.size();
 			if (TownySettings.isUsingIConomy() && !owner.canPay(cost))
 				throw new TownyException("Town cannot afford to claim "+selection.size() + " town blocks costing " + cost + TownyIConomyObject.getIConomyCurrency());
 		} catch (IConomyException e1) {
@@ -1986,6 +1993,9 @@ public class TownyPlayerListener extends PlayerListener {
 		Resident resident;
 		Nation nation;
 		try {
+			if (amount < 0)
+				throw new TownyException("Negative money is stupid. Weirdo."); //TODO
+			
 			resident = plugin.getTownyUniverse().getResident(player.getName());
 			nation = resident.getTown().getNation();
 			
@@ -2004,6 +2014,9 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
 			resident = plugin.getTownyUniverse().getResident(player.getName());
 			nation = resident.getTown().getNation();
+			
+			if (amount < 0)
+				throw new TownyException("Negative money is stupid. Weirdo."); //TODO
 			
 			if (!resident.pay(amount, nation))
 				throw new TownyException("You don't have that much.");
@@ -2040,7 +2053,7 @@ public class TownyPlayerListener extends PlayerListener {
 	public void newNation(Player player, String name, String capitalName) {
 		TownyUniverse universe = plugin.getTownyUniverse();
 		try {
-			if (TownySettings.isNationCreationAdminOnly() && !plugin.isTownyAdmin(player) && !plugin.hasPermission(player, "towny.newnation"))
+			if (TownySettings.isNationCreationAdminOnly() && !plugin.isTownyAdmin(player) && !plugin.hasPermission(player, "towny.nation.new"))
 				throw new TownyException(TownySettings.getNotPermToNewNationLine());
 			
 			Town town = universe.getTown(capitalName);
@@ -2600,7 +2613,7 @@ public class TownyPlayerListener extends PlayerListener {
 				else
 					try {
 						boolean choice = parseOnOff(split[1]);
-						world.setClaimable(choice);
+						world.setPvP(choice);
 						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s PvP " + split[1]);
 					} catch (Exception e) {
 						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
@@ -2752,7 +2765,6 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.sendErrorMsg(player, "Invalid sub command.");
 	}
 
-	@SuppressWarnings("static-access")
 	public void showAdminPanel(Player player) {
 		Runtime run = Runtime.getRuntime();
 		player.sendMessage(ChatTools.formatTitle("Towny Admin Panel"));
@@ -2767,8 +2779,8 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
 			TownyIConomyObject.checkIConomy();
 			player.sendMessage(Colors.Blue + "[" + Colors.LightBlue + "iConomy" + Colors.Blue + "] "
-					+ Colors.Green + "Economy: " + Colors.LightGreen + getTotalEconomy() + " " + iConomy.currency + Colors.Gray + " | "
-					+ Colors.Green + "Bank Accounts: " + Colors.LightGreen + iConomy.getDatabase().accounts.returnMap().size());
+					+ Colors.Green + "Economy: " + Colors.LightGreen + TownyFormatter.formatMoney(getTotalEconomy()) + Colors.Gray + " | "
+					+ Colors.Green + "Bank Accounts: " + Colors.LightGreen + getNumBankAccounts());
 		} catch (Exception e) {
 		}
 		player.sendMessage(Colors.Blue + "[" + Colors.LightBlue + "Server" + Colors.Blue + "] "
@@ -2779,18 +2791,25 @@ public class TownyPlayerListener extends PlayerListener {
 
 	}
 
-	public int getTotalEconomy() {
-		int total = 0;
+	public double getTotalEconomy() {
+		double total = 0;
 		try {
-			@SuppressWarnings("static-access")
-			Map<String, String> map = iConomy.getDatabase().accounts.returnMap();
-			Set<String> keys = map.keySet();
+			Map<String, Account> map = iConomy.getBank().getAccounts();
+			Collection<Account> accounts = map.values();
 
-			for (String key : keys)
-				total += iConomy.getDatabase().getBalance(key);
+			for (Account account : accounts)
+				total += account.getBalance();
 		} catch (Exception e) {
 		}
 		return total;
+	}
+	
+	public int getNumBankAccounts() {
+		try {
+			return iConomy.getBank().getAccounts().values().size();
+		} catch (Exception e) {
+			return 0; 
+		}
 	}
 
 	/**

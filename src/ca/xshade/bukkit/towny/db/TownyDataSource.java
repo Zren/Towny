@@ -116,6 +116,7 @@ public abstract class TownyDataSource {
 	}
 	
 	public boolean loadServerWorldsList() {
+		sendDebugMsg("Loading Server World List");
 		for (World world : plugin.getServer().getWorlds())
 			try {
 				String[] split = world.getName().split("/");
@@ -132,6 +133,7 @@ public abstract class TownyDataSource {
 	 */
 
 	public boolean loadResidents() {
+		sendDebugMsg("Loading Residents");
 		for (Resident resident : universe.getResidents())
 			if (!loadResident(resident))
 				System.out.println("[Towny] Loading Error: Could not read resident data '" + resident.getName() + "'.");
@@ -139,6 +141,7 @@ public abstract class TownyDataSource {
 	}
 
 	public boolean loadTowns() {
+		sendDebugMsg("Loading Towns");
 		for (Town town : universe.getTowns())
 			if (!loadTown(town))
 				System.out.println("[Towny] Loading Error: Could not read town data " + town.getName() + "'.");
@@ -146,6 +149,7 @@ public abstract class TownyDataSource {
 	}
 
 	public boolean loadNations() {
+		sendDebugMsg("Loading Nations");
 		for (Nation nation : universe.getNations())
 			if (!loadNation(nation))
 				System.out.println("[Towny] Loading Error: Could not read nation data '" + nation.getName() + "'.");
@@ -153,10 +157,12 @@ public abstract class TownyDataSource {
 	}
 
 	public boolean loadWorlds() {
+		sendDebugMsg("Loading Worlds");
 		for (TownyWorld world : universe.getWorlds())
-			if (!loadWorld(world))
-				if (!TownySettings.isFirstRun())
-					System.out.println("[Towny] Loading Error: Could not read world data '" + world.getName() + "'.");
+			loadWorld(world);
+			//if (!loadWorld(world))
+			//	if (!TownySettings.isFirstRun())
+			//		System.out.println("[Towny] Loading Error: Could not read world data '" + world.getName() + "'.");
 		return true;
 	}
 
@@ -165,24 +171,28 @@ public abstract class TownyDataSource {
 	 */
 
 	public boolean saveResidents() {
+		sendDebugMsg("Saving Residents");
 		for (Resident resident : universe.getResidents())
 			saveResident(resident);
 		return true;
 	}
 
 	public boolean saveTowns() {
+		sendDebugMsg("Saving Towns");
 		for (Town town : universe.getTowns())
 			saveTown(town);
 		return true;
 	}
 
 	public boolean saveNations() {
+		sendDebugMsg("Saving Nations");
 		for (Nation nation : universe.getNations())
 			saveNation(nation);
 		return true;
 	}
 
 	public boolean saveWorlds() {
+		sendDebugMsg("Saving Worlds");
 		for (TownyWorld world : universe.getWorlds())
 			saveWorld(world);
 		return true;

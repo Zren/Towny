@@ -150,13 +150,13 @@ public class War {
 	public void end() {
 		for (Player player : universe.getOnlinePlayers())
 			sendStats(player);
-		int halfWinnings;
+		double halfWinnings;
 		try {
 			// Transactions might leave 1 coin. (OH noez!)
-			halfWinnings = getWarSpoils().getIConomyBalance() / 2;
+			halfWinnings = getWarSpoils().getIConomyBalance() / 2.0;
 				
 			try {
-				int nationWinnings = halfWinnings / warringNations.size(); // Again, might leave residue.
+				double nationWinnings = halfWinnings / warringNations.size(); // Again, might leave residue.
 				for (Nation winningNation : warringNations) {
 					getWarSpoils().pay(nationWinnings, winningNation);
 					universe.sendGlobalMessage(winningNation.getName() + " won " + nationWinnings + " " + TownyIConomyObject.getIConomyCurrency() + ".");

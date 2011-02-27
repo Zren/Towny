@@ -133,7 +133,7 @@ public class Towny extends JavaPlugin {
 			if(test != null)
 				permissions = (Permissions)test;
 			else
-				System.out.println("[Towny] Nither Permissions nor GroupManager was found. Towny Admins not loaded. Ops only.");
+				System.out.println("[Towny] Neither Permissions nor GroupManager was found. Towny Admins not loaded. Ops only.");
 		}		
 		test = getServer().getPluginManager().getPlugin("iConomy");
 		if (test == null)
@@ -182,7 +182,7 @@ public class Towny extends JavaPlugin {
 	private void registerEvents() {
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
@@ -402,10 +402,11 @@ public class Towny extends JavaPlugin {
 	}
 
 	public boolean hasPermission(Player player, String node) {
-		if (groupManager != null)
-			return groupManager.getHandler().permission(player, node);
-		else if (permissions != null)
+		sendDebugMsg(player.getName() + ": " + node);
+		if (permissions != null)
 			return Permissions.Security.permission(player, node);
+		//else if (groupManager != null)
+		//	return groupManager.getHandler().permission(player, node);
 		else
 			return false;
 	}
@@ -462,6 +463,8 @@ public class Towny extends JavaPlugin {
 					return TownBlockStatus.PLOT_OWNER;
 				else if (owner.hasFriend(resident))
 					return TownBlockStatus.PLOT_FRIEND;
+				else if (resident.hasTown() && townyUniverse.isAlly(resident.getTown(), owner.getTown()) )
+					return TownBlockStatus.PLOT_ALLY;
 				else
 					// Exit out and use town permissions
 					throw new TownyException();

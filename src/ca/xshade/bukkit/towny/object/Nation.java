@@ -241,6 +241,11 @@ public class Nation extends TownyIConomyObject implements ResidentList {
 		}
 		towns.remove(town);
 	}
+	
+	private void removeAllTowns() {
+		for (Town town : towns)
+			remove(town);
+	}
 
 	public boolean hasAssistantIn(Town town) {
 		for (Resident resident : town.getResidents())
@@ -270,9 +275,9 @@ public class Nation extends TownyIConomyObject implements ResidentList {
 		//TODO: Check cleanup
 		removeAllAllies();
 		removeAllEnemies();
+		removeAllTowns();
 		capital = null;
 		assistants.clear();
-		towns.clear();
 	}
 
 	public void setNeutral(boolean neutral) {

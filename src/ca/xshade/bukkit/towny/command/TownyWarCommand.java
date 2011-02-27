@@ -10,7 +10,7 @@ import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
 
 public class TownyWarCommand extends TownyCommand {
-	public static final List<String> output = new ArrayList<String>();
+	public final List<String> output = new ArrayList<String>();
 	
 	public TownyWarCommand() {
 		super("war");

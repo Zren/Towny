@@ -88,8 +88,6 @@ public class TownySettings {
 		TOWN_BLOCK_SIZE,
 		TOWN_BLOCK_RATIO,
 		DEFAULT_MAX_TOWN_BLOCKS,
-		PRICE_NEW_TOWN,
-		PRICE_NEW_NATION,
 		PRICE_NATION_NEUTRALITY,
 		WARTIME_WARNING_DELAY,
 		WARTIME_TOWN_BLOCK_HP,
@@ -101,22 +99,27 @@ public class TownySettings {
 		WARTIME_MIN_HEIGHT,
 		MOB_REMOVAL_SPEED,
 		HEALTH_REGEN_SPEED,
-		TOWN_LIMIT,
-		PRICE_CLAIM_TOWNBLOCK,
-		PRICE_OUTPOST,
-		PRICE_TOWN_SPAWN_TRAVEL,
-		WARTIME_BASE_SPOILS,
-		WARTIME_DEATH_PRICE,
-		DEATH_PRICE,
-		WARTIME_TOWN_BLOCK_LOSS_PRICE,
-		PRICE_TOWN_UPKEEP,
-		PRICE_NATION_UPKEEP
+		TOWN_LIMIT
 	};
 	// Long
 	public enum KeyLong {
 		INACTIVE_AFTER_TIME,
 		DELETED_AFTER_TIME,
 		DAY_INTERVAL
+	};
+	// Double
+	public enum Doub {
+		PRICE_CLAIM_TOWNBLOCK,
+		PRICE_OUTPOST,
+		PRICE_TOWN_SPAWN_TRAVEL,
+		WARTIME_DEATH_PRICE,
+		DEATH_PRICE,
+		WARTIME_TOWN_BLOCK_LOSS_PRICE,
+		PRICE_TOWN_UPKEEP,
+		PRICE_NATION_UPKEEP,
+		WARTIME_BASE_SPOILS,
+		PRICE_NEW_TOWN,
+		PRICE_NEW_NATION
 	};
 	// Boolean
 	public enum Bool {
@@ -172,7 +175,9 @@ public class TownySettings {
 	private static final ConcurrentHashMap<TownySettings.Int,Integer> configInt
 		= new ConcurrentHashMap<TownySettings.Int,Integer>();
 	private static final ConcurrentHashMap<TownySettings.KeyLong,Long> configLong
-	= new ConcurrentHashMap<TownySettings.KeyLong,Long>();
+		= new ConcurrentHashMap<TownySettings.KeyLong,Long>();
+	private static final ConcurrentHashMap<TownySettings.Doub,Double> configDoub
+		= new ConcurrentHashMap<TownySettings.Doub,Double>();
 	private static final ConcurrentHashMap<TownySettings.Bool,Boolean> configBool
 		= new ConcurrentHashMap<TownySettings.Bool,Boolean>();
 	private static final ConcurrentHashMap<Integer,ConcurrentHashMap<TownySettings.NationLevel,Object>> configNationLevel
@@ -242,8 +247,6 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
 		configInt.put(TownySettings.Int.DEFAULT_MAX_TOWN_BLOCKS, 64);
-		configInt.put(TownySettings.Int.PRICE_NEW_TOWN, 250);
-		configInt.put(TownySettings.Int.PRICE_NEW_NATION, 1000);
 		configInt.put(TownySettings.Int.PRICE_NATION_NEUTRALITY, 0);
 		configInt.put(TownySettings.Int.WARTIME_WARNING_DELAY, 30); // 30 seconds 
 		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_HP, 60); // 1 minute
@@ -256,19 +259,22 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.MOB_REMOVAL_SPEED, 5000); // 5 Seconds
 		configInt.put(TownySettings.Int.HEALTH_REGEN_SPEED, 3000); // 9 Seconds (20*3 = 3 minute)
 		configInt.put(TownySettings.Int.TOWN_LIMIT, 3000);
-		configInt.put(TownySettings.Int.PRICE_CLAIM_TOWNBLOCK, 25);
-		configInt.put(TownySettings.Int.PRICE_OUTPOST, 500);
-		configInt.put(TownySettings.Int.PRICE_TOWN_SPAWN_TRAVEL, 10);
-		configInt.put(TownySettings.Int.WARTIME_BASE_SPOILS, 100);
-		configInt.put(TownySettings.Int.WARTIME_DEATH_PRICE, 200);
-		configInt.put(TownySettings.Int.DEATH_PRICE, 10);
-		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_LOSS_PRICE, 100);
-		configInt.put(TownySettings.Int.PRICE_TOWN_UPKEEP, 10);
-		configInt.put(TownySettings.Int.PRICE_NATION_UPKEEP, 100);
 		// Long
 		configLong.put(TownySettings.KeyLong.INACTIVE_AFTER_TIME, 86400000L); // 24 Hours
 		configLong.put(TownySettings.KeyLong.DELETED_AFTER_TIME, 5184000000L); // Two Months
 		configLong.put(TownySettings.KeyLong.DAY_INTERVAL, 86400000L); // 24 Hours
+		//Double
+		configDoub.put(TownySettings.Doub.PRICE_NEW_TOWN, 250D);
+		configDoub.put(TownySettings.Doub.PRICE_NEW_NATION, 1000D);
+		configDoub.put(TownySettings.Doub.PRICE_CLAIM_TOWNBLOCK, 25D);
+		configDoub.put(TownySettings.Doub.PRICE_OUTPOST, 500D);
+		configDoub.put(TownySettings.Doub.PRICE_TOWN_SPAWN_TRAVEL, 10D);
+		configDoub.put(TownySettings.Doub.WARTIME_BASE_SPOILS, 100D);
+		configDoub.put(TownySettings.Doub.WARTIME_DEATH_PRICE, 200D);
+		configDoub.put(TownySettings.Doub.DEATH_PRICE, 10D);
+		configDoub.put(TownySettings.Doub.WARTIME_TOWN_BLOCK_LOSS_PRICE, 100D);
+		configDoub.put(TownySettings.Doub.PRICE_TOWN_UPKEEP, 10D);
+		configDoub.put(TownySettings.Doub.PRICE_NATION_UPKEEP, 100D);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -461,6 +467,8 @@ public class TownySettings {
 			configInt.put(key, kvFile.getInt(key.toString().toLowerCase(), getInt(key)));
 		for (TownySettings.KeyLong key : TownySettings.KeyLong.values())
 			configLong.put(key, kvFile.getLong(key.toString().toLowerCase(), getLong(key)));
+		for (TownySettings.Doub key : TownySettings.Doub.values())
+			configDoub.put(key, kvFile.getDouble(key.toString().toLowerCase(), getDouble(key)));
 		for (TownySettings.Bool key : TownySettings.Bool.values())
 			configBool.put(key, kvFile.getBoolean(key.toString().toLowerCase(), getBoolean(key)));
 		
@@ -473,6 +481,10 @@ public class TownySettings {
 	
 	public static Long getLong(TownySettings.KeyLong key) {
 		return configLong.get(key);
+	}
+	
+	public static Double getDouble(TownySettings.Doub key) {
+		return configDoub.get(key);
 	}
 	
 	public static Boolean getBoolean(TownySettings.Bool key) {
@@ -661,12 +673,12 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.USING_ESSENTIALS);
 	}
 
-	public static int getNewTownPrice() {
-		return getInt(TownySettings.Int.PRICE_NEW_TOWN);
+	public static double getNewTownPrice() {
+		return getDouble(TownySettings.Doub.PRICE_NEW_TOWN);
 	}
 	
-	public static int getNewNationPrice() {
-		return getInt(TownySettings.Int.PRICE_NEW_NATION);
+	public static double getNewNationPrice() {
+		return getDouble(TownySettings.Doub.PRICE_NEW_NATION);
 	}
 
 	public static boolean getUnclaimedZoneBuildRights() {
@@ -878,8 +890,8 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.ALLOW_OUTPOSTS);
 	}
 	
-	public static int getOutpostCost() {
-		return getInt(TownySettings.Int.PRICE_OUTPOST);
+	public static double getOutpostCost() {
+		return getDouble(TownySettings.Doub.PRICE_OUTPOST);
 	} 
 	
 	public static List<Integer> getSwitchIds() {
@@ -920,8 +932,8 @@ public class TownySettings {
 		return getString(TownySettings.Str.NPC_PREFIX);
 	}
 
-	public static int getClaimPrice() {
-		return getInt(TownySettings.Int.PRICE_CLAIM_TOWNBLOCK);
+	public static double getClaimPrice() {
+		return getDouble(TownySettings.Doub.PRICE_CLAIM_TOWNBLOCK);
 	}
 
 	public static boolean getUnclaimedZoneSwitchRights() {
@@ -944,24 +956,24 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL);
 	}
 	
-	public static int getTownSpawnTravelPrice() {
-		return getInt(TownySettings.Int.PRICE_TOWN_SPAWN_TRAVEL);
+	public static double getTownSpawnTravelPrice() {
+		return getDouble(TownySettings.Doub.PRICE_TOWN_SPAWN_TRAVEL);
 	}
 	
-	public static int getBaseSpoilsOfWar() {
-		return getInt(TownySettings.Int.WARTIME_BASE_SPOILS);
+	public static double getBaseSpoilsOfWar() {
+		return getDouble(TownySettings.Doub.WARTIME_BASE_SPOILS);
 	}
 	
-	public static int getWartimeDeathPrice() {
-		return getInt(TownySettings.Int.WARTIME_DEATH_PRICE);
+	public static double getWartimeDeathPrice() {
+		return getDouble(TownySettings.Doub.WARTIME_DEATH_PRICE);
 	}
 	
-	public static int getDeathPrice() {
-		return getInt(TownySettings.Int.DEATH_PRICE);
+	public static double getDeathPrice() {
+		return getDouble(TownySettings.Doub.DEATH_PRICE);
 	}
 	
-	public static int getWartimeTownBlockLossPrice() {
-		return getInt(TownySettings.Int.WARTIME_TOWN_BLOCK_LOSS_PRICE);
+	public static double getWartimeTownBlockLossPrice() {
+		return getDouble(TownySettings.Doub.WARTIME_TOWN_BLOCK_LOSS_PRICE);
 	}
 	
 	public static boolean isDevMode() {
@@ -976,12 +988,12 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH);
 	}
 
-	public static int getTownUpkeepCost() {
-		return getInt(TownySettings.Int.PRICE_TOWN_UPKEEP);
+	public static double getTownUpkeepCost() {
+		return getDouble(TownySettings.Doub.PRICE_TOWN_UPKEEP);
 	}
 	
-	public static int getNationUpkeepCost() {
-		return getInt(TownySettings.Int.PRICE_NATION_UPKEEP);
+	public static double getNationUpkeepCost() {
+		return getDouble(TownySettings.Doub.PRICE_NATION_UPKEEP);
 	}
 	
 	public static String getFlatFileBackupType() {

@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ca.xshade.bukkit.towny.NotRegisteredException;
+import ca.xshade.bukkit.towny.TownyFormatter;
 import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.towny.object.Nation;
 import ca.xshade.bukkit.towny.object.Resident;
@@ -69,19 +70,19 @@ public class TownyPricesCommand extends TownyCommand {
 		
 		output.add(ChatTools.formatTitle("Prices"));
 		output.add(Colors.Yellow + "[New] "
-				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(TownySettings.getNewTownPrice())
+				+ Colors.Green + "Town: " + Colors.LightGreen + TownyFormatter.formatMoney(TownySettings.getNewTownPrice())
 				+ Colors.Gray + " | "
-				+ Colors.Green + "Nation: " + Colors.LightGreen + Integer.toString(TownySettings.getNewNationPrice()));
+				+ Colors.Green + "Nation: " + Colors.LightGreen + TownyFormatter.formatMoney(TownySettings.getNewNationPrice()));
 		output.add(Colors.Yellow + "[Upkeep] "
-				+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(TownySettings.getTownUpkeepCost())
+				+ Colors.Green + "Town: " + Colors.LightGreen + TownyFormatter.formatMoney(TownySettings.getTownUpkeepCost())
 				+ Colors.Gray + " | "
-				+ Colors.Green + "Nation: " + Colors.LightGreen + Integer.toString(TownySettings.getNationUpkeepCost()));
+				+ Colors.Green + "Nation: " + Colors.LightGreen + TownyFormatter.formatMoney(TownySettings.getNationUpkeepCost()));
 		if (town != null) {
 			output.add(Colors.Yellow + "Town ["+universe.getFormatter().getFormattedName(town)+"]");
 			output.add(Colors.Rose + "    [Price] "
 					+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotPrice())
 					+ Colors.Gray + " | "
-					+ Colors.Green + "Outpost: " + Colors.LightGreen + Integer.toString(TownySettings.getOutpostCost()));
+					+ Colors.Green + "Outpost: " + Colors.LightGreen + TownyFormatter.formatMoney(TownySettings.getOutpostCost()));
 			output.add(Colors.Rose + "    [Upkeep] "
 					+ Colors.Green + "Resident: " + Colors.LightGreen + Integer.toString(town.getTaxes())
 					+ Colors.Gray + " | "

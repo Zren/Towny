@@ -180,7 +180,7 @@ public class TownyBlockListener extends BlockListener {
 				PlayerCache cache = plugin.getCache(player);
 				cache.updateCoord(worldCoord);
 				TownBlockStatus status = cache.getStatus();
-				if (status == TownBlockStatus.UNCLAIMED_ZONE && TownySettings.isUnclaimedZoneIgnoreId(event.getBlock().getTypeId()))
+				if (status == TownBlockStatus.UNCLAIMED_ZONE && hasWildOverride(worldCoord.getWorld(), player, event.getBlock().getTypeId()))
 					return;
 				if (!cache.getSwitchPermission())
 					event.setCancelled(true);

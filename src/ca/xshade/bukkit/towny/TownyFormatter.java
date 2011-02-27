@@ -14,7 +14,7 @@ import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
 import ca.xshade.util.StringMgmt;
 
-import com.nijikokun.bukkit.iConomy.iConomy;
+import com.nijiko.coelho.iConomy.iConomy;
 
 //TODO: Make static
 //TODO: pull names from the config
@@ -49,7 +49,7 @@ public class TownyFormatter {
 		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
-				out.add(Colors.Green + "Bank: " + Colors.LightGreen + resident.getIConomyBalance() + " " + iConomy.currency);
+				out.add(Colors.Green + "Bank: " + Colors.LightGreen + resident.getFormattedBalance());
 			} catch (IConomyException e1) {
 			}
 		
@@ -106,7 +106,7 @@ public class TownyFormatter {
 		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
-				bankString = Colors.Gray + " | " + Colors.Green + "Bank: " + Colors.LightGreen + town.getIConomyBalance() + " " + iConomy.currency;
+				bankString = Colors.Gray + " | " + Colors.Green + "Bank: " + Colors.LightGreen + town.getFormattedBalance();
 			} catch (IConomyException e1) {
 			}
 
@@ -141,7 +141,7 @@ public class TownyFormatter {
 		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
-				out.add(Colors.Green + "Bank: " + Colors.LightGreen + nation.getIConomyBalance() + " " + iConomy.currency);
+				out.add(Colors.Green + "Bank: " + Colors.LightGreen + nation.getFormattedBalance());
 			} catch (IConomyException e1) {
 			}
 		
@@ -260,5 +260,13 @@ public class TownyFormatter {
 		for (Nation nation : nations)
 			names.add(getFormattedName(nation));
 		return names.toArray(new String[0]);
+	}
+	
+	public static String formatMoney(double amount) {
+		try {
+			return iConomy.getBank().format(amount);
+		} catch (Exception e) {
+			return Double.toString(amount);
+		}
 	}
 }

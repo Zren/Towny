@@ -5,10 +5,8 @@ import org.bukkit.plugin.Plugin;
 import ca.xshade.bukkit.towny.IConomyException;
 import ca.xshade.bukkit.towny.Towny;
 
-import com.nijikokun.bukkit.iConomy.Account;
-import com.nijikokun.bukkit.iConomy.iConomy;
-
-;
+import com.nijiko.coelho.iConomy.iConomy;
+import com.nijiko.coelho.iConomy.system.Account;
 
 public class TownyIConomyObject extends TownyObject {
 	private static Towny plugin;
@@ -21,22 +19,27 @@ public class TownyIConomyObject extends TownyObject {
 		TownyIConomyObject.plugin = plugin;
 	}
 
-	public boolean pay(int n) throws IConomyException {
-		int balance = getIConomyBalance();
+	public boolean pay(double n) throws IConomyException {
+		Account account = getIConomyAccount();
+		double balance = account.getBalance();
 
 		if (balance < n || balance - n < 0)
 			return false;
 
-		iConomy.Bank.getAccount(getIConomyName()).setBalance(balance - n);
+		
+		account.setBalance(balance - n);
+		account.save();
 		return true;
 	}
 
-	public void collect(int n) throws IConomyException {
-		int balance = getIConomyBalance();
-		iConomy.Bank.getAccount(getIConomyName()).setBalance(balance + n);
+	public void collect(double n) throws IConomyException {
+		Account account = getIConomyAccount();
+		double balance = account.getBalance();
+		account.setBalance(balance + n);
+		account.save();
 	}
 
-	public boolean pay(int n, TownyIConomyObject collector) throws IConomyException {
+	public boolean pay(double n, TownyIConomyObject collector) throws IConomyException {
 		if (pay(n)) {
 			collector.collect(n);
 			return true;
@@ -54,17 +57,24 @@ public class TownyIConomyObject extends TownyObject {
 			return getName();
 	}
 
-	public int getIConomyBalance() throws IConomyException {
+	public double getIConomyBalance() throws IConomyException {
 		checkIConomy();
-		return (int)getIConomyAccount().getBalance();
+		Account account = getIConomyAccount();
+		return account.getBalance();
 	}
 	
 	public Account getIConomyAccount() throws IConomyException {
-		return iConomy.Bank.getAccount(getIConomyName());
+		Account account = iConomy.getBank().getAccount(getIConomyName());
+		if (account == null) {
+			iConomy.getBank().addAccount(getIConomyName());
+			account = iConomy.getBank().getAccount(getIConomyName());
+			account.save();
+		}
+		return account;
 	}
 	
-	public boolean canPay(int n) throws IConomyException {
-		int balance = getIConomyBalance();
+	public boolean canPay(double n) throws IConomyException {
+		double balance = getIConomyBalance();
 
 		if (balance < n || balance - n < 0)
 			return false;
@@ -77,19 +87,32 @@ public class TownyIConomyObject extends TownyObject {
 			throw new IConomyException("IConomyObject has not had plugin configured.");
 
 		Plugin test = plugin.getServer().getPluginManager().getPlugin("iConomy");
-
-		if (test != null)
-			return (iConomy) test;
-		else
-			throw new IConomyException("IConomy has not been installed.");
+		
+		try {
+			if (test != null)
+				return (iConomy) test;
+			else
+				throw new IConomyException("IConomy has not been installed.");
+		} catch (Exception e) {
+			throw new IConomyException("Incorrect iConomy plugin. Try updating.");
+		}
 	}
 	
 	@SuppressWarnings("static-access")
 	public static String getIConomyCurrency() {
 		try {
-			return checkIConomy().currency;
+			return checkIConomy().getBank().getCurrency();
 		} catch (IConomyException e) {
 			return "";
+		}
+	}
+	
+	@SuppressWarnings("static-access")
+	public String getFormattedBalance() {
+		try {
+			return checkIConomy().getBank().format(getIConomyBalance());
+		} catch (IConomyException e) {
+			return "0 " + getIConomyCurrency();
 		}
 	}
 }

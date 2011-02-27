@@ -18,7 +18,7 @@ import ca.xshade.util.KeyValueTable;
 
 
 public class TownyTopCommand extends TownyCommand {
-	public static final List<String> output = new ArrayList<String>();
+	public final List<String> output = new ArrayList<String>();
 	
 	public TownyTopCommand() {
 		super("top");
@@ -52,6 +52,7 @@ public class TownyTopCommand extends TownyCommand {
 					sendErrorMsg(sender, "Invalid sub command.");
 			} catch (IConomyException e) {
 				sendErrorMsg(sender, "IConomy error.");
+				sendErrorMsg(sender, e.getError());
 			}
 		else if (args[0].equalsIgnoreCase("residents"))
 			if (args.length == 1 || args[1].equalsIgnoreCase("all")) {
@@ -99,13 +100,13 @@ public class TownyTopCommand extends TownyCommand {
 	
 	public List<String> getTopBankBalance(List<TownyIConomyObject> list, int maxListing) throws IConomyException {
 		List<String> output = new ArrayList<String>();
-		KeyValueTable<TownyIConomyObject,Integer> kvTable = new KeyValueTable<TownyIConomyObject,Integer>();
+		KeyValueTable<TownyIConomyObject,Double> kvTable = new KeyValueTable<TownyIConomyObject,Double>();
 		for (TownyIConomyObject obj : list)
 			kvTable.put(obj, obj.getIConomyBalance());
 		kvTable.sortByValue();
 		kvTable.revese();
 		int n = 0;
-		for (KeyValue<TownyIConomyObject,Integer> kv : kvTable.getKeyValues()) {
+		for (KeyValue<TownyIConomyObject,Double> kv : kvTable.getKeyValues()) {
 			n++;
 			if (maxListing != -1 && n > maxListing)
 				break;
@@ -113,7 +114,7 @@ public class TownyTopCommand extends TownyCommand {
 			output.add(String.format(
 					Colors.Blue + "%30s "+Colors.Gold+"|"+Colors.LightGray+" %10d",
 					universe.getFormatter().getFormattedName(town),
-					(Integer)kv.value));
+					(Double)kv.value));
 		}
 		return output;
 	}

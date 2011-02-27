@@ -129,12 +129,23 @@ v0.35:
 	Fixed entity damage mess caused by the PvE option.
 	Updated for iConomy 3.0
 v0.36:
-	Added new town/nation permissions along with config msgs for those without them (towny.newtown)(towny.newnation). This is only in use when the "only let admin" option is turned on in the config.
+	Added new town/nation permissions along with config msgs for those without them (towny.town.new)(towny.nation.new). This is only in use when the "only let admin" option is turned on in the config.
 	Town set public was actually editing the pvp setting.
 	Changed towny version command to /towny v, as bukkit highjacks the "version" token.
 v0.37:
 	Added permission towny.wild.block.[blockid]. Allows things like lumberjacks (towny.wild.block.17).
 	Added the permission (towny.town.claim). Without this permission, people will not be able to expand their towns. MAKE SURE YOU ADD IT.
+v0.38:
+	Fixed iConomy bug.
+v0.39:
+	Check if your admin before town.claim check.
+	Checks Permissions before GroupManager (as it's hecktic).
+v0.40:
+	Using the command preprocessor.
+	Updated for iConomy 4.0
+	Depositing/withdrawing prevent negatives.
+	Temp removed GroupManager support.
+	Prices in the config are now doubles (real numbers). (town/nation taxes are still integers for now).
 
 TODO:	
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc

@@ -107,8 +107,8 @@ public class TownyEntityMonitorListener extends EntityListener {
 				if (attackerResident == null)
 					throw new NotRegisteredException();
 				
-				int price = TownySettings.getWartimeDeathPrice();
-				int townPrice = 0;
+				double price = TownySettings.getWartimeDeathPrice();
+				double townPrice = 0;
 				if (!defenderResident.canPay(price)) {
 					townPrice = price - defenderResident.getIConomyBalance();
 					price = defenderResident.getIConomyBalance();
@@ -143,7 +143,7 @@ public class TownyEntityMonitorListener extends EntityListener {
 			}
 		else if (TownySettings.getDeathPrice() > 0)
 			try {
-				int price = TownySettings.getDeathPrice();
+				double price = TownySettings.getDeathPrice();
 				if (!defenderResident.canPay(price))
 					price = defenderResident.getIConomyBalance();
 			
