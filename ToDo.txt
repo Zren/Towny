@@ -10,6 +10,7 @@ TODO:
 	SortedList<Integer> townLevels to efficiently find the keys for the level hashmap.
 	Claim circle [radius] 
 	Managed to claim 5 out of the 16 selected (x,z) .. (x1,z2).
+	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
 
 Permissions TODO:
 	towny.claim

@@ -146,6 +146,24 @@ v0.40:
 	Depositing/withdrawing prevent negatives.
 	Temp removed GroupManager support.
 	Prices in the config are now doubles (real numbers). (town/nation taxes are still integers for now).
-
-TODO:	
-	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
+v0.41:
+	Peasants can no longer turn the town into a nation.
+	The player cache is reset after certain events.
+v0.42:
+	Another vain attempt to fix iConomy and Permissions.
+v0.43:
+	Fixed string formatting forgotten when changing all money handling to real numbers.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

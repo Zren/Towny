@@ -3,6 +3,7 @@ package ca.xshade.bukkit.towny;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,9 +39,11 @@ import ca.xshade.bukkit.towny.object.TownyUniverse;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
+import ca.xshade.util.StringMgmt;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
+import com.nijiko.coelho.iConomy.iConomy;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 /**
@@ -63,6 +66,7 @@ public class Towny extends JavaPlugin {
 	private TownyUniverse townyUniverse;
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
+	private iConomy iconomy = null;
 	private Permissions permissions = null;
 	private GroupManager groupManager = null;
 	
@@ -125,25 +129,40 @@ public class Towny extends JavaPlugin {
 	}
 
 	private void checkPlugins() {
+		List<String> using = new ArrayList<String>();
 		Plugin test = getServer().getPluginManager().getPlugin("GroupManager");
-		if(test != null)
-			groupManager = (GroupManager)test;
-		else {
+		//if(test != null)
+		//	groupManager = (GroupManager)test;
+		//else {
 			test = getServer().getPluginManager().getPlugin("Permissions");
-			if(test != null)
+			if(test != null) {
 				permissions = (Permissions)test;
-			else
+				using.add("Permissions");
+			} else
 				System.out.println("[Towny] Neither Permissions nor GroupManager was found. Towny Admins not loaded. Ops only.");
-		}		
+		//}		
+		
 		test = getServer().getPluginManager().getPlugin("iConomy");
 		if (test == null)
 			setSetting(TownySettings.Bool.USING_ICONOMY, false);
+		else {
+			iconomy = (iConomy)test;
+			if (TownySettings.isUsingIConomy())
+				using.add("iConomy");
+		}
+		
 		test = getServer().getPluginManager().getPlugin("Essentials");
 		if (test == null)
 			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
+		
 		test = getServer().getPluginManager().getPlugin("EssentialsTele");
 		if (test == null)
 			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
+		else if (TownySettings.isUsingIConomy())
+			using.add("Essentials");
+		
+		if (using.size() > 0)
+			System.out.println("[Towny] Using: " + StringMgmt.join(using, ", "));
 	}
 
 	@Override
@@ -177,6 +196,7 @@ public class Towny extends JavaPlugin {
 		townyUniverse.toggleDailyTimer(true);
 		townyUniverse.toggleMobRemoval(TownySettings.isRemovingMobs());
 		townyUniverse.toggleHealthRegen(TownySettings.hasHealthRegen());
+		updateCache();
 	}
 
 	private void registerEvents() {
@@ -307,7 +327,11 @@ public class Towny extends JavaPlugin {
 	}
 	
 	public void deleteCache(Player player) {
-		playerCache.remove(player.getName().toLowerCase());
+		deleteCache(player.getName());
+	}
+	
+	public void deleteCache(String name) {
+		playerCache.remove(name.toLowerCase());
 	}
 	
 	public PlayerCache getCache(Player player) {
@@ -402,13 +426,16 @@ public class Towny extends JavaPlugin {
 	}
 
 	public boolean hasPermission(Player player, String node) {
-		sendDebugMsg(player.getName() + ": " + node);
-		if (permissions != null)
+		sendDebugMsg("Perm Check: " + player.getName() + ": " + node);
+		if (permissions != null) {
+			sendDebugMsg("    Permissions says yes.");
 			return Permissions.Security.permission(player, node);
-		//else if (groupManager != null)
+		// } else if (groupManager != null)
 		//	return groupManager.getHandler().permission(player, node);
-		else
+		} else {
+			sendDebugMsg("    Does not have permission.");
 			return false;
+		}
 	}
 
 	public void sendMsg(String msg) {
@@ -623,4 +650,12 @@ public class Towny extends JavaPlugin {
 		sendErrorMsg(player, "Error updating " + actionType.toString() + " permission.");
 		return false;
 	}	
+
+	public iConomy getIConomy() throws IConomyException {
+		if (iconomy == null)
+			throw new IConomyException("iConomy is not installed");
+		else
+			return iconomy;
+		
+	}
 }

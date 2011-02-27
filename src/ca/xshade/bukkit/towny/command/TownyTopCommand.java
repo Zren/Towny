@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ca.xshade.bukkit.towny.IConomyException;
+import ca.xshade.bukkit.towny.TownyFormatter;
 import ca.xshade.bukkit.towny.object.ResidentList;
 import ca.xshade.bukkit.towny.object.TownBlockOwner;
 import ca.xshade.bukkit.towny.object.TownyIConomyObject;
@@ -112,9 +113,9 @@ public class TownyTopCommand extends TownyCommand {
 				break;
 			TownyIConomyObject town = (TownyIConomyObject)kv.key;
 			output.add(String.format(
-					Colors.Blue + "%30s "+Colors.Gold+"|"+Colors.LightGray+" %10d",
+					Colors.LightGray + "%-20s "+Colors.Gold+"|"+Colors.Blue+" %s",
 					universe.getFormatter().getFormattedName(town),
-					(Double)kv.value));
+					TownyFormatter.formatMoney((Double)kv.value)));
 		}
 		return output;
 	}

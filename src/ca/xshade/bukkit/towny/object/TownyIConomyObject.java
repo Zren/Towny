@@ -7,6 +7,7 @@ import ca.xshade.bukkit.towny.Towny;
 
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.coelho.iConomy.system.Account;
+import com.nijiko.coelho.iConomy.system.Bank;
 
 public class TownyIConomyObject extends TownyObject {
 	private static Towny plugin;
@@ -63,14 +64,22 @@ public class TownyIConomyObject extends TownyObject {
 		return account.getBalance();
 	}
 	
+	@SuppressWarnings("static-access")
 	public Account getIConomyAccount() throws IConomyException {
-		Account account = iConomy.getBank().getAccount(getIConomyName());
-		if (account == null) {
-			iConomy.getBank().addAccount(getIConomyName());
-			account = iConomy.getBank().getAccount(getIConomyName());
-			account.save();
+		try {
+			Bank bank = plugin.getIConomy().getBank();
+			Account account = bank.getAccount(getIConomyName());
+			if (account == null) {
+				bank.addAccount(getIConomyName());
+				account = bank.getAccount(getIConomyName());
+				account.save();
+			}
+			return account;
+		} catch (NoClassDefFoundError e) {
+			e.printStackTrace();
+			throw new IConomyException("IConomy error. Incorrect install.");
 		}
-		return account;
+		
 	}
 	
 	public boolean canPay(double n) throws IConomyException {

@@ -533,6 +533,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Resident newFriend : invited)
 			try {
 				resident.addFriend(newFriend);
+				plugin.deleteCache(newFriend.getName());
 			} catch (AlreadyRegisteredException e) {
 				remove.add(newFriend);
 			}
@@ -559,6 +560,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Resident friend : kicking)
 			try {
 				resident.removeFriend(friend);
+				plugin.deleteCache(friend.getName());
 			} catch (NotRegisteredException e) {
 				remove.add(friend);
 			}
@@ -1127,6 +1129,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Resident newMember : invited)
 			try {
 				town.addResident(newMember);
+				plugin.deleteCache(newMember.getName());
 				plugin.getTownyUniverse().getDataSource().saveResident(newMember);
 			} catch (AlreadyRegisteredException e) {
 				remove.add(newMember);
@@ -1181,6 +1184,7 @@ public class TownyPlayerListener extends PlayerListener {
 			else
 				try {
 					town.removeResident(member);
+					plugin.deleteCache(member.getName());
 					plugin.getTownyUniverse().getDataSource().saveResident(member);
 				} catch (NotRegisteredException e) {
 					remove.add(member);
@@ -1256,6 +1260,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Resident newMember : invited)
 			try {
 				town.addAssistant(newMember);
+				plugin.deleteCache(newMember.getName());
 				plugin.getTownyUniverse().getDataSource().saveResident(newMember);
 			} catch (AlreadyRegisteredException e) {
 				remove.add(newMember);
@@ -1304,6 +1309,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Resident member : kicking)
 			try {
 				town.removeAssistant(member);
+				plugin.deleteCache(member.getName());
 				plugin.getTownyUniverse().getDataSource().saveResident(member);
 			} catch (NotRegisteredException e) {
 				remove.add(member);
@@ -1662,8 +1668,11 @@ public class TownyPlayerListener extends PlayerListener {
 					plugin.sendErrorMsg(player, "Eg: /town set mayor Dumbo");
 				else
 					try {
+						String oldMayor = town.getMayor().getName();
 						Resident newMayor = plugin.getTownyUniverse().getResident(split[1]);
 						town.setMayor(newMayor);
+						plugin.deleteCache(oldMayor);
+						plugin.deleteCache(newMayor.getName());
 						plugin.getTownyUniverse().sendTownMessage(town, TownySettings.getNewMayorMsg(newMayor.getName()));
 					} catch (TownyException e) {
 						plugin.sendErrorMsg(player, e.getError());
@@ -1726,6 +1735,7 @@ public class TownyPlayerListener extends PlayerListener {
 			else if (split[0].equalsIgnoreCase("perm")) {
 				String[] newSplit = StringMgmt.remFirstArg(split);
 				setTownBlockOwnerPermissions(player, town, newSplit);
+				plugin.updateCache();
 			} else if (split[0].equalsIgnoreCase("pvp")) {
 				if (split.length < 2)
 					plugin.sendErrorMsg(player, "Eg: /town set pvp [on/off]");
@@ -1933,6 +1943,8 @@ public class TownyPlayerListener extends PlayerListener {
 			else if (split.length == 2)
 				try { // TODO: Make sure of the error catching
 					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+					if (!resident.isMayor() && !resident.getTown().hasAssistant(resident))
+						throw new TownyException("A peasant hasn't the right to force his leaders into the throne.");
 					newNation(player, split[1], resident.getTown().getName());
 				} catch (TownyException x) {
 					plugin.sendErrorMsg(player, x.getError());
@@ -2166,6 +2178,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Town town : invited)
 			try {
 				nation.addTown(town);
+				plugin.updateCache();
 				plugin.getTownyUniverse().getDataSource().saveTown(town);
 			} catch (AlreadyRegisteredException e) {
 				remove.add(town);
@@ -2209,6 +2222,7 @@ public class TownyPlayerListener extends PlayerListener {
 			else
 				try {
 					nation.removeTown(town);
+					plugin.updateCache();
 					plugin.getTownyUniverse().getDataSource().saveTown(town);
 				} catch (NotRegisteredException e) {
 					remove.add(town);
@@ -2281,6 +2295,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Resident newMember : invited)
 			try {
 				nation.addAssistant(newMember);
+				plugin.deleteCache(newMember.getName());
 				plugin.getTownyUniverse().getDataSource().saveResident(newMember);
 			} catch (AlreadyRegisteredException e) {
 				remove.add(newMember);
@@ -2329,6 +2344,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Resident member : kicking)
 			try {
 				nation.removeAssistant(member);
+				plugin.deleteCache(member.getName());
 				plugin.getTownyUniverse().getDataSource().saveResident(member);
 			} catch (NotRegisteredException e) {
 				remove.add(member);
@@ -2373,6 +2389,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Nation newAlly : newAllies)
 			try {
 				nation.addAlly(newAlly);
+				plugin.updateCache();
 				//plugin.getTownyUniverse().getDataSource().saveNation(newAlly);
 			} catch (AlreadyRegisteredException e) {
 				remove.add(newAlly);
@@ -2412,6 +2429,7 @@ public class TownyPlayerListener extends PlayerListener {
 		for (Nation newEnemy : newEnemies)
 			try {
 				nation.addEnemy(newEnemy);
+				plugin.updateCache();
 				//plugin.getTownyUniverse().getDataSource().saveNation(newAlly);
 			} catch (AlreadyRegisteredException e) {
 				remove.add(newEnemy);
@@ -2457,7 +2475,10 @@ public class TownyPlayerListener extends PlayerListener {
 				else
 					try {
 						Resident newKing = plugin.getTownyUniverse().getResident(split[1]);
+						String oldKingsName = nation.getCapital().getMayor().getName();
 						nation.setKing(newKing);
+						plugin.deleteCache(oldKingsName);
+						plugin.deleteCache(newKing.getName());
 						plugin.getTownyUniverse().sendNationMessage(nation, TownySettings.getNewKingMsg(newKing.getName()));
 					} catch (TownyException e) {
 						plugin.sendErrorMsg(player, e.getError());
@@ -2469,6 +2490,7 @@ public class TownyPlayerListener extends PlayerListener {
 					try {
 						Town newCapital = plugin.getTownyUniverse().getTown(split[1]);
 						nation.setCapital(newCapital);
+						plugin.updateCache();
 						plugin.getTownyUniverse().sendNationMessage(nation, TownySettings.getNewKingMsg(newCapital.getMayor().getName()));
 					} catch (NumberFormatException e) {
 						plugin.sendErrorMsg(player, "Taxes must be an interger.");
@@ -2501,6 +2523,7 @@ public class TownyPlayerListener extends PlayerListener {
 							throw new TownyException("Nation couldn't afford to become a neutral nation.");
 							
 						nation.setNeutral(choice);
+						plugin.updateCache();
 						plugin.sendMsg(player, "Successfully changed nation's neutrality.");
 						plugin.getTownyUniverse().sendNationMessage(nation, "You nation is now" + (nation.isNeutral() ? Colors.Green : Colors.Red + " not") + " neutral.");
 					} catch (IConomyException e) {
@@ -2618,9 +2641,10 @@ public class TownyPlayerListener extends PlayerListener {
 					} catch (Exception e) {
 						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
 					}
-			} else if (split[0].equalsIgnoreCase("usedefault"))
+			} else if (split[0].equalsIgnoreCase("usedefault")) {
 				world.setUsingDefault(true);
-			else if (split[0].equalsIgnoreCase("wildperm")) {
+				plugin.updateCache();
+			} else if (split[0].equalsIgnoreCase("wildperm")) {
 				if (split.length < 2)
 					plugin.sendErrorMsg(player, "Eg: /townyworld set wildperm build destroy");
 				else
@@ -2631,6 +2655,7 @@ public class TownyPlayerListener extends PlayerListener {
 						world.setUnclaimedZoneSwitch(perms.contains("switch"));
 						world.setUnclaimedZoneItemUse(perms.contains("itemuse"));
 						world.setUsingDefault(false);
+						plugin.updateCache();
 						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s wild permissions " + split[1]);
 					} catch (Exception e) {
 						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
@@ -2648,6 +2673,7 @@ public class TownyPlayerListener extends PlayerListener {
 							}
 						world.setUnclaimedZoneIgnore(nums);
 						world.setUsingDefault(false);
+						plugin.updateCache();
 						plugin.sendMsg(player, "Successfully changed " + world.getName() + "'s wild ignore blocks to " + Arrays.toString(nums.toArray(new Integer[0])));
 					} catch (Exception e) {
 						plugin.sendErrorMsg(player, "Input error. Please use either on or off.");
@@ -2670,6 +2696,7 @@ public class TownyPlayerListener extends PlayerListener {
 					try {
 						boolean choice = parseOnOff(split[1]);
 						world.setUsingTowny(choice);
+						plugin.updateCache();
 						if (world.isUsingTowny())
 							plugin.sendMsg(player, "This is now follows towny rules.");
 						else
@@ -2862,6 +2889,13 @@ public class TownyPlayerListener extends PlayerListener {
 			try {
 				plugin.setSetting(TownySettings.Bool.DEV_MODE, parseOnOff(split[1]));
 				plugin.sendMsg(player, "Turned DevMode " + (TownySettings.isDevMode() ? Colors.Green + "on" : Colors.Red + "off"));
+			} catch (Exception e) {
+				plugin.sendErrorMsg(player, "Must specify if it's [on/off]");
+			}
+		else if (split[0].equalsIgnoreCase("debugmode"))
+			try {
+				plugin.setSetting(TownySettings.Bool.DEBUG_MODE, parseOnOff(split[1]));
+				plugin.sendMsg(player, "Turned DebugMode " + (TownySettings.getDebug() ? Colors.Green + "on" : Colors.Red + "off"));
 			} catch (Exception e) {
 				plugin.sendErrorMsg(player, "Must specify if it's [on/off]");
 			}

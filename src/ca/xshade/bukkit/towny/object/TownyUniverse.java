@@ -743,6 +743,7 @@ public class TownyUniverse extends TownyObject {
 		} catch (IConomyException e) {
 		}
 		nations.remove(nation.getName().toLowerCase());
+		plugin.updateCache();
 		for (Town town : toSave)
 			getDataSource().saveTown(town);
 		getDataSource().saveNationList();
@@ -760,6 +761,7 @@ public class TownyUniverse extends TownyObject {
 		} catch (IConomyException e) {
 		}
 		towns.remove(town.getName().toLowerCase());
+		plugin.updateCache();
 		for (Resident resident : toSave)
 			getDataSource().saveResident(resident);
 		getDataSource().saveTownList();
@@ -771,7 +773,9 @@ public class TownyUniverse extends TownyObject {
 		} catch (EmptyTownException e) {
 			removeTown(e.getTown());
 		}
-		residents.remove(resident.getName().toLowerCase());
+		String name = resident.getName();
+		residents.remove(name.toLowerCase());
+		plugin.deleteCache(name);
 		getDataSource().saveResidentList();
 	}
 	

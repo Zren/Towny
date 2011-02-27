@@ -65,7 +65,7 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 						TownyWorld townyWorld = universe.getWorld(world.getName());
 						TownBlock townBlock = townyWorld.getTownBlock(coord);
 						if (!townBlock.getTown().hasMobs()) {
-							universe.getPlugin().sendDebugMsg("MobRemoval Removed: " + livingEntity.toString());
+							//universe.getPlugin().sendDebugMsg("MobRemoval Removed: " + livingEntity.toString());
 							livingEntity.teleportTo(new Location(world, loc.getX(), -50, loc.getZ()));
 							numRemoved++;
 						}
@@ -74,6 +74,6 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 				}
 			//universe.getPlugin().sendDebugMsg(world.getName() + ": " + StringMgmt.join(worldLivingEntities));
 		}
-		universe.getPlugin().sendDebugMsg("MobRemoval (Removed: "+numRemoved+") (Total Living: "+livingEntities+")");
+		//universe.getPlugin().sendDebugMsg("MobRemoval (Removed: "+numRemoved+") (Total Living: "+livingEntities+")");
 	}
 }

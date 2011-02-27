@@ -153,7 +153,7 @@ public class TownyBlockListener extends BlockListener {
 		
 		long start = System.currentTimeMillis();
 
-		onBlockInteractEvent(event, true, null);
+		//onBlockInteractEvent(event, true, null);
 
 		plugin.sendDebugMsg("onBlockInteractEvent took " + (System.currentTimeMillis() - start) + "ms");
 	}
