@@ -197,6 +197,10 @@ public class Towny extends JavaPlugin {
 		townyUniverse.toggleMobRemoval(TownySettings.isRemovingMobs());
 		townyUniverse.toggleHealthRegen(TownySettings.hasHealthRegen());
 		updateCache();
+		
+		if (TownySettings.isForcingPvP())
+			for (Town town : townyUniverse.getTowns())
+				town.setPVP(true);
 	}
 
 	private void registerEvents() {

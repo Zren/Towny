@@ -153,9 +153,9 @@ v0.42:
 	Another vain attempt to fix iConomy and Permissions.
 v0.43:
 	Fixed string formatting forgotten when changing all money handling to real numbers.
-	
-	
-	
+v0.44:
+	Uncommented out switch permissions left in from debugging.
+	Added option to force PvP everywhere. 
 	
 	
 	

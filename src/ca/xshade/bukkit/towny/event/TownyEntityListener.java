@@ -53,19 +53,23 @@ public class TownyEntityListener extends EntityListener {
 
 		
 		try {
+			// Universe is only PvP
+			if (TownySettings.isForcingPvP())
+				return false;
+			
 			TownyWorld world = universe.getWorld(a.getWorld().getName());
 			// World using Towny
 			if (!world.isUsingTowny())
 				return false;
-			//plugin.sendDebugMsg("using towny on world");
+			
 			// World PvP
 			if (!world.isPvP())
 				return true;
-			//plugin.sendDebugMsg("not pvp world");
+			
 			// Wartime
 			if (universe.isWarTime())
 				return false;
-			//plugin.sendDebugMsg("not war");
+
 			// Check Town PvP status
 			Coord key = Coord.parseCoord(a);
 			TownBlock townblock = world.getTownBlock(key);

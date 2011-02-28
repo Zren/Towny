@@ -18,27 +18,6 @@ import ca.xshade.bukkit.towny.object.TownyPermission;
 import ca.xshade.bukkit.towny.object.TownyWorld;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 
-//TODO: Admin/Group Build Rights
-
-/*
- * Logic:
- * 
- * Check Cache -> if need to update
- * Update Cache by
- * check townblock with
- * wild permissions
- * is there a plot owner? otherwise skip to town permissions
- * is plot owner
- * is plot friend
- * plot owner allow allies? if so check town permissions
- * is the townblock owned by a town?
- * is town resident
- * has town part of town's nation
- * is nation's ally
- * 
- * TODO: wartime allows enemy nations to edit
- * 
- */
 
 public class TownyBlockListener extends BlockListener {
 	private final Towny plugin;
@@ -53,7 +32,7 @@ public class TownyBlockListener extends BlockListener {
 		if (event.isCancelled())
 			return;
 		
-		if (event.getDamageLevel() == BlockDamageLevel.STOPPED) {
+		if (event.getDamageLevel() == BlockDamageLevel.STOPPED || event.getDamageLevel() == BlockDamageLevel.BROKEN) {
 			long start = System.currentTimeMillis();
 
 			onBlockBreakEvent(event, true);
@@ -153,7 +132,7 @@ public class TownyBlockListener extends BlockListener {
 		
 		long start = System.currentTimeMillis();
 
-		//onBlockInteractEvent(event, true, null);
+		onBlockInteractEvent(event, true, null);
 
 		plugin.sendDebugMsg("onBlockInteractEvent took " + (System.currentTimeMillis() - start) + "ms");
 	}

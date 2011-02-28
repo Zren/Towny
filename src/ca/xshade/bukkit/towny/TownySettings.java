@@ -144,7 +144,8 @@ public class TownySettings {
 		DEV_MODE,
 		WARTIME_REMOVE_ON_MONARCH_DEATH, //TODO: Add to Wiki
 		ALLOW_TOWN_SPAWN, //TODO
-		PVE_IN_NON_PVP_TOWNS //TODO
+		PVE_IN_NON_PVP_TOWNS, //TODO
+		FORCE_PVP_ON //TODO
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -298,6 +299,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.DEV_MODE, false);
 		configBool.put(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH, false);
 		configBool.put(TownySettings.Bool.PVE_IN_NON_PVP_TOWNS, true);
+		configBool.put(TownySettings.Bool.FORCE_PVP_ON, false);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -918,10 +920,6 @@ public class TownySettings {
 		return getIntArr(TownySettings.IntArr.ITEM_USE_IDS).contains(id);
 	}
 	
-	/************************************************************/
-	
-	//TODO: better way to set values besides passing the filepath as a param
-	
 	public static void setBoolean(String filepath, TownySettings.Bool key, Boolean value) {
 		KeyValueFile kvFile = new KeyValueFile(filepath);
 		configBool.put(key, value);
@@ -998,5 +996,9 @@ public class TownySettings {
 	
 	public static String getFlatFileBackupType() {
 		return getString(TownySettings.Str.FLATFILE_BACKUP);
+	}
+	
+	public static boolean isForcingPvP() {
+		return getBoolean(TownySettings.Bool.FORCE_PVP_ON);
 	}
 }

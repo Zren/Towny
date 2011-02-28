@@ -538,15 +538,6 @@ public class TownyUniverse extends TownyObject {
 		return getDataSource().loadAll();
 	}
 
-	/*
-	public TownyWorld getWorld(String name) throws NotRegisteredException {
-		TownyWorld world = worlds.get(name.toLowerCase());
-		if (world == null)
-			throw new NotRegisteredException();
-		return world;
-	}
-	*/
-
 	public TownyWorld getWorld(String name) throws NotRegisteredException {
 		TownyWorld world = worlds.get(name.toLowerCase());
 		if (world == null) {

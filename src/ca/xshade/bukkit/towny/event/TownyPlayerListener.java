@@ -1741,10 +1741,15 @@ public class TownyPlayerListener extends PlayerListener {
 					plugin.sendErrorMsg(player, "Eg: /town set pvp [on/off]");
 				else
 					try {
+						if (TownySettings.isForcingPvP()) {
+							town.setPVP(true);
+							throw new Exception("This world is PvP only.");
+						}
 						town.setPVP(parseOnOff(split[1]));
 						plugin.sendMsg(player, "Successfully changed town's pvp setting.");
 						// TODO: send message to all with town
 					} catch (Exception e) {
+						plugin.sendErrorMsg(player, e.getMessage());
 					}
 			} else if (split[0].equalsIgnoreCase("public")) {
 				if (split.length < 2)
@@ -1851,7 +1856,7 @@ public class TownyPlayerListener extends PlayerListener {
 		else if (s.equalsIgnoreCase("off"))
 			return false;
 		else
-			throw new Exception();
+			throw new Exception("Invalid input. Use on or off.");
 	}
 
 	public void townRename(Player player, Town town, String newName) {
