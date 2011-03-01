@@ -107,10 +107,13 @@ public class TownyPlayerListener extends PlayerListener {
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 		plugin.sendDebugMsg("onPlayerDeath: " + player.getName());
-		try {
-			event.setRespawnLocation(plugin.getTownyUniverse().getTownSpawnLocation(player, true));
-		} catch (TownyException e) {
-		}
+		if (TownySettings.isTownRespawning())
+			try {
+				Location respawn = plugin.getTownyUniverse().getTownSpawnLocation(player);
+				event.setRespawnLocation(respawn);
+			} catch (TownyException e) {
+				// Not set will make it default.
+			}
 	}
 	
 	
@@ -2805,9 +2808,8 @@ public class TownyPlayerListener extends PlayerListener {
 				+ Colors.Gray + " | "
 				+ Colors.Green + "Health Regen: " + (plugin.getTownyUniverse().isHealthRegenRunning() ? Colors.LightGreen + "On" : Colors.Rose + "Off")
 				+ Colors.Gray + " | "
-				+ Colors.Green + "Mob Removal: " + (plugin.getTownyUniverse().isMobRemovalRunning() ? Colors.LightGreen + "On" : Colors.Rose + "Off")
-				+ Colors.Gray + " | "
-				+ Colors.Green + "Daily: " + (plugin.getTownyUniverse().isDailyTimerRunning() ? Colors.LightGreen + "On" : Colors.Rose + "Off"));
+				+ Colors.Green + "Mob Removal: " + (plugin.getTownyUniverse().isMobRemovalRunning() ? Colors.LightGreen + "On" : Colors.Rose + "Off"));
+		player.sendMessage(Colors.Green + "Daily: " + (plugin.getTownyUniverse().isDailyTimerRunning() ? Colors.LightGreen + "On" : Colors.Rose + "Off"));
 		try {
 			TownyIConomyObject.checkIConomy();
 			player.sendMessage(Colors.Blue + "[" + Colors.LightBlue + "iConomy" + Colors.Blue + "] "

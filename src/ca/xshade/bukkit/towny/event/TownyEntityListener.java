@@ -53,13 +53,13 @@ public class TownyEntityListener extends EntityListener {
 
 		
 		try {
-			// Universe is only PvP
-			if (TownySettings.isForcingPvP())
-				return false;
-			
 			TownyWorld world = universe.getWorld(a.getWorld().getName());
 			// World using Towny
 			if (!world.isUsingTowny())
+				return false;
+			
+			// Universe is only PvP
+			if (TownySettings.isForcingPvP())
 				return false;
 			
 			// World PvP

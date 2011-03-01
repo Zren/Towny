@@ -11,10 +11,7 @@ TODO:
 	Claim circle [radius] 
 	Managed to claim 5 out of the 16 selected (x,z) .. (x1,z2).
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
-
-Permissions TODO:
-	towny.claim
-
+	Remember outposts coordinated. Charge extra tax on them. Allow for outpost teleporting.
 
 Cool Concepts:
 	In the wild, users who've registered less than X time are exempt to permissions.
@@ -22,6 +19,7 @@ Cool Concepts:
 
 Probably need TODO something:
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-14#post-81114
+	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-44-resident-town-nation-hierarchy-grid-based-protection.3358/page-18#post-92835
 
 Bugs:
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-74896

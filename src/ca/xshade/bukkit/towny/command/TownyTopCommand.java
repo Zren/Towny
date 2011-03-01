@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import ca.xshade.bukkit.towny.IConomyException;
 import ca.xshade.bukkit.towny.TownyFormatter;
@@ -85,15 +84,9 @@ public class TownyTopCommand extends TownyCommand {
 				sendErrorMsg(sender, "Invalid sub command.");
 		else
 			sendErrorMsg(sender, "Invalid sub command.");
-		
-		if (sender instanceof Player) {
-			Player player = (Player)sender;
-			for (String line : output)
-				player.sendMessage(line);
-		} else
-			// Console
-			for (String line : output)
-				sender.sendMessage(Colors.strip(line));
+
+		for (String line : output)
+			sender.sendMessage(line);
 		
 		output.clear();
 		return true;

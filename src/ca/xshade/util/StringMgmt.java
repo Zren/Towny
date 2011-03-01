@@ -2,6 +2,13 @@ package ca.xshade.util;
 
 import java.util.List;
 
+/**
+ * Useful functions related to strings, or arrays of them.
+ * 
+ * @author Shade (Chris H)
+ * @version 1.0
+ */
+
 public class StringMgmt {
 	@SuppressWarnings("rawtypes")
 	public static String join(List arr) {
@@ -9,7 +16,7 @@ public class StringMgmt {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static String join( List arr, String separator) {
+	public static String join(List arr, String separator) {
 		if (arr == null || arr.size() == 0)
 			return "";
 		String out = arr.get(0).toString();

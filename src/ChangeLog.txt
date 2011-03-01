@@ -156,7 +156,15 @@ v0.43:
 v0.44:
 	Uncommented out switch permissions left in from debugging.
 	Added option to force PvP everywhere. 
-	
+v0.45:
+	Moved the check for forcing pvp to after it makes sure the world is in use with towny.
+	Possible efficiency boost with determining Town levels.
+	Fixed error in first run town-levels.csv
+	Fixed loading of levels configs.
+	Stopped forcing respawn events to use world spawn if town spawn isn't found.
+	Added option to skip town respawn.
+	Changelog is displayed in console during an update.
+	Added a ton of debug statements to the daily timer, as well as an option to turn it off.
 	
 	
 	

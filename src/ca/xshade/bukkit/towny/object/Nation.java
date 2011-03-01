@@ -243,7 +243,7 @@ public class Nation extends TownyIConomyObject implements ResidentList {
 	}
 	
 	private void removeAllTowns() {
-		for (Town town : towns)
+		for (Town town : new ArrayList<Town>(towns))
 			remove(town);
 	}
 

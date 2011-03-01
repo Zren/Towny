@@ -35,16 +35,12 @@ public class TownyHelpCommand extends TownyCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-		if (sender instanceof Player) {
-			Player player = (Player)sender;
-			for (String line : output)
-				player.sendMessage(line);
-		} else {
-			// Console
-			for (String line : output)
-				sender.sendMessage(Colors.strip(line));
+		for (String line : output)
+			sender.sendMessage(line);
+		
+		if (!(sender instanceof Player))
 			sender.sendMessage(Colors.strip(ChatTools.formatCommand("Console", "towny", "tree", "Display universe tree")));
-		}
+		
 		return true;
 	}
 }

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -39,6 +38,7 @@ import ca.xshade.bukkit.towny.object.TownyUniverse;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
+import ca.xshade.util.JavaUtil;
 import ca.xshade.util.StringMgmt;
 
 import com.earth2me.essentials.Essentials;
@@ -68,7 +68,7 @@ public class Towny extends JavaPlugin {
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
 	private iConomy iconomy = null;
 	private Permissions permissions = null;
-	private GroupManager groupManager = null;
+	//private GroupManager groupManager = null;
 	
 	@Override
 	public void onEnable() {
@@ -107,8 +107,6 @@ public class Towny extends JavaPlugin {
 		}
 		
 		checkPlugins();
-		
-		
 		onLoad();
 		
 		if (TownySettings.isFirstRun()) {
@@ -116,6 +114,9 @@ public class Towny extends JavaPlugin {
 			TownySettings.setBoolean(getDataFolder().getPath() + "/settings/config.properties", TownySettings.Bool.FIRST_RUN, false);
 			townyUniverse.loadSettings();
 		}
+		
+		if (TownySettings.isTownyUpdating(getVersion()))
+			update();
 		
 		System.out.println("[Towny] Version: " + version + " - Mod Enabled");
 		
@@ -193,14 +194,14 @@ public class Towny extends JavaPlugin {
 	
 	public void onLoad() {
 		loadSettings();
+		if (TownySettings.isForcingPvP())
+			for (Town town : townyUniverse.getTowns())
+				town.setPVP(true);
+		
 		townyUniverse.toggleDailyTimer(true);
 		townyUniverse.toggleMobRemoval(TownySettings.isRemovingMobs());
 		townyUniverse.toggleHealthRegen(TownySettings.hasHealthRegen());
 		updateCache();
-		
-		if (TownySettings.isForcingPvP())
-			for (Town town : townyUniverse.getTowns())
-				town.setPVP(true);
 	}
 
 	private void registerEvents() {
@@ -224,17 +225,17 @@ public class Towny extends JavaPlugin {
 	}
 	
 	private void firstRun() {
-		System.out.println("------------------------------");
+		System.out.println("------------------------------------");
 		System.out.println("[Towny] Detected first run");
 		
 		try {
 			String newLine = System.getProperty("line.separator");
 			BufferedWriter fout = new BufferedWriter(new FileWriter(getDataFolder().getPath() + "/settings/town-levels.csv"));
-			fout.write("0,, Ruin:Spirit ,,1" + newLine);
+			fout.write("0,, Ruin,Spirit ,,1" + newLine);
 			fout.write("1,, Hamlet,,,16" + newLine);
 			fout.write("2,, Village,Mayor ,,64" + newLine);
 			fout.write("6,, Town,Lord ,,128" + newLine);
-			fout.write("12,, City,Lord ,,256" + newLine);
+			fout.write("12,, City,Lord ,,256");
 			fout.close();
 			System.out.println("[Towny] Registered default town levels.");
 		} catch (Exception e) {
@@ -243,18 +244,38 @@ public class Towny extends JavaPlugin {
 		try {
 			String newLine = System.getProperty("line.separator");
 			BufferedWriter fout = new BufferedWriter(new FileWriter(getDataFolder().getPath() + "/settings/nation-levels.csv"));
-			fout.write("0,, Wilderness,, Lands,Leader ," + newLine);
-			fout.write("1,Dominion of , ,, Center,Leader," + newLine);
-			fout.write("2,Lands of ,,, Center,Leader ," + newLine);
-			fout.write("3,, Country,, Lands,King ," + newLine);
-			fout.write("6,, Kingdom,, Lands,King ," + newLine);
-			fout.write("12,, Empire,, Lands,Emperor ," + newLine);
+			fout.write("0,, Wilderness,, Lands,Leader ,," + newLine);
+			fout.write("1,Dominion of , ,, Center,Leader,," + newLine);
+			fout.write("2,Lands of ,,, Center,Leader ,," + newLine);
+			fout.write("3,, Country,, Lands,King ,," + newLine);
+			fout.write("6,, Kingdom,, Lands,King ,," + newLine);
+			fout.write("12,, Empire,, Lands,Emperor ,,");
 			fout.close();
 			System.out.println("[Towny] Registered default nation levels.");
 		} catch (Exception e) {
 			System.out.println("[Towny] Error: Could not write default nation levels file.");
 		}
-		System.out.println("------------------------------");
+		System.out.println("------------------------------------");
+	}
+	
+	public void update() {
+		try {
+			List<String> changeLog = JavaUtil.readTextFromJar("/ChangeLog.txt");
+			boolean display = false;
+			System.out.println("------------------------------------");
+			System.out.println("[Towny] ChangeLog up until v" + getVersion());
+			String lastVersion = TownySettings.getLastRunVersion();
+			for (String line : changeLog) { //TODO: crawl from the bottom, then past from that index.
+				if (line.startsWith("v" + lastVersion))
+					display = true;
+				if (display && line.replaceAll(" ", "").replaceAll("\t", "").length() > 0)
+					System.out.println(line);
+			}
+			System.out.println("------------------------------------");
+		} catch (IOException e) {
+			sendDebugMsg("Could not read ChangeLog.txt");
+		}
+		setSetting(TownySettings.Str.LAST_RUN_VERSION, getVersion());
 	}
 	
 	@Override
@@ -432,8 +453,10 @@ public class Towny extends JavaPlugin {
 	public boolean hasPermission(Player player, String node) {
 		sendDebugMsg("Perm Check: " + player.getName() + ": " + node);
 		if (permissions != null) {
-			sendDebugMsg("    Permissions says yes.");
-			return Permissions.Security.permission(player, node);
+			sendDebugMsg("    Permissions installed.");
+			boolean perm = Permissions.Security.permission(player, node);
+			sendDebugMsg("    Permissions says "+perm+".");
+			return perm;
 		// } else if (groupManager != null)
 		//	return groupManager.getHandler().permission(player, node);
 		} else {
@@ -453,7 +476,8 @@ public class Towny extends JavaPlugin {
 	public void setSetting(Object key, Object value) {
 		if (key instanceof TownySettings.Bool && value instanceof Boolean)
 			TownySettings.setBoolean(getConfigPath(), (TownySettings.Bool)key, (Boolean)value);
-		
+		else if (key instanceof TownySettings.Str && value instanceof String)
+			TownySettings.setString(getConfigPath(), (TownySettings.Str)key, (String)value);
 		//TODO: the rest
 	}
 	

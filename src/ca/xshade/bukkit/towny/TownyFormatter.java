@@ -78,8 +78,7 @@ public class TownyFormatter {
 		List<String> out = new ArrayList<String>();
 
 		// ___[ Raccoon City (PvP) ]___
-		out.add(ChatTools.formatTitle(getFormattedName(town)
-				+ (town.isPVP() ? Colors.Red + " (PvP)" : "")));
+		out.add(ChatTools.formatTitle(getFormattedName(town) + (town.isPVP() ? Colors.Red + " (PvP)" : "")));
 
 		// Lord: Mayor Quimby
 		// Board: Get your fried chicken
@@ -218,6 +217,7 @@ public class TownyFormatter {
 			return getFormattedTownName((Town) obj);
 		else if (obj instanceof Nation)
 			return getFormattedNationName((Nation) obj);
+		System.out.println("just name: " + obj.getName());
 		return obj.getName();
 	}
 	

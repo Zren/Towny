@@ -22,7 +22,7 @@ public class TownyCommandMap extends TownyCommand {
 		subCommands.register("top", "", new TownyTopCommand());
 		subCommands.register("tree", "", new TownyTreeCommand());
 		subCommands.register("universe", "", new TownyUniverseCommand());
-		subCommands.register("version", "", new TownyVersionCommand());
+		subCommands.register("v", "", new TownyVersionCommand());
 		subCommands.register("war", "", new TownyWarCommand());
 	}
 

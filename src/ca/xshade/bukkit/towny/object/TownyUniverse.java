@@ -77,35 +77,25 @@ public class TownyUniverse extends TownyObject {
 	
 	public void toggleMobRemoval(boolean on) {
 		if (on && !isMobRemovalRunning()) {
-			//mobRemoveTimer = new Timer();
-			//mobRemoveTimer.scheduleAtFixedRate(new MobRemovalTimerTask(this, plugin.getServer()), 0, TownySettings.getMobRemovalSpeed());
 			mobRemoveTask = getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(getPlugin(), new MobRemovalTimerTask(this, plugin.getServer()), 0, MinecraftTools.convertToTicks(TownySettings.getMobRemovalSpeed()));
 			if (mobRemoveTask == -1)
 				plugin.sendErrorMsg("Could not schedule mob removal loop.");
 		} else if (!on && isMobRemovalRunning())
-			//mobRemoveTimer.cancel();
-			//mobRemoveTimer = null;
 			getPlugin().getServer().getScheduler().cancelTask(mobRemoveTask);
 	}
 	
 	public void toggleDailyTimer(boolean on) {
 		if (on && !isDailyTimerRunning()) {
-			//dailyTimer = new Timer();
 			long timeTillNextDay = TownySettings.getDayInterval() - System.currentTimeMillis() % TownySettings.getDayInterval();
-			//dailyTimer.scheduleAtFixedRate(new DailyTimerTask(this), timeTillNextDay, TownySettings.getDayInterval());
 			dailyTask = getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(getPlugin(), new DailyTimerTask(this), MinecraftTools.convertToTicks(timeTillNextDay), MinecraftTools.convertToTicks(TownySettings.getDayInterval()));
 			if (dailyTask == -1)
 				plugin.sendErrorMsg("Could not schedule new day loop.");
 		} else if (!on && isDailyTimerRunning())
-			//dailyTimer.cancel();
-			//dailyTimer = null;
 			getPlugin().getServer().getScheduler().cancelTask(dailyTask);
 	}
 	
 	public void toggleHealthRegen(boolean on) {
 		if (on && !isHealthRegenRunning()) {
-			//healthRegenTimer = new Timer();
-			//healthRegenTimer.scheduleAtFixedRate(new HealthRegenTimerTask(this, plugin.getServer()), 0, TownySettings.getHealthRegenSpeed());
 			dailyTask = getPlugin().getServer().getScheduler().scheduleAsyncRepeatingTask(getPlugin(), new HealthRegenTimerTask(this, plugin.getServer()), 0, MinecraftTools.convertToTicks(TownySettings.getHealthRegenSpeed()));
 			if (dailyTask == -1)
 				plugin.sendErrorMsg("Could not schedule health regen loop.");
@@ -189,16 +179,13 @@ public class TownyUniverse extends TownyObject {
 		}
 	}
 	
-	public Location getTownSpawnLocation(Player player, boolean forceTeleport) throws TownyException {
+	public Location getTownSpawnLocation(Player player) throws TownyException {
 		try {
 			Resident resident = plugin.getTownyUniverse().getResident(player.getName());
 			Town town = resident.getTown();
 			return town.getSpawn();
 		} catch (TownyException x) {
-			if (forceTeleport)
-				return player.getWorld().getSpawnLocation();
-			else
-				throw new TownyException("Unable to get spawn location");
+			throw new TownyException("Unable to get spawn location");
 		}
 	}
 
@@ -613,85 +600,89 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void collectNationTaxes() throws IConomyException {
-		for (Nation nation : nations.values())
+		for (Nation nation : new ArrayList<Nation>(nations.values()))
 			collectNationTaxe(nation);
 	}
 
 	public void collectNationTaxe(Nation nation) throws IConomyException {
-		for (Town town : nation.getTowns()) {
-			if (town.isCapital())
-				continue;
-			if (!town.pay(nation.getTaxes(), nation)) {
-				try {
-					sendNationMessage(nation, TownySettings.getCouldntPayTaxesMsg(town, ", and was kicked from the nation."));
-					nation.removeTown(town);
-				} catch (EmptyNationException e) {
-					// Always has 1 town (capital) so ignore
-				} catch (NotRegisteredException e) {
-				}
-				getDataSource().saveTown(town);
-				getDataSource().saveNation(nation);
-			} else
-				sendTownMessage(town, "Payed town tax of " + nation.getTaxes());
-		}
+		if (nation.getTaxes() > 0)
+			for (Town town : new ArrayList<Town>(nation.getTowns())) {
+				if (town.isCapital())
+					continue;
+				if (!town.pay(nation.getTaxes(), nation)) {
+					try {
+						sendNationMessage(nation, TownySettings.getCouldntPayTaxesMsg(town, ", and was kicked from the nation."));
+						nation.removeTown(town);
+					} catch (EmptyNationException e) {
+						// Always has 1 town (capital) so ignore
+					} catch (NotRegisteredException e) {
+					}
+					getDataSource().saveTown(town);
+					getDataSource().saveNation(nation);
+				} else
+					sendTownMessage(town, "Payed town tax of " + nation.getTaxes());
+			}
 	}
 
 	public void collectTownTaxes() throws IConomyException {
-		for (Town town : towns.values())
+		for (Town town : new ArrayList<Town>(towns.values()))
 			collectTownTaxe(town);
 	}
 
 	public void collectTownTaxe(Town town) throws IConomyException {
 		//Resident Tax
-		for (Resident resident : town.getResidents())
-			if (town.isMayor(resident) || town.hasAssistant(resident)) {
-				try {
-					sendResidentMessage(resident, "Town staff are exempt from taxes.");
-				} catch (TownyException e) {
-				}
-				continue;
-			} else if (!resident.pay(town.getTaxes(), town)) {
-				sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and was kicked from town."));
-				try {
-					town.removeResident(resident);
-				} catch (NotRegisteredException e) {
-				} catch (EmptyTownException e) {
-				}
-				getDataSource().saveResident(resident);
-				getDataSource().saveTown(town);
-			} else
-				try {
-					sendResidentMessage(resident, "Payed resident tax of " + town.getTaxes());
-				} catch (TownyException e1) {
-				}
+		if (town.getTaxes() > 0)
+			for (Resident resident : town.getResidents())
+				if (town.isMayor(resident) || town.hasAssistant(resident)) {
+					try {
+						sendResidentMessage(resident, "Town staff are exempt from taxes.");
+					} catch (TownyException e) {
+					}
+					continue;
+				} else if (!resident.pay(town.getTaxes(), town)) {
+					sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and was kicked from town."));
+					try {
+						town.removeResident(resident);
+					} catch (NotRegisteredException e) {
+					} catch (EmptyTownException e) {
+					}
+					getDataSource().saveResident(resident);
+					getDataSource().saveTown(town);
+				} else
+					try {
+						sendResidentMessage(resident, "Payed resident tax of " + town.getTaxes());
+					} catch (TownyException e1) {
+					}
 				
 		
 		//Plot Tax
-		Hashtable<Resident,Integer> townPlots = new Hashtable<Resident,Integer>();
-		for (TownBlock townBlock : town.getTownBlocks()) {
-			if (!townBlock.hasResident())
-				continue;
-			try {
-				Resident resident = townBlock.getResident();
-				if (town.isMayor(resident) || town.hasAssistant(resident))
+		if (town.getPlotTax() > 0) {
+			Hashtable<Resident,Integer> townPlots = new Hashtable<Resident,Integer>();
+			for (TownBlock townBlock : town.getTownBlocks()) {
+				if (!townBlock.hasResident())
 					continue;
-				if (!resident.pay(town.getPlotTax(), town)) {
-					sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and lost ownership over a plot."));
-					townBlock.setResident(null);
-					getDataSource().saveResident(resident);
-					getDataSource().saveWorld(townBlock.getWorld());
-				} else
-					townPlots.put(resident, (townPlots.containsKey(resident) ? townPlots.get(resident) : 0) + 1);
-			} catch (NotRegisteredException e) {
+				try {
+					Resident resident = townBlock.getResident();
+					if (town.isMayor(resident) || town.hasAssistant(resident))
+						continue;
+					if (!resident.pay(town.getPlotTax(), town)) {
+						sendTownMessage(town, TownySettings.getCouldntPayTaxesMsg(resident, ", and lost ownership over a plot."));
+						townBlock.setResident(null);
+						getDataSource().saveResident(resident);
+						getDataSource().saveWorld(townBlock.getWorld());
+					} else
+						townPlots.put(resident, (townPlots.containsKey(resident) ? townPlots.get(resident) : 0) + 1);
+				} catch (NotRegisteredException e) {
+				}
 			}
+			for (Resident resident : townPlots.keySet())
+				try {
+					int numPlots = townPlots.get(resident);
+					int totalCost = town.getPlotTax() * numPlots;
+					sendResidentMessage(resident, "Payed " + totalCost + " for " + numPlots + " plots in " + town.getName());
+				} catch (TownyException e) {
+				}
 		}
-		for (Resident resident : townPlots.keySet())
-			try {
-				int numPlots = townPlots.get(resident);
-				int totalCost = town.getPlotTax() * numPlots;
-				sendResidentMessage(resident, "Payed " + totalCost + " for " + numPlots + " plots in " + town.getName());
-			} catch (TownyException e) {
-			}
 	}
 
 	public void startWarEvent() {
@@ -796,12 +787,12 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public void removeTownBlocks(Town town) {
-		for (TownBlock townBlock : town.getTownBlocks())
+		for (TownBlock townBlock : new ArrayList<TownBlock>(town.getTownBlocks()))
 			removeTownBlock(townBlock);
 	}
 
 	public void collectTownCosts() throws IConomyException {
-		for (Town town : towns.values())
+		for (Town town : new ArrayList<Town>(towns.values()))
 			if (!town.pay(TownySettings.getTownUpkeepCost())) {
 				removeTown(town);
 				sendGlobalMessage(town.getName() + " couldn't afford to remain a town.");
@@ -809,7 +800,7 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public void collectNationCosts() throws IConomyException {
-		for (Nation nation : nations.values()) {
+		for (Nation nation : new ArrayList<Nation>(nations.values())) {
 			if (!nation.pay(TownySettings.getNationUpkeepCost())) {
 				removeNation(nation);
 				sendGlobalMessage(nation.getName() + " couldn't afford to remain a nation.");

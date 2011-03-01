@@ -943,7 +943,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 						if (town != null)
 							townblock.setTown(town);
 
-						if (resident != null)
+						if (resident != null && townblock.hasTown())
 							townblock.setResident(resident);
 
 						if (tokens.length >= 3)
