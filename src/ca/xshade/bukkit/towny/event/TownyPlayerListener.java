@@ -488,8 +488,9 @@ public class TownyPlayerListener extends PlayerListener {
 		if (split.length == 0) {
 			player.sendMessage(ChatTools.formatCommand("", "/resident set mode", "reset", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/resident set mode", "[mode] ...[mode]", ""));
-			player.sendMessage(ChatTools.formatCommand("", "    Mode:", "map", "Show the map between each townblock"));
-			player.sendMessage(ChatTools.formatCommand("", "    Mode:", "townclaim", "Attempt to claim the new area"));
+			player.sendMessage(ChatTools.formatCommand("Mode", "map", "", "Show the map between each townblock"));
+			player.sendMessage(ChatTools.formatCommand("Mode", "townclaim", "", "Attempt to claim as you walk"));
+			player.sendMessage(ChatTools.formatCommand("Mode", "townunclaim", "", "Attempt to unclaim as you walk"));
 			player.sendMessage(ChatTools.formatCommand("Eg", "/resident set mode", "map townclaim", ""));
 		} else if (split[0].equalsIgnoreCase("reset"))
 			plugin.removePlayerMode(player);
@@ -1002,6 +1003,8 @@ public class TownyPlayerListener extends PlayerListener {
 			if (TownySettings.hasTownLimit() && universe.getTowns().size() >= TownySettings.getTownLimit())
 				throw new TownyException("The universe cannot hold any more towns.");
 			
+			
+			
 			Resident resident = universe.getResident(mayorName);
 			if (resident.hasTown())
 				throw new TownyException(resident.getName() + " already belongs to a town.");
@@ -1010,6 +1013,9 @@ public class TownyPlayerListener extends PlayerListener {
 			Coord key = Coord.parseCoord(player);
 			if (world.hasTownBlock(key))
 				throw new TownyException("This area (" + key + ") already belongs to someone.");
+			
+			if (world.getMinDistanceFromOtherTowns(key) < TownySettings.getMinDistanceFromTownHomeblocks())
+				throw new TownyException("This area is too close to another town.");
 
 			if (TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getNewTownPrice()))
 				throw new TownyException("You can't afford to settle a new town here.");
@@ -1023,7 +1029,7 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.sendErrorMsg(player, x.getError());
 		}
 	}
-	
+
 	public Town newTown(TownyUniverse universe, TownyWorld world, String name, Resident resident, Coord key, Location spawn) throws TownyException {
 		world.newTownBlock(key);
 		universe.newTown(name);
@@ -1718,9 +1724,14 @@ public class TownyPlayerListener extends PlayerListener {
 			} else if (split[0].equalsIgnoreCase("homeblock")) {
 				Coord coord = Coord.parseCoord(player);
 				TownBlock townBlock;
+				TownyWorld world;
 				try {
 					if (plugin.getTownyUniverse().isWarTime())
 						throw new TownyException("You cannot do this when the world is at war.");
+					
+					world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
+					if (world.getMinDistanceFromOtherTowns(coord) < TownySettings.getMinDistanceFromTownHomeblocks())
+						throw new TownyException("This area is too close to another town.");
 					
 					townBlock = plugin.getTownyUniverse().getWorld(player.getWorld().getName()).getTownBlock(coord);
 					town.setHomeBlock(townBlock);

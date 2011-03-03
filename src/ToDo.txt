@@ -12,6 +12,7 @@ TODO:
 	Managed to claim 5 out of the 16 selected (x,z) .. (x1,z2).
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
 	Remember outposts coordinated. Charge extra tax on them. Allow for outpost teleporting.
+	NewTown -> Min dist from claimed townblock.
 
 Cool Concepts:
 	In the wild, users who've registered less than X time are exempt to permissions.

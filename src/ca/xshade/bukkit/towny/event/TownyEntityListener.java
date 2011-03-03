@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 
+import ca.xshade.bukkit.towny.NotRegisteredException;
 import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.towny.object.Coord;
@@ -35,51 +36,71 @@ public class TownyEntityListener extends EntityListener {
 			Entity attacker = entityEvent.getDamager();
 			Entity defender = entityEvent.getEntity();
 
-			if (preventDamageCall(attacker, defender))
-				event.setCancelled(true);
-			else if (defender instanceof Player && attacker instanceof Player) {
-				Player a = (Player) attacker;
-				Player b = (Player) defender;
-				if (preventFriendlyFire(a, b))
+			TownyUniverse universe = plugin.getTownyUniverse();
+			try {
+				TownyWorld world = universe.getWorld(defender.getWorld().getName());
+				
+				// Wartime
+				if (universe.isWarTime()) {
+					event.setCancelled(false);
+					throw new Exception();
+				}
+				
+				Player a = null;
+				Player b = null;
+				
+				if (attacker instanceof Player)
+					a = (Player) attacker;
+				if (defender instanceof Player)
+					b = (Player) defender;
+				
+				if (preventDamageCall(world, attacker, defender, a, b))
 					event.setCancelled(true);
-			}	
+			} catch (Exception e) {
+			}
+			
+			
 			plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
 		}
 		
 	}
 
-	public boolean preventDamageCall(Entity a, Entity b) {
-		TownyUniverse universe = plugin.getTownyUniverse();
-
+	
+	
+	public boolean preventDamageCall(TownyWorld world, Entity a, Entity b, Player ap, Player bp) {
+		// World using Towny
+		if (!world.isUsingTowny())
+			return false;
+		
+		if (ap != null && bp != null)
+			if (preventDamagePvP(world, ap, bp) || preventFriendlyFire(ap, bp))
+				return true;
+		
 		
 		try {
-			TownyWorld world = universe.getWorld(a.getWorld().getName());
-			// World using Towny
-			if (!world.isUsingTowny())
-				return false;
-			
-			// Universe is only PvP
-			if (TownySettings.isForcingPvP())
-				return false;
-			
-			// World PvP
-			if (!world.isPvP())
-				return true;
-			
-			// Wartime
-			if (universe.isWarTime())
-				return false;
-
 			// Check Town PvP status
 			Coord key = Coord.parseCoord(a);
 			TownBlock townblock = world.getTownBlock(key);
 			if (!townblock.getTown().isPVP())
-				if (b instanceof Player && (a instanceof Player || a instanceof Arrow))
+				if (bp != null && (ap != null || a instanceof Arrow))
 					return true;
 				else if (!TownySettings.isPvEWithinNonPvPZones()) // TODO: Allow EvE >.>
 					return true;
-		} catch (Exception e) {
+		} catch (NotRegisteredException e) {
 		}
+		
+		return false;
+	}
+	
+	public boolean preventDamagePvP(TownyWorld world, Player a, Player b) {
+		// Universe is only PvP
+		if (TownySettings.isForcingPvP())
+			return false;
+		
+		// World PvP
+		if (!world.isPvP())
+			return true;
+		
 		return false;
 	}
 	

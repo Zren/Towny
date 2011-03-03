@@ -157,10 +157,9 @@ public abstract class TownyDataSource {
 	public boolean loadWorlds() {
 		sendDebugMsg("Loading Worlds");
 		for (TownyWorld world : universe.getWorlds())
-			loadWorld(world);
-			//if (!loadWorld(world))
-			//	if (!TownySettings.isFirstRun())
-			//		System.out.println("[Towny] Loading Error: Could not read world data '" + world.getName() + "'.");
+			if (!loadWorld(world))
+				if (!TownySettings.isFirstRun())
+					System.out.println("[Towny] Loading Error: Could not read world data '" + world.getName() + "'.");
 		return true;
 	}
 

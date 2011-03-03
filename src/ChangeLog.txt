@@ -165,7 +165,12 @@ v0.45:
 	Added option to skip town respawn.
 	Changelog is displayed in console during an update.
 	Added a ton of debug statements to the daily timer, as well as an option to turn it off.
-	
+v0.46:
+	There is now an option to set the minimum distance between another town's homeblocks (default is 0 ie no change).
+	Fixed a concurrent modification bug with unclaiming all townblocks in a town.
+	Mob removal now runs in the game thread (possible slow down, increase MOB_REMOVAL_SPEED variable in config if you find a new slowdown after updating).
+	Added torches (id=50) to wild ignore ids default.
+	Modified the onDamage call.
 	
 	
 	

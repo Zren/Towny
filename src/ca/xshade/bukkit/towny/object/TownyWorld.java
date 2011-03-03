@@ -7,6 +7,7 @@ import java.util.List;
 
 import ca.xshade.bukkit.towny.AlreadyRegisteredException;
 import ca.xshade.bukkit.towny.NotRegisteredException;
+import ca.xshade.bukkit.towny.TownyException;
 import ca.xshade.bukkit.towny.TownySettings;
 
 public class TownyWorld extends TownyObject {
@@ -243,5 +244,25 @@ public class TownyWorld extends TownyObject {
 			return TownySettings.getUnclaimedZoneItemUseRights();
 		else
 			return unclaimedZoneItemUse;
+	}
+	
+	/**
+	 * Checks the distance from a another town's homeblock.
+	 * 
+	 * @param key
+	 * @return the closest distance to another towns homeblock.
+	 */
+	public int getMinDistanceFromOtherTowns(Coord key) {
+		double min = Integer.MAX_VALUE;
+		for (Town town : getTowns())
+			try {
+				Coord townCoord = town.getHomeBlock().getCoord();
+				double dist = Math.sqrt(Math.pow(townCoord.getX() - key.getX(), 2) + Math.pow(townCoord.getZ() - key.getZ(), 2));
+				if (dist < min)
+					min = dist;
+			} catch (TownyException e) {
+			}
+				
+		return (int)Math.ceil(min);
 	}
 }

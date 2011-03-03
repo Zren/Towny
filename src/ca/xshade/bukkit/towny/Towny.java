@@ -244,12 +244,12 @@ public class Towny extends JavaPlugin {
 		try {
 			String newLine = System.getProperty("line.separator");
 			BufferedWriter fout = new BufferedWriter(new FileWriter(getDataFolder().getPath() + "/settings/nation-levels.csv"));
-			fout.write("0,, Wilderness,, Lands,Leader ,," + newLine);
-			fout.write("1,Dominion of , ,, Center,Leader,," + newLine);
-			fout.write("2,Lands of ,,, Center,Leader ,," + newLine);
-			fout.write("3,, Country,, Lands,King ,," + newLine);
-			fout.write("6,, Kingdom,, Lands,King ,," + newLine);
-			fout.write("12,, Empire,, Lands,Emperor ,,");
+			fout.write("0,, Wilderness,, Lands,Leader ," + newLine);
+			fout.write("1,Dominion of ,,, Center,Leader," + newLine);
+			fout.write("2,Lands of ,,, Center,Leader ," + newLine);
+			fout.write("3,, Country,, Lands,King ," + newLine);
+			fout.write("6,, Kingdom,, Lands,King ," + newLine);
+			fout.write("12,, Empire,, Lands,Emperor ,");
 			fout.close();
 			System.out.println("[Towny] Registered default nation levels.");
 		} catch (Exception e) {

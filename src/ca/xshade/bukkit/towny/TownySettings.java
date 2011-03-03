@@ -103,7 +103,8 @@ public class TownySettings {
 		WARTIME_MIN_HEIGHT,
 		MOB_REMOVAL_SPEED,
 		HEALTH_REGEN_SPEED,
-		TOWN_LIMIT
+		TOWN_LIMIT,
+		MIN_DISTANCE_FROM_TOWN_HOMEBLOCK //TODO
 	};
 	// Long
 	public enum KeyLong {
@@ -218,7 +219,7 @@ public class TownySettings {
 		})));
 		// Integer[]
 		configIntArr.put(TownySettings.IntArr.SWITCH_IDS,  new ArrayList<Integer>(Arrays.asList(new Integer[]{64,69,70,71,72,77})));
-		configIntArr.put(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE, new ArrayList<Integer>(Arrays.asList(new Integer[]{14,15,16,21,56,65,66,73,74,89})));
+		configIntArr.put(TownySettings.IntArr.UNCLAIMED_ZONE_IGNORE, new ArrayList<Integer>(Arrays.asList(new Integer[]{14,15,16,21,50,56,65,66,73,74,89})));
 		configIntArr.put(TownySettings.IntArr.ITEM_USE_IDS,  new ArrayList<Integer>(Arrays.asList(new Integer[]{259,325,326,327})));
 		// String
 		configStr.put(TownySettings.Str.LAST_RUN_VERSION, "2.0.0");
@@ -276,6 +277,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.MOB_REMOVAL_SPEED, 5000); // 5 Seconds
 		configInt.put(TownySettings.Int.HEALTH_REGEN_SPEED, 3000); // 9 Seconds (20*3 = 3 minute)
 		configInt.put(TownySettings.Int.TOWN_LIMIT, 3000);
+		configInt.put(TownySettings.Int.MIN_DISTANCE_FROM_TOWN_HOMEBLOCK, 0);
 		// Long
 		configLong.put(TownySettings.KeyLong.INACTIVE_AFTER_TIME, 86400000L); // 24 Hours
 		configLong.put(TownySettings.KeyLong.DELETED_AFTER_TIME, 5184000000L); // Two Months
@@ -1048,5 +1050,9 @@ public class TownySettings {
 
 	public static String getLastRunVersion() {
 		return getString(TownySettings.Str.LAST_RUN_VERSION);
+	}
+
+	public static int getMinDistanceFromTownHomeblocks() {
+		return getInt(TownySettings.Int.MIN_DISTANCE_FROM_TOWN_HOMEBLOCK);
 	}
 }
