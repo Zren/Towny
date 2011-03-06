@@ -1,18 +1,19 @@
 
 TODO:
-	Commenting
-	Replace getDataSource() with a manager class to allow multiple save formats at once.
 	Log nation/town chat
 	Log town/nation messages with timestamps. On login, see if there's been any events. Make command: /town log [page] to see messages.
 	Update cache when adding/removing people
-	Make the formatting/wording for [nation] .. [nation] etc, better.
 	Re-register a player after res delete
-	SortedList<Integer> townLevels to efficiently find the keys for the level hashmap.
 	Claim circle [radius] 
-	Managed to claim 5 out of the 16 selected (x,z) .. (x1,z2).
+	Managed to claim 5 out of the 16 selected (x1,z1) .. (x2,z2).
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
 	Remember outposts coordinated. Charge extra tax on them. Allow for outpost teleporting.
 	NewTown -> Min dist from claimed townblock.
+
+Secondary:
+	Commenting
+	Replace getDataSource() with a manager class to allow multiple save formats at once.
+	Make the formatting/wording for [nation] .. [nation] etc, better.
 
 Cool Concepts:
 	In the wild, users who've registered less than X time are exempt to permissions.
