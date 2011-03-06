@@ -81,7 +81,7 @@ public class TownyPermission {
 		if (outsiderDestroy)
 			out += (out.length() > 0 ? "," : "") + "outsiderDestroy";
 		if (outsiderSwitch)
-			out += (out.length() > 0 ? "," : "") + "outsiderSwitches";
+			out += (out.length() > 0 ? "," : "") + "outsiderSwitch";
 		if (outsiderItemUse)
 			out += (out.length() > 0 ? "," : "") + "outsiderItemUse";
 		if (allyBuild)

@@ -48,6 +48,10 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		permissions.residentDestroy = true;
 		permissions.residentSwitch = true;
 		permissions.residentItemUse = true;
+		permissions.outsiderBuild = false;
+		permissions.outsiderDestroy = false;
+		permissions.outsiderSwitch = false;
+		permissions.outsiderItemUse = false;
 	}
 	
 	@Override
