@@ -13,6 +13,7 @@ import ca.xshade.bukkit.towny.IConomyException;
 import ca.xshade.bukkit.towny.NotRegisteredException;
 import ca.xshade.bukkit.towny.TownyException;
 import ca.xshade.bukkit.towny.TownySettings;
+import ca.xshade.bukkit.towny.object.TownyPermission.ActionType;
 import ca.xshade.bukkit.wallgen.Wall;
 import ca.xshade.bukkit.wallgen.WallSection;
 import ca.xshade.bukkit.wallgen.Walled;
@@ -40,18 +41,18 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		isPVP = false;
 		hasMobs = false;
 		isPublic = true;
-		permissions.allyBuild = true;
-		permissions.allyDestroy = true;
-		permissions.allySwitch = true;
-		permissions.allyItemUse = true;
-		permissions.residentBuild = true;
-		permissions.residentDestroy = true;
-		permissions.residentSwitch = true;
-		permissions.residentItemUse = true;
-		permissions.outsiderBuild = false;
-		permissions.outsiderDestroy = false;
-		permissions.outsiderSwitch = false;
-		permissions.outsiderItemUse = false;
+		permissions.allyBuild = TownySettings.getDefaultAllyPermission(ActionType.BUILD);
+		permissions.allyDestroy = TownySettings.getDefaultAllyPermission(ActionType.DESTROY);
+		permissions.allySwitch = TownySettings.getDefaultAllyPermission(ActionType.SWITCH);
+		permissions.allyItemUse = TownySettings.getDefaultAllyPermission(ActionType.ITEM_USE);
+		permissions.residentBuild = TownySettings.getDefaultResidentPermission(ActionType.BUILD);
+		permissions.residentDestroy = TownySettings.getDefaultResidentPermission(ActionType.DESTROY);
+		permissions.residentSwitch = TownySettings.getDefaultResidentPermission(ActionType.SWITCH);
+		permissions.residentItemUse = TownySettings.getDefaultResidentPermission(ActionType.ITEM_USE);
+		permissions.outsiderBuild = TownySettings.getDefaultOutsiderPermission(ActionType.BUILD);
+		permissions.outsiderDestroy = TownySettings.getDefaultOutsiderPermission(ActionType.DESTROY);
+		permissions.outsiderSwitch = TownySettings.getDefaultOutsiderPermission(ActionType.SWITCH);
+		permissions.outsiderItemUse = TownySettings.getDefaultOutsiderPermission(ActionType.ITEM_USE);
 	}
 	
 	@Override
