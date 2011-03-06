@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -38,6 +40,7 @@ import ca.xshade.bukkit.towny.object.TownyUniverse;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
+import ca.xshade.util.FileMgmt;
 import ca.xshade.util.JavaUtil;
 import ca.xshade.util.StringMgmt;
 
@@ -68,6 +71,7 @@ public class Towny extends JavaPlugin {
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
 	private iConomy iconomy = null;
 	private Permissions permissions = null;
+	private Logger logger = Logger.getLogger("ca.xshade.bukkit.towny");
 	//private GroupManager groupManager = null;
 	
 	@Override
@@ -451,7 +455,7 @@ public class Towny extends JavaPlugin {
 	}
 
 	public boolean hasPermission(Player player, String node) {
-		sendDebugMsg("Perm Check: " + player.getName() + ": " + node);
+		sendDebugMsg("Perm Check: Does " + player.getName() + " have the node '" + node + "'?");
 		if (permissions != null) {
 			sendDebugMsg("    Permissions installed.");
 			boolean perm = Permissions.Security.permission(player, node);
@@ -511,6 +515,13 @@ public class Towny extends JavaPlugin {
 				} catch (NotRegisteredException e) {
 				}
 			
+			// Town Owner Override
+			try {
+				if (townBlock.getTown().isMayor(resident) || townBlock.getTown().hasAssistant(resident))
+					return TownBlockStatus.TOWN_OWNER;
+			} catch (NotRegisteredException e) {
+			}
+				
 			// Resident Plot switch rights
 			try {
 				Resident owner = townBlock.getResident();
@@ -518,7 +529,7 @@ public class Towny extends JavaPlugin {
 					return TownBlockStatus.PLOT_OWNER;
 				else if (owner.hasFriend(resident))
 					return TownBlockStatus.PLOT_FRIEND;
-				else if (resident.hasTown() && townyUniverse.isAlly(resident.getTown(), owner.getTown()) )
+				else if (resident.hasTown() && townyUniverse.isAlly(resident.getTown(), owner.getTown()))
 					return TownBlockStatus.PLOT_ALLY;
 				else
 					// Exit out and use town permissions
@@ -685,5 +696,20 @@ public class Towny extends JavaPlugin {
 		else
 			return iconomy;
 		
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+	
+	public void setupLogger() {
+		FileMgmt.checkFolders(new String[]{getTownyUniverse().getRootFolder() + "/logs"});
+        try {
+            FileHandler fh = new FileHandler(getDataFolder() + "/logs/towny.log");
+            fh.setFormatter(new TownyLogFormatter());
+            getLogger().addHandler(fh);
+        } catch (IOException e) {
+        	e.printStackTrace();
+        }
 	}
 }

@@ -40,14 +40,8 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		isPVP = false;
 		hasMobs = false;
 		isPublic = true;
-		permissions.allyBuild = true;
-		permissions.allyDestroy = true;
-		permissions.allySwitch = true;
-		permissions.allyItemUse = true;
-		permissions.residentBuild = true;
-		permissions.residentDestroy = true;
-		permissions.residentSwitch = true;
-		permissions.residentItemUse = true;
+		permissions.loadDefault(this);
+		permissions.load(TownySettings.getDefaultTownPerms()); // Uhg. Static content that could change. >.>
 	}
 	
 	@Override

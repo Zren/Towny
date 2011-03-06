@@ -496,7 +496,9 @@ public class TownyUniverse extends TownyObject {
 
 	public boolean loadSettings() {
 		try {
-			FileMgmt.checkFolders(new String[]{getRootFolder(), getRootFolder() + "/settings"});
+			FileMgmt.checkFolders(new String[]{
+					getRootFolder(),
+					getRootFolder() + "/settings"});
 			FileMgmt.checkFiles(new String[]{
 					getRootFolder() + "/settings/config.properties",
 					getRootFolder() + "/settings/town-levels.csv",

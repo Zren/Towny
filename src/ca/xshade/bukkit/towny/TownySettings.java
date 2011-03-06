@@ -16,13 +16,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import ca.xshade.bukkit.towny.object.Nation;
 import ca.xshade.bukkit.towny.object.Resident;
 import ca.xshade.bukkit.towny.object.Town;
+import ca.xshade.bukkit.towny.object.TownBlockOwner;
 import ca.xshade.bukkit.towny.object.TownyObject;
+import ca.xshade.bukkit.towny.object.TownyPermission.ActionType;
+import ca.xshade.bukkit.towny.object.TownyPermission.PermLevel;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 import ca.xshade.util.KeyValueFile;
 import ca.xshade.util.StringMgmt;
 
 
 //TODO: Make String[]/StrArr into lists.
+//TODO: Make the default config a resourse file in the jar.
 
 public class TownySettings {
 	// String[]
@@ -85,7 +89,9 @@ public class TownySettings {
 		LINE_NOT_PERM_TO_NEW_NATION, //TODO 
 		UNCLAIMED_PLOT_NAME,
 		NPC_PREFIX,
-		FLATFILE_BACKUP //TODO
+		FLATFILE_BACKUP, //TODO
+		DEFAULT_RESIDENT_PERM, //TODO
+		DEFAULT_TOWN_PERM //TODO
 	};
 	// Integer
 	public enum Int {
@@ -104,7 +110,8 @@ public class TownySettings {
 		MOB_REMOVAL_SPEED,
 		HEALTH_REGEN_SPEED,
 		TOWN_LIMIT,
-		MIN_DISTANCE_FROM_TOWN_HOMEBLOCK //TODO
+		MIN_DISTANCE_FROM_TOWN_HOMEBLOCK, //TODO
+		MAX_PLOTS_PER_RESIDENT //TODO
 	};
 	// Long
 	public enum KeyLong {
@@ -153,7 +160,31 @@ public class TownySettings {
 		FORCE_PVP_ON, //TODO
 		TOWN_RESPAWN, //TODO
 		DAILY_TAXES, //TODO
-		DAILY_BACKUPS //TODO
+		DAILY_BACKUPS, //TODO
+		DEFAULT_RESIDENT_PERM_FRIEND_BUILD,
+		DEFAULT_RESIDENT_PERM_FRIEND_DESTROY,
+		DEFAULT_RESIDENT_PERM_FRIEND_SWITCH,
+		DEFAULT_RESIDENT_PERM_FRIEND_ITEMUSE,
+		DEFAULT_RESIDENT_PERM_ALLY_BUILD,
+		DEFAULT_RESIDENT_PERM_ALLY_DESTROY,
+		DEFAULT_RESIDENT_PERM_ALLY_SWITCH,
+		DEFAULT_RESIDENT_PERM_ALLY_ITEMUSE,
+		DEFAULT_RESIDENT_PERM_OUTSIDER_BUILD,
+		DEFAULT_RESIDENT_PERM_OUTSIDER_DESTROY,
+		DEFAULT_RESIDENT_PERM_OUTSIDER_SWITCH,
+		DEFAULT_RESIDENT_PERM_OUTSIDER_ITEMUSE,
+		DEFAULT_TOWN_PERM_RESIDENT_BUILD,
+		DEFAULT_TOWN_PERM_RESIDENT_DESTROY,
+		DEFAULT_TOWN_PERM_RESIDENT_SWITCH,
+		DEFAULT_TOWN_PERM_RESIDENT_ITEMUSE,
+		DEFAULT_TOWN_PERM_ALLY_BUILD,
+		DEFAULT_TOWN_PERM_ALLY_DESTROY,
+		DEFAULT_TOWN_PERM_ALLY_SWITCH,
+		DEFAULT_TOWN_PERM_ALLY_ITEMUSE,
+		DEFAULT_TOWN_PERM_OUTSIDER_BUILD,
+		DEFAULT_TOWN_PERM_OUTSIDER_DESTROY,
+		DEFAULT_TOWN_PERM_OUTSIDER_SWITCH,
+		DEFAULT_TOWN_PERM_OUTSIDER_ITEMUSE,
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -261,6 +292,8 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		configStr.put(TownySettings.Str.FLATFILE_BACKUP, "zip");
+		configStr.put(TownySettings.Str.DEFAULT_RESIDENT_PERM, "residentBuild,residentDestroy,residentSwitch,residentItemUse,allyBuild,allyDestroy,allySwitch,allyItemUse");
+		configStr.put(TownySettings.Str.DEFAULT_TOWN_PERM, "residentBuild,residentDestroy,residentSwitch,residentItemUse");
 		// Integer
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
@@ -278,6 +311,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.HEALTH_REGEN_SPEED, 3000); // 9 Seconds (20*3 = 3 minute)
 		configInt.put(TownySettings.Int.TOWN_LIMIT, 3000);
 		configInt.put(TownySettings.Int.MIN_DISTANCE_FROM_TOWN_HOMEBLOCK, 0);
+		configInt.put(TownySettings.Int.MAX_PLOTS_PER_RESIDENT, 100);
 		// Long
 		configLong.put(TownySettings.KeyLong.INACTIVE_AFTER_TIME, 86400000L); // 24 Hours
 		configLong.put(TownySettings.KeyLong.DELETED_AFTER_TIME, 5184000000L); // Two Months
@@ -321,6 +355,30 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.TOWN_RESPAWN, true);
 		configBool.put(TownySettings.Bool.DAILY_TAXES, true);
 		configBool.put(TownySettings.Bool.DAILY_BACKUPS, true);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_ALLY_BUILD, false);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_ALLY_DESTROY, false);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_ALLY_ITEMUSE, false);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_ALLY_SWITCH, false);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_OUTSIDER_BUILD, false);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_OUTSIDER_DESTROY, false);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_OUTSIDER_ITEMUSE, false);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_OUTSIDER_SWITCH, false);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_FRIEND_BUILD, true);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_FRIEND_DESTROY, true);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_FRIEND_ITEMUSE, true);
+		configBool.put(TownySettings.Bool.DEFAULT_RESIDENT_PERM_FRIEND_SWITCH, true);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_ALLY_BUILD, true);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_ALLY_DESTROY, true);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_ALLY_ITEMUSE, true);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_ALLY_SWITCH, true);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_OUTSIDER_BUILD, false);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_OUTSIDER_DESTROY, false);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_OUTSIDER_ITEMUSE, false);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_OUTSIDER_SWITCH, false);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_BUILD, true);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_DESTROY, true);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_ITEMUSE, true);
+		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_SWITCH, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -1054,5 +1112,89 @@ public class TownySettings {
 
 	public static int getMinDistanceFromTownHomeblocks() {
 		return getInt(TownySettings.Int.MIN_DISTANCE_FROM_TOWN_HOMEBLOCK);
+	}
+
+	public static int getMaxPlotsPerResident() {
+		return getInt(TownySettings.Int.MAX_PLOTS_PER_RESIDENT);
+	}
+
+	public static String getDefaultResidentPerms() {
+		return getString(TownySettings.Str.DEFAULT_RESIDENT_PERM);
+	}
+	
+	public static String getDefaultTownPerms() {
+		return getString(TownySettings.Str.DEFAULT_TOWN_PERM);
+	}
+	
+	public static boolean getDefaultResidentPermission(TownBlockOwner owner, ActionType type) {
+		if (owner instanceof Resident)
+			switch (type) {
+				case BUILD: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_FRIEND_BUILD);
+				case DESTROY: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_FRIEND_DESTROY);
+				case SWITCH: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_FRIEND_ITEMUSE);
+				case ITEM_USE: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_FRIEND_SWITCH);
+				default: throw new UnsupportedOperationException();
+			}
+		else if (owner instanceof Town)
+			switch (type) {
+				case BUILD: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_BUILD);
+				case DESTROY: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_DESTROY);
+				case SWITCH: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_ITEMUSE);
+				case ITEM_USE: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_SWITCH);
+				default: throw new UnsupportedOperationException();
+			}
+		else
+			throw new UnsupportedOperationException();
+	}
+	
+	public static boolean getDefaultAllyPermission(TownBlockOwner owner, ActionType type) {
+		if (owner instanceof Resident)
+			switch (type) {
+				case BUILD: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_ALLY_BUILD);
+				case DESTROY: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_ALLY_DESTROY);
+				case SWITCH: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_ALLY_ITEMUSE);
+				case ITEM_USE: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_ALLY_SWITCH);
+				default: throw new UnsupportedOperationException();
+			}
+		else if (owner instanceof Town)
+			switch (type) {
+				case BUILD: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_ALLY_BUILD);
+				case DESTROY: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_ALLY_DESTROY);
+				case SWITCH: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_ALLY_ITEMUSE);
+				case ITEM_USE: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_ALLY_SWITCH);
+				default: throw new UnsupportedOperationException();
+			}
+		else
+			throw new UnsupportedOperationException();
+	}
+	
+	public static boolean getDefaultOutsiderPermission(TownBlockOwner owner, ActionType type) {
+		if (owner instanceof Resident)
+			switch (type) {
+				case BUILD: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_OUTSIDER_BUILD);
+				case DESTROY: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_OUTSIDER_DESTROY);
+				case SWITCH: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_OUTSIDER_ITEMUSE);
+				case ITEM_USE: return getBoolean(TownySettings.Bool.DEFAULT_RESIDENT_PERM_OUTSIDER_SWITCH);
+				default: throw new UnsupportedOperationException();
+			}
+		else if (owner instanceof Town)
+			switch (type) {
+				case BUILD: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_OUTSIDER_BUILD);
+				case DESTROY: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_OUTSIDER_DESTROY);
+				case SWITCH: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_OUTSIDER_ITEMUSE);
+				case ITEM_USE: return getBoolean(TownySettings.Bool.DEFAULT_TOWN_PERM_OUTSIDER_SWITCH);
+				default: throw new UnsupportedOperationException();
+			}
+		else
+			throw new UnsupportedOperationException();
+	}
+	
+	public static boolean getDefaultPermission(TownBlockOwner owner, PermLevel level, ActionType type) {
+		switch (level) {
+			case RESIDENT: return getDefaultResidentPermission(owner, type);
+			case ALLY: return getDefaultAllyPermission(owner, type);
+			case OUTSIDER: return getDefaultOutsiderPermission(owner, type);
+			default: throw new UnsupportedOperationException();
+		}
 	}
 }

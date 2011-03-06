@@ -1,5 +1,6 @@
 package ca.xshade.bukkit.towny.object;
 
+import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.util.Colors;
 
 //TODO: 12 permission so far. Anything else will expand it to include even more variables. Possibly change the data structure.
@@ -81,7 +82,7 @@ public class TownyPermission {
 		if (outsiderDestroy)
 			out += (out.length() > 0 ? "," : "") + "outsiderDestroy";
 		if (outsiderSwitch)
-			out += (out.length() > 0 ? "," : "") + "outsiderSwitches";
+			out += (out.length() > 0 ? "," : "") + "outsiderSwitch";
 		if (outsiderItemUse)
 			out += (out.length() > 0 ? "," : "") + "outsiderItemUse";
 		if (allyBuild)
@@ -102,6 +103,17 @@ public class TownyPermission {
 		DESTROY,
 		SWITCH,
 		ITEM_USE;
+		
+		@Override
+		public String toString() {
+			return super.toString().toLowerCase();
+		}
+	};
+	
+	public enum PermLevel {
+		RESIDENT,
+		ALLY,
+		OUTSIDER;
 		
 		@Override
 		public String toString() {
@@ -167,5 +179,20 @@ public class TownyPermission {
 			+ (residentItemUse ? "f" : "-")
 			+ (allyItemUse ? "a" : "-")
 			+ (outsiderItemUse ? "o" : "-");
+	}
+	
+	public void loadDefault(TownBlockOwner owner) {
+		residentBuild = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.BUILD);
+		residentDestroy = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.DESTROY);
+		residentSwitch = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.ITEM_USE);
+		residentItemUse = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.SWITCH);
+		allyBuild = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.BUILD);
+		allyDestroy = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.DESTROY);
+		allySwitch = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.ITEM_USE);
+		allyItemUse = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.SWITCH);
+		outsiderBuild = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.BUILD);
+		outsiderDestroy = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.DESTROY);
+		outsiderItemUse = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.ITEM_USE);
+		outsiderSwitch = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.SWITCH);
 	}
 }
