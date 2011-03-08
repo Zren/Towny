@@ -41,7 +41,6 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		hasMobs = false;
 		isPublic = true;
 		permissions.loadDefault(this);
-		permissions.load(TownySettings.getDefaultTownPerms()); // Uhg. Static content that could change. >.>
 	}
 	
 	@Override

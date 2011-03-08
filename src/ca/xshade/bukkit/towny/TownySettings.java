@@ -90,8 +90,6 @@ public class TownySettings {
 		UNCLAIMED_PLOT_NAME,
 		NPC_PREFIX,
 		FLATFILE_BACKUP, //TODO
-		DEFAULT_RESIDENT_PERM, //TODO
-		DEFAULT_TOWN_PERM //TODO
 	};
 	// Integer
 	public enum Int {
@@ -293,8 +291,6 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		configStr.put(TownySettings.Str.FLATFILE_BACKUP, "zip");
-		configStr.put(TownySettings.Str.DEFAULT_RESIDENT_PERM, "residentBuild,residentDestroy,residentSwitch,residentItemUse,allyBuild,allyDestroy,allySwitch,allyItemUse");
-		configStr.put(TownySettings.Str.DEFAULT_TOWN_PERM, "residentBuild,residentDestroy,residentSwitch,residentItemUse");
 		// Integer
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
@@ -1118,14 +1114,6 @@ public class TownySettings {
 
 	public static int getMaxPlotsPerResident() {
 		return getInt(TownySettings.Int.MAX_PLOTS_PER_RESIDENT);
-	}
-
-	public static String getDefaultResidentPerms() {
-		return getString(TownySettings.Str.DEFAULT_RESIDENT_PERM);
-	}
-	
-	public static String getDefaultTownPerms() {
-		return getString(TownySettings.Str.DEFAULT_TOWN_PERM);
 	}
 	
 	public static boolean getDefaultResidentPermission(TownBlockOwner owner, ActionType type) {

@@ -174,7 +174,6 @@ v0.46:
 v0.47:
 	Changed the debug output for when permissions are checked against as it might be causing confusing.
 	Quick fix for /tc and /nc with no msg.
-	Town/Nation chat is sent to the console.
 	Ingame Resident/Town/Nation/Global messages are now sent to it's own log file. It's nature is to start a new log every time the plugin is enabled. Due to the nature of the backup system, it will now keep the log of what went on during that time period.
 	Compiled against Permissions 2.5, to see if it makes any difference.
 	Added maximum plots per resident globally (default=1000). Anyone trying to claim more than this will get an error.

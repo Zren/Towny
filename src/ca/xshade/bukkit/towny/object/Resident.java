@@ -8,7 +8,6 @@ import ca.xshade.bukkit.towny.AlreadyRegisteredException;
 import ca.xshade.bukkit.towny.EmptyTownException;
 import ca.xshade.bukkit.towny.NotRegisteredException;
 import ca.xshade.bukkit.towny.TownyException;
-import ca.xshade.bukkit.towny.TownySettings;
 
 public class Resident extends TownBlockOwner {
 	private List<Resident> friends = new ArrayList<Resident>();
@@ -18,7 +17,6 @@ public class Resident extends TownBlockOwner {
 	public Resident(String name) {
 		setName(name);
 		permissions.loadDefault(this);
-		permissions.load(TownySettings.getDefaultResidentPerms()); // Uhg. Static content that could change. >.>
 	}
 
 	public void setLastOnline(long lastOnline) {
