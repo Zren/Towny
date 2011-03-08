@@ -62,4 +62,9 @@ public class WorldCoord extends Coord {
 		WorldCoord o = (WorldCoord) obj;
 		return this.x == o.x && this.z == o.z && this.world.equals(o.world);
 	}
+	
+	@Override
+	public String toString() {
+		return world.getName() + "," + super.toString();
+	}
 }

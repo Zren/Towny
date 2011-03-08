@@ -307,42 +307,53 @@ public class TownyUniverse extends TownyObject {
 		throw new TownyException("Resident is not online");
 	}
 
-	public void sendResidentMessage(Resident resident, String[] lines)
-			throws TownyException {
+	public void sendResidentMessage(Resident resident, String[] lines) throws TownyException {
+		for (String line : lines)
+			plugin.log("[Resident Msg] " + resident.getName() + ": " + line);
 		Player player = getPlayer(resident);
 		for (String line : lines)
 			player.sendMessage(line);
+		
 	}
 
 	public void sendTownMessage(Town town, String[] lines) {
+		for (String line : lines)
+			plugin.log("[Town Msg] " + town.getName() + ": " + line);
 		for (Player player : getOnlinePlayers(town))
 			for (String line : lines)
 				player.sendMessage(line);
 	}
 
 	public void sendNationMessage(Nation nation, String[] lines) {
+		for (String line : lines)
+			plugin.log("[Nation Msg] " + nation.getName() + ": " + line);
 		for (Player player : getOnlinePlayers(nation))
 			for (String line : lines)
 				player.sendMessage(line);
 	}
 
 	public void sendGlobalMessage(String[] lines) {
+		for (String line : lines)
+			plugin.log("[Global Msg] " + line);
 		for (Player player : getOnlinePlayers())
 			for (String line : lines)
 				player.sendMessage(line);
 	}
 
 	public void sendResidentMessage(Resident resident, String line) throws TownyException {
+		plugin.log("[Resident Msg] " + resident.getName() + ": " + line);
 		Player player = getPlayer(resident);
 		player.sendMessage(line);
 	}
 
 	public void sendTownMessage(Town town, String line) {
+		plugin.log("[Town Msg] " + town.getName() + ": " + line);
 		for (Player player : getOnlinePlayers(town))
 			player.sendMessage(line);
 	}
 	
 	public void sendNationMessage(Nation nation, String line) {
+		plugin.log("[Nation Msg] " + nation.getName() + ": " + line);
 		for (Player player : getOnlinePlayers(nation))
 			player.sendMessage(line);
 	}

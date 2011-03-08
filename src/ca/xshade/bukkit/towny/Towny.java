@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import ca.xshade.bukkit.towny.PlayerCache.TownBlockStatus;
@@ -77,14 +77,9 @@ public class Towny extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		version = this.getDescription().getVersion();
-		
-		registerEvents();
-		
-		PluginDescriptionFile pdfFile = this.getDescription();
-		pdfFile.getVersion();
-		
 		townyUniverse = new TownyUniverse(this);
 		loadSettings();
+		setupLogger();
 		
 		System.out.println("[Towny] Database: [Load] " + TownySettings.getLoadDatabase() + " [Save] " + TownySettings.getSaveDatabase());
 		if (!townyUniverse.loadDatabase(TownySettings.getLoadDatabase())) {
@@ -122,6 +117,7 @@ public class Towny extends JavaPlugin {
 		if (TownySettings.isTownyUpdating(getVersion()))
 			update();
 		
+		registerEvents();
 		System.out.println("[Towny] Version: " + version + " - Mod Enabled");
 		
 		// Re login anyone online. (In case of plugin reloading)
@@ -700,6 +696,11 @@ public class Towny extends JavaPlugin {
 
 	public Logger getLogger() {
 		return logger;
+	}
+	
+	public void log(String msg) {
+		if (TownySettings.isLogging())
+			getLogger().info(ChatColor.stripColor(msg));
 	}
 	
 	public void setupLogger() {

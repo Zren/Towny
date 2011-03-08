@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/GroupManager.jar"/>
 	<classpathentry kind="lib" path="lib/iConomy.jar"/>
 	<classpathentry kind="lib" path="lib/Permissions.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Questioner"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

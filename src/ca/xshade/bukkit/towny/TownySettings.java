@@ -124,8 +124,8 @@ public class TownySettings {
 		PRICE_CLAIM_TOWNBLOCK,
 		PRICE_OUTPOST,
 		PRICE_TOWN_SPAWN_TRAVEL,
-		WARTIME_DEATH_PRICE,
-		DEATH_PRICE,
+		PRICE_DEATH_WARTIME,
+		PRICE_DEATH,
 		WARTIME_TOWN_BLOCK_LOSS_PRICE,
 		PRICE_TOWN_UPKEEP,
 		PRICE_NATION_UPKEEP,
@@ -185,6 +185,7 @@ public class TownySettings {
 		DEFAULT_TOWN_PERM_OUTSIDER_DESTROY,
 		DEFAULT_TOWN_PERM_OUTSIDER_SWITCH,
 		DEFAULT_TOWN_PERM_OUTSIDER_ITEMUSE,
+		LOGGING
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -282,7 +283,7 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_WAR_FORFEITED, "&6[Towny] &b%s forfeited.");
 		configStr.put(TownySettings.Str.MSG_WAR_LOSE_BLOCK, "&6[Towny] &b(%s) belonging to %s has fallen.");
 		configStr.put(TownySettings.Str.MSG_WAR_SCORE, "&6[War] &b%s scored %d points!");
-		configStr.put(TownySettings.Str.MSG_NEW_DAY, "&6[Towny] &bA new day is here! Taxes and rent has been collected.");
+		configStr.put(TownySettings.Str.MSG_NEW_DAY, "&6[Towny] &bA new day is here! Taxes and rent has been collected");
 		configStr.put(TownySettings.Str.MSG_COULDNT_PAY_TAXES, "&6[Towny] &b%s couldn't pay taxes%s");
 		configStr.put(TownySettings.Str.MSG_BUY_RESIDENT_PLOT, "&6[Towny] &b%s bought %s's plot!");
 		configStr.put(TownySettings.Str.MSG_PLOT_FOR_SALE, "&6[Towny] &b%s put the plot (%s) up for sale!");
@@ -323,8 +324,8 @@ public class TownySettings {
 		configDoub.put(TownySettings.Doub.PRICE_OUTPOST, 500D);
 		configDoub.put(TownySettings.Doub.PRICE_TOWN_SPAWN_TRAVEL, 10D);
 		configDoub.put(TownySettings.Doub.WARTIME_BASE_SPOILS, 100D);
-		configDoub.put(TownySettings.Doub.WARTIME_DEATH_PRICE, 200D);
-		configDoub.put(TownySettings.Doub.DEATH_PRICE, 10D);
+		configDoub.put(TownySettings.Doub.PRICE_DEATH_WARTIME, 200D);
+		configDoub.put(TownySettings.Doub.PRICE_DEATH, 10D);
 		configDoub.put(TownySettings.Doub.WARTIME_TOWN_BLOCK_LOSS_PRICE, 100D);
 		configDoub.put(TownySettings.Doub.PRICE_TOWN_UPKEEP, 10D);
 		configDoub.put(TownySettings.Doub.PRICE_NATION_UPKEEP, 100D);
@@ -379,6 +380,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_DESTROY, true);
 		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_ITEMUSE, true);
 		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_SWITCH, true);
+		configBool.put(TownySettings.Bool.LOGGING, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -1031,7 +1033,7 @@ public class TownySettings {
 		return getBoolean(TownySettings.Bool.ALLOW_TOWN_SPAWN);
 	}
 	
-	public static boolean isAllowingTownSpawnTravel() {
+	public static boolean isAllowingPublicTownSpawnTravel() {
 		return getBoolean(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL);
 	}
 	
@@ -1052,11 +1054,11 @@ public class TownySettings {
 	}
 	
 	public static double getWartimeDeathPrice() {
-		return getDouble(TownySettings.Doub.WARTIME_DEATH_PRICE);
+		return getDouble(TownySettings.Doub.PRICE_DEATH_WARTIME);
 	}
 	
 	public static double getDeathPrice() {
-		return getDouble(TownySettings.Doub.DEATH_PRICE);
+		return getDouble(TownySettings.Doub.PRICE_DEATH);
 	}
 	
 	public static double getWartimeTownBlockLossPrice() {
@@ -1196,5 +1198,9 @@ public class TownySettings {
 			case OUTSIDER: return getDefaultOutsiderPermission(owner, type);
 			default: throw new UnsupportedOperationException();
 		}
+	}
+
+	public static boolean isLogging() {
+		return getBoolean(TownySettings.Bool.LOGGING);
 	}
 }

@@ -76,8 +76,10 @@ public class TownyPlayerListener extends PlayerListener {
 					colour = Colors.LightBlue;
 				else
 					colour = Colors.White;
-				formatedName = (colour.equals(Colors.White) ? "" : colour) + plugin.getTownyUniverse().getFormatter().getNamePrefix(resident)
-					+ "%1$s" + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident) + (colour.equals(Colors.White) ? "" : Colors.White);
+				formatedName = (colour.equals(Colors.White) ? "" : colour)
+					+ plugin.getTownyUniverse().getFormatter().getNamePrefix(resident)
+					+ "%1$s" + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident)
+					+ (colour.equals(Colors.White) ? "" : Colors.White);
 				String formatString = event.getFormat();
 				int index = formatString.indexOf("%1$s");
 				formatString = formatString.substring(0, index) + formatedName + formatString.substring(index+4);
@@ -180,8 +182,12 @@ public class TownyPlayerListener extends PlayerListener {
 			WorldCoord toCoord = new WorldCoord((from.getWorld().equals(to.getWorld()) ? fromWorld : plugin.getTownyUniverse().getWorld(to.getWorld().getName())), Coord.parseCoord(to));
 			if (!fromCoord.equals(toCoord))
 				onPlayerMoveChunk(player, fromCoord, toCoord, from, to);
-			else
-				plugin.sendDebugMsg(player.getName() + " is still within same coordinates. " + fromCoord + " " +toCoord);
+			else {
+				//plugin.sendDebugMsg("    From: " + fromCoord);
+				//plugin.sendDebugMsg("    To:   " + toCoord);
+				//plugin.sendDebugMsg("        " + from.toString());
+				//plugin.sendDebugMsg("        " + to.toString());
+			}
 		} catch (NotRegisteredException e) {
 			plugin.sendErrorMsg(player, e.getError());
 		}
@@ -193,6 +199,7 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	public void onPlayerMoveChunk(Player player, WorldCoord from, WorldCoord to, Location fromLoc, Location toLoc) {
+		plugin.sendDebugMsg("onPlayerMoveChunk: " + player.getName());
 		TownyUniverse universe = plugin.getTownyUniverse();
 		
 		plugin.getCache(player).updateCoord(to);
@@ -285,7 +292,6 @@ public class TownyPlayerListener extends PlayerListener {
 			
 			plugin.sendDebugMsg("onPlayerMoveChunk: " + fromWild + " ^ " + toWild + " " + fromTown + " = " + toTown);
 		}
-		
 	}
 	
 	@Override
@@ -357,7 +363,6 @@ public class TownyPlayerListener extends PlayerListener {
 					+ player.getDisplayName() + ": "
 					+ Colors.LightBlue + msg;
 			plugin.getTownyUniverse().sendTownMessage(town, ChatTools.color(line));
-			plugin.sendMsg("[" + town.getName() + "] " + player.getName() + ": " + msg);
 		} catch (NotRegisteredException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		}
@@ -371,7 +376,6 @@ public class TownyPlayerListener extends PlayerListener {
 					+ player.getDisplayName() + ": "
 					+ Colors.Yellow + msg;
 			plugin.getTownyUniverse().sendNationMessage(nation, ChatTools.color(line));
-			plugin.sendMsg("[" + nation.getName() + "] " + player.getName() + ": " + msg);
 		} catch (NotRegisteredException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		}
@@ -619,7 +623,7 @@ public class TownyPlayerListener extends PlayerListener {
 					plugin.getTownyUniverse().getDataSource().saveWorld(world);
 				} else if (split[0].equalsIgnoreCase("unclaim")) {
 					WorldCoord coord = new WorldCoord(world, Coord.parseCoord(player));
-					residentUnclaim(resident, new WorldCoord(world, Coord.parseCoord(player)));
+					residentUnclaim(resident, new WorldCoord(world, Coord.parseCoord(player)), false);
 
 					plugin.sendMsg(player, "Successfully unclaimed (" + coord + ").");
 
@@ -691,14 +695,14 @@ public class TownyPlayerListener extends PlayerListener {
 			throw new TownyException("You must belong to a town in order to claim plots.");
 	}
 	
-	public boolean residentUnclaim(Resident resident, WorldCoord worldCoord) throws TownyException {
+	public boolean residentUnclaim(Resident resident, WorldCoord worldCoord, boolean force) throws TownyException {
 		if (plugin.getTownyUniverse().isWarTime())
 			throw new TownyException("You cannot do this when the world is at war.");
 		
 		try {
 			TownBlock townBlock = worldCoord.getTownBlock();
 			Resident owner = townBlock.getResident();
-			if (resident == owner) {
+			if (resident == owner || force) {
 				townBlock.setResident(null);
 				townBlock.setForSale(true);
 				plugin.getTownyUniverse().getDataSource().saveResident(resident);
@@ -838,7 +842,7 @@ public class TownyPlayerListener extends PlayerListener {
 						plugin.getTownyUniverse().townSpawn(player, false);
 				} else {
 					boolean isTownyAdmin = plugin.isTownyAdmin(player);
-					if (!TownySettings.isAllowingTownSpawnTravel() && !isTownyAdmin && !plugin.hasPermission(player, "towny.publicspawntp"))
+					if (!TownySettings.isAllowingPublicTownSpawnTravel() && !isTownyAdmin && !plugin.hasPermission(player, "towny.publicspawntp"))
 						throw new TownyException("Town spawn travel is forbidden.");
 					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
 					Town town = plugin.getTownyUniverse().getTown(split[1]);
@@ -2740,6 +2744,55 @@ public class TownyPlayerListener extends PlayerListener {
 		}
 	}
 	
+	public void parseAdminUnclaimCommand(Player player, String[] split) {
+		if (split.length == 1 && split[0].equalsIgnoreCase("?")) {
+			player.sendMessage(ChatTools.formatTitle("/townyadmin unclaim"));
+			player.sendMessage(ChatTools.formatCommand("Admin", "/ta unclaim", "", "Unclaim this town block"));
+			player.sendMessage(ChatTools.formatCommand("Admin", "/ta unclaim", "rect [radius]", "Attempt to unclaim around you."));
+		} else {
+			TownyWorld world;
+			try {
+				if (plugin.getTownyUniverse().isWarTime())
+					throw new TownyException("You cannot do this when the world is at war.");
+				
+				world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
+				
+				List<WorldCoord> selection;
+				selection = selectWorldCoordArea(null, new WorldCoord(world, Coord.parseCoord(player)), split);
+				List<Resident> residents = new ArrayList<Resident>();
+				List<Town> towns = new ArrayList<Town>();
+				
+				for (WorldCoord worldCoord : selection) {
+					try {
+						Town town = worldCoord.getTownBlock().getTown();
+						if (!towns.contains(town))
+							towns.add(town);
+					} catch (NotRegisteredException e) {
+					}
+					try {
+						Resident resident = worldCoord.getTownBlock().getResident();
+						if (!residents.contains(resident))
+							residents.add(resident);
+					} catch (NotRegisteredException e) {
+					}
+					residentUnclaim(null, worldCoord, true);
+					townUnclaim(null, worldCoord, true);
+				}
+
+				plugin.sendMsg(player, "Forcefully unclaimed area " + Arrays.toString(selection.toArray(new WorldCoord[0])));
+				for (Resident resident : residents)
+					plugin.getTownyUniverse().getDataSource().saveResident(resident);
+				for (Town town : towns)
+					plugin.getTownyUniverse().getDataSource().saveTown(town);
+				plugin.getTownyUniverse().getDataSource().saveWorld(world);
+				plugin.updateCache();
+			} catch (TownyException x) {
+				plugin.sendErrorMsg(player, x.getError());
+				return;
+			}
+		}
+	}
+	
 	private void warSeed(Player player) {
 		/*Resident r1 = plugin.getTownyUniverse().newResident("r1");
 		Resident r2 = plugin.getTownyUniverse().newResident("r2");
@@ -2780,10 +2833,9 @@ public class TownyPlayerListener extends PlayerListener {
 		else if (split[0].equalsIgnoreCase("set")) {
 			String[] newSplit = StringMgmt.remFirstArg(split);
 			adminSet(player, newSplit);
-		} else if (split[0].equalsIgnoreCase("war")) {
-			String[] newSplit = StringMgmt.remFirstArg(split);
-			parseWarCommand(player, newSplit);
-		} else if (split[0].equalsIgnoreCase("givebonus"))
+		} else if (split[0].equalsIgnoreCase("war"))
+			parseWarCommand(player, StringMgmt.remFirstArg(split));
+		else if (split[0].equalsIgnoreCase("givebonus"))
 			try {
 				if (split.length != 3)
 					throw new TownyException("Wrong input. Eg: givebonus [town] [n]");
@@ -2810,6 +2862,8 @@ public class TownyPlayerListener extends PlayerListener {
 			}
 		else if (split[0].equalsIgnoreCase("newday"))
 			plugin.getTownyUniverse().newDay();
+		else if (split[0].equalsIgnoreCase("unclaim"))
+			parseAdminUnclaimCommand(player, StringMgmt.remFirstArg(split));
 		else if (split[0].equalsIgnoreCase("tree"))
 			plugin.getTownyUniverse().sendUniverseTree(player);
 		else if (split[0].equalsIgnoreCase("seed") && TownySettings.getDebug())

@@ -14,6 +14,7 @@ Secondary:
 	Commenting
 	Replace getDataSource() with a manager class to allow multiple save formats at once.
 	Make the formatting/wording for [nation] .. [nation] etc, better.
+	Treat underscores as spaces during formatting.
 
 Cool Concepts:
 	In the wild, users who've registered less than X time are exempt to permissions.
@@ -25,6 +26,7 @@ Probably need TODO something:
 
 Bugs:
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-74896
+	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-46-resident-town-nation-hierarchy-grid-based-protection.3358/page-22#post-109451
 
 
 
