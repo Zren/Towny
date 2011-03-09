@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/bukkit.jar" sourcepath="C:/Users/Admin/Desktop/git/Bukkit"/>
 	<classpathentry kind="lib" path="lib/Essentials.jar"/>
-	<classpathentry kind="lib" path="lib/EssentialsTele.jar"/>
 	<classpathentry kind="lib" path="lib/GroupManager.jar"/>
 	<classpathentry kind="lib" path="lib/iConomy.jar"/>
 	<classpathentry kind="lib" path="lib/Permissions.jar"/>

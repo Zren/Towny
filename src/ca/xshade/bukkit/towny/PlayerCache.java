@@ -1,5 +1,6 @@
 package ca.xshade.bukkit.towny;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import ca.xshade.bukkit.towny.object.Coord;
@@ -10,6 +11,7 @@ public class PlayerCache {
 	private WorldCoord lastTownBlock;
 	private Boolean buildPermission, destroyPermission, switchPermission, itemUsePermission;
 	private String blockErrMsg;
+	private Location lastLocation;
 	//TODO: cache last entity attacked
 
 	public PlayerCache(TownyWorld world, Player player) {
@@ -135,5 +137,16 @@ public class PlayerCache {
 			throw new NullPointerException();
 		else
 			return itemUsePermission;
+	}
+
+	public void setLastLocation(Location lastLocation) {
+		this.lastLocation = lastLocation.clone();
+	}
+
+	public Location getLastLocation() throws NullPointerException {
+		if (lastLocation == null)
+			throw new NullPointerException();
+		else
+			return lastLocation;
 	}
 }

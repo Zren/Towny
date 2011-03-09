@@ -155,11 +155,7 @@ public class Towny extends JavaPlugin {
 		test = getServer().getPluginManager().getPlugin("Essentials");
 		if (test == null)
 			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
-		
-		test = getServer().getPluginManager().getPlugin("EssentialsTele");
-		if (test == null)
-			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
-		else if (TownySettings.isUsingIConomy())
+		else if (TownySettings.isUsingEssentials())
 			using.add("Essentials");
 		
 		if (using.size() > 0)
@@ -431,14 +427,8 @@ public class Towny extends JavaPlugin {
 		essentials.loadClasses();
 		sendDebugMsg("Using Essenitials");
 		
-		
-		test = getServer().getPluginManager().getPlugin("EssentialsTele");
-		if (test == null)
-			return true;
-		sendDebugMsg("Using EssenitialsTele");
-		
 		try {
-			User user = User.get(player, getServer());
+			User user = User.get(player);
 			user.teleportCooldown();
 			user.charge("tp");
 		} catch (Exception e) {

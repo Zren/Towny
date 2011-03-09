@@ -182,8 +182,8 @@ v0.47:
 	Fixed outsiderSwitch permission. (Thanks PixelEater)
 	wartime_death_price and death_price were renamed to price_death_wartime and price_death.
 	Testing a /townyadmin unclaim command. Untested, use at your own risk.
-	
-	
-	
-	
+v0.48:
+	Fix Essentials compatibility.
+v0.49:
+	Towny now caches the last block location a player was at.
 	

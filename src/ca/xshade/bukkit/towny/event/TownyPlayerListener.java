@@ -173,8 +173,16 @@ public class TownyPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
-		Location from = event.getFrom();
+		Location from;
+		try {
+			from = plugin.getCache(player).getLastLocation();
+		} catch (NullPointerException e) {
+			from = event.getFrom();
+		}
 		Location to = event.getTo();
+		
+		if (from.getBlockX() == to.getBlockX() && from.getBlockY() == to.getBlockY() && from.getBlockZ() == to.getBlockZ())
+			return;
 		
 		try {
 			TownyWorld fromWorld = plugin.getTownyUniverse().getWorld(from.getWorld().getName());
@@ -191,6 +199,11 @@ public class TownyPlayerListener extends PlayerListener {
 		} catch (NotRegisteredException e) {
 			plugin.sendErrorMsg(player, e.getError());
 		}
+		
+		plugin.getCache(player).setLastLocation(to);
+		//plugin.sendDebugMsg("onBlockMove: " + player.getName() + ": ");
+		//plugin.sendDebugMsg("        " + from.toString());
+		//plugin.sendDebugMsg("        " + to.toString());
 	}
 
 	@Override
