@@ -37,6 +37,7 @@ import ca.xshade.bukkit.towny.object.TownBlock;
 import ca.xshade.bukkit.towny.object.TownyIConomyObject;
 import ca.xshade.bukkit.towny.object.TownyPermission;
 import ca.xshade.bukkit.towny.object.TownyUniverse;
+import ca.xshade.bukkit.towny.object.TownyWorld;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
@@ -702,5 +703,9 @@ public class Towny extends JavaPlugin {
         } catch (IOException e) {
         	e.printStackTrace();
         }
+	}
+	
+	public boolean hasWildOverride(TownyWorld world, Player player, int blockId, TownyPermission.ActionType action) {
+		return world.isUnclaimedZoneIgnoreId(blockId) || hasPermission(player, "towny.wild.block." + blockId + "." + action.toString());
 	}
 }

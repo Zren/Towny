@@ -645,7 +645,7 @@ public class TownyUniverse extends TownyObject {
 	public void collectTownTaxe(Town town) throws IConomyException {
 		//Resident Tax
 		if (town.getTaxes() > 0)
-			for (Resident resident : town.getResidents())
+			for (Resident resident : new ArrayList<Resident>(town.getResidents()))
 				if (town.isMayor(resident) || town.hasAssistant(resident)) {
 					try {
 						sendResidentMessage(resident, "Town staff are exempt from taxes.");
@@ -671,7 +671,7 @@ public class TownyUniverse extends TownyObject {
 		//Plot Tax
 		if (town.getPlotTax() > 0) {
 			Hashtable<Resident,Integer> townPlots = new Hashtable<Resident,Integer>();
-			for (TownBlock townBlock : town.getTownBlocks()) {
+			for (TownBlock townBlock : new ArrayList<TownBlock>(town.getTownBlocks())) {
 				if (!townBlock.hasResident())
 					continue;
 				try {

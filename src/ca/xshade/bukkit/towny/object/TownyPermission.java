@@ -41,6 +41,7 @@ public class TownyPermission {
 			residentSwitch = b;
 		else if (s.equalsIgnoreCase("residentItemUse"))
 			residentItemUse = b;
+		
 		else if (s.equalsIgnoreCase("outsiderBuild"))
 			outsiderBuild = b;
 		else if (s.equalsIgnoreCase("outsiderDestroy"))
@@ -49,6 +50,7 @@ public class TownyPermission {
 			outsiderSwitch = b;
 		else if (s.equalsIgnoreCase("outsiderItemUse"))
 			outsiderItemUse = b;
+		
 		else if (s.equalsIgnoreCase("allyBuild"))
 			allyBuild = b;
 		else if (s.equalsIgnoreCase("allyDestroy"))
@@ -77,6 +79,7 @@ public class TownyPermission {
 			out += (out.length() > 0 ? "," : "") + "residentSwitch";
 		if (residentItemUse)
 			out += (out.length() > 0 ? "," : "") + "residentItemUse";
+		
 		if (outsiderBuild)
 			out += (out.length() > 0 ? "," : "") + "outsiderBuild";
 		if (outsiderDestroy)
@@ -85,6 +88,7 @@ public class TownyPermission {
 			out += (out.length() > 0 ? "," : "") + "outsiderSwitch";
 		if (outsiderItemUse)
 			out += (out.length() > 0 ? "," : "") + "outsiderItemUse";
+		
 		if (allyBuild)
 			out += (out.length() > 0 ? "," : "") + "allyBuild";
 		if (allyDestroy)
@@ -93,6 +97,7 @@ public class TownyPermission {
 			out += (out.length() > 0 ? "," : "") + "allySwitch";
 		if (allyItemUse)
 			out += (out.length() > 0 ? "," : "") + "allyItemUse";
+		
 		if (out.length() == 0)
 			out += "denyAll"; // Make the token not empty
 		return out;
@@ -172,8 +177,8 @@ public class TownyPermission {
 			+ (allyDestroy ? "a" : "-")
 			+ (outsiderDestroy ? "o" : "-")
 			+ Colors.LightGreen + " S=" + Colors.LightGray
-			+ (residentDestroy ? "f" : "-")
-			+ (allyDestroy ? "a" : "-")
+			+ (residentSwitch ? "f" : "-")
+			+ (allySwitch ? "a" : "-")
 			+ (outsiderSwitch ? "o" : "-")
 			+ Colors.LightGreen + " I=" + Colors.LightGray
 			+ (residentItemUse ? "f" : "-")

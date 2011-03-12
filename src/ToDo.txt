@@ -27,6 +27,7 @@ Probably need TODO something:
 Bugs:
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-74896
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-46-resident-town-nation-hierarchy-grid-based-protection.3358/page-22#post-109451
+	AG_Elias: I am having an issue with Towny. It seems to not pass events on to Craftbook if the event occurs in a town.
 
 
 

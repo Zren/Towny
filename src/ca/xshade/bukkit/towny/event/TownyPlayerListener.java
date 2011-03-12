@@ -149,6 +149,9 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
 			PlayerCache cache = plugin.getCache(player);
 			cache.updateCoord(worldCoord);
+			TownBlockStatus status = cache.getStatus();
+			if (status == TownBlockStatus.UNCLAIMED_ZONE && plugin.hasWildOverride(worldCoord.getWorld(), player, event.getItem().getTypeId(), TownyPermission.ActionType.ITEM_USE))
+				return;
 			if (!cache.getItemUsePermission())
 				event.setCancelled(true);
 			if (cache.hasBlockErrMsg())
@@ -341,6 +344,8 @@ public class TownyPlayerListener extends PlayerListener {
 				parseTownChatCommand(player, event.getMessage().substring(4));
 			else if (TownySettings.getNationChatCommands().contains(split[0]))
 				parseNationChatCommand(player, event.getMessage().substring(4));
+			else
+				return;
 		} else
 			return;
 

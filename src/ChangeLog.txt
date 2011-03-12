@@ -186,4 +186,12 @@ v0.48:
 	Fix Essentials compatibility.
 v0.49:
 	Towny now caches the last block location a player was at.
+v0.50:
+	Fixed towny being a pimp and taking over every other plugins command.
+v0.51:
+	Fixed some concurrent errors during taxation.
+v0.52:
+	Switch perms were outputting incorrectly.
+	Item use are now included in item ids usable in the wild.
+	The permission, towny.wild.block.[item id] is now towny.wild.block.[item id].[action], where [action] is build, destroy, switch, item_use. So just add .* onto the end to function normally.
 	
