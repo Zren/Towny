@@ -98,7 +98,7 @@ public class TownyPricesCommand extends TownyCommand {
 				output.add(Colors.Rose + "    [Upkeep] "
 					+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(nation.getTaxes())
 					+ Colors.Gray + " | "
-					+ Colors.Green + "Neutrality: " + Colors.LightGreen + Integer.toString(TownySettings.getNationNeutralityCost()));
+					+ Colors.Green + "Neutrality: " + Colors.LightGreen + TownyFormatter.formatMoney(TownySettings.getNationNeutralityCost()));
 			}
 		}
 		return output;

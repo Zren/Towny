@@ -30,7 +30,7 @@ public class TownyEntityListener extends EntityListener {
 			return;
 		
 		if (event instanceof EntityDamageByEntityEvent) {
-			long start = System.currentTimeMillis();
+			//long start = System.currentTimeMillis();
 			
 			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent)event;
 			Entity attacker = entityEvent.getDamager();
@@ -60,7 +60,7 @@ public class TownyEntityListener extends EntityListener {
 			}
 			
 			
-			plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
+			//plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
 		}
 		
 	}

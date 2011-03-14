@@ -17,7 +17,9 @@ import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.plugin.Plugin;
 
+import ca.xshade.bukkit.questioner.Questioner;
 import ca.xshade.bukkit.towny.AlreadyRegisteredException;
 import ca.xshade.bukkit.towny.EmptyNationException;
 import ca.xshade.bukkit.towny.EmptyTownException;
@@ -41,9 +43,13 @@ import ca.xshade.bukkit.towny.object.TownyPermission;
 import ca.xshade.bukkit.towny.object.TownyUniverse;
 import ca.xshade.bukkit.towny.object.TownyWorld;
 import ca.xshade.bukkit.towny.object.WorldCoord;
+import ca.xshade.bukkit.towny.questioner.JoinTownTask;
+import ca.xshade.bukkit.towny.questioner.ResidentTownQuestionTask;
 import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
 import ca.xshade.bukkit.util.MinecraftTools;
+import ca.xshade.questionmanager.Option;
+import ca.xshade.questionmanager.Question;
 import ca.xshade.util.MemMgmt;
 import ca.xshade.util.StringMgmt;
 
@@ -130,8 +136,9 @@ public class TownyPlayerListener extends PlayerListener {
 			onPlayerItemEvent(event, true);
 		
 		plugin.sendDebugMsg("onPlayerItemEvent took " + (System.currentTimeMillis() - start) + "ms");
-		
 	}
+	
+	
 	
 	public void onPlayerItemEvent(PlayerItemEvent event, boolean firstCall) {	
 		Player player = event.getPlayer();
@@ -190,7 +197,9 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
 			TownyWorld fromWorld = plugin.getTownyUniverse().getWorld(from.getWorld().getName());
 			WorldCoord fromCoord = new WorldCoord(fromWorld, Coord.parseCoord(from));
-			WorldCoord toCoord = new WorldCoord((from.getWorld().equals(to.getWorld()) ? fromWorld : plugin.getTownyUniverse().getWorld(to.getWorld().getName())), Coord.parseCoord(to));
+			//WorldCoord toCoord = new WorldCoord((from.getWorld().equals(to.getWorld()) ? fromWorld : plugin.getTownyUniverse().getWorld(to.getWorld().getName())), Coord.parseCoord(to));
+			TownyWorld toWorld = plugin.getTownyUniverse().getWorld(to.getWorld().getName());
+			WorldCoord toCoord = new WorldCoord(toWorld, Coord.parseCoord(to));
 			if (!fromCoord.equals(toCoord))
 				onPlayerMoveChunk(player, fromCoord, toCoord, from, to);
 			else {
@@ -1167,11 +1176,11 @@ public class TownyPlayerListener extends PlayerListener {
 		ArrayList<Resident> remove = new ArrayList<Resident>();
 		for (Resident newMember : invited)
 			try {
-				town.addResident(newMember);
-				plugin.deleteCache(newMember.getName());
-				plugin.getTownyUniverse().getDataSource().saveResident(newMember);
+				town.addResidentCheck(newMember);
+				townInviteResident(town, newMember);
 			} catch (AlreadyRegisteredException e) {
 				remove.add(newMember);
+				plugin.sendErrorMsg(player, e.getError());
 			}
 		for (Resident newMember : remove)
 			invited.remove(newMember);
@@ -1185,6 +1194,40 @@ public class TownyPlayerListener extends PlayerListener {
 			plugin.getTownyUniverse().getDataSource().saveTown(town);
 		} else
 			plugin.sendErrorMsg(player, "None of those names were valid.");
+	}
+	
+	public void townAddResident(Town town, Resident resident) throws AlreadyRegisteredException {
+		town.addResident(resident);
+		plugin.deleteCache(resident.getName());
+		plugin.getTownyUniverse().getDataSource().saveResident(resident);
+	}
+
+	private void townInviteResident(Town town, Resident newMember) throws AlreadyRegisteredException {
+		Plugin test = plugin.getServer().getPluginManager().getPlugin("Questioner");
+		
+		if (TownySettings.isUsingQuestioner() && test != null && test instanceof Questioner && test.isEnabled()) {
+			Questioner questioner = (Questioner)test;
+			questioner.loadClasses();
+			
+			List<Option> options = new ArrayList<Option>();
+			options.add(new Option("accept", new JoinTownTask(newMember, town)));
+			options.add(new Option("deny", new ResidentTownQuestionTask(newMember, town) {
+				@Override
+				public void run() {
+					getUniverse().sendTownMessage(getTown(), getResident().getName() + " denied your invite.");
+				}
+			}));
+			Question question = new Question(newMember.getName(), "You've been invited to join " + town.getName() + ".", options);
+			try {
+				plugin.appendQuestion(questioner, question);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		} else
+			try {
+				townAddResident(town, newMember);
+			} catch (AlreadyRegisteredException e) {
+			}
 	}
 
 	/**
@@ -1885,10 +1928,6 @@ public class TownyPlayerListener extends PlayerListener {
 				} catch (Exception e) {
 				}
 			String perms = townBlockOwner.getPermissions().toString();
-			if (perms.length() == 0)
-				perms = "deny all";
-			else
-				perms = "only allow ";
 			plugin.sendMsg(player, "Successfully changed permissions to " + perms + ".");
 			
 		}
@@ -2693,6 +2732,7 @@ public class TownyPlayerListener extends PlayerListener {
 			} else if (split[0].equalsIgnoreCase("usedefault")) {
 				world.setUsingDefault(true);
 				plugin.updateCache();
+				plugin.sendMsg(player, "This world (" + world.getName() + ") is now using the global default settings.");
 			} else if (split[0].equalsIgnoreCase("wildperm")) {
 				if (split.length < 2)
 					plugin.sendErrorMsg(player, "Eg: /townyworld set wildperm build destroy");
@@ -2848,10 +2888,9 @@ public class TownyPlayerListener extends PlayerListener {
 			showAdminPanel(player);
 		else if (split[0].equalsIgnoreCase("?"))
 			showTownyAdminHelp(player);
-		else if (split[0].equalsIgnoreCase("set")) {
-			String[] newSplit = StringMgmt.remFirstArg(split);
-			adminSet(player, newSplit);
-		} else if (split[0].equalsIgnoreCase("war"))
+		else if (split[0].equalsIgnoreCase("set"))
+			adminSet(player, StringMgmt.remFirstArg(split));
+		else if (split[0].equalsIgnoreCase("war"))
 			parseWarCommand(player, StringMgmt.remFirstArg(split));
 		else if (split[0].equalsIgnoreCase("givebonus"))
 			try {

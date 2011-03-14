@@ -36,7 +36,7 @@ public class TownyBlockListener extends BlockListener {
 
 			onBlockBreakEvent(event, true);
 
-			plugin.sendDebugMsg("onBlockBreakEvent took " + (System.currentTimeMillis() - start) + "ms");
+			plugin.sendDebugMsg("onBlockBreakEvent took " + (System.currentTimeMillis() - start) + "ms ("+event.getPlayer().getName()+", "+event.isCancelled() +")");
 		}
 	}
 	
@@ -84,7 +84,7 @@ public class TownyBlockListener extends BlockListener {
 
 		onBlockPlaceEvent(event, true, null);
 
-		plugin.sendDebugMsg("onBlockPlacedEvent took " + (System.currentTimeMillis() - start) + "ms");
+		plugin.sendDebugMsg("onBlockPlacedEvent took " + (System.currentTimeMillis() - start) + "ms ("+event.getPlayer().getName()+", "+event.isCancelled() +")");
 	}
 
 	public void onBlockPlaceEvent(BlockPlaceEvent event, boolean firstCall, String errMsg) {
@@ -133,7 +133,7 @@ public class TownyBlockListener extends BlockListener {
 
 		onBlockInteractEvent(event, true, null);
 
-		plugin.sendDebugMsg("onBlockInteractEvent took " + (System.currentTimeMillis() - start) + "ms");
+		plugin.sendDebugMsg("onBlockInteractEvent took " + (System.currentTimeMillis() - start) + "ms" + (event.isPlayer() ? " ("+((Player)event.getEntity()).getName()+", "+event.isCancelled() +")" : ""));
 	}
 	
 	public void onBlockInteractEvent(BlockInteractEvent event, boolean firstCall, String errMsg) {

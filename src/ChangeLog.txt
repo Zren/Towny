@@ -194,4 +194,8 @@ v0.52:
 	Switch perms were outputting incorrectly.
 	Item use are now included in item ids usable in the wild.
 	The permission, towny.wild.block.[item id] is now towny.wild.block.[item id].[action], where [action] is build, destroy, switch, item_use. So just add .* onto the end to function normally.
-	
+	No longer attempts to tax when using_iconomy=false.
+	Added support for Questioner (A simple manager for asking questions).
+		'/town add' will go through it to ask the player instead of immediately adding the player if installed.
+	Possible bugfix?
+	 

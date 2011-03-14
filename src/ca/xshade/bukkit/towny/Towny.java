@@ -22,6 +22,7 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import ca.xshade.bukkit.questioner.Questioner;
 import ca.xshade.bukkit.towny.PlayerCache.TownBlockStatus;
 import ca.xshade.bukkit.towny.command.TownyCommand;
 import ca.xshade.bukkit.towny.command.TownyCommandMap;
@@ -39,8 +40,11 @@ import ca.xshade.bukkit.towny.object.TownyPermission;
 import ca.xshade.bukkit.towny.object.TownyUniverse;
 import ca.xshade.bukkit.towny.object.TownyWorld;
 import ca.xshade.bukkit.towny.object.WorldCoord;
+import ca.xshade.bukkit.towny.questioner.TownyQuestionTask;
 import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
+import ca.xshade.questionmanager.Option;
+import ca.xshade.questionmanager.Question;
 import ca.xshade.util.FileMgmt;
 import ca.xshade.util.JavaUtil;
 import ca.xshade.util.StringMgmt;
@@ -132,7 +136,8 @@ public class Towny extends JavaPlugin {
 
 	private void checkPlugins() {
 		List<String> using = new ArrayList<String>();
-		Plugin test = getServer().getPluginManager().getPlugin("GroupManager");
+		Plugin test;
+		//test = getServer().getPluginManager().getPlugin("GroupManager");
 		//if(test != null)
 		//	groupManager = (GroupManager)test;
 		//else {
@@ -158,6 +163,12 @@ public class Towny extends JavaPlugin {
 			setSetting(TownySettings.Bool.USING_ESSENTIALS, false);
 		else if (TownySettings.isUsingEssentials())
 			using.add("Essentials");
+		
+		test = getServer().getPluginManager().getPlugin("Questioner");
+		if (test == null)
+			setSetting(TownySettings.Bool.USING_QUESTIONER, false);
+		else if (TownySettings.isUsingQuestioner())
+			using.add("Questioner");
 		
 		if (using.size() > 0)
 			System.out.println("[Towny] Using: " + StringMgmt.join(using, ", "));
@@ -491,9 +502,14 @@ public class Towny extends JavaPlugin {
 			return TownBlockStatus.UNCLAIMED_ZONE;
 		}
 
+		Resident resident;
 		try {
-			Resident resident = universe.getResident(player.getName());
-			
+			resident = universe.getResident(player.getName());
+		} catch (TownyException e) {
+			return TownBlockStatus.NOT_REGISTERED;
+		}
+		
+		try {
 			// War Time switch rights
 			if (universe.isWarTime())
 				try {
@@ -599,6 +615,11 @@ public class Towny extends JavaPlugin {
 			status == TownBlockStatus.PLOT_OWNER ||
 			status == TownBlockStatus.TOWN_OWNER)
 				return true;
+		
+		if (status == TownBlockStatus.NOT_REGISTERED) {
+			cacheBlockErrMsg(player, "You have not been registered with Towny. Try relogging.");
+			return false;
+		}
 		
 		TownBlock townBlock;
 		Town town;
@@ -707,5 +728,12 @@ public class Towny extends JavaPlugin {
 	
 	public boolean hasWildOverride(TownyWorld world, Player player, int blockId, TownyPermission.ActionType action) {
 		return world.isUnclaimedZoneIgnoreId(blockId) || hasPermission(player, "towny.wild.block." + blockId + "." + action.toString());
+	}
+	
+	public void appendQuestion(Questioner questioner, Question question) throws Exception {
+		for (Option option : question.getOptions())
+			if (option.getReaction() instanceof TownyQuestionTask)
+				((TownyQuestionTask)option.getReaction()).setTowny(this);
+		questioner.appendQuestion(question);
 	}
 }

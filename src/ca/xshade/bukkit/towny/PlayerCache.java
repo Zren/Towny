@@ -88,6 +88,7 @@ public class PlayerCache {
 	
 	public enum TownBlockStatus {
 		UNKOWN,
+		NOT_REGISTERED,
 		OFF_WORLD, // In a world untouched by towny.
 		ADMIN,
 		UNCLAIMED_ZONE,

@@ -119,15 +119,17 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 		return assistants.contains(resident);
 	}
 
-	public void addResident(Resident resident)  throws AlreadyRegisteredException {
+	public void addResident(Resident resident) throws AlreadyRegisteredException {
+		addResidentCheck(resident);
+		residents.add(resident);
+		resident.setTown(this);
+	}
+	
+	public void addResidentCheck(Resident resident) throws AlreadyRegisteredException {
 		if (hasResident(resident))
-			throw new AlreadyRegisteredException();
+			throw new AlreadyRegisteredException(resident.getName() + " already belongs to town.");
 		else if (resident.hasTown())
-			throw new AlreadyRegisteredException();
-		else {
-			residents.add(resident);
-			resident.setTown(this);
-		}
+			throw new AlreadyRegisteredException(resident.getName() + " already belongs to another town.");
 	}
 
 	public void addAssistant(Resident resident)
@@ -258,8 +260,12 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 	}
 	
 	private void remove(Resident resident) {
-		// TODO: Remove all plots of land owned in town.
-
+		for (TownBlock townBlock : new ArrayList<TownBlock>(resident.getTownBlocks())) {
+			townBlock.setResident(null);
+			townBlock.setForSale(true);
+			getPlugin().getTownyUniverse().getDataSource().saveResident(resident); //TODO: BAD!
+		}
+		
 		if (hasNation() && nation.hasAssistant(resident))
 			try {
 				nation.removeAssistant(resident);

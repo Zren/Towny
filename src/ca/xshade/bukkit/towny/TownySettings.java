@@ -84,19 +84,19 @@ public class TownySettings {
 		MSG_COULDNT_PAY_TAXES,
 		MSG_BUY_RESIDENT_PLOT,
 		MSG_PLOT_FOR_SALE,
-		MSG_MAYOR_ABADON, //TODO
+		MSG_MAYOR_ABANDON, //TODO
 		LINE_NOT_PERM_TO_NEW_TOWN, //TODO
 		LINE_NOT_PERM_TO_NEW_NATION, //TODO 
 		UNCLAIMED_PLOT_NAME,
 		NPC_PREFIX,
 		FLATFILE_BACKUP, //TODO
+		
 	};
 	// Integer
 	public enum Int {
 		TOWN_BLOCK_SIZE,
 		TOWN_BLOCK_RATIO,
 		DEFAULT_MAX_TOWN_BLOCKS,
-		PRICE_NATION_NEUTRALITY,
 		WARTIME_WARNING_DELAY,
 		WARTIME_TOWN_BLOCK_HP,
 		WARTIME_HOME_BLOCK_HP,
@@ -129,7 +129,8 @@ public class TownySettings {
 		PRICE_NATION_UPKEEP,
 		WARTIME_BASE_SPOILS,
 		PRICE_NEW_TOWN,
-		PRICE_NEW_NATION
+		PRICE_NEW_NATION,
+		PRICE_NATION_NEUTRALITY
 	};
 	// Boolean
 	public enum Bool {
@@ -183,7 +184,8 @@ public class TownySettings {
 		DEFAULT_TOWN_PERM_OUTSIDER_DESTROY,
 		DEFAULT_TOWN_PERM_OUTSIDER_SWITCH,
 		DEFAULT_TOWN_PERM_OUTSIDER_ITEMUSE,
-		LOGGING
+		LOGGING,
+		USING_QUESTIONER
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -285,7 +287,7 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.MSG_COULDNT_PAY_TAXES, "&6[Towny] &b%s couldn't pay taxes%s");
 		configStr.put(TownySettings.Str.MSG_BUY_RESIDENT_PLOT, "&6[Towny] &b%s bought %s's plot!");
 		configStr.put(TownySettings.Str.MSG_PLOT_FOR_SALE, "&6[Towny] &b%s put the plot (%s) up for sale!");
-		configStr.put(TownySettings.Str.MSG_MAYOR_ABADON, "&6[Towny] &bYou would abandon your people? Choose another mayor with '/t set mayor' if your sure.");
+		configStr.put(TownySettings.Str.MSG_MAYOR_ABANDON, "&6[Towny] &bYou would abandon your people? Choose another mayor with '/t set mayor' if your sure.");
 		configStr.put(TownySettings.Str.LINE_NOT_PERM_TO_NEW_TOWN, "&6[Towny] &bOnly admins are allowed to create towns.");
 		configStr.put(TownySettings.Str.LINE_NOT_PERM_TO_NEW_NATION, "&6[Towny] &bOnly admins are allowed to create nations.");
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
@@ -295,7 +297,6 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
 		configInt.put(TownySettings.Int.DEFAULT_MAX_TOWN_BLOCKS, 64);
-		configInt.put(TownySettings.Int.PRICE_NATION_NEUTRALITY, 0);
 		configInt.put(TownySettings.Int.WARTIME_WARNING_DELAY, 30); // 30 seconds 
 		configInt.put(TownySettings.Int.WARTIME_TOWN_BLOCK_HP, 60); // 1 minute
 		configInt.put(TownySettings.Int.WARTIME_HOME_BLOCK_HP, 120); // 2 minutes
@@ -325,6 +326,7 @@ public class TownySettings {
 		configDoub.put(TownySettings.Doub.WARTIME_TOWN_BLOCK_LOSS_PRICE, 100D);
 		configDoub.put(TownySettings.Doub.PRICE_TOWN_UPKEEP, 10D);
 		configDoub.put(TownySettings.Doub.PRICE_NATION_UPKEEP, 100D);
+		configDoub.put(TownySettings.Doub.PRICE_NATION_NEUTRALITY, 0D);
 		// Boolean
 		configBool.put(TownySettings.Bool.FIRST_RUN, true);
 		configBool.put(TownySettings.Bool.FRIENDLY_FIRE, false);
@@ -377,6 +379,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_ITEMUSE, true);
 		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_SWITCH, true);
 		configBool.put(TownySettings.Bool.LOGGING, true);
+		configBool.put(TownySettings.Bool.USING_QUESTIONER, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -938,7 +941,7 @@ public class TownySettings {
 	}
 	
 	public static String[] getMayorAbondonMsg() {
-		return parseString(getString(TownySettings.Str.MSG_MAYOR_ABADON));
+		return parseString(getString(TownySettings.Str.MSG_MAYOR_ABANDON));
 	}
 	
 	public static String getNotPermToNewTownLine() {
@@ -957,8 +960,8 @@ public class TownySettings {
 		return getInt(TownySettings.Int.TOWN_LIMIT);
 	}
 	
-	public static int getNationNeutralityCost() {
-		return getInt(TownySettings.Int.PRICE_NATION_NEUTRALITY);
+	public static double getNationNeutralityCost() {
+		return getDouble(TownySettings.Doub.PRICE_NATION_NEUTRALITY);
 	}
 	
 	public static boolean isAllowingOutposts() {
@@ -1190,5 +1193,9 @@ public class TownySettings {
 
 	public static boolean isLogging() {
 		return getBoolean(TownySettings.Bool.LOGGING);
+	}
+
+	public static boolean isUsingQuestioner() {
+		return getBoolean(TownySettings.Bool.USING_QUESTIONER);
 	}
 }

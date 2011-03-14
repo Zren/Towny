@@ -15,6 +15,8 @@ Secondary:
 	Replace getDataSource() with a manager class to allow multiple save formats at once.
 	Make the formatting/wording for [nation] .. [nation] etc, better.
 	Treat underscores as spaces during formatting.
+	Chat:
+		Town/nation name
 
 Cool Concepts:
 	In the wild, users who've registered less than X time are exempt to permissions.
@@ -29,6 +31,8 @@ Bugs:
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-46-resident-town-nation-hierarchy-grid-based-protection.3358/page-22#post-109451
 	AG_Elias: I am having an issue with Towny. It seems to not pass events on to Craftbook if the event occurs in a town.
 
+	Placing halfsteps on other halfsteps of a diffent type will place the step regardless of canceling the event. Placing slabs of the same type (not smooth type) will cancel the event, but turn the bottom to smooth slab. When placing indirectly (block on top), the second effect happens (changing to smooth), but the first effect does not happen.
+		http://www.youtube.com/watch?v=WPoozI4HJWE
 
 
 
