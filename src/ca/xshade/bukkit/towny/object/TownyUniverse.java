@@ -9,6 +9,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
+import javax.naming.InvalidNameException;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -190,31 +192,68 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void newResident(String name) throws AlreadyRegisteredException, NotRegisteredException {
-		if (residents.containsKey(name.toLowerCase()))
-			throw new AlreadyRegisteredException("The resident " + name + " is already in use.");
-
-		residents.put(name.toLowerCase(), new Resident(name));
+		String filteredName;
+		try {
+			filteredName = checkAndFilterName(name);
+		} catch (InvalidNameException e) {
+			throw new NotRegisteredException(e.getMessage());
+		}
+		
+		if (residents.containsKey(filteredName.toLowerCase()))
+			throw new AlreadyRegisteredException("A resident with the name " + filteredName + " is already in use.");
+		
+		residents.put(filteredName.toLowerCase(), new Resident(filteredName));
 	}
 
 	public void newTown(String name) throws AlreadyRegisteredException, NotRegisteredException {
-		if (towns.containsKey(name.toLowerCase()))
-			throw new AlreadyRegisteredException("The town " + name + " is already in use.");
-
-		towns.put(name.toLowerCase(), new Town(name));
+		String filteredName;
+		try {
+			filteredName = checkAndFilterName(name);
+		} catch (InvalidNameException e) {
+			throw new NotRegisteredException(e.getMessage());
+		}
+		
+		if (towns.containsKey(filteredName.toLowerCase()))
+			throw new AlreadyRegisteredException("The town " + filteredName + " is already in use.");
+		
+		towns.put(filteredName.toLowerCase(), new Town(filteredName));
 	}
 
 	public void newNation(String name) throws AlreadyRegisteredException, NotRegisteredException {
-		if (nations.containsKey(name.toLowerCase()))
-			throw new AlreadyRegisteredException("The nation " + name + " is already in use.");
-
-		nations.put(name.toLowerCase(), new Nation(name));
+		String filteredName;
+		try {
+			filteredName = checkAndFilterName(name);
+		} catch (InvalidNameException e) {
+			throw new NotRegisteredException(e.getMessage());
+		}
+		
+		if (nations.containsKey(filteredName.toLowerCase()))
+			throw new AlreadyRegisteredException("The nation " + filteredName + " is already in use.");
+		
+		nations.put(filteredName.toLowerCase(), new Nation(filteredName));
 	}
 
-	public void newWorld(String name) throws AlreadyRegisteredException {
-		if (worlds.containsKey(name.toLowerCase()))
-			throw new AlreadyRegisteredException("The world " + name + " is already in use.");
-
-		worlds.put(name.toLowerCase(), new TownyWorld(name));
+	public void newWorld(String name) throws AlreadyRegisteredException, NotRegisteredException {
+		String filteredName;
+		try {
+			filteredName = checkAndFilterName(name);
+		} catch (InvalidNameException e) {
+			throw new NotRegisteredException(e.getMessage());
+		}
+		
+		if (worlds.containsKey(filteredName.toLowerCase()))
+			throw new AlreadyRegisteredException("The world " + filteredName + " is already in use.");
+		
+		worlds.put(filteredName.toLowerCase(), new TownyWorld(filteredName));
+	}
+	
+	public String checkAndFilterName(String name) throws InvalidNameException {
+		String out = name.replaceAll("/", "_").replaceAll(" ", "_");
+		
+		if (!TownySettings.isValidName(out))
+			throw new InvalidNameException(out + " is an invalid name.");
+		
+		return out;
 	}
 
 	public boolean hasResident(String name) {
@@ -270,7 +309,7 @@ public class TownyUniverse extends TownyObject {
 	public Resident getResident(String name) throws NotRegisteredException {
 		Resident resident = residents.get(name.toLowerCase());
 		if (resident == null)
-			throw new NotRegisteredException();
+			throw new NotRegisteredException(name + " is not registered.");
 		return resident;
 	}
 
@@ -487,14 +526,14 @@ public class TownyUniverse extends TownyObject {
 	public Town getTown(String name) throws NotRegisteredException {
 		Town town = towns.get(name.toLowerCase());
 		if (town == null)
-			throw new NotRegisteredException();
+			throw new NotRegisteredException(name + " is not registered.");
 		return town;
 	}
 
 	public Nation getNation(String name) throws NotRegisteredException {
 		Nation nation = nations.get(name.toLowerCase());
 		if (nation == null)
-			throw new NotRegisteredException();
+			throw new NotRegisteredException(name + " is not registered.");
 		return nation;
 	}
 	
@@ -545,6 +584,8 @@ public class TownyUniverse extends TownyObject {
 				newWorld(name);
 			} catch (AlreadyRegisteredException e) {
 				throw new NotRegisteredException("Not registered, but already registered when trying to register.");
+			} catch (NotRegisteredException e) {
+				e.printStackTrace();
 			}
 			world = worlds.get(name.toLowerCase());
 			if (world == null)
@@ -730,7 +771,13 @@ public class TownyUniverse extends TownyObject {
 		this.plugin = plugin;
 	}
 
+	public void removeWorld(TownyWorld world) throws UnsupportedOperationException {
+		getDataSource().deleteWorld(world);
+		throw new UnsupportedOperationException();
+	}
+	
 	public void removeNation(Nation nation) {
+		getDataSource().deleteNation(nation);
 		List<Town> toSave = new ArrayList<Town>(nation.getTowns());
 		nation.clear();
 		try {
@@ -745,6 +792,7 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void removeTown(Town town) {
+		getDataSource().deleteTown(town);
 		List<Resident> toSave = new ArrayList<Resident>(town.getResidents());
 		try {
 			town.clear();
@@ -763,6 +811,7 @@ public class TownyUniverse extends TownyObject {
 	}
 
 	public void removeResident(Resident resident) {
+		getDataSource().deleteResident(resident);
 		try {
 			resident.clear();
 		} catch (EmptyTownException e) {

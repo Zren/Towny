@@ -3,7 +3,6 @@ package ca.xshade.bukkit.towny;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -18,11 +17,12 @@ import ca.xshade.util.JavaUtil;
 public class MobRemovalTimerTask extends TownyTimerTask {
 	private Server server;
 	@SuppressWarnings("rawtypes")
-	private List<Class> mobsToRemove = new ArrayList<Class>();
+	public static List<Class> mobsToRemove = new ArrayList<Class>();
 	
 	public MobRemovalTimerTask(TownyUniverse universe, Server server) {
 		super(universe);
 		this.server = server;
+		mobsToRemove.clear();
 		for (String mob : TownySettings.getMobRemovalEntities())
 			try {
 				@SuppressWarnings("rawtypes")
@@ -39,7 +39,7 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public boolean isRemovingEntity(LivingEntity livingEntity) {
+	public static boolean isRemovingEntity(LivingEntity livingEntity) {
 		for (Class c : mobsToRemove)
 			if (c.isInstance(livingEntity))
 				return true;
@@ -54,6 +54,7 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 		int numRemoved = 0;
 		int livingEntities = 0;
 		
+		/* OLD METHOD
 		for (World world : server.getWorlds()) {
 			List<LivingEntity> worldLivingEntities = new ArrayList<LivingEntity>(world.getLivingEntities());
 			livingEntities += worldLivingEntities.size();
@@ -75,5 +76,31 @@ public class MobRemovalTimerTask extends TownyTimerTask {
 			//universe.getPlugin().sendDebugMsg(world.getName() + ": " + StringMgmt.join(worldLivingEntities));
 		}
 		//universe.getPlugin().sendDebugMsg("MobRemoval (Removed: "+numRemoved+") (Total Living: "+livingEntities+")");
+		*/
+		
+		
+		for (World world : server.getWorlds()) {
+			List<LivingEntity> livingEntitiesToRemove = new ArrayList<LivingEntity>();
+			livingEntities += world.getLivingEntities().size();
+			for (LivingEntity livingEntity : world.getLivingEntities())
+				if (isRemovingEntity(livingEntity)) {
+					Coord coord = Coord.parseCoord(livingEntity.getLocation());
+					try {
+						TownyWorld townyWorld = universe.getWorld(world.getName());
+						TownBlock townBlock = townyWorld.getTownBlock(coord);
+						if (!townBlock.getTown().hasMobs())
+							livingEntitiesToRemove.add(livingEntity);
+					} catch (TownyException x) {
+					}
+				}
+			for (LivingEntity livingEntity : livingEntitiesToRemove) {
+				universe.getPlugin().sendDebugMsg("MobRemoval Removed: " + livingEntity.toString());
+				//livingEntity.teleportTo(new Location(world, livingEntity.getLocation().getX(), -50, livingEntity.getLocation().getZ()));
+				livingEntity.remove();
+				numRemoved++;
+			}
+			//universe.getPlugin().sendDebugMsg(world.getName() + ": " + StringMgmt.join(worldLivingEntities));
+		}
+		
 	}
 }

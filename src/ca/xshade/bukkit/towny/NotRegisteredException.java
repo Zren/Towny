@@ -1,5 +1,6 @@
 package ca.xshade.bukkit.towny;
 
+
 public class NotRegisteredException extends TownyException {
 	private static final long serialVersionUID = 175945283391669005L;
 

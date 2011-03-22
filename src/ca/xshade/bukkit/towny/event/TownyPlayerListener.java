@@ -197,7 +197,6 @@ public class TownyPlayerListener extends PlayerListener {
 		try {
 			TownyWorld fromWorld = plugin.getTownyUniverse().getWorld(from.getWorld().getName());
 			WorldCoord fromCoord = new WorldCoord(fromWorld, Coord.parseCoord(from));
-			//WorldCoord toCoord = new WorldCoord((from.getWorld().equals(to.getWorld()) ? fromWorld : plugin.getTownyUniverse().getWorld(to.getWorld().getName())), Coord.parseCoord(to));
 			TownyWorld toWorld = plugin.getTownyUniverse().getWorld(to.getWorld().getName());
 			WorldCoord toCoord = new WorldCoord(toWorld, Coord.parseCoord(to));
 			if (!fromCoord.equals(toCoord))
@@ -350,9 +349,9 @@ public class TownyPlayerListener extends PlayerListener {
 				parseTownyAdminCommand(player, newSplit);
 		else if (split.length > 1) {
 			if (TownySettings.getTownChatCommands().contains(split[0]))
-				parseTownChatCommand(player, event.getMessage().substring(4));
+				parseTownChatCommand(player, StringMgmt.join(newSplit, " "));
 			else if (TownySettings.getNationChatCommands().contains(split[0]))
-				parseNationChatCommand(player, event.getMessage().substring(4));
+				parseNationChatCommand(player, StringMgmt.join(newSplit, " "));
 			else
 				return;
 		} else
@@ -809,7 +808,6 @@ public class TownyPlayerListener extends PlayerListener {
 		if (!TownySettings.isTownCreationAdminOnly())
 			player.sendMessage(ChatTools.formatCommand("", "/town", "new [town]", "New town with you as mayor."));
 		player.sendMessage(ChatTools.formatCommand("Admin", "/town", "new [town] [mayor]", "New town with target mayor."));
-		player.sendMessage(ChatTools.formatCommand("Admin", "/town", "new [town] [mayor]", "New town with target mayor."));
 		player.sendMessage(ChatTools.formatCommand("Resident", "/town", "deposit [$]", ""));
 		player.sendMessage(ChatTools.formatCommand("Mayor", "/town", "mayor ?", "List commands for mayors."));
 		player.sendMessage(ChatTools.formatCommand("Admin", "/town", "delete [town]", ""));
@@ -835,8 +833,7 @@ public class TownyPlayerListener extends PlayerListener {
 			try {
 				Resident resident = plugin.getTownyUniverse().getResident(player.getName());
 				Town town = resident.getTown();
-				plugin.getTownyUniverse().sendMessage(player,
-						plugin.getTownyUniverse().getStatus(town));
+				plugin.getTownyUniverse().sendMessage(player, plugin.getTownyUniverse().getStatus(town));
 			} catch (NotRegisteredException x) {
 				plugin.sendErrorMsg(player, "You don't belong to a town.");
 			}
@@ -915,11 +912,11 @@ public class TownyPlayerListener extends PlayerListener {
 			else if (split[0].equalsIgnoreCase("delete"))
 				townDelete(player, newSplit);
 			else if (split[0].equalsIgnoreCase("add"))
-				townAdd(player, newSplit, true);
+				townAdd(player, null, newSplit, true);
 			else if (split[0].equalsIgnoreCase("kick"))
 				townKick(player, newSplit, true);
 			else if (split[0].equalsIgnoreCase("add+"))
-				townAdd(player, newSplit, false);
+				townAdd(player, null, newSplit, false);
 			else if (split[0].equalsIgnoreCase("kick+"))
 				townKick(player, newSplit, false);
 			else if (split[0].equalsIgnoreCase("claim"))
@@ -1042,7 +1039,8 @@ public class TownyPlayerListener extends PlayerListener {
 			if (TownySettings.hasTownLimit() && universe.getTowns().size() >= TownySettings.getTownLimit())
 				throw new TownyException("The universe cannot hold any more towns.");
 			
-			
+			if (!TownySettings.isValidName(name))
+				throw new TownyException(name + " is an invalid name.");
 			
 			Resident resident = universe.getResident(mayorName);
 			if (resident.hasTown())
@@ -1057,7 +1055,7 @@ public class TownyPlayerListener extends PlayerListener {
 				throw new TownyException("This area is too close to another town.");
 
 			if (TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getNewTownPrice()))
-				throw new TownyException("You can't afford to settle a new town here.");
+				throw new TownyException((resident.getName().equals(player.getName()) ? "You" : resident.getName()) + " can't afford to settle a new town here.");
 
 			newTown(universe, world, name, resident, key, player.getLocation());			
 			universe.sendGlobalMessage(TownySettings.getNewTownMsg(player.getName(), name));
@@ -1138,15 +1136,19 @@ public class TownyPlayerListener extends PlayerListener {
 	 * [resident] .. [resident]
 	 * 
 	 * @param player
+	 * @param town to add to if not null
 	 * @param names
 	 */
 
-	public void townAdd(Player player, String[] names, boolean matchOnline) {
+	public void townAdd(Player player, Town specifiedTown, String[] names, boolean matchOnline) {
 		Resident resident;
 		Town town;
 		try {
 			resident = plugin.getTownyUniverse().getResident(player.getName());
-			town = resident.getTown();
+			if (specifiedTown == null)
+				town = resident.getTown();
+			else
+				town = specifiedTown;
 			if (!resident.isMayor())
 				if (!town.hasAssistant(resident))
 					throw new TownyException("You are not the mayor or an assistant.");
@@ -1430,7 +1432,7 @@ public class TownyPlayerListener extends PlayerListener {
 				if (plugin.getTownyUniverse().isWarTime())
 					throw new TownyException("You cannot do this when the world is at war.");
 				
-				if (!plugin.isTownyAdmin(player) && !plugin.hasPermission(player, "towny.town.claim"))
+				if (!plugin.isTownyAdmin(player) && TownySettings.isUsingPermissions() && !plugin.hasPermission(player, "towny.town.claim"))
 					throw new TownyException("You do not have permission to expand your town.");
 				
 				resident = plugin.getTownyUniverse().getResident(player.getName());
@@ -1929,7 +1931,7 @@ public class TownyPlayerListener extends PlayerListener {
 				}
 			String perms = townBlockOwner.getPermissions().toString();
 			plugin.sendMsg(player, "Successfully changed permissions to " + perms + ".");
-			
+			plugin.updateCache();
 		}
 	}
 
@@ -2159,6 +2161,9 @@ public class TownyPlayerListener extends PlayerListener {
 			Town town = universe.getTown(capitalName);
 			if (town.hasNation())
 				throw new TownyException("Target town already belongs to a nation.");
+			
+			if (!TownySettings.isValidName(name))
+				throw new TownyException(name + " is an invalid name.");
 			
 			if (TownySettings.isUsingIConomy() && !town.pay(TownySettings.getNewNationPrice()))
 				throw new TownyException("The town can't afford to start a new nation.");
@@ -2890,6 +2895,8 @@ public class TownyPlayerListener extends PlayerListener {
 			showTownyAdminHelp(player);
 		else if (split[0].equalsIgnoreCase("set"))
 			adminSet(player, StringMgmt.remFirstArg(split));
+		else if (split[0].equalsIgnoreCase("town"))
+			parseAdminTownCommand(player, StringMgmt.remFirstArg(split));
 		else if (split[0].equalsIgnoreCase("war"))
 			parseWarCommand(player, StringMgmt.remFirstArg(split));
 		else if (split[0].equalsIgnoreCase("givebonus"))
@@ -2954,6 +2961,27 @@ public class TownyPlayerListener extends PlayerListener {
 				+ Colors.Green + "Time: " + Colors.LightGreen + plugin.getTownyUniverse().getFormatter().getTime());
 		player.sendMessage(Colors.Yellow + MemMgmt.getMemoryBar(50, run));
 
+	}
+	
+	public void parseAdminTownCommand(Player player, String[] split) {
+		//TODO Make this use the actual town command procedually.
+		
+		if (split.length == 0 || split[0].equalsIgnoreCase("?")) {
+			player.sendMessage(ChatTools.formatTitle("/townyadmin town"));
+			player.sendMessage(ChatTools.formatCommand("Admin", "/ta town", "[town]", ""));
+			player.sendMessage(ChatTools.formatCommand("Admin", "/ta town", "[town] add [] .. []", ""));
+		} else
+			try {
+				Town town = plugin.getTownyUniverse().getTown(split[0]);
+				if (split.length == 1)
+					plugin.getTownyUniverse().sendMessage(player, plugin.getTownyUniverse().getStatus(town));
+				else if (split[1].equalsIgnoreCase("add"))
+					townAdd(player, town, StringMgmt.remArgs(split, 2), true);
+				else if (split[1].equalsIgnoreCase("add+"))
+					townAdd(player, town, StringMgmt.remArgs(split, 2), false);
+			} catch (NotRegisteredException e) {
+				plugin.sendErrorMsg(player, e.getError());
+			}
 	}
 
 	public double getTotalEconomy() {
@@ -3056,7 +3084,7 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 	
 	public void reloadTowny(Player player) {
-		plugin.onLoad();
+		plugin.load();
 		plugin.sendMsg(player, "Towny's settings was reloaded.");
 	}
 	

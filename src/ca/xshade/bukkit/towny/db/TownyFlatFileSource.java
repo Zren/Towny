@@ -81,6 +81,24 @@ public class TownyFlatFileSource extends TownyDataSource {
 				throw new IOException("Unsupported flatfile backup type (" + backupType + ")");
 		}
 	}
+	
+	public String getResidentFilename(Resident resident) {
+		return rootFolder + dataFolder + "/residents/" + resident.getName() + ".txt";
+	}
+	
+	public String getTownFilename(Town town) {
+		return rootFolder + dataFolder + "/towns/" + town.getName() + ".txt";
+	}
+	
+	public String getNationFilename(Nation nation) {
+		return rootFolder + dataFolder + "/nations/" + nation.getName() + ".txt";
+	}
+	
+	public String getWorldFilename(TownyWorld world) {
+		return rootFolder + dataFolder + "/worlds/" + world.getName() + ".txt";
+	}
+	
+	
 
 	/*
 	 * Load keys
@@ -206,7 +224,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	@Override
 	public boolean loadResident(Resident resident) {
 		String line;
-		String path = rootFolder + dataFolder + "/residents/" + resident.getName() + ".txt";
+		String path = getResidentFilename(resident);
 		File fileResident = new File(path);
 		if (fileResident.exists() && fileResident.isFile()) {
 			try {
@@ -257,7 +275,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	public boolean loadTown(Town town) {
 		String line;
 		String[] tokens;
-		String path = rootFolder + dataFolder + "/towns/" + town.getName() + ".txt";
+		String path = getTownFilename(town);
 		File fileResident = new File(path);
 		if (fileResident.exists() && fileResident.isFile()) {
 			try {
@@ -405,7 +423,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	public boolean loadNation(Nation nation) {
 		String line = "";
 		String[] tokens;
-		String path = rootFolder + dataFolder + "/nations/" + nation.getName() + ".txt";
+		String path = getNationFilename(nation);
 		File fileResident = new File(path);
 		if (fileResident.exists() && fileResident.isFile()) {
 			try {
@@ -485,12 +503,12 @@ public class TownyFlatFileSource extends TownyDataSource {
 	public boolean loadWorld(TownyWorld world) {
 		String line = "";
 		String[] tokens;
-		String path = rootFolder + dataFolder + "/worlds/" + world.getName() + ".txt";
+		String path = getWorldFilename(world);
 		File fileWorld = new File(path);
 		if (fileWorld.exists() && fileWorld.isFile()) {
 			try {
 				KeyValueFile kvFile = new KeyValueFile(path);
-
+				
 				line = kvFile.get("towns");
 				if (line != null) {
 					tokens = line.split(",");
@@ -710,7 +728,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	@Override
 	public boolean saveResident(Resident resident) {
 		try {
-			String path = rootFolder + dataFolder + "/residents/" + resident.getName() + ".txt";
+			String path = getResidentFilename(resident);
 			BufferedWriter fout = new BufferedWriter(new FileWriter(path));
 			// Last Online
 			fout.write("lastOnline=" + Long.toString(resident.getLastOnline()) + newLine);
@@ -738,7 +756,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	@Override
 	public boolean saveTown(Town town) {
 		BufferedWriter fout;
-		String path = rootFolder + dataFolder + "/towns/" + town.getName() + ".txt";
+		String path = getTownFilename(town);
 		try {
 			fout = new BufferedWriter(new FileWriter(path));
 		} catch (IOException e) {
@@ -747,10 +765,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 		}
 		try {
 			// Residents
-			fout.write("residents=");
-			for (Resident resident : town.getResidents())
-				fout.write(resident.getName() + ",");
-			fout.write(newLine);
+			fout.write("residents=" + StringMgmt.join(town.getResidents(), ",") + newLine);
 			// Mayor
 			if (town.hasMayor())
 				fout.write("mayor=" + town.getMayor().getName() + newLine);
@@ -810,7 +825,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	@Override
 	public boolean saveNation(Nation nation) {
 		try {
-			String path = rootFolder + dataFolder + "/nations/" + nation.getName() + ".txt";
+			String path = getNationFilename(nation);
 			BufferedWriter fout = new BufferedWriter(new FileWriter(path));
 			fout.write("towns=");
 			for (Town town : nation.getTowns())
@@ -847,7 +862,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	@Override
 	public boolean saveWorld(TownyWorld world) {
 		try {
-			String path = rootFolder + dataFolder + "/worlds/" + world.getName() + ".txt";
+			String path = getWorldFilename(world);
 			BufferedWriter fout = new BufferedWriter(new FileWriter(path));
 			
 			// Towns
@@ -978,5 +993,33 @@ public class TownyFlatFileSource extends TownyDataSource {
 		}
 
 		return out;
+	}
+
+	@Override
+	public void deleteResident(Resident resident) {
+		File file = new File(getResidentFilename(resident));
+		if (file.exists())
+			file.delete();
+	}
+
+	@Override
+	public void deleteTown(Town town) {
+		File file = new File(getTownFilename(town));
+		if (file.exists())
+			file.delete();
+	}
+
+	@Override
+	public void deleteNation(Nation nation) {
+		File file = new File(getNationFilename(nation));
+		if (file.exists())
+			file.delete();
+	}
+
+	@Override
+	public void deleteWorld(TownyWorld world) {
+		File file = new File(getWorldFilename(world));
+		if (file.exists())
+			file.delete();
 	}
 }

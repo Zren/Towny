@@ -219,27 +219,27 @@ public class TownyFormatter {
 		else if (obj instanceof Nation)
 			return getFormattedNationName((Nation) obj);
 		System.out.println("just name: " + obj.getName());
-		return obj.getName();
+		return obj.getName().replaceAll("_", " ");
 	}
 	
 	public String getFormattedResidentName(Resident resident) {
 		if (resident == null)
 			return "null";
 		if (resident.isKing())
-			return TownySettings.getKingPrefix(resident) + resident.getName() + TownySettings.getKingPostfix(resident);
+			return TownySettings.getKingPrefix(resident) + resident.getName().replaceAll("_", " ") + TownySettings.getKingPostfix(resident);
 		else if (resident.isMayor())
-			return TownySettings.getMayorPrefix(resident) + resident.getName() + TownySettings.getMayorPostfix(resident);
-		return resident.getName();
+			return TownySettings.getMayorPrefix(resident) + resident.getName().replaceAll("_", " ") + TownySettings.getMayorPostfix(resident);
+		return resident.getName().replaceAll("_", " ");
 	}
 
 	public String getFormattedTownName(Town town) {
 		if (town.isCapital())
-			return TownySettings.getCapitalPrefix(town) + town.getName() + TownySettings.getCapitalPostfix(town);
-		return TownySettings.getTownPrefix(town) + town.getName() + TownySettings.getTownPostfix(town);
+			return TownySettings.getCapitalPrefix(town) + town.getName().replaceAll("_", " ") + TownySettings.getCapitalPostfix(town);
+		return TownySettings.getTownPrefix(town) + town.getName().replaceAll("_", " ") + TownySettings.getTownPostfix(town);
 	}
 
 	public String getFormattedNationName(Nation nation) {
-		return TownySettings.getNationPrefix() + nation.getName() + TownySettings.getNationPostfix();
+		return TownySettings.getNationPrefix() + nation.getName().replaceAll("_", " ") + TownySettings.getNationPostfix();
 	}
 
 	public String[] getFormattedNames(Resident[] residents) {

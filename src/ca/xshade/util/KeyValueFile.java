@@ -11,10 +11,17 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-//TODO: Clean this class up.
-
-//Ripped Niji's properties file to not use the Properties class.
-
+/**
+ * This class is used to emulate what Java's Properties file does, however it
+ * will sort the keys so the output does not randomly sort itself based on it's
+ * mapping. It will also save a temp file to write to before move/overwriting
+ * the old data. 
+ * 
+ * Thanks to Nijikokun who wrote the majority of this class other than File I/O.
+ * 
+ * @author Chris H (Shade) & Nijikokun
+ * @version 1.1
+ */
 public class KeyValueFile {
 	private static final String newLine = System.getProperty("line.separator");
 	private Map<String, String> keys = new HashMap<String, String>();
@@ -32,14 +39,24 @@ public class KeyValueFile {
 	}
 
 	public void load() {
-		String line;
+		String line, lineBeforeComment;
 		String[] tokens;
+		
 		try {
 			BufferedReader fin = new BufferedReader(new FileReader(fileName));
-			while ((line = fin.readLine()) != null) {
-				tokens = line.split("=");
-				if (tokens.length >= 2)
-					keys.put(tokens[0], tokens[1]);
+			try {
+				while ((line = fin.readLine()) != null) {
+					tokens = line.split("#");
+					if (tokens.length > 0) {
+						lineBeforeComment = tokens[0];
+						tokens = lineBeforeComment.split("=");
+						if (tokens.length >= 2)
+							keys.put(tokens[0], tokens[1]);
+					}
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 			fin.close();
 		} catch (IOException e) {
@@ -51,8 +68,12 @@ public class KeyValueFile {
 		SortedMap<String,String> sortedKeys = new TreeMap<String,String>(keys);
 		try {
 			BufferedWriter output = new BufferedWriter(new FileWriter(fileName));
-			for (String key : sortedKeys.keySet())
-				output.write(key.toLowerCase() + "=" + sortedKeys.get(key) + newLine);
+			try {
+				for (String key : sortedKeys.keySet())
+					output.write(key.toLowerCase() + "=" + sortedKeys.get(key) + newLine);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			output.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -61,6 +82,11 @@ public class KeyValueFile {
 	
 	public void setMap(Map<String, String> keys) {
 		this.keys = keys;
+		save();
+	}
+	
+	public void putAll(Map<String, String> keys) {
+		this.keys.putAll(keys);
 		save();
 	}
 	

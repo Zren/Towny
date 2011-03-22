@@ -6,7 +6,7 @@ import java.util.List;
  * Useful functions related to strings, or arrays of them.
  * 
  * @author Shade (Chris H)
- * @version 1.0
+ * @version 1.3
  */
 
 public class StringMgmt {
@@ -39,12 +39,38 @@ public class StringMgmt {
 	}
 	
 	public static String[] remFirstArg(String[] arr) {
+		return remArgs(arr, 1);
+	}
+	
+	public static String[] remArgs(String[] arr, int startFromIndex) {
 		if (arr.length == 0)
 			return arr;
+		else if (arr.length < startFromIndex)
+			return new String[0];
 		else {
-			String[] newSplit = new String[arr.length - 1];
-			System.arraycopy(arr, 1, newSplit, 0, arr.length - 1);
+			String[] newSplit = new String[arr.length - startFromIndex];
+			System.arraycopy(arr, startFromIndex, newSplit, 0, arr.length - startFromIndex);
 			return newSplit;
 		}
+	}
+	
+	/**
+	 * Shortens the string to fit in the specified size with an elipse "..." at the end.
+	 * @return the shortened string
+	 */
+	public static String maxLength(String str, int length) {
+		if (str.length() < length)
+			return str;
+		else if (length > 3)
+			return str.substring(0, length-3) + "...";
+		else
+			throw new UnsupportedOperationException("Minimum length of 3 characters.");
+	}
+	
+	public static boolean containsIgnoreCase(List<String> arr, String str) {
+		for (String s : arr)
+			if (s.equalsIgnoreCase(str))
+				return true;
+		return false;
 	}
 }

@@ -187,17 +187,17 @@ public class TownyPermission {
 	}
 	
 	public void loadDefault(TownBlockOwner owner) {
-		residentBuild = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.BUILD);
-		residentDestroy = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.DESTROY);
-		residentSwitch = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.ITEM_USE);
-		residentItemUse = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.SWITCH);
+		residentBuild = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.BUILD);
+		residentDestroy = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.DESTROY);
+		residentSwitch = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.ITEM_USE);
+		residentItemUse = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.SWITCH);
 		allyBuild = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.BUILD);
 		allyDestroy = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.DESTROY);
 		allySwitch = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.ITEM_USE);
 		allyItemUse = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.SWITCH);
-		outsiderBuild = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.BUILD);
-		outsiderDestroy = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.DESTROY);
-		outsiderItemUse = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.ITEM_USE);
-		outsiderSwitch = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.SWITCH);
+		outsiderBuild = TownySettings.getDefaultPermission(owner, PermLevel.OUTSIDER, ActionType.BUILD);
+		outsiderDestroy = TownySettings.getDefaultPermission(owner, PermLevel.OUTSIDER, ActionType.DESTROY);
+		outsiderItemUse = TownySettings.getDefaultPermission(owner, PermLevel.OUTSIDER, ActionType.ITEM_USE);
+		outsiderSwitch = TownySettings.getDefaultPermission(owner, PermLevel.OUTSIDER, ActionType.SWITCH);
 	}
 }

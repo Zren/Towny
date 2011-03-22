@@ -198,4 +198,26 @@ v0.52:
 	Added support for Questioner (A simple manager for asking questions).
 		'/town add' will go through it to ask the player instead of immediately adding the player if installed.
 	Possible bugfix?
-	 
+v0.53:
+	Changed function name that is now used in Bukkit.
+v0.54:
+	"_" is now skinned as spaces with formatted names.
+	Fix for world data persistence. World names with / or spaces are now filtered to use _ instead.
+	Set perms will clear the cache now.
+	Added /ta town [town] ... to be used for admin use. /ta town [town] add is the only command for now.
+	Option to not delete and start log from new when the server starts up.
+	Plausible bug with resident plot permissions.
+	Multiworld persistent.
+	Default permissions for new towns etc now work as intended.
+	Permissions is now treated as every other optional plugin.
+	You can claim without being OP when Permissions isn't installed.
+	Trying a new method for mob removal.
+	Now canceling spawn events within towns instead of waiting for the removal.
+v0.55:
+	Fixed reloading the towny config.
+	Added regex check for all names. Names must be alphanumeric with the exception of underscores in place of spaces. Old names with invalid characters will be filtered appropriately.
+	World names are now filtered like the other objects in the universe, worlds with / are no longer just using the last token.
+	Reworded errors when making new towns. "You" was hardcoded, and didn't take into account admins making towns for others. To clarify, money is taken from the new mayor's bank account.
+	Added new config option save_on_load. It's defaulted to off (which is opposite to what it was before). It will no longer to a giant save on startup which assured that what's in memory = saved in file. This should speed up startup of particular large db.
+	Files are deleted when the object is deleted. It will not delete existing files, so files deleted outside of towny's regular actions will remain.
+	

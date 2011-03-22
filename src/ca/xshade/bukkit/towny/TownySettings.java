@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import ca.xshade.bukkit.towny.object.Nation;
 import ca.xshade.bukkit.towny.object.Resident;
@@ -84,13 +86,15 @@ public class TownySettings {
 		MSG_COULDNT_PAY_TAXES,
 		MSG_BUY_RESIDENT_PLOT,
 		MSG_PLOT_FOR_SALE,
-		MSG_MAYOR_ABANDON, //TODO
-		LINE_NOT_PERM_TO_NEW_TOWN, //TODO
-		LINE_NOT_PERM_TO_NEW_NATION, //TODO 
+		MSG_MAYOR_ABANDON,
+		LINE_NOT_PERM_TO_NEW_TOWN,
+		LINE_NOT_PERM_TO_NEW_NATION, 
 		UNCLAIMED_PLOT_NAME,
 		NPC_PREFIX,
-		FLATFILE_BACKUP, //TODO
-		
+		FLATFILE_BACKUP,
+		NAME_CHECK_REGEX,
+		NAME_FILTER_REGEX,
+		NAME_REMOVE_REGEX
 	};
 	// Integer
 	public enum Int {
@@ -108,8 +112,8 @@ public class TownySettings {
 		MOB_REMOVAL_SPEED,
 		HEALTH_REGEN_SPEED,
 		TOWN_LIMIT,
-		MIN_DISTANCE_FROM_TOWN_HOMEBLOCK, //TODO
-		MAX_PLOTS_PER_RESIDENT //TODO
+		MIN_DISTANCE_FROM_TOWN_HOMEBLOCK,
+		MAX_PLOTS_PER_RESIDENT
 	};
 	// Long
 	public enum KeyLong {
@@ -153,13 +157,13 @@ public class TownySettings {
 		ALLOW_OUTPOSTS,
 		ALLOW_TOWN_SPAWN_TRAVEL,
 		DEV_MODE,
-		WARTIME_REMOVE_ON_MONARCH_DEATH, //TODO: Add to Wiki
-		ALLOW_TOWN_SPAWN, //TODO
-		PVE_IN_NON_PVP_TOWNS, //TODO
-		FORCE_PVP_ON, //TODO
-		TOWN_RESPAWN, //TODO
-		DAILY_TAXES, //TODO
-		DAILY_BACKUPS, //TODO
+		WARTIME_REMOVE_ON_MONARCH_DEATH,
+		ALLOW_TOWN_SPAWN,
+		PVE_IN_NON_PVP_TOWNS,
+		FORCE_PVP_ON,
+		TOWN_RESPAWN,
+		DAILY_TAXES,
+		DAILY_BACKUPS,
 		DEFAULT_RESIDENT_PERM_FRIEND_BUILD,
 		DEFAULT_RESIDENT_PERM_FRIEND_DESTROY,
 		DEFAULT_RESIDENT_PERM_FRIEND_SWITCH,
@@ -185,7 +189,11 @@ public class TownySettings {
 		DEFAULT_TOWN_PERM_OUTSIDER_SWITCH,
 		DEFAULT_TOWN_PERM_OUTSIDER_ITEMUSE,
 		LOGGING,
-		USING_QUESTIONER
+		USING_QUESTIONER,
+		RESET_LOG_ON_BOOT,
+		USING_PERMISSIONS,
+		//TODO
+		SAVE_ON_LOAD
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -205,7 +213,7 @@ public class TownySettings {
 		TOWN_BLOCK_LIMIT
 	};
 	
-	
+	private static Pattern namePattern = null;
 	
 	private static final ConcurrentHashMap<TownySettings.StrArr,List<String>> configStrArr
 		= new ConcurrentHashMap<TownySettings.StrArr,List<String>>();
@@ -293,6 +301,9 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		configStr.put(TownySettings.Str.FLATFILE_BACKUP, "zip");
+		configStr.put(TownySettings.Str.NAME_CHECK_REGEX, "^[a-zA-Z0-9]+[a-zA-Z0-9_]*$");
+		configStr.put(TownySettings.Str.NAME_FILTER_REGEX, "[ /]");
+		configStr.put(TownySettings.Str.NAME_REMOVE_REGEX, "[^a-zA-Z0-9_]");
 		// Integer
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
@@ -311,7 +322,7 @@ public class TownySettings {
 		configInt.put(TownySettings.Int.MIN_DISTANCE_FROM_TOWN_HOMEBLOCK, 0);
 		configInt.put(TownySettings.Int.MAX_PLOTS_PER_RESIDENT, 100);
 		// Long
-		configLong.put(TownySettings.KeyLong.INACTIVE_AFTER_TIME, 86400000L); // 24 Hours
+		configLong.put(TownySettings.KeyLong.INACTIVE_AFTER_TIME, 86400000L); // 1 Hour
 		configLong.put(TownySettings.KeyLong.DELETED_AFTER_TIME, 5184000000L); // Two Months
 		configLong.put(TownySettings.KeyLong.DAY_INTERVAL, 86400000L); // 24 Hours
 		//Double
@@ -380,6 +391,9 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.DEFAULT_TOWN_PERM_RESIDENT_SWITCH, true);
 		configBool.put(TownySettings.Bool.LOGGING, true);
 		configBool.put(TownySettings.Bool.USING_QUESTIONER, true);
+		configBool.put(TownySettings.Bool.RESET_LOG_ON_BOOT, true);
+		configBool.put(TownySettings.Bool.USING_PERMISSIONS, true);
+		configBool.put(TownySettings.Bool.SAVE_ON_LOAD, false);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -1197,5 +1211,32 @@ public class TownySettings {
 
 	public static boolean isUsingQuestioner() {
 		return getBoolean(TownySettings.Bool.USING_QUESTIONER);
+	}
+	
+	public static boolean isAppendingToLog() {
+		return !getBoolean(TownySettings.Bool.RESET_LOG_ON_BOOT);
+	}
+
+	public static boolean isUsingPermissions() {
+		return getBoolean(TownySettings.Bool.USING_PERMISSIONS);
+	}
+	
+	public static String filterName(String input) {
+		return input.replaceAll(getString(TownySettings.Str.NAME_FILTER_REGEX), "_").replaceAll(getString(TownySettings.Str.NAME_REMOVE_REGEX), "");
+	}
+	
+	public static boolean isValidName(String name) {
+		try {
+			if (TownySettings.namePattern == null)
+				namePattern = Pattern.compile(getString(TownySettings.Str.NAME_CHECK_REGEX));
+			return TownySettings.namePattern.matcher(name).find();
+		} catch (PatternSyntaxException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static boolean isSavingOnLoad() {
+		return getBoolean(TownySettings.Bool.SAVE_ON_LOAD);
 	}
 }

@@ -1,30 +1,39 @@
 
 TODO:
-	Log nation/town chat
-	Log town/nation messages with timestamps. On login, see if there's been any events. Make command: /town log [page] to see messages.
 	Update cache when adding/removing people
-	Re-register a player after res delete
-	Claim circle [radius] 
-	Managed to claim 5 out of the 16 selected (x1,z1) .. (x2,z2).
 	Ability to make NPC Residents profiles (not actual human entities). /townyadmin set mayor [town] npc
 	Remember outposts coordinated. Charge extra tax on them. Allow for outpost teleporting.
-	NewTown -> Min dist from claimed townblock.
+	Admins can moderate town/nation channels ingame.
+	Delay for changing between PvP and Non-PvP.
+	Require x residents to start a town.
+	Buy certain sizes of towns.
+	Mob removal by town. Ingame command.
+		Town set mobremoval on -> pay cost.
+		if not one time payment, every day = charge.
 
 Secondary:
 	Commenting
 	Replace getDataSource() with a manager class to allow multiple save formats at once.
 	Make the formatting/wording for [nation] .. [nation] etc, better.
-	Treat underscores as spaces during formatting.
 	Chat:
 		Town/nation name
+	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-52-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-27#post-132597
+	NewTown -> Min dist from claimed townblock.
+	Re-register a player after res delete.
+	Claim circle [radius].
+	Managed to claim 5 out of the 16 selected (x1,z1) .. (x2,z2).
+	On login, see if there's been any events. Make command: /town log [page] to see messages.
+	Function to cleanup non linked files in database.
 
 Cool Concepts:
 	In the wild, users who've registered less than X time are exempt to permissions.
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-73637
+	In the wild, allow people to mine underneath height of x.
 
 Probably need TODO something:
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-14#post-81114
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-44-resident-town-nation-hierarchy-grid-based-protection.3358/page-18#post-92835
+	
 
 Bugs:
 	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-34-resident-town-nation-hierarchy-grid-based-protection.3358/page-12#post-74896
@@ -33,8 +42,25 @@ Bugs:
 
 	Placing halfsteps on other halfsteps of a diffent type will place the step regardless of canceling the event. Placing slabs of the same type (not smooth type) will cancel the event, but turn the bottom to smooth slab. When placing indirectly (block on top), the second effect happens (changing to smooth), but the first effect does not happen.
 		http://www.youtube.com/watch?v=WPoozI4HJWE
+		
+	http://forums.bukkit.org/threads/sec-fun-info-towny-v0-52-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-24#post-121274
+		http://forums.bukkit.org/threads/sec-fun-info-towny-v0-52-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-27#post-130832
+		
+	Leaving town - Plot bug
+		http://forums.bukkit.org/threads/sec-fun-info-towny-v0-52-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-27#post-130470
 
+	Essentials cooldown etc.
+		http://forums.bukkit.org/threads/sec-fun-info-towny-v0-52-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-26#post-129664
 
+	Protection issues.
+		Destroy was fine, but player was able to build.
+			http://forums.bukkit.org/threads/sec-fun-info-towny-v0-52-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-26#post-129321
+			http://forums.bukkit.org/threads/sec-fun-info-towny-v0-52-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-26#post-129035
 
-
+	Town files resetting:
+		Realmz
+		http://forums.bukkit.org/threads/sec-fun-info-towny-v0-52-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-26#post-128932
+		
+		
+	Deleting a resident leaves it's pointer in Town.getResidents().
 

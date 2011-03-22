@@ -31,6 +31,7 @@ import ca.xshade.bukkit.towny.event.TownyEntityListener;
 import ca.xshade.bukkit.towny.event.TownyEntityMonitorListener;
 import ca.xshade.bukkit.towny.event.TownyPlayerListener;
 import ca.xshade.bukkit.towny.event.TownyPlayerLowListener;
+import ca.xshade.bukkit.towny.event.TownyWorldListener;
 import ca.xshade.bukkit.towny.object.Coord;
 import ca.xshade.bukkit.towny.object.Resident;
 import ca.xshade.bukkit.towny.object.Town;
@@ -71,6 +72,7 @@ public class Towny extends JavaPlugin {
 	private final TownyEntityListener entityListener = new TownyEntityListener(this);
 	private final TownyPlayerLowListener playerLowListener = new TownyPlayerLowListener(this);
 	private final TownyEntityMonitorListener entityMonitorListener = new TownyEntityMonitorListener(this);
+	private final TownyWorldListener worldListener = new TownyWorldListener(this);
 	private TownyUniverse townyUniverse;
 	private Map<String, PlayerCache> playerCache = Collections.synchronizedMap(new HashMap<String, PlayerCache>());
 	private Map<String, List<String>> playerMode = Collections.synchronizedMap(new HashMap<String, List<String>>());
@@ -103,7 +105,8 @@ public class Towny extends JavaPlugin {
 				e.printStackTrace();
 			}
 			
-			townyUniverse.getDataSource().saveAll();
+			if (TownySettings.isSavingOnLoad())
+				townyUniverse.getDataSource().saveAll();
 		} catch (UnsupportedOperationException e) {
 			System.out.println("[Towny] Error: Unsupported save format!");
 			getServer().getPluginManager().disablePlugin(this);
@@ -111,12 +114,12 @@ public class Towny extends JavaPlugin {
 		}
 		
 		checkPlugins();
-		onLoad();
+		load();
 		
 		if (TownySettings.isFirstRun()) {
 			firstRun();
 			TownySettings.setBoolean(getDataFolder().getPath() + "/settings/config.properties", TownySettings.Bool.FIRST_RUN, false);
-			townyUniverse.loadSettings();
+			loadSettings();
 		}
 		
 		if (TownySettings.isTownyUpdating(getVersion()))
@@ -137,17 +140,15 @@ public class Towny extends JavaPlugin {
 	private void checkPlugins() {
 		List<String> using = new ArrayList<String>();
 		Plugin test;
-		//test = getServer().getPluginManager().getPlugin("GroupManager");
-		//if(test != null)
-		//	groupManager = (GroupManager)test;
-		//else {
-			test = getServer().getPluginManager().getPlugin("Permissions");
-			if(test != null) {
-				permissions = (Permissions)test;
+
+		test = getServer().getPluginManager().getPlugin("Permissions");
+		if (test == null)
+			setSetting(TownySettings.Bool.USING_PERMISSIONS, false);
+		else {
+			permissions = (Permissions)test;
+			if (TownySettings.isUsingPermissions())
 				using.add("Permissions");
-			} else
-				System.out.println("[Towny] Neither Permissions nor GroupManager was found. Towny Admins not loaded. Ops only.");
-		//}		
+		}
 		
 		test = getServer().getPluginManager().getPlugin("iConomy");
 		if (test == null)
@@ -200,7 +201,7 @@ public class Towny extends JavaPlugin {
 		TownyCommand.setUniverse(townyUniverse);
 	}
 	
-	public void onLoad() {
+	public void load() {
 		loadSettings();
 		if (TownySettings.isForcingPvP())
 			for (Town town : townyUniverse.getTowns())
@@ -230,6 +231,9 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGED, entityMonitorListener, Priority.Monitor, this);
 		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Priority.Normal, this);
+		
+		getServer().getPluginManager().registerEvent(Event.Type.WORLD_LOADED, worldListener, Priority.Normal, this);
 	}
 	
 	private void firstRun() {
@@ -253,7 +257,7 @@ public class Towny extends JavaPlugin {
 			String newLine = System.getProperty("line.separator");
 			BufferedWriter fout = new BufferedWriter(new FileWriter(getDataFolder().getPath() + "/settings/nation-levels.csv"));
 			fout.write("0,, Wilderness,, Lands,Leader ," + newLine);
-			fout.write("1,Dominion of ,,, Center,Leader," + newLine);
+			fout.write("1,Dominion of ,,, Center,Leader ," + newLine);
 			fout.write("2,Lands of ,,, Center,Leader ," + newLine);
 			fout.write("3,, Country,, Lands,King ," + newLine);
 			fout.write("6,, Kingdom,, Lands,King ," + newLine);
@@ -454,7 +458,7 @@ public class Towny extends JavaPlugin {
 
 	public boolean hasPermission(Player player, String node) {
 		sendDebugMsg("Perm Check: Does " + player.getName() + " have the node '" + node + "'?");
-		if (permissions != null) {
+		if (TownySettings.isUsingPermissions() && permissions != null) {
 			sendDebugMsg("    Permissions installed.");
 			boolean perm = Permissions.Security.permission(player, node);
 			sendDebugMsg("    Permissions says "+perm+".");
@@ -661,7 +665,7 @@ public class Towny extends JavaPlugin {
 					cacheBlockErrMsg(player, "Owner doesn't allow allies to " + actionType.toString() + " here.");
 					return false;
 				}
-			else if (status == TownBlockStatus.OUTSIDER)
+			else //TODO: (Remove) if (status == TownBlockStatus.OUTSIDER)
 				if (owner.getPermissions().getOutsider(actionType))
 					return true;
 				else {
@@ -718,7 +722,7 @@ public class Towny extends JavaPlugin {
 	public void setupLogger() {
 		FileMgmt.checkFolders(new String[]{getTownyUniverse().getRootFolder() + "/logs"});
         try {
-            FileHandler fh = new FileHandler(getDataFolder() + "/logs/towny.log");
+            FileHandler fh = new FileHandler(getDataFolder() + "/logs/towny.log", TownySettings.isAppendingToLog());
             fh.setFormatter(new TownyLogFormatter());
             getLogger().addHandler(fh);
         } catch (IOException e) {

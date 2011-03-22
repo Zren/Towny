@@ -6,6 +6,7 @@ import java.util.Scanner;
 import org.bukkit.World;
 
 import ca.xshade.bukkit.towny.AlreadyRegisteredException;
+import ca.xshade.bukkit.towny.NotRegisteredException;
 import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.towny.object.Nation;
@@ -80,35 +81,29 @@ public abstract class TownyDataSource {
 	}
 
 	abstract public boolean loadResidentList();
-
 	abstract public boolean loadTownList();
-
 	abstract public boolean loadNationList();
-
+	
 	abstract public boolean loadResident(Resident resident);
-
 	abstract public boolean loadTown(Town town);
-
 	abstract public boolean loadNation(Nation nation);
-
 	abstract public boolean loadWorld(TownyWorld world);
-
+	
 	abstract public boolean saveResidentList();
-
 	abstract public boolean saveTownList();
-
 	abstract public boolean saveNationList();
-
 	abstract public boolean saveWorldList();
-
+	
 	abstract public boolean saveResident(Resident resident);
-
 	abstract public boolean saveTown(Town town);
-
 	abstract public boolean saveNation(Nation nation);
-
 	abstract public boolean saveWorld(TownyWorld world);
 
+	abstract public void deleteResident(Resident resident);
+	abstract public void deleteTown(Town town);
+	abstract public void deleteNation(Nation nation);
+	abstract public void deleteWorld(TownyWorld world);
+	
 	public boolean loadWorldList() {
 		return loadServerWorldsList();
 	}
@@ -117,10 +112,13 @@ public abstract class TownyDataSource {
 		sendDebugMsg("Loading Server World List");
 		for (World world : plugin.getServer().getWorlds())
 			try {
-				String[] split = world.getName().split("/");
-				String worldName = split[split.length-1];
-				universe.newWorld(worldName);
+				//String[] split = world.getName().split("/");
+				//String worldName = split[split.length-1];
+				//universe.newWorld(worldName);
+				universe.newWorld(world.getName());
 			} catch (AlreadyRegisteredException e) {
+				e.printStackTrace();
+			} catch (NotRegisteredException e) {
 				e.printStackTrace();
 			}
 		return true;

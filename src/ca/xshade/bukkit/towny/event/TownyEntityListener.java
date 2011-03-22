@@ -1,15 +1,20 @@
 package ca.xshade.bukkit.towny.event;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 
+import ca.xshade.bukkit.towny.MobRemovalTimerTask;
 import ca.xshade.bukkit.towny.NotRegisteredException;
 import ca.xshade.bukkit.towny.Towny;
+import ca.xshade.bukkit.towny.TownyException;
 import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.towny.object.Coord;
 import ca.xshade.bukkit.towny.object.TownBlock;
@@ -122,4 +127,23 @@ public class TownyEntityListener extends EntityListener {
 			plugin.sendDebugMsg("onPlayerDeath: " + player.getName() + "[ID: " + entity.getEntityId() + "]");
 		}
     }
+	
+	@Override
+	public void onCreatureSpawn(CreatureSpawnEvent event) {
+		if (TownySettings.isRemovingMobs() && event.getEntity() instanceof LivingEntity) {
+			LivingEntity livingEntity = (LivingEntity)event.getEntity();
+			Location loc = event.getLocation();
+			if (MobRemovalTimerTask.isRemovingEntity(livingEntity)) {
+				Coord coord = Coord.parseCoord(loc);
+				try {
+					TownyWorld townyWorld = plugin.getTownyUniverse().getWorld(loc.getWorld().getName());
+					TownBlock townBlock = townyWorld.getTownBlock(coord);
+					if (!townBlock.getTown().hasMobs())
+						//plugin.sendDebugMsg("onCreatureSpawn: Canceled " + event.getCreatureType() + " from spawning within "+coord.toString()+".");
+						event.setCancelled(true);
+				} catch (TownyException x) {
+				}
+			}
+		}
+	}
 }

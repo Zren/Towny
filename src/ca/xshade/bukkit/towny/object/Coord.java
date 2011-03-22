@@ -60,8 +60,7 @@ public class Coord {
 	}
 
 	public static Coord parseCoord(int x, int z) {
-		return new Coord(x / getCellSize() - (x < 0 ? 1 : 0),
-				z / getCellSize() - (z < 0 ? 1 : 0));
+		return new Coord(x / getCellSize() - (x < 0 ? 1 : 0), z / getCellSize() - (z < 0 ? 1 : 0));
 	}
 
 	public static Coord parseCoord(Entity entity) {
