@@ -58,6 +58,9 @@ public class Coord {
 		Coord o = (Coord) obj;
 		return this.x == o.x && this.z == o.z;
 	}
+	
+	
+	
 	/*
 	 * OLD METHOD
 	
@@ -66,6 +69,16 @@ public class Coord {
 	}
 	*/
 	
+	/**
+	 * Convert regular grid coordinates to their grid cell's counterparts.
+	 * 
+	 * @author gmcouto
+	 * 
+	 * @param x
+	 * @param z
+	 * @return a new instance of Coord.
+	 * 
+	 */
 	public static Coord parseCoord(int x, int z) {
         int xresult = x / getCellSize();
         int zresult = z / getCellSize();
