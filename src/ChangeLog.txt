@@ -220,4 +220,21 @@ v0.55:
 	Reworded errors when making new towns. "You" was hardcoded, and didn't take into account admins making towns for others. To clarify, money is taken from the new mayor's bank account.
 	Added new config option save_on_load. It's defaulted to off (which is opposite to what it was before). It will no longer to a giant save on startup which assured that what's in memory = saved in file. This should speed up startup of particular large db.
 	Files are deleted when the object is deleted. It will not delete existing files, so files deleted outside of towny's regular actions will remain.
+	Added allow_resident_plots to enable/disable plot commands, essentially freezing the plot system.
+	Fixed admin add command (you couldnt add if you werent a mayor/assistant of any town).
+	The admin set mayor command will now add the person to town if he/she isn't already. The npc part of this command now works as well.
+v0.56:
+	Fixed default setting for regex.
+v0.57:
+	Removed debug statements.
+v0.58:
+	Fixed default regex settings.
+v0.59:
+	onDestroy is now checked when a player starts breaking a block.
+v0.60:
+	Using on onBlockBreak instead of onBlockDamage.
+v0.61:
+	Now using correct way to calculate townblock cells. Any cells in the negative range will shift by 1.
+	
+	
 	

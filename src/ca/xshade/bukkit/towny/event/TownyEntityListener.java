@@ -35,7 +35,7 @@ public class TownyEntityListener extends EntityListener {
 			return;
 		
 		if (event instanceof EntityDamageByEntityEvent) {
-			//long start = System.currentTimeMillis();
+			long start = System.currentTimeMillis();
 			
 			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent)event;
 			Entity attacker = entityEvent.getDamager();
@@ -65,7 +65,7 @@ public class TownyEntityListener extends EntityListener {
 			}
 			
 			
-			//plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
+			plugin.sendDebugMsg("onEntityDamagedByEntity took " + (System.currentTimeMillis() - start) + "ms");
 		}
 		
 	}
@@ -86,11 +86,13 @@ public class TownyEntityListener extends EntityListener {
 			// Check Town PvP status
 			Coord key = Coord.parseCoord(a);
 			TownBlock townblock = world.getTownBlock(key);
+			//plugin.sendDebugMsg("is townblock");
 			if (!townblock.getTown().isPVP())
 				if (bp != null && (ap != null || a instanceof Arrow))
 					return true;
 				else if (!TownySettings.isPvEWithinNonPvPZones()) // TODO: Allow EvE >.>
 					return true;
+			//plugin.sendDebugMsg("is pvp");
 		} catch (NotRegisteredException e) {
 		}
 		
@@ -101,11 +103,11 @@ public class TownyEntityListener extends EntityListener {
 		// Universe is only PvP
 		if (TownySettings.isForcingPvP())
 			return false;
-		
+		//plugin.sendDebugMsg("is not forcing pvp");
 		// World PvP
 		if (!world.isPvP())
 			return true;
-		
+		//plugin.sendDebugMsg("world is pvp");
 		return false;
 	}
 	

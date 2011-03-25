@@ -151,6 +151,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 		} catch (AlreadyRegisteredException e) {
 			e.printStackTrace();
 			confirmContinuation(e.getMessage() + " | Continuing will delete it's data.");
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

@@ -248,7 +248,7 @@ public class TownyUniverse extends TownyObject {
 	}
 	
 	public String checkAndFilterName(String name) throws InvalidNameException {
-		String out = name.replaceAll("/", "_").replaceAll(" ", "_");
+		String out = TownySettings.filterName(name);
 		
 		if (!TownySettings.isValidName(out))
 			throw new InvalidNameException(out + " is an invalid name.");
@@ -589,7 +589,7 @@ public class TownyUniverse extends TownyObject {
 			}
 			world = worlds.get(name.toLowerCase());
 			if (world == null)
-				throw new NotRegisteredException();
+				throw new NotRegisteredException("Could not create world " + name.toLowerCase());
 		}
 		return world;
 	}

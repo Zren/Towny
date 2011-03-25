@@ -193,7 +193,8 @@ public class TownySettings {
 		RESET_LOG_ON_BOOT,
 		USING_PERMISSIONS,
 		//TODO
-		SAVE_ON_LOAD
+		SAVE_ON_LOAD,
+		ALLOW_RESIDENT_PLOTS
 	};
 	// Nation Level
 	public enum NationLevel {
@@ -301,9 +302,9 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		configStr.put(TownySettings.Str.FLATFILE_BACKUP, "zip");
-		configStr.put(TownySettings.Str.NAME_CHECK_REGEX, "^[a-zA-Z0-9]+[a-zA-Z0-9_]*$");
+		configStr.put(TownySettings.Str.NAME_CHECK_REGEX, "^[a-zA-Z0-9]+[a-zA-Z0-9._-]*$");
 		configStr.put(TownySettings.Str.NAME_FILTER_REGEX, "[ /]");
-		configStr.put(TownySettings.Str.NAME_REMOVE_REGEX, "[^a-zA-Z0-9_]");
+		configStr.put(TownySettings.Str.NAME_REMOVE_REGEX, "[^a-zA-Z0-9._-]");
 		// Integer
 		configInt.put(TownySettings.Int.TOWN_BLOCK_SIZE, 16);
 		configInt.put(TownySettings.Int.TOWN_BLOCK_RATIO, 16);
@@ -394,6 +395,7 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.RESET_LOG_ON_BOOT, true);
 		configBool.put(TownySettings.Bool.USING_PERMISSIONS, true);
 		configBool.put(TownySettings.Bool.SAVE_ON_LOAD, false);
+		configBool.put(TownySettings.Bool.ALLOW_RESIDENT_PLOTS, true);
 		
 		newTownLevel(0, "", " Town", "Mayor ", "", 16);
 		newNationLevel(0, "", " Nation", "Capital: ", " City", "King ", "");
@@ -563,6 +565,8 @@ public class TownySettings {
 			configDoub.put(key, kvFile.getDouble(key.toString().toLowerCase(), getDouble(key)));
 		for (TownySettings.Bool key : TownySettings.Bool.values())
 			configBool.put(key, kvFile.getBoolean(key.toString().toLowerCase(), getBoolean(key)));
+		
+		TownySettings.namePattern = null;
 		
 		kvFile.save();
 	}
@@ -1238,5 +1242,9 @@ public class TownySettings {
 
 	public static boolean isSavingOnLoad() {
 		return getBoolean(TownySettings.Bool.SAVE_ON_LOAD);
+	}
+	
+	public static boolean isAllowingResidentPlots() {
+		return getBoolean(TownySettings.Bool.ALLOW_RESIDENT_PLOTS);
 	}
 }

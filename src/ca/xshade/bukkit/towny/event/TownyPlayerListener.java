@@ -202,10 +202,10 @@ public class TownyPlayerListener extends PlayerListener {
 			if (!fromCoord.equals(toCoord))
 				onPlayerMoveChunk(player, fromCoord, toCoord, from, to);
 			else {
-				//plugin.sendDebugMsg("    From: " + fromCoord);
-				//plugin.sendDebugMsg("    To:   " + toCoord);
-				//plugin.sendDebugMsg("        " + from.toString());
-				//plugin.sendDebugMsg("        " + to.toString());
+				plugin.sendDebugMsg("    From: " + fromCoord);
+				plugin.sendDebugMsg("    To:   " + toCoord);
+				plugin.sendDebugMsg("        " + from.toString());
+				plugin.sendDebugMsg("        " + to.toString());
 			}
 		} catch (NotRegisteredException e) {
 			plugin.sendErrorMsg(player, e.getError());
@@ -338,7 +338,7 @@ public class TownyPlayerListener extends PlayerListener {
 			parseNationCommand(player, newSplit);
 		else if (TownySettings.getWorldCommands().contains(split[0]))
 			parseWorldCommand(player, newSplit);
-		else if (TownySettings.getPlotCommands().contains(split[0]))
+		else if (TownySettings.isAllowingResidentPlots() && TownySettings.getPlotCommands().contains(split[0]))
 			parsePlotCommand(player, newSplit);
 		/*else if (TownySettings.getTownyCommands().contains(split[0]))
 			parseTownyCommand(player, newSplit);*/
@@ -1149,9 +1149,8 @@ public class TownyPlayerListener extends PlayerListener {
 				town = resident.getTown();
 			else
 				town = specifiedTown;
-			if (!resident.isMayor())
-				if (!town.hasAssistant(resident))
-					throw new TownyException("You are not the mayor or an assistant.");
+			if (!plugin.isTownyAdmin(player) && !resident.isMayor() && !town.hasAssistant(resident))
+				throw new TownyException("You are not the mayor or an assistant.");
 		} catch (TownyException x) {
 			plugin.sendErrorMsg(player, x.getError());
 			return;
@@ -1712,7 +1711,7 @@ public class TownyPlayerListener extends PlayerListener {
 		if (split.length == 0) {
 			player.sendMessage(ChatTools.formatTitle("/town set"));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "board [message ... ]", ""));
-			player.sendMessage(ChatTools.formatCommand("", "/town set", "mayor [mayor] *[town]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/town set", "mayor [mayor]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "homeblock", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "spawn", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/town set", "perm ...", "'/town set perm' for help"));
@@ -3029,6 +3028,8 @@ public class TownyPlayerListener extends PlayerListener {
 			//TODO: player.sendMessage(ChatTools.formatCommand("", "/townyadmin set", "king [nation] [king]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/townyadmin set", "mayor [town] [mayor]", ""));
 			player.sendMessage(ChatTools.formatCommand("", "/townyadmin set", "mayor [town] npc", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyadmin set", "debugmode [on/off]", ""));
+			player.sendMessage(ChatTools.formatCommand("", "/townyadmin set", "devmode [on/off]", ""));
 		} else if (split[0].equalsIgnoreCase("mayor")) {
 			if (split.length < 3) {
 				player.sendMessage(ChatTools.formatTitle("/townyadmin set mayor"));
@@ -3045,6 +3046,8 @@ public class TownyPlayerListener extends PlayerListener {
 					} else
 						newMayor = plugin.getTownyUniverse().getResident(split[2]);
 					Town town = plugin.getTownyUniverse().getTown(split[1]);
+					if (!town.hasResident(newMayor))
+						townAddResident(town, newMayor);
 					town.setMayor(newMayor);
 					plugin.getTownyUniverse().getDataSource().saveTown(town);
 					plugin.getTownyUniverse().sendTownMessage(town, TownySettings.getNewMayorMsg(newMayor.getName()));

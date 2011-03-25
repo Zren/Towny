@@ -58,10 +58,21 @@ public class Coord {
 		Coord o = (Coord) obj;
 		return this.x == o.x && this.z == o.z;
 	}
-
+	/*
+	 * OLD METHOD
+	
 	public static Coord parseCoord(int x, int z) {
 		return new Coord(x / getCellSize() - (x < 0 ? 1 : 0), z / getCellSize() - (z < 0 ? 1 : 0));
 	}
+	*/
+	
+	public static Coord parseCoord(int x, int z) {
+        int xresult = x / getCellSize();
+        int zresult = z / getCellSize();
+        boolean xneedfix = x % getCellSize()!=0;
+        boolean zneedfix = z % getCellSize()!=0;
+        return new Coord(xresult - (x < 0 && xneedfix ? 1 : 0), zresult - (z < 0 && zneedfix ? 1 : 0));
+    }
 
 	public static Coord parseCoord(Entity entity) {
 		return parseCoord(entity.getLocation());

@@ -22,7 +22,6 @@ public class TownyWarCommand extends TownyCommand {
 			output.add(ChatTools.formatTitle("/towny war"));
 			output.add(ChatTools.formatCommand("", "/towny war", "stats", ""));
 			output.add(ChatTools.formatCommand("", "/towny war", "scores", ""));
-			output.add(ChatTools.formatCommand("", "/towny war", "map", ""));
 		} else
 			if (universe.isWarTime()) {
 				if (args[0].equalsIgnoreCase("stats"))

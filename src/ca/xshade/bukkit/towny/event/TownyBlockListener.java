@@ -1,8 +1,8 @@
 package ca.xshade.bukkit.towny.event;
 
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
@@ -25,22 +25,26 @@ public class TownyBlockListener extends BlockListener {
 		plugin = instance;
 	}
 
-	
 	@Override
-	public void onBlockDamage(BlockDamageEvent event) {
+	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.isCancelled())
 			return;
 		
-		if (event.getDamageLevel() == BlockDamageLevel.STOPPED || event.getDamageLevel() == BlockDamageLevel.BROKEN) {
+		//if (event.getDamageLevel() == BlockDamageLevel.STOPPED || event.getDamageLevel() == BlockDamageLevel.BROKEN || event.getDamageLevel() == BlockDamageLevel.STARTED) {
 			long start = System.currentTimeMillis();
 
 			onBlockBreakEvent(event, true);
 
 			plugin.sendDebugMsg("onBlockBreakEvent took " + (System.currentTimeMillis() - start) + "ms ("+event.getPlayer().getName()+", "+event.isCancelled() +")");
-		}
+		//}
 	}
 	
-	public void onBlockBreakEvent(BlockDamageEvent event, boolean firstCall) {	
+	@Override
+	public void onBlockDamage(BlockDamageEvent event) {
+		
+	}
+	
+	public void onBlockBreakEvent(BlockBreakEvent event, boolean firstCall) {	
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		WorldCoord worldCoord;
