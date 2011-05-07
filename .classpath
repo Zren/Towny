@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/bukkit.jar" sourcepath="C:/Users/Admin/Desktop/git/Bukkit"/>
-	<classpathentry kind="lib" path="lib/Essentials.jar"/>
-	<classpathentry kind="lib" path="lib/GroupManager.jar"/>
-	<classpathentry kind="lib" path="lib/iConomy.jar"/>
-	<classpathentry kind="lib" path="lib/Permissions.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Questioner"/>
+	<classpathentry kind="lib" path="H:/Code/Minecraft/ExternalJAR/bukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="H:/Code/Minecraft/ExternalJAR/craftbukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="H:/Code/Minecraft/ExternalJAR/Essentials.jar"/>
+	<classpathentry kind="lib" path="H:/Code/Minecraft/ExternalJAR/iConomy.jar"/>
+	<classpathentry kind="lib" path="H:/Code/Minecraft/ExternalJAR/Permissions.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
