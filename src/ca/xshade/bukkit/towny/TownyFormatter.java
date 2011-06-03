@@ -14,7 +14,7 @@ import ca.xshade.bukkit.util.ChatTools;
 import ca.xshade.bukkit.util.Colors;
 import ca.xshade.util.StringMgmt;
 
-import com.nijiko.coelho.iConomy.iConomy;
+import com.iConomy.*;
 
 //TODO: Make static
 //TODO: pull names from the config
@@ -49,7 +49,7 @@ public class TownyFormatter {
 		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
-				out.add(Colors.Green + "Bank: " + Colors.LightGreen + resident.getFormattedBalance());
+				out.add(Colors.Green + "Bank: " + Colors.LightGreen + resident.getHoldingBalance());
 			} catch (IConomyException e1) {
 			}
 		
@@ -105,7 +105,7 @@ public class TownyFormatter {
 		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
-				bankString = Colors.Gray + " | " + Colors.Green + "Bank: " + Colors.LightGreen + town.getFormattedBalance();
+				bankString = Colors.Gray + " | " + Colors.Green + "Bank: " + Colors.LightGreen + town.getHoldingBalance();
 			} catch (IConomyException e1) {
 			}
 
@@ -140,7 +140,7 @@ public class TownyFormatter {
 		if (TownySettings.isUsingIConomy())
 			try {
 				TownyIConomyObject.checkIConomy();
-				out.add(Colors.Green + "Bank: " + Colors.LightGreen + nation.getFormattedBalance());
+				out.add(Colors.Green + "Bank: " + Colors.LightGreen + nation.getHoldingBalance());
 			} catch (IConomyException e1) {
 			}
 		
@@ -265,7 +265,7 @@ public class TownyFormatter {
 	
 	public static String formatMoney(double amount) {
 		try {
-			return iConomy.getBank().format(amount);
+			return iConomy.format(amount);
 		} catch (Exception e) {
 			return Double.toString(amount);
 		}

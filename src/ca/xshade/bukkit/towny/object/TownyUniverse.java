@@ -171,10 +171,12 @@ public class TownyUniverse extends TownyObject {
 		try {
 			Resident resident = plugin.getTownyUniverse().getResident(player.getName());
 			Town town = resident.getTown();
-			player.teleportTo(town.getSpawn());
+			player.teleport(town.getSpawn());
+			//player.teleportTo(town.getSpawn());
 		} catch (TownyException x) {
 			if (forceTeleport) {
-				player.teleportTo(player.getWorld().getSpawnLocation());
+				player.teleport(player.getWorld().getSpawnLocation());
+				//player.teleportTo(player.getWorld().getSpawnLocation());
 				plugin.sendDebugMsg("onTownSpawn: [forced] "+player.getName());
 			} else
 				plugin.sendErrorMsg(player, x.getError());
@@ -280,7 +282,7 @@ public class TownyUniverse extends TownyObject {
 		town.setName(newName);
 		try {
 			Town oldTown = new Town(oldName);
-			oldTown.pay(oldTown.getIConomyBalance(), town);
+			oldTown.pay(oldTown.getHoldingBalance(), town);
 		} catch (IConomyException e) {
 		}
 		getDataSource().saveTown(town);
@@ -299,7 +301,7 @@ public class TownyUniverse extends TownyObject {
 		nation.setName(newName);
 		try {
 			Nation oldNation = new Nation(oldName);
-			oldNation.pay(oldNation.getIConomyBalance(), nation);
+			oldNation.pay(oldNation.getHoldingBalance(), nation);
 		} catch (IConomyException e) {
 		}
 		getDataSource().saveNation(nation);
@@ -781,7 +783,7 @@ public class TownyUniverse extends TownyObject {
 		List<Town> toSave = new ArrayList<Town>(nation.getTowns());
 		nation.clear();
 		try {
-			nation.pay(nation.getIConomyBalance(), new WarSpoils());
+			nation.pay(nation.getHoldingBalance(), new WarSpoils());
 		} catch (IConomyException e) {
 		}
 		nations.remove(nation.getName().toLowerCase());
@@ -800,7 +802,7 @@ public class TownyUniverse extends TownyObject {
 			removeNation(e.getNation());
 		}
 		try {
-			town.pay(town.getIConomyBalance(), new WarSpoils());
+			town.pay(town.getHoldingBalance(), new WarSpoils());
 		} catch (IConomyException e) {
 		}
 		towns.remove(town.getName().toLowerCase());

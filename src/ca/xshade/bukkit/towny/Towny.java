@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -52,7 +53,7 @@ import ca.xshade.util.StringMgmt;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
-import com.nijiko.coelho.iConomy.iConomy;
+import com.iConomy.*;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 /**
@@ -135,8 +136,29 @@ public class Towny extends JavaPlugin {
 			} catch (TownyException x) {
 				sendErrorMsg(player, x.getError());
 			}
+		//setupDatabase();
 	}
 
+	private void setupDatabase()
+	{
+		try
+		{
+		getDatabase().find(Towny.class).findRowCount();
+		}
+		catch(PersistenceException ex)
+		{
+			System.out.println("Installing database for " + getDescription().getName() + " due to first time usage");
+			installDDL();
+		}
+	}
+	
+	@Override
+	public List<Class<?>> getDatabaseClasses()
+	{
+		List<Class<?>> list = new ArrayList<Class<?>>();
+		list.add(Towny.class);
+		return list;
+	}
 	private void checkPlugins() {
 		List<String> using = new ArrayList<String>();
 		Plugin test;
@@ -222,18 +244,18 @@ public class Towny extends JavaPlugin {
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerLowListener, Priority.Low, this);
 		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
 
-		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.BLOCK_INTERACT, blockListener, Priority.Normal, this);
+		//getServer().getPluginManager().registerEvent(Event.Type.BLOCK_INTERACT, blockListener, Priority.Normal, this);
 
-		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Normal, this);
-		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGED, entityMonitorListener, Priority.Monitor, this);
+		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityMonitorListener, Priority.Monitor, this);
 		getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
 		getServer().getPluginManager().registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Priority.Normal, this);
 		
-		getServer().getPluginManager().registerEvent(Event.Type.WORLD_LOADED, worldListener, Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Event.Type.WORLD_LOAD, worldListener, Priority.Normal, this);
 	}
 	
 	private void firstRun() {
@@ -433,27 +455,24 @@ public class Towny extends JavaPlugin {
 
 	@SuppressWarnings("static-access")
 	public boolean checkEssentialsTeleport(Player player) {
-		if (!TownySettings.isUsingEssentials())
+		if (!TownySettings.isUsingEssentials() || !TownySettings.isAllowingTownSpawn())
 			return true;
 		
 		Plugin test = getServer().getPluginManager().getPlugin("Essentials");
 		if (test == null)
 			return true;
 		Essentials essentials = (Essentials)test;
-		essentials.loadClasses();
+		//essentials.loadClasses();
 		sendDebugMsg("Using Essenitials");
 		
 		try {
-			User user = User.get(player);
-			user.teleportCooldown();
-			user.charge("tp");
+			User user = essentials.getUser(player);
+			return true;
 		} catch (Exception e) {
 			sendErrorMsg(player, "Error: " + e.getMessage());
 			return false;
 		}
 		
-			
-		return true;
 	}
 
 	public boolean hasPermission(Player player, String node) {

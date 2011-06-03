@@ -96,7 +96,9 @@ public class TownyTopCommand extends TownyCommand {
 		List<String> output = new ArrayList<String>();
 		KeyValueTable<TownyIConomyObject,Double> kvTable = new KeyValueTable<TownyIConomyObject,Double>();
 		for (TownyIConomyObject obj : list)
-			kvTable.put(obj, obj.getIConomyBalance());
+		{
+			kvTable.put(obj, obj.getHoldingBalance());
+		}
 		kvTable.sortByValue();
 		kvTable.revese();
 		int n = 0;

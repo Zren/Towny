@@ -10,13 +10,19 @@ import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 
 import ca.xshade.bukkit.questioner.Questioner;
@@ -53,9 +59,8 @@ import ca.xshade.questionmanager.Question;
 import ca.xshade.util.MemMgmt;
 import ca.xshade.util.StringMgmt;
 
-import com.nijiko.coelho.iConomy.iConomy;
-import com.nijiko.coelho.iConomy.system.Account;
-
+import com.iConomy.*;
+import com.iConomy.system.Account;
 /**
  * Handle events for all Player related events
  * 
@@ -95,7 +100,7 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 	
 	@Override
-	public void onPlayerJoin(PlayerEvent event) {
+	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		try {
 			plugin.getTownyUniverse().onLogin(player);
@@ -105,7 +110,7 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 	
 	@Override
-	public void onPlayerQuit(PlayerEvent event) {
+	public void onPlayerQuit(PlayerQuitEvent event) {
 		plugin.getTownyUniverse().onLogout(event.getPlayer());
 		
 		plugin.deleteCache(event.getPlayer());
@@ -124,26 +129,42 @@ public class TownyPlayerListener extends PlayerListener {
 			}
 	}
 	
-	
 	@Override
-	public void onPlayerItem(PlayerItemEvent event) {
+	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.isCancelled())
 			return;
+			
 		
+		//System.out.println("onPlayerInteract2");
 		long start = System.currentTimeMillis();
 		
-		if (TownySettings.isItemUseId(event.getItem().getTypeId()))
-			onPlayerItemEvent(event, true);
-		
-		plugin.sendDebugMsg("onPlayerItemEvent took " + (System.currentTimeMillis() - start) + "ms");
+		if(event.hasItem())
+		{
+			if (TownySettings.isItemUseId(event.getItem().getTypeId()))
+			{
+				//System.out.println("onPlayerInteractEvent: IsItemUseId");
+				onPlayerInteractEvent(event, true);
+				return;
+			}
+		}
+			if (TownySettings.isSwitchId(event.getClickedBlock().getTypeId()) || event.getAction() == Action.PHYSICAL)
+			{
+				//System.out.println("onPlayerInteractEvent: isSwitchId");
+				onPlayerSwitchEvent(event, true, null);
+				return;
+			}
+			plugin.sendDebugMsg("onPlayerItemEvent took " + (System.currentTimeMillis() - start) + "ms");
+		//}
 	}
 	
 	
 	
-	public void onPlayerItemEvent(PlayerItemEvent event, boolean firstCall) {	
+	public void onPlayerInteractEvent(PlayerInteractEvent event, boolean firstCall) {	
 		Player player = event.getPlayer();
-		
+		Block block = event.getClickedBlock();
 		WorldCoord worldCoord;
+		//System.out.println("onPlayerInteractEvent");
+		
 		try {
 			worldCoord = new WorldCoord(plugin.getTownyUniverse().getWorld(player.getWorld().getName()), Coord.parseCoord(player));
 		} catch (NotRegisteredException e1) {
@@ -152,6 +173,7 @@ public class TownyPlayerListener extends PlayerListener {
 			return;
 		}
 
+		
 		// Check cached permissions first
 		try {
 			PlayerCache cache = plugin.getCache(player);
@@ -169,7 +191,7 @@ public class TownyPlayerListener extends PlayerListener {
 				// New or old destroy permission was null, update it
 				TownBlockStatus status = plugin.cacheStatus(player, worldCoord, plugin.getStatusCache(player, worldCoord));
 				plugin.cacheItemUse(player, worldCoord, getItemUsePermission(player, status, worldCoord));
-				onPlayerItemEvent(event, false);
+				onPlayerInteractEvent(event, false);
 			} else
 				plugin.sendErrorMsg(player, "Error updating item use permissions cache.");
 		}
@@ -179,7 +201,60 @@ public class TownyPlayerListener extends PlayerListener {
 		return plugin.getPermission(player, status, pos, TownyPermission.ActionType.ITEM_USE);
 	}
 	
+	public void onPlayerSwitchEvent(PlayerInteractEvent event, boolean firstCall, String errMsg) {
+		
+			Player player = event.getPlayer();
+			Block block = event.getClickedBlock();
+			
+			if (!TownySettings.isSwitchId(block.getTypeId()))
+				return;
+
+			WorldCoord worldCoord;
+			try {
+				worldCoord = new WorldCoord(plugin.getTownyUniverse().getWorld(block.getWorld().getName()), Coord.parseCoord(block));
+			} catch (NotRegisteredException e1) {
+				plugin.sendErrorMsg(player, "This world has not been configured by Towny.");
+				event.setCancelled(true);
+				return;
+			}
 	
+			// Check cached permissions first
+			try {
+				
+				PlayerCache cache = plugin.getCache(player);
+				cache.updateCoord(worldCoord);
+				TownBlockStatus status = cache.getStatus();
+				if (status == TownBlockStatus.UNCLAIMED_ZONE && plugin.hasWildOverride(worldCoord.getWorld(), player, event.getClickedBlock().getTypeId(), TownyPermission.ActionType.SWITCH))
+					return;
+				if (!cache.getSwitchPermission())
+				{
+					event.setCancelled(true);
+				}
+				if (cache.hasBlockErrMsg())
+					plugin.sendErrorMsg(player, cache.getBlockErrMsg());
+				return;
+			} catch (NullPointerException e) {
+				if (firstCall) {
+					// New or old build permission was null, update it
+					TownBlockStatus status = plugin.cacheStatus(player, worldCoord, plugin.getStatusCache(player, worldCoord));
+					plugin.cacheSwitch(player, worldCoord, getSwitchPermission(player, status, worldCoord));
+					onPlayerSwitchEvent(event, false, errMsg);
+				} else
+					plugin.sendErrorMsg(player, "Error updating switch permissions cache.");
+			}
+		}
+	
+public boolean getBuildPermission(Player player, TownBlockStatus status, WorldCoord pos) {
+	return plugin.getPermission(player, status, pos, TownyPermission.ActionType.BUILD);
+}
+
+public boolean getDestroyPermission(Player player, TownBlockStatus status, WorldCoord pos) {
+	return plugin.getPermission(player, status, pos, TownyPermission.ActionType.DESTROY);
+}
+
+public boolean getSwitchPermission(Player player, TownBlockStatus status, WorldCoord pos) {
+	return plugin.getPermission(player, status, pos, TownyPermission.ActionType.SWITCH);
+}
 	@Override
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
@@ -218,7 +293,7 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerTeleport(PlayerMoveEvent event) {
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		onPlayerMove(event);
 	}
 
@@ -319,7 +394,7 @@ public class TownyPlayerListener extends PlayerListener {
 	}
 	
 	@Override
-	public void onPlayerCommandPreprocess(PlayerChatEvent event) {
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		if (event.isCancelled())
 			return;
 
@@ -875,7 +950,7 @@ public class TownyPlayerListener extends PlayerListener {
 					if (!isTownyAdmin && !town.isPublic())
 						throw new TownyException("That town is not public.");
 					if (plugin.checkEssentialsTeleport(player))
-						player.teleportTo(town.getSpawn());
+						player.teleport(town.getSpawn());
 				}
 			} catch (TownyException e) {
 				plugin.sendErrorMsg(player, e.getMessage());
@@ -1078,7 +1153,13 @@ public class TownyPlayerListener extends PlayerListener {
 		town.setHomeBlock(townBlock);
 		town.setSpawn(spawn);
 		world.addTown(town);
-
+		plugin.sendDebugMsg("Creating new Town account: " + "town-"+name);
+		if(TownySettings.isUsingIConomy())
+		{
+			iConomy.getAccount("town-"+name);
+			iConomy.getAccount("town-"+name).getHoldings().set(0);
+		}
+		
 		universe.getDataSource().saveResident(resident);
 		universe.getDataSource().saveTown(town);
 		universe.getDataSource().saveWorld(world);
@@ -1590,7 +1671,7 @@ public class TownyPlayerListener extends PlayerListener {
 		
 		try {
 			double cost = blockCost * selection.size();
-			if (TownySettings.isUsingIConomy() && !owner.canPay(cost))
+			if (TownySettings.isUsingIConomy() && !owner.canPayFromHoldings(cost))
 				throw new TownyException("Town cannot afford to claim "+selection.size() + " town blocks costing " + cost + TownyIConomyObject.getIConomyCurrency());
 		} catch (IConomyException e1) {
 			throw new TownyException("Iconomy Error");
@@ -1794,7 +1875,8 @@ public class TownyPlayerListener extends PlayerListener {
 				if (split.length < 2)
 					plugin.sendErrorMsg(player, "Eg: /town set name BillyBobTown");
 				else
-					townRename(player, town, split[1]);
+					plugin.sendErrorMsg(player, "Town Renaming Disabled");
+					//townRename(player, town, split[1]);
 			} else if (split[0].equalsIgnoreCase("homeblock")) {
 				Coord coord = Coord.parseCoord(player);
 				TownBlock townBlock;
@@ -2191,7 +2273,11 @@ public class TownyPlayerListener extends PlayerListener {
 		Nation nation = universe.getNation(name);
 		nation.addTown(town);
 		nation.setCapital(town);
-
+		if(TownySettings.isUsingIConomy())
+		{
+			iConomy.getAccount("nation-"+name);
+			iConomy.getAccount("nation-"+name).getHoldings().set(0);
+		}
 		universe.getDataSource().saveTown(town);
 		universe.getDataSource().saveNation(nation);
 		universe.getDataSource().saveNationList();
@@ -2986,11 +3072,7 @@ public class TownyPlayerListener extends PlayerListener {
 	public double getTotalEconomy() {
 		double total = 0;
 		try {
-			Map<String, Account> map = iConomy.getBank().getAccounts();
-			Collection<Account> accounts = map.values();
-
-			for (Account account : accounts)
-				total += account.getBalance();
+                        return total;
 		} catch (Exception e) {
 		}
 		return total;
@@ -2998,7 +3080,7 @@ public class TownyPlayerListener extends PlayerListener {
 	
 	public int getNumBankAccounts() {
 		try {
-			return iConomy.getBank().getAccounts().values().size();
+			return 0;
 		} catch (Exception e) {
 			return 0; 
 		}

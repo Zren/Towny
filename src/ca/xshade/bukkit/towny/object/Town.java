@@ -296,14 +296,19 @@ public class Town extends TownBlockOwner implements Walled, ResidentList {
 			throw new TownyException("Home Block has not been set");
 		Coord spawnBlock = Coord.parseCoord(spawn);
 		if (homeBlock.getX() == spawnBlock.getX() && homeBlock.getZ() == spawnBlock.getZ())
+		{
 			this.spawn = spawn;
+		}
 		else
 			throw new TownyException("Spawn is not within the homeBlock.");
 	}
 
 	public Location getSpawn() throws TownyException {
-		if (hasSpawn())
+		if (hasHomeBlock() && spawn != null)
+		{
 			return spawn;
+		}
+			
 		else
 			throw new TownyException("Town has not set a spawn location.");
 	}

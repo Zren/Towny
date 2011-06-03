@@ -1,7 +1,7 @@
 name: Towny
 main: ca.xshade.bukkit.towny.Towny
-version: 0.61
-author: Shade
+version: 0.68
+author: Shade, Modified by FuzzeWuzze
 website: http://towny.xshade.ca
 description: >
     Resident-Town-Nation heirarchy combined with a grid based

@@ -164,14 +164,24 @@ public class TownyMapCommand extends TownyCommand {
 
 			for (int mx = 30; mx >= 0; mx--)
 				line += townyMap[mx][my];
-			
-			if (lineCount < help.length)
-				line += help[lineCount];
-			
 			player.sendMessage(line);
 			lineCount++;
+			
 		}
-
+		//Print the help at the bottom
+		lineCount=0;
+		for(int i=0;i<2;i++)
+		{
+			line = "";
+			line += help[lineCount];
+			line += help[lineCount+1];
+			line += help[lineCount+2];
+			player.sendMessage(line);
+			lineCount+=3;
+		}
+		line=help[6];
+		player.sendMessage(line);
+		
 		// Current town block data
 		try {
 			TownBlock townblock = world.getTownBlock(pos);

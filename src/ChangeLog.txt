@@ -235,6 +235,8 @@ v0.60:
 	Using on onBlockBreak instead of onBlockDamage.
 v0.61:
 	Now using correct way to calculate townblock cells. Any cells in the negative range will shift by 1.
-	
+v0.62:
+	Fixed towny map not drawing properly due to new bukkit font
+	Fixed town spawn
 	
 	

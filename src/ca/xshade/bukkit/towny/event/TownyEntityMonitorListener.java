@@ -109,9 +109,10 @@ public class TownyEntityMonitorListener extends EntityListener {
 				
 				double price = TownySettings.getWartimeDeathPrice();
 				double townPrice = 0;
-				if (!defenderResident.canPay(price)) {
-					townPrice = price - defenderResident.getIConomyBalance();
-					price = defenderResident.getIConomyBalance();
+				if (!defenderResident.canPayFromHoldings(price)) 
+                                {
+					townPrice = price - defenderResident.getHoldingBalance();
+					price = defenderResident.getHoldingBalance();
 				}
 				
 				if (price > 0) {
@@ -123,9 +124,9 @@ public class TownyEntityMonitorListener extends EntityListener {
 				// Resident doesn't have enough funds.
 				if (townPrice > 0) {
 					Town town = defenderResident.getTown();
-					if (!town.canPay(townPrice)) {
+					if (!town.canPayFromHoldings(townPrice)) {
 						// Town doesn't have enough funds.
-						townPrice = town.getIConomyBalance();
+						townPrice = town.getHoldingBalance();
 						try {
 							plugin.getTownyUniverse().getWarEvent().remove(attackerResident.getTown(), town);
 						} catch (NotRegisteredException e) {
@@ -144,8 +145,8 @@ public class TownyEntityMonitorListener extends EntityListener {
 		else if (TownySettings.getDeathPrice() > 0)
 			try {
 				double price = TownySettings.getDeathPrice();
-				if (!defenderResident.canPay(price))
-					price = defenderResident.getIConomyBalance();
+				if (!defenderResident.canPayFromHoldings(price))
+					price = defenderResident.getHoldingBalance();
 			
 				defenderResident.pay(price, new WarSpoils());
 				plugin.sendMsg(defenderPlayer, "You lost " + price + " " + TownyIConomyObject.getIConomyCurrency() + ".");

@@ -153,7 +153,7 @@ public class War {
 		double halfWinnings;
 		try {
 			// Transactions might leave 1 coin. (OH noez!)
-			halfWinnings = getWarSpoils().getIConomyBalance() / 2.0;
+			halfWinnings = getWarSpoils().getHoldingBalance() / 2.0;
 				
 			try {
 				double nationWinnings = halfWinnings / warringNations.size(); // Again, might leave residue.
@@ -374,11 +374,14 @@ public class War {
 		output.add(Colors.Green + "  Nations: " + Colors.LightGreen + warringNations.size());
 		output.add(Colors.Green + "  Towns: " + Colors.LightGreen + warringTowns.size() +" / " + townScores.size());
 		output.add(Colors.Green + "  WarZone: " + Colors.LightGreen + warZone.size() + " Town blocks");
-		try {
-			output.add(Colors.Green + "  Spoils of War: " + Colors.LightGreen + warSpoils.getIConomyBalance() + " " + TownyIConomyObject.getIConomyCurrency());
-		} catch (IConomyException e) {
+		try{
+        output.add(Colors.Green + "  Spoils of War: " + Colors.LightGreen + warSpoils.getHoldingBalance() + " " + TownyIConomyObject.getIConomyCurrency());
+        return output;
 		}
-		return output;
+		catch(IConomyException e)
+		{
+		}
+		return null;
 	}
 	
 	public void sendScores(Player player) {

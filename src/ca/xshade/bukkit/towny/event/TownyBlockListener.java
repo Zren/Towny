@@ -4,7 +4,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
@@ -128,7 +127,7 @@ public class TownyBlockListener extends BlockListener {
 		}
 	}
 	
-	@Override
+	/*@Override
 	public void onBlockInteract(BlockInteractEvent event) {
 		if (event.isCancelled())
 			return;
@@ -180,7 +179,7 @@ public class TownyBlockListener extends BlockListener {
 			}
 		}
 	}
-
+*/
 	public boolean getBuildPermission(Player player, TownBlockStatus status, WorldCoord pos) {
 		return plugin.getPermission(player, status, pos, TownyPermission.ActionType.BUILD);
 	}

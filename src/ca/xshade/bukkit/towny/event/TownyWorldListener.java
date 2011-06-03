@@ -2,6 +2,7 @@ package ca.xshade.bukkit.towny.event;
 
 import org.bukkit.event.world.WorldEvent;
 import org.bukkit.event.world.WorldListener;
+import org.bukkit.event.world.WorldLoadEvent;
 
 import ca.xshade.bukkit.towny.AlreadyRegisteredException;
 import ca.xshade.bukkit.towny.NotRegisteredException;
@@ -16,7 +17,7 @@ public class TownyWorldListener extends WorldListener {
 	}
 	
 	@Override
-	public void onWorldLoaded(WorldEvent event) {
+	public void onWorldLoad(WorldLoadEvent event) {
 		String worldName = event.getWorld().getName();
 		try {
 			plugin.getTownyUniverse().newWorld(worldName);

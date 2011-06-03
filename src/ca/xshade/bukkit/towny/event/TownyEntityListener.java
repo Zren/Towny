@@ -141,7 +141,7 @@ public class TownyEntityListener extends EntityListener {
 					TownyWorld townyWorld = plugin.getTownyUniverse().getWorld(loc.getWorld().getName());
 					TownBlock townBlock = townyWorld.getTownBlock(coord);
 					if (!townBlock.getTown().hasMobs())
-						//plugin.sendDebugMsg("onCreatureSpawn: Canceled " + event.getCreatureType() + " from spawning within "+coord.toString()+".");
+						plugin.sendDebugMsg("onCreatureSpawn: Canceled " + event.getCreatureType() + " from spawning within "+coord.toString()+".");
 						event.setCancelled(true);
 				} catch (TownyException x) {
 				}
