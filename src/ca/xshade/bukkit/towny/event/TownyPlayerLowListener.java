@@ -6,6 +6,7 @@ import org.bukkit.event.player.PlayerListener;
 
 import ca.xshade.bukkit.towny.NotRegisteredException;
 import ca.xshade.bukkit.towny.Towny;
+import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.towny.object.Nation;
 import ca.xshade.bukkit.towny.object.Resident;
 import ca.xshade.bukkit.towny.object.Town;
@@ -36,9 +37,27 @@ public class TownyPlayerLowListener extends PlayerListener {
 			parseTownChatCommand(player, event.getMessage());
 		else if (plugin.hasPlayerMode(player, "nc")) 
 			parseNationChatCommand(player, event.getMessage());
-		else
+		else {
+			if (TownySettings.isUsingChatPrefix()) {
+				try {
+					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+					String colour, formatedName = "";
+					if (resident.isKing())
+						colour = Colors.Gold;
+					else if (resident.isMayor())
+						colour = Colors.LightBlue;
+					else
+						colour = "";
+					formatedName = colour + plugin.getTownyUniverse().getFormatter().getNamePrefix(resident)
+						+ player.getName() + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident)
+						+ Colors.White;
+					player.setDisplayName(formatedName);
+				} catch (NotRegisteredException e) {
+					plugin.log("Not Registered");
+				}
+			}
 			return;
-		
+		}
 		event.setCancelled(true);
 	}
 	
