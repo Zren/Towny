@@ -56,6 +56,9 @@ import com.earth2me.essentials.User;
 import com.iConomy.*;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
+import com.nijiko.permissions.PermissionHandler;
+import org.bukkit.plugin.Plugin;
+
 
 /**
  * Towny Plugin for Bukkit
@@ -82,6 +85,7 @@ public class Towny extends JavaPlugin {
 	private Permissions permissions = null;
 	private Logger logger = Logger.getLogger("ca.xshade.bukkit.towny");
 	//private GroupManager groupManager = null;
+	public static PermissionHandler permissionHandler;
 	
 	@Override
 	public void onEnable() {
@@ -166,12 +170,17 @@ public class Towny extends JavaPlugin {
 
 		test = getServer().getPluginManager().getPlugin("Permissions");
 		if (test == null)
-			setSetting(TownySettings.Bool.USING_PERMISSIONS, false);
+			setSetting(TownySettings.Bool.USING_PERMISSIONS2, false);
 		else {
 			permissions = (Permissions)test;
-			if (TownySettings.isUsingPermissions())
-				using.add("Permissions");
+			if (TownySettings.isUsingPermissions2()) {
+				using.add("Permissions2");
+			} else if (TownySettings.isUsingPermissions3()){
+				using.add("Permissions3");
+				permissionHandler = ((Permissions) test).getHandler();
+			}
 		}
+
 		
 		test = getServer().getPluginManager().getPlugin("iConomy");
 		if (test == null)
@@ -197,6 +206,7 @@ public class Towny extends JavaPlugin {
 		if (using.size() > 0)
 			System.out.println("[Towny] Using: " + StringMgmt.join(using, ", "));
 	}
+	
 
 	@Override
 	public void onDisable() {
@@ -477,13 +487,18 @@ public class Towny extends JavaPlugin {
 
 	public boolean hasPermission(Player player, String node) {
 		sendDebugMsg("Perm Check: Does " + player.getName() + " have the node '" + node + "'?");
-		if (TownySettings.isUsingPermissions() && permissions != null) {
+		if (TownySettings.isUsingPermissions2() && permissions != null) {
 			sendDebugMsg("    Permissions installed.");
 			boolean perm = Permissions.Security.permission(player, node);
 			sendDebugMsg("    Permissions says "+perm+".");
 			return perm;
 		// } else if (groupManager != null)
 		//	return groupManager.getHandler().permission(player, node);
+		} else if (TownySettings.isUsingPermissions3()){
+			sendDebugMsg("    Permissions3 installed.");
+			boolean perm = this.permissionHandler.has(player, node);
+			sendDebugMsg("    Permissions3 says "+perm+".");
+			return perm;
 		} else {
 			sendDebugMsg("    Does not have permission.");
 			return false;

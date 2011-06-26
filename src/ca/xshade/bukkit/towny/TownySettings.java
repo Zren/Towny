@@ -191,7 +191,8 @@ public class TownySettings {
 		LOGGING,
 		USING_QUESTIONER,
 		RESET_LOG_ON_BOOT,
-		USING_PERMISSIONS,
+		USING_PERMISSIONS2,
+		USING_PERMISSIONS3,
 		//TODO
 		SAVE_ON_LOAD,
 		ALLOW_RESIDENT_PLOTS
@@ -393,7 +394,8 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.LOGGING, true);
 		configBool.put(TownySettings.Bool.USING_QUESTIONER, true);
 		configBool.put(TownySettings.Bool.RESET_LOG_ON_BOOT, true);
-		configBool.put(TownySettings.Bool.USING_PERMISSIONS, true);
+		configBool.put(TownySettings.Bool.USING_PERMISSIONS2, true);
+		configBool.put(TownySettings.Bool.USING_PERMISSIONS3, false);
 		configBool.put(TownySettings.Bool.SAVE_ON_LOAD, false);
 		configBool.put(TownySettings.Bool.ALLOW_RESIDENT_PLOTS, true);
 		
@@ -1221,8 +1223,12 @@ public class TownySettings {
 		return !getBoolean(TownySettings.Bool.RESET_LOG_ON_BOOT);
 	}
 
-	public static boolean isUsingPermissions() {
-		return getBoolean(TownySettings.Bool.USING_PERMISSIONS);
+	public static boolean isUsingPermissions2() {
+		return getBoolean(TownySettings.Bool.USING_PERMISSIONS2);
+	}
+	
+	public static boolean isUsingPermissions3() {
+		return getBoolean(TownySettings.Bool.USING_PERMISSIONS3);
 	}
 	
 	public static String filterName(String input) {

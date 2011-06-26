@@ -2,11 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/croxis/Downloads/bukkit-0.0.1-SNAPSHOT(1).jar"/>
 	<classpathentry kind="lib" path="/home/croxis/minecraftserver/plugins/Essentials.jar"/>
 	<classpathentry kind="lib" path="/home/croxis/minecraftserver/plugins/iConomy.jar"/>
 	<classpathentry kind="lib" path="/home/croxis/minecraftserver/plugins/Permissions.jar"/>
 	<classpathentry kind="lib" path="/home/croxis/minecraftserver/plugins/Questioner.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="lib" path="/home/croxis/Downloads/bukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/Downloads/Permissions3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

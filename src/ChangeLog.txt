@@ -238,6 +238,7 @@ v0.61:
 v0.62:
 	Fixed towny map not drawing properly due to new bukkit font
 	Fixed town spawn
-	
 v0.69:
 	Fixed iChat
+v0.70:
+	Added permissions 3 support

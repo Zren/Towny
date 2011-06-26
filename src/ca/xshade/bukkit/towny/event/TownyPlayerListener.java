@@ -1487,8 +1487,11 @@ public boolean getSwitchPermission(Player player, TownBlockStatus status, WorldC
 				if (plugin.getTownyUniverse().isWarTime())
 					throw new TownyException("You cannot do this when the world is at war.");
 				
-				if (!plugin.isTownyAdmin(player) && TownySettings.isUsingPermissions() && !plugin.hasPermission(player, "towny.town.claim"))
+				if (!plugin.isTownyAdmin(player) && TownySettings.isUsingPermissions2() && !plugin.hasPermission(player, "towny.town.claim")){
 					throw new TownyException("You do not have permission to expand your town.");
+				} else if (!plugin.isTownyAdmin(player) && TownySettings.isUsingPermissions3() && !plugin.hasPermission(player, "towny.town.claim"))
+					throw new TownyException("You do not have permission to expand your town.");
+				
 				
 				resident = plugin.getTownyUniverse().getResident(player.getName());
 				town = resident.getTown();
