@@ -73,31 +73,6 @@ public class TownyPlayerListener extends PlayerListener {
 	public TownyPlayerListener(Towny instance) {
 		plugin = instance;
 	}
-
-	@Override
-	public void onPlayerChat(PlayerChatEvent event) {
-		Player player = event.getPlayer();
-		if (TownySettings.isUsingChatPrefix())
-			try {
-				Resident resident = plugin.getTownyUniverse().getResident(player.getName());
-				String colour, formatedName = "";
-				if (resident.isKing())
-					colour = Colors.Gold;
-				else if (resident.isMayor())
-					colour = Colors.LightBlue;
-				else
-					colour = Colors.White;
-				formatedName = (colour.equals(Colors.White) ? "" : colour)
-					+ plugin.getTownyUniverse().getFormatter().getNamePrefix(resident)
-					+ "%1$s" + plugin.getTownyUniverse().getFormatter().getNamePostfix(resident)
-					+ (colour.equals(Colors.White) ? "" : Colors.White);
-				String formatString = event.getFormat();
-				int index = formatString.indexOf("%1$s");
-				formatString = formatString.substring(0, index) + formatedName + formatString.substring(index+4);
-				event.setFormat(formatString);
-			} catch (NotRegisteredException e) {
-			}
-	}
 	
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
