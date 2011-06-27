@@ -280,12 +280,14 @@ public class TownyUniverse extends TownyObject {
 		towns.put(newName.toLowerCase(), town);
 		towns.remove(oldName.toLowerCase());
 		town.setName(newName);
+		Town oldTown = new Town(oldName);
 		try {
-			Town oldTown = new Town(oldName);
+			
 			oldTown.pay(oldTown.getHoldingBalance(), town);
 		} catch (IConomyException e) {
 		}
 		getDataSource().saveTown(town);
+		getDataSource().deleteTown(oldTown);
 		getDataSource().saveTownList();
 	}
 	
@@ -299,12 +301,14 @@ public class TownyUniverse extends TownyObject {
 		nations.put(newName.toLowerCase(), nation);
 		nations.remove(oldName.toLowerCase());
 		nation.setName(newName);
+		Nation oldNation = new Nation(oldName);
 		try {
-			Nation oldNation = new Nation(oldName);
+			
 			oldNation.pay(oldNation.getHoldingBalance(), nation);
 		} catch (IConomyException e) {
 		}
 		getDataSource().saveNation(nation);
+		getDataSource().deleteNation(oldNation);
 		getDataSource().saveNationList();
 	}
 

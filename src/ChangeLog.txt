@@ -252,3 +252,4 @@ v0.71:
     unclaimed_zone_itemuse is now set by: towny.wild.item_use
     unclaimed_zone_ignore is now set by: towny.wild.block.[block id]
     /townyworld set wild* commands are no longer availiable
+    Fixed town and nation renaming

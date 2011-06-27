@@ -335,8 +335,9 @@ public class Towny extends JavaPlugin {
 	}
 
 	public void sendErrorMsg(Player player, String msg) {
-		for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Rose + msg))
-			player.sendMessage(line);
+		//for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Rose + msg))
+		//	player.sendMessage(line);
+		player.sendMessage(Colors.Gold + "[Towny] " + Colors.Rose + msg);
 		sendDevMsg(msg);
 	}
 	
@@ -349,8 +350,9 @@ public class Towny extends JavaPlugin {
 			Player townyDev = getServer().getPlayer("croxis");
 			if (townyDev == null)
 				return;
-			for (String line : ChatTools.color(Colors.Gold + "[Towny] DevMode: " + Colors.Rose + msg))
-				townyDev.sendMessage(line);
+			//for (String line : ChatTools.color(Colors.Gold + "[Towny] DevMode: " + Colors.Rose + msg))
+			//	townyDev.sendMessage(line);
+			townyDev.sendMessage(Colors.Gold + "[Towny] DevMode: " + Colors.Rose + msg);
 		}
 	}
 	
@@ -366,8 +368,9 @@ public class Towny extends JavaPlugin {
 	}
 
 	public void sendMsg(Player player, String msg) {
-		for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Green + msg))
-			player.sendMessage(line);
+		//for (String line : ChatTools.color(Colors.Gold + "[Towny] " + Colors.Green + msg))
+		//	player.sendMessage(line);
+		player.sendMessage(Colors.Gold + "[Towny] " + Colors.Green + msg);
 	}
 
 	public String getVersion() {
