@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
 import ca.xshade.bukkit.towny.object.Nation;
 import ca.xshade.bukkit.towny.object.Resident;
 import ca.xshade.bukkit.towny.object.Town;
@@ -164,7 +167,7 @@ public class TownyFormatter {
 		return out;
 	}
 	
-	public List<String> getStatus(TownyWorld world) {
+	public List<String> getStatus(TownyWorld world, Player player, Towny plugin) {
 		List<String> out = new ArrayList<String>();
 		
 		// ___[ World ]___
@@ -180,12 +183,12 @@ public class TownyFormatter {
 		//     Build, Destroy, Switch
 		//     Ignored Blocks: 34, 45, 64
 		out.add(Colors.Green + world.getUnclaimedZoneName() + ":");
-		out.add("    " + (world.getUnclaimedZoneBuild() ? Colors.LightGreen : Colors.Rose) + "Build"
-				 + Colors.Gray + ", " + (world.getUnclaimedZoneDestroy() ? Colors.LightGreen : Colors.Rose) + "Destroy"
-				 + Colors.Gray + ", " + (world.getUnclaimedZoneSwitch() ? Colors.LightGreen : Colors.Rose) + "Switch"
-				 + Colors.Gray + ", " + (world.getUnclaimedZoneItemUse() ? Colors.LightGreen : Colors.Rose) + "ItemUse");
-		out.add("    " + Colors.Green + "Ignored Blocks:" + Colors.LightGreen + " " + StringMgmt.join(world.getUnclaimedZoneIgnoreIds(), ", "));
-		
+		out.add("    " + (plugin.hasPermission(player, "towny.wild.build") ? Colors.LightGreen : Colors.Rose) + "Build"
+				 + Colors.Gray + ", " + (plugin.hasPermission(player, "towny.wild.destroy") ? Colors.LightGreen : Colors.Rose) + "Destroy"
+				 + Colors.Gray + ", " + (plugin.hasPermission(player, "towny.wild.switch") ? Colors.LightGreen : Colors.Rose) + "Switch"
+				 + Colors.Gray + ", " + (plugin.hasPermission(player, "towny.wild.item_use") ? Colors.LightGreen : Colors.Rose) + "ItemUse");
+		//out.add("    " + Colors.Green + "Ignored Blocks:" + Colors.LightGreen + " " + StringMgmt.join(world.getUnclaimedZoneIgnoreIds(), ", "));
+		// FIXME: Return ignored ids to the output
 		return out;
 	}
 

@@ -9,6 +9,7 @@ import ca.xshade.bukkit.towny.NotRegisteredException;
 public class TownBlockOwner extends TownyIConomyObject {
 	protected List<TownBlock> townBlocks = new ArrayList<TownBlock>();
 	protected TownyPermission permissions = new TownyPermission();
+	
 
 	public void setTownblocks(List<TownBlock> townblocks) {
 		this.townBlocks = townblocks;

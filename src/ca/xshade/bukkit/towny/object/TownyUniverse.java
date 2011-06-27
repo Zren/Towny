@@ -521,8 +521,8 @@ public class TownyUniverse extends TownyObject {
 		return getFormatter().getStatus(nation);
 	}
 	
-	public List<String> getStatus(TownyWorld world) {
-		return getFormatter().getStatus(world);
+	public List<String> getStatus(TownyWorld world, Player player, Towny plugin) {
+		return getFormatter().getStatus(world, player, plugin);
 	}
 
 	public Town getTown(String name) throws NotRegisteredException {

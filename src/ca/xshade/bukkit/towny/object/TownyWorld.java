@@ -154,11 +154,8 @@ public class TownyWorld extends TownyObject {
 	public void setUsingDefault(boolean usingDefault) {
 		this.usingDefault = usingDefault;
 		if (usingDefault) {
-			setUnclaimedZoneBuild(null);
-			setUnclaimedZoneDestroy(null);
-			setUnclaimedZoneSwitch(null);
 			setUnclaimedZoneItemUse(null);
-			setUnclaimedZoneIgnore(null);
+			//setUnclaimedZoneIgnore(null);
 			setUnclaimedZoneName(null);
 		}
 			
@@ -167,7 +164,7 @@ public class TownyWorld extends TownyObject {
 	public boolean isUsingDefault() {
 		return usingDefault;
 	}
-	
+	/*	
 	public List<Integer> getUnclaimedZoneIgnoreIds() {
 		if (unclaimedZoneIgnoreIds == null || isUsingDefault())
 			return TownySettings.getUnclaimedZoneIgnoreIds();
@@ -185,7 +182,7 @@ public class TownyWorld extends TownyObject {
 
 	public Boolean getUnclaimedZoneBuild() {
 		if (unclaimedZoneBuild == null || isUsingDefault())
-			return TownySettings.getUnclaimedZoneBuildRights();
+			return plugin.hasPermission(player, "towny.wild.build");
 		else
 			return unclaimedZoneBuild;
 	}
@@ -196,7 +193,7 @@ public class TownyWorld extends TownyObject {
 
 	public Boolean getUnclaimedZoneDestroy() {
 		if (unclaimedZoneDestroy == null || isUsingDefault())
-			return TownySettings.getUnclaimedZoneDestroyRights();
+			return plugin.hasPermission(player, "towny.wild.destroy");
 		else
 			return unclaimedZoneDestroy;
 	}
@@ -207,14 +204,14 @@ public class TownyWorld extends TownyObject {
 
 	public Boolean getUnclaimedZoneSwitch() {
 		if (unclaimedZoneSwitch == null || isUsingDefault())
-			return TownySettings.getUnclaimedZoneSwitchRights();
+			return plugin.hasPermission(player, "towny.wild.switch");
 		else
 			return unclaimedZoneSwitch;
 	}
 
 	public void setUnclaimedZoneSwitch(Boolean unclaimedZoneSwitch) {
 		this.unclaimedZoneSwitch = unclaimedZoneSwitch;
-	}
+	}*/
 
 	public String getUnclaimedZoneName() {
 		if (unclaimedZoneName == null || isUsingDefault())
@@ -237,13 +234,6 @@ public class TownyWorld extends TownyObject {
 
 	public void setUnclaimedZoneItemUse(Boolean unclaimedZoneItemUse) {
 		this.unclaimedZoneItemUse = unclaimedZoneItemUse;
-	}
-
-	public Boolean getUnclaimedZoneItemUse() {
-		if (unclaimedZoneItemUse == null || isUsingDefault())
-			return TownySettings.getUnclaimedZoneItemUseRights();
-		else
-			return unclaimedZoneItemUse;
 	}
 	
 	/**

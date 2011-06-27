@@ -1,5 +1,8 @@
 package ca.xshade.bukkit.towny.object;
 
+import org.bukkit.entity.Player;
+
+import ca.xshade.bukkit.towny.Towny;
 import ca.xshade.bukkit.towny.TownySettings;
 import ca.xshade.bukkit.util.Colors;
 
@@ -156,12 +159,12 @@ public class TownyPermission {
 		}
 	}
 	
-	public static boolean getUnclaimedZone(ActionType type, TownyWorld world) {
+	public static boolean getUnclaimedZone(ActionType type, TownyWorld world, Player player, Towny plugin) {
 		switch (type) {
-			case BUILD: return world.getUnclaimedZoneBuild();
-			case DESTROY: return world.getUnclaimedZoneDestroy();
-			case SWITCH: return world.getUnclaimedZoneSwitch();
-			case ITEM_USE: return world.getUnclaimedZoneItemUse();
+			case BUILD: return plugin.hasPermission(player, "towny.wild.build");
+			case DESTROY: return plugin.hasPermission(player, "towny.wild.destroy");
+			case SWITCH: return plugin.hasPermission(player, "towny.wild.switch");
+			case ITEM_USE: return plugin.hasPermission(player, "towny.wild.item_use");
 			default: throw new UnsupportedOperationException();
 		}
 	}

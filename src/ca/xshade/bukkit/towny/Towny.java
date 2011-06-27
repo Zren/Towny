@@ -669,7 +669,7 @@ public class Towny extends JavaPlugin {
 			if (status == TownBlockStatus.UNCLAIMED_ZONE)
 				if (hasPermission(player, "towny.wild." + actionType.toString()))
 					return true;
-				else if (!TownyPermission.getUnclaimedZone(actionType, pos.getWorld())) {
+				else if (!TownyPermission.getUnclaimedZone(actionType, pos.getWorld(), player, this)) {
 					// TODO: Have permission to destroy here
 					cacheBlockErrMsg(player, "Not allowed to " + actionType.toString() + " in the wild.");
 					return false;
@@ -765,7 +765,7 @@ public class Towny extends JavaPlugin {
 	}
 	
 	public boolean hasWildOverride(TownyWorld world, Player player, int blockId, TownyPermission.ActionType action) {
-		return world.isUnclaimedZoneIgnoreId(blockId) || hasPermission(player, "towny.wild.block." + blockId + "." + action.toString());
+		return hasPermission(player, "towny.wild.block." + blockId + "." + action.toString());
 	}
 	
 	public void appendQuestion(Questioner questioner, Question question) throws Exception {
