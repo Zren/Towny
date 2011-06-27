@@ -159,7 +159,7 @@ public class TownyPermission {
 		}
 	}
 	
-	public static boolean getUnclaimedZone(ActionType type, TownyWorld world, Player player, Towny plugin) {
+	/*public static boolean getUnclaimedZone(ActionType type, TownyWorld world, Player player, Towny plugin) {
 		switch (type) {
 			case BUILD: return plugin.hasPermission(player, "towny.wild.build");
 			case DESTROY: return plugin.hasPermission(player, "towny.wild.destroy");
@@ -167,7 +167,7 @@ public class TownyPermission {
 			case ITEM_USE: return plugin.hasPermission(player, "towny.wild.item_use");
 			default: throw new UnsupportedOperationException();
 		}
-	}
+	}*/
 	
 	public String getColourString() {
 		return

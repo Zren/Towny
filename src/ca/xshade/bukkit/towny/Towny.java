@@ -346,7 +346,7 @@ public class Towny extends JavaPlugin {
 	
 	public void sendDevMsg(String msg) {
 		if (TownySettings.isDevMode()) {
-			Player townyDev = getServer().getPlayer("Shadeness");
+			Player townyDev = getServer().getPlayer("croxis");
 			if (townyDev == null)
 				return;
 			for (String line : ChatTools.color(Colors.Gold + "[Towny] DevMode: " + Colors.Rose + msg))
@@ -666,16 +666,18 @@ public class Towny extends JavaPlugin {
 			town = townBlock.getTown();
 		} catch (NotRegisteredException e) {
 			// Wilderness Permissions
-			if (status == TownBlockStatus.UNCLAIMED_ZONE)
-				if (hasPermission(player, "towny.wild." + actionType.toString()))
+			if (status == TownBlockStatus.UNCLAIMED_ZONE){
+				if (hasPermission(player, "towny.wild." + actionType.toString())){
 					return true;
-				else if (!TownyPermission.getUnclaimedZone(actionType, pos.getWorld(), player, this)) {
+				//}else if (!TownyPermission.getUnclaimedZone(actionType, pos.getWorld(), player, this)) {
 					// TODO: Have permission to destroy here
+				//	cacheBlockErrMsg(player, "Not allowed to " + actionType.toString() + " in the wild.");
+				//	return false;
+				} else {
 					cacheBlockErrMsg(player, "Not allowed to " + actionType.toString() + " in the wild.");
 					return false;
-				} else
-					return true;
-			else {
+				}
+			} else {
 				sendErrorMsg(player, "Error updating destroy permission.");
 				return false;
 			}
@@ -765,7 +767,14 @@ public class Towny extends JavaPlugin {
 	}
 	
 	public boolean hasWildOverride(TownyWorld world, Player player, int blockId, TownyPermission.ActionType action) {
-		return hasPermission(player, "towny.wild.block." + blockId + "." + action.toString());
+		boolean overide = false;
+		if (hasPermission(player, "towny.wild." + action.toString()))
+			overide = true;
+		else if (hasPermission(player, "towny.wild.block." + blockId))
+			overide = true;
+		else if (hasPermission(player, "towny.admin"))
+			overide = true;
+		return overide;
 	}
 	
 	public void appendQuestion(Questioner questioner, Question question) throws Exception {
