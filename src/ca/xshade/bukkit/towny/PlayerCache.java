@@ -81,6 +81,7 @@ public class PlayerCache {
 		lastTownBlock = null;
 		buildPermission = null;
 		destroyPermission = null;
+		townBlockStatus = null;
 		switchPermission = null;
 		itemUsePermission = null;
 		blockErrMsg = null;
