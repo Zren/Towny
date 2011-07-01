@@ -468,7 +468,7 @@ public class Towny extends JavaPlugin {
 
 	@SuppressWarnings("static-access")
 	public boolean checkEssentialsTeleport(Player player) {
-		if (!TownySettings.isUsingEssentials() || !TownySettings.isAllowingTownSpawn())
+		if (!TownySettings.isUsingEssentials() || !hasPermission(player, "towny.spawntp"))
 			return true;
 		
 		Plugin test = getServer().getPluginManager().getPlugin("Essentials");

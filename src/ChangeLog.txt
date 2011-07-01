@@ -251,5 +251,9 @@ v0.71:
     unclaimed_zone_switch is now set by: towny.wild.switch
     unclaimed_zone_itemuse is now set by: towny.wild.item_use
     unclaimed_zone_ignore is now set by: towny.wild.block.[block id]
+    allow_town_spawn is now set by towny.spawntp
+    allow_town_spawn_travel is now set by towny.publicspawntp
     /townyworld set wild* commands are no longer availiable
-    Fixed town and nation renaming
+    Broken line chat bug should now be fixed
+v0.72:
+    Remaining chat bugs should be fixed!

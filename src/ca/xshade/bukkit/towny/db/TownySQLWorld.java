@@ -6,8 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.avaje.ebean.validation.Length;
-import com.avaje.ebean.validation.NotEmpty;
+
 
 @Entity()
 @Table(name = "towny_worlds")
@@ -15,34 +14,34 @@ public class TownySQLWorld {
 	@Id
     private int id;
 
-    @Length(max = 30)
-    @NotEmpty
+    //@Length(max = 30)
+    //@NotEmpty
     private String name;
     
-    @NotEmpty
+    //@NotEmpty
     private boolean pvp;
     
-    @NotEmpty
+    //@NotEmpty
     private boolean claimable;
     
-    @NotEmpty
+    //@NotEmpty
     private boolean unclaimedZoneBuild;
     
-    @NotEmpty
+    //@NotEmpty
     private boolean unclaimedZoneDestroy;
     
-    @NotEmpty
+    //@NotEmpty
     private boolean unclaimedZoneSwitch;
     
-    @NotEmpty
+    //@NotEmpty
     private boolean unclaimedZoneItemUse;
     
-    @NotEmpty
+    //@NotEmpty
     private String unclaimedZoneName;
     
     private List<Integer> unclaimedZoneIgnoreIds;
     
-    @NotEmpty
+    //@NotEmpty
     private boolean usingTowny;
 
 }

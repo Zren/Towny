@@ -2,9 +2,6 @@ package ca.xshade.bukkit.towny.db;
 
 import java.util.List;
 
-import com.avaje.ebean.validation.Length;
-import com.avaje.ebean.validation.NotEmpty;
-import com.avaje.ebean.validation.NotNull;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -22,25 +19,25 @@ public class TownySQLTown {
 
     @Id
     private int id;
-    @NotNull
+    //@NotNull
     private String playerName;
-    @Length(max = 30)
-    @NotEmpty
+    //@Length(max = 30)
+   // @NotEmpty
     private String name;
 
-    @NotEmpty
+    //@NotEmpty
     private TownySQLResident mayor;
     
     @OneToMany
     private List<TownySQLResident> assistants;
     
-    @NotEmpty
+    //@NotEmpty
     @OneToMany
     private List<TownySQLBlock> blocks;
     
     private String townBoard;
     
-    @NotEmpty
+    //@NotEmpty
     private int taxes;
     
     private int plotPrice;

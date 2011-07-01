@@ -155,10 +155,8 @@ public class TownySettings {
 		MOB_REMOVAL,
 		HEALTH_REGEN,
 		ALLOW_OUTPOSTS,
-		ALLOW_TOWN_SPAWN_TRAVEL,
 		DEV_MODE,
 		WARTIME_REMOVE_ON_MONARCH_DEATH,
-		ALLOW_TOWN_SPAWN,
 		PVE_IN_NON_PVP_TOWNS,
 		FORCE_PVP_ON,
 		TOWN_RESPAWN,
@@ -358,8 +356,6 @@ public class TownySettings {
 		configBool.put(TownySettings.Bool.MOB_REMOVAL, true);
 		configBool.put(TownySettings.Bool.HEALTH_REGEN, true);
 		configBool.put(TownySettings.Bool.ALLOW_OUTPOSTS, true);
-		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL, true);
-		configBool.put(TownySettings.Bool.ALLOW_TOWN_SPAWN, true);
 		configBool.put(TownySettings.Bool.DEV_MODE, false);
 		configBool.put(TownySettings.Bool.WARTIME_REMOVE_ON_MONARCH_DEATH, false);
 		configBool.put(TownySettings.Bool.PVE_IN_NON_PVP_TOWNS, true);
@@ -1046,14 +1042,6 @@ public class TownySettings {
 
 	public static long getDayInterval() {
 		return getLong(TownySettings.KeyLong.DAY_INTERVAL);
-	}
-	
-	public static boolean isAllowingTownSpawn() {
-		return getBoolean(TownySettings.Bool.ALLOW_TOWN_SPAWN);
-	}
-	
-	public static boolean isAllowingPublicTownSpawnTravel() {
-		return getBoolean(TownySettings.Bool.ALLOW_TOWN_SPAWN_TRAVEL);
 	}
 	
 	public static boolean isTaxingDaily() {

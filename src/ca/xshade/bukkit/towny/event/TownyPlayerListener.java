@@ -907,7 +907,7 @@ public boolean getSwitchPermission(Player player, TownBlockStatus status, WorldC
 			try {
 				if (split.length == 1) {
 					boolean isTownyAdmin = plugin.isTownyAdmin(player);
-					if (!TownySettings.isAllowingTownSpawn() && !isTownyAdmin && !plugin.hasPermission(player, "towny.spawntp"))
+					if (!isTownyAdmin && !plugin.hasPermission(player, "towny.spawntp"))
 						throw new TownyException("Town spawn travel is forbidden.");
 					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
 					if (!isTownyAdmin && TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getTownSpawnTravelPrice()))
@@ -916,7 +916,7 @@ public boolean getSwitchPermission(Player player, TownBlockStatus status, WorldC
 						plugin.getTownyUniverse().townSpawn(player, false);
 				} else {
 					boolean isTownyAdmin = plugin.isTownyAdmin(player);
-					if (!TownySettings.isAllowingPublicTownSpawnTravel() && !isTownyAdmin && !plugin.hasPermission(player, "towny.publicspawntp"))
+					if (!isTownyAdmin && !plugin.hasPermission(player, "towny.publicspawntp"))
 						throw new TownyException("Town spawn travel is forbidden.");
 					Resident resident = plugin.getTownyUniverse().getResident(player.getName());
 					Town town = plugin.getTownyUniverse().getTown(split[1]);

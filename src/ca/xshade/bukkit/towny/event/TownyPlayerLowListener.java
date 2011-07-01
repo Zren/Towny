@@ -70,7 +70,7 @@ public class TownyPlayerLowListener extends PlayerListener {
 			String line = Colors.Blue + "[" + town.getName() + "] "
 					+ player.getDisplayName() + ": "
 					+ Colors.LightBlue + msg;
-			plugin.getTownyUniverse().sendTownMessage(town, ChatTools.color(line));
+			plugin.getTownyUniverse().sendTownMessage(town, line);
 		} catch (NotRegisteredException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		}
@@ -83,7 +83,7 @@ public class TownyPlayerLowListener extends PlayerListener {
 			String line = Colors.Gold + "[" + nation.getName() + "] "
 					+ player.getDisplayName() + ": "
 					+ Colors.Yellow + msg;
-			plugin.getTownyUniverse().sendNationMessage(nation, ChatTools.color(line));
+			plugin.getTownyUniverse().sendNationMessage(nation, line);
 		} catch (NotRegisteredException x) {
 			plugin.sendErrorMsg(player, x.getError());
 		}

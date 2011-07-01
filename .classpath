@@ -6,8 +6,15 @@
 	<classpathentry kind="lib" path="/home/croxis/minecraftserver/plugins/iConomy.jar"/>
 	<classpathentry kind="lib" path="/home/croxis/minecraftserver/plugins/Permissions.jar"/>
 	<classpathentry kind="lib" path="/home/croxis/minecraftserver/plugins/Questioner.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="lib" path="/home/croxis/Downloads/bukkit-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/home/croxis/Downloads/Permissions3.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/src/hibernate-distribution-3.6.5.Final/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/src/hibernate-distribution-3.6.5.Final/lib/required/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/src/hibernate-distribution-3.6.5.Final/lib/required/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/src/hibernate-distribution-3.6.5.Final/lib/required/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/src/hibernate-distribution-3.6.5.Final/lib/required/javassist-3.12.0.GA.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/src/hibernate-distribution-3.6.5.Final/lib/required/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/src/hibernate-distribution-3.6.5.Final/lib/required/slf4j-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/home/croxis/src/hibernate-distribution-3.6.5.Final/lib/jpa/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

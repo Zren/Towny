@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.avaje.ebean.validation.NotEmpty;
 
 @Entity()
 @Table(name = "towny_blocks")
@@ -14,16 +13,16 @@ public class TownySQLBlock {
 	
 	private String name;
 	
-	@NotEmpty
+	//@NotEmpty
 	private String world;
 	
-	@NotEmpty
+	//@NotEmpty
 	private int x;
 	
-	@NotEmpty
+	//@NotEmpty
 	private int z;
 	
-	@NotEmpty
+	//@NotEmpty
 	private TownySQLTown town;
 	
 	private TownySQLResident owner;
