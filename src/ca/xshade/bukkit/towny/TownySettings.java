@@ -302,7 +302,7 @@ public class TownySettings {
 		configStr.put(TownySettings.Str.UNCLAIMED_PLOT_NAME, "Unowned");
 		configStr.put(TownySettings.Str.NPC_PREFIX, "[NPC]");
 		configStr.put(TownySettings.Str.FLATFILE_BACKUP, "zip");
-		configStr.put(TownySettings.Str.NAME_CHECK_REGEX, "^[a-zA-Z0-9]+[a-zA-Z0-9._-]*$");
+		configStr.put(TownySettings.Str.NAME_CHECK_REGEX, "^[a-zA-Z0-9._-]*$");
 		configStr.put(TownySettings.Str.NAME_FILTER_REGEX, "[ /]");
 		configStr.put(TownySettings.Str.NAME_REMOVE_REGEX, "[^a-zA-Z0-9._-]");
 		// Integer
