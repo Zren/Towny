@@ -320,6 +320,7 @@ public class Towny extends JavaPlugin {
 			sendDebugMsg("Could not read ChangeLog.txt");
 		}
 		setSetting(TownySettings.Str.LAST_RUN_VERSION, getVersion());
+		setSetting(TownySettings.Str.NAME_CHECK_REGEX, "[^a-zA-Z0-9._-]"); //TODO: Remove next version
 	}
 	
 	@Override
