@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/bukkit.jar" sourcepath="C:/Users/Admin/Desktop/git/Bukkit"/>
-	<classpathentry kind="lib" path="lib/Essentials.jar"/>
-	<classpathentry kind="lib" path="lib/GroupManager.jar"/>
-	<classpathentry kind="lib" path="lib/iConomy.jar"/>
-	<classpathentry kind="lib" path="lib/Permissions.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Questioner"/>
+	<classpathentry kind="lib" path="E:/ElgarL/Development/Resources/Questioner.jar"/>
+	<classpathentry kind="lib" path="E:/ElgarL/Development/Resources/bukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="E:/ElgarL/Development/Resources/craftbukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="E:/ElgarL/Development/Resources/Essentials.jar"/>
+	<classpathentry kind="lib" path="E:/ElgarL/Development/Resources/iConomy.jar"/>
+	<classpathentry kind="lib" path="E:/ElgarL/Development/Resources/Permissions.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
