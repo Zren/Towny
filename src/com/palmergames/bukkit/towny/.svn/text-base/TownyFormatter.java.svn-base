@@ -129,8 +129,14 @@ public class TownyFormatter {
 		}
 
 		// Residents [12]: James, Carry, Mason
-		
-		out.addAll(ChatTools.listArr(getFormattedNames(town.getResidents().toArray(new Resident[0])),
+        String[] residents = getFormattedNames(town.getResidents().toArray(new Resident[0]));
+		if(residents.length > 34){
+            String[] entire = residents;
+            residents = new String[36];
+            System.arraycopy(entire, 0, residents, 0, 35);
+            residents[35] = "and more...";
+        }
+		out.addAll(ChatTools.listArr(residents,
 				Colors.Green + "Residents " + Colors.LightGreen + "[" + town.getNumResidents() + "]" + Colors.Green + ":" + Colors.White + " "));
 
 		return out;
@@ -185,7 +191,7 @@ public class TownyFormatter {
 				+ Colors.Green + "ForcePvP: " + (world.isForcePVP() ? Colors.Rose + "On" : Colors.LightGreen + "Off")
 				+ Colors.Gray + " | "
 				+ Colors.Green + "Fire: " + (world.isForceFire() ? Colors.Rose + "On" : Colors.LightGreen + "Off"));
-		
+
 		out.add(Colors.Green + "Explosions: " + (world.isForceExpl() ? Colors.Rose + "On" : Colors.LightGreen + "Off")
 				+ Colors.Gray + " | "
 				+ Colors.Green + "World Mobs: " + (world.hasWorldMobs() ? Colors.Rose + "On" : Colors.LightGreen + "Off")

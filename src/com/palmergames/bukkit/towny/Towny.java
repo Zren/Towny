@@ -221,7 +221,7 @@ public class Towny extends JavaPlugin {
 
 		test = getServer().getPluginManager().getPlugin("Permissions");
 		if (test == null)
-			setSetting("USING_PERMISSIONS", false, false);
+			TownySettings.setUsingPermissions(false);
 		else {
 			permissions = (Permissions)test;
 			if (TownySettings.isUsingPermissions())
@@ -230,7 +230,7 @@ public class Towny extends JavaPlugin {
 		
 		test = getServer().getPluginManager().getPlugin("iConomy");
 		if (test == null)
-			setSetting("USING_ICONOMY", false, false);
+			TownySettings.setUsingIConomy(false);
 		else {
 			iconomy = (iConomy)test;
 			if (TownySettings.isUsingIConomy())
@@ -239,13 +239,13 @@ public class Towny extends JavaPlugin {
 		
 		test = getServer().getPluginManager().getPlugin("Essentials");
 		if (test == null)
-			setSetting("USING_ESSENTIALS", false, false);
+			TownySettings.setUsingEssentials(false);
 		else if (TownySettings.isUsingEssentials())
 			using.add("Essentials");
 		
 		test = getServer().getPluginManager().getPlugin("Questioner");
 		if (test == null)
-			setSetting("USING_QUESTIONER", false, false);
+			TownySettings.setUsingQuestioner(false);
 		else if (TownySettings.isUsingQuestioner())
 			using.add("Questioner");
 		
@@ -263,6 +263,7 @@ public class Towny extends JavaPlugin {
 		townyUniverse.toggleDailyTimer(false);
 		townyUniverse.toggleMobRemoval(false);
 		townyUniverse.toggleHealthRegen(false);
+        townyUniverse.toggleTeleportWarmup(false);
 		
 		playerCache.clear();
 		playerMode.clear();
@@ -281,7 +282,7 @@ public class Towny extends JavaPlugin {
 			getServer().getPluginManager().disablePlugin(this);
 		}
 		
-		Coord.setCellSize(TownySettings.getTownBlockSize());
+		//Coord.setCellSize(TownySettings.getTownBlockSize());
 		TownyIConomyObject.setPlugin(this);
 		//TownyCommand.setUniverse(townyUniverse);
 	}
@@ -298,6 +299,7 @@ public class Towny extends JavaPlugin {
 		townyUniverse.toggleDailyTimer(false);
 		townyUniverse.toggleMobRemoval(false);
 		townyUniverse.toggleHealthRegen(false);
+        townyUniverse.toggleTeleportWarmup(false);
 		
 		/*
 		if (TownySettings.isForcingPvP() || TownySettings.isForcingExplosions() || TownySettings.isForcingMonsters())
@@ -316,6 +318,7 @@ public class Towny extends JavaPlugin {
 		townyUniverse.toggleDailyTimer(true);
 		townyUniverse.toggleMobRemoval(true);
 		townyUniverse.toggleHealthRegen(TownySettings.hasHealthRegen());
+        townyUniverse.toggleTeleportWarmup(TownySettings.getTeleportWarmupTime() > 0);
 		updateCache();
 	}
 
@@ -394,7 +397,7 @@ public class Towny extends JavaPlugin {
 			boolean display = false;
 			System.out.println("------------------------------------");
 			System.out.println("[Towny] ChangeLog up until v" + getVersion());
-			String lastVersion = TownySettings.getLastRunVersion();
+			String lastVersion = TownySettings.getLastRunVersion(getVersion());
 			for (String line : changeLog) { //TODO: crawl from the bottom, then past from that index.
 				if (line.startsWith("v" + lastVersion))
 					display = true;
@@ -405,7 +408,7 @@ public class Towny extends JavaPlugin {
 		} catch (IOException e) {
 			sendDebugMsg("Could not read ChangeLog.txt");
 		}
-		setSetting("LAST_RUN_VERSION", getVersion(), true);
+		TownySettings.setLastRunVersion(getVersion());
 	}
 	
 
@@ -425,7 +428,7 @@ public class Towny extends JavaPlugin {
 	
 	public void sendDevMsg(String msg) {
 		if (TownySettings.isDevMode()) {
-			Player townyDev = getServer().getPlayer(TownySettings.getString("dev_name"));
+			Player townyDev = getServer().getPlayer(TownySettings.getDevName());
 			if (townyDev == null)
 				return;
 			for (String line : ChatTools.color(TownySettings.getLangString("default_towny_prefix") + " DevMode: " + Colors.Rose + msg))
@@ -513,17 +516,17 @@ public class Towny extends JavaPlugin {
 	public void setDisplayName (Player player) {
 		
 		// Setup the chat prefix BEFORE we speak.
-		//if (TownySettings.isUsingChatPrefix()) {
+		if (TownySettings.isUsingModifyChat()) {
 			try {
 				Resident resident = getTownyUniverse().getResident(player.getName());
 				String colour, formattedName = "";
 				if (resident.isKing())
-					colour = TownySettings.getString("COLOUR_KING");
+					colour = TownySettings.getKingColour();
 				else if (resident.isMayor())
-					colour = TownySettings.getString("COLOUR_MAYOR");
+					colour = TownySettings.getMayorColour();
 				else
 					colour = "";
-				formattedName = TownySettings.getString("MODIFY_CHAT");
+				formattedName = TownySettings.getModifyChatFormat();
 				
 				formattedName = formattedName.replace("{nation}", resident.hasNation() ? "[" + resident.getTown().getNation().getName() + "]" : "");
 				formattedName = formattedName.replace("{town}", resident.hasTown() ? "[" + resident.getTown().getName() + "]" : "");
@@ -543,7 +546,7 @@ public class Towny extends JavaPlugin {
 			} catch (NotRegisteredException e) {
 				log("Not Registered");
 			}
-		//}		
+		}		
 	}
 	
 	public void setPlayerMode(Player player, String[] modes) {
@@ -696,16 +699,16 @@ public class Towny extends JavaPlugin {
 	}
 
 	public void sendMsg(String msg) {
-		System.out.println("[Towny] " + msg);
+		System.out.println("[Towny] " + ChatTools.stripColour(msg));
 	}
 	
 	public String getConfigPath() {
 		return getDataFolder().getPath() + FileMgmt.fileSeparator() + "settings" + FileMgmt.fileSeparator() + "config.yml";
 	}
 	
-	public void setSetting(String root, Object value, boolean saveYML) {
-			TownySettings.setProperty(root, value, saveYML);
-	}
+	//public void setSetting(String root, Object value, boolean saveYML) {
+	//		TownySettings.setProperty(root, value, saveYML);
+	//}
 	
 	public Object getSetting(String root) {
 		return TownySettings.getProperty(root);

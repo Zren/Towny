@@ -347,7 +347,7 @@ public class TownyCommand implements CommandExecutor {
 						townyMap[y][x] = Colors.White;
 
 					// Registered town block
-					if (townblock.isForSale() != -1)
+					if (townblock.getPlotPrice() != -1)
 						townyMap[y][x] += "$";
 					else if (townblock.isHomeBlock())
 						townyMap[y][x] += "H";
@@ -478,19 +478,19 @@ public class TownyCommand implements CommandExecutor {
 		if (town != null) {
 			output.add(Colors.Yellow + "Town [" + plugin.getTownyUniverse().getFormatter().getFormattedName(town)+"]");
 			output.add(Colors.Rose + "    [Price] "
-					+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotPrice())
+					+ Colors.Green + "Plot: " + Colors.LightGreen + Double.toString(town.getPlotPrice())
 					+ Colors.Gray + " | "
 					+ Colors.Green + "Outpost: " + Colors.LightGreen + TownyFormatter.formatMoney(TownySettings.getOutpostCost()));
 			output.add(Colors.Rose + "    [Upkeep] "
-					+ Colors.Green + "Resident: " + Colors.LightGreen + Integer.toString(town.getTaxes())
+					+ Colors.Green + "Resident: " + Colors.LightGreen + Double.toString(town.getTaxes())
 					+ Colors.Gray + " | "
-					+ Colors.Green + "Plot: " + Colors.LightGreen + Integer.toString(town.getPlotTax()));
+					+ Colors.Green + "Plot: " + Colors.LightGreen + Double.toString(town.getPlotTax()));
 			
 			
 			if (nation != null) {
 				output.add(Colors.Yellow + "Nation [" + plugin.getTownyUniverse().getFormatter().getFormattedName(nation)+"]");
 				output.add(Colors.Rose + "    [Upkeep] "
-					+ Colors.Green + "Town: " + Colors.LightGreen + Integer.toString(nation.getTaxes())
+					+ Colors.Green + "Town: " + Colors.LightGreen + Double.toString(nation.getTaxes())
 					+ Colors.Gray + " | "
 					+ Colors.Green + "Neutrality: " + Colors.LightGreen + TownyFormatter.formatMoney(TownySettings.getNationNeutralityCost()));
 			}

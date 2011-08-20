@@ -411,4 +411,20 @@ v0.74.0:
     - townLevels and nationLevels are now full YAML nodes for easy editing (commit by dumptruckman).
     - Pistons can now only operate between similarly owned townblocks or wild areas (No piston griefing).
     - You can now block the use of '/town spawn' if you are in certain zones (unclaimed 'wilderness', Neutral towns and Enemy towns).
-    - Added ability to claim in a circle. /town claim circle [radius], and /town claim circle auto.
+v0.74.1:
+    - Added sanity checking to prevent colour codes in titles and surnames, and a notification message when a title/surname is cleared.
+    - Removed console spam from 'send message'.
+    - Disabled the use of '/town new' and '/town claim' in worlds where Towny is disabled.
+    - Added 'disable_modify_chat' for those not wanting Towny to make any changes.
+    - Fixed an error if a player uses '/town spawn' after logging in, but before moving. This caused the player cache to be empty.
+    - All console messages should now have their colour codes removed correctly.
+    - New config.yml handling code means no need to delete config at each upgrade. (thanks dumptruckman)
+    - Fixed town spawn being lost at load when using non standard (16x16) plot sizes.
+    - Allow the ignition of obsidian for lighting portals, even when fire lighting is disabled in town.
+    - Durations specified in the config are now in seconds rather than milliseconds.
+    - Implemented Towny's own teleport_warmup_time.
+    - Added a command '/townyadmin reset'. Wipes all settings and generate/load a default config.yml.
+    - Title and Surnames can now be limited in length by the setting 'max_title_length' in config.yml.
+    - Towny is now an observable object.  This allows other plugins to observe events that happen in Towny.
+    - Towny now abbreviates it's residents lists when displayed, for easier reading.
+    - Better formatting for times in the config eg. 1d6h20s.

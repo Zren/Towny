@@ -2,33 +2,17 @@ package com.palmergames.bukkit.towny.object;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.naming.InvalidNameException;
 
+import com.palmergames.bukkit.towny.*;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.palmergames.bukkit.towny.AlreadyRegisteredException;
-import com.palmergames.bukkit.towny.DailyTimerTask;
-import com.palmergames.bukkit.towny.EmptyNationException;
-import com.palmergames.bukkit.towny.EmptyTownException;
-import com.palmergames.bukkit.towny.HealthRegenTimerTask;
-import com.palmergames.bukkit.towny.IConomyException;
-import com.palmergames.bukkit.towny.MobRemovalTimerTask;
-import com.palmergames.bukkit.towny.NotRegisteredException;
-import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.TownyException;
-import com.palmergames.bukkit.towny.TownyFormatter;
-import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.db.TownyDataSource;
 import com.palmergames.bukkit.towny.db.TownyFlatFileSource;
 import com.palmergames.bukkit.towny.db.TownyHModFlatFileSource;
@@ -38,6 +22,8 @@ import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.bukkit.util.MinecraftTools;
 import com.palmergames.util.FileMgmt;
+
+import static com.palmergames.bukkit.towny.object.TownyObservableType.*;
 
 
 public class TownyUniverse extends TownyObject {
@@ -52,6 +38,7 @@ public class TownyUniverse extends TownyObject {
 	private int dailyTask = -1;
 	private int mobRemoveTask = -1;
 	private int healthRegenTask = -1;
+    private int teleportWarmupTask = -1;
 	private War warEvent;
 	private String rootFolder;
 	
@@ -76,10 +63,11 @@ public class TownyUniverse extends TownyObject {
 		//dailyTimer.schedule(new DailyTimerTask(this), 0);
 		if (getPlugin().getServer().getScheduler().scheduleAsyncDelayedTask(getPlugin(), new DailyTimerTask(this)) == -1)
 			plugin.sendErrorMsg("Could not schedule newDay.");
+        setChanged();
+        notifyObservers(NEW_DAY);
 	}
 	
 	public void toggleMobRemoval(boolean on) {
-		
 		if (on && !isMobRemovalRunning()) {
 			mobRemoveTask = getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(getPlugin(), new MobRemovalTimerTask(this, plugin.getServer()), 0, MinecraftTools.convertToTicks(TownySettings.getMobRemovalSpeed()));
 			if (mobRemoveTask == -1)
@@ -88,6 +76,8 @@ public class TownyUniverse extends TownyObject {
 			getPlugin().getServer().getScheduler().cancelTask(mobRemoveTask);
 			mobRemoveTask = -1;
 		}
+        setChanged();
+        notifyObservers(TOGGLE_MOB_REMOVAL);
 	}
 	
 	public void toggleDailyTimer(boolean on) {
@@ -100,7 +90,8 @@ public class TownyUniverse extends TownyObject {
 			getPlugin().getServer().getScheduler().cancelTask(dailyTask);
 			dailyTask = -1;
 		}
-
+        setChanged();
+        notifyObservers(TOGGLE_DAILY_TIMER);
 	}
 	
 	public void toggleHealthRegen(boolean on) {
@@ -112,7 +103,22 @@ public class TownyUniverse extends TownyObject {
 			getPlugin().getServer().getScheduler().cancelTask(healthRegenTask);
 			healthRegenTask = -1;
 		}
+        setChanged();
+        notifyObservers(TOGGLE_HEALTH_REGEN);
 	}
+
+    public void toggleTeleportWarmup(boolean on) {
+        if (on && !isTeleportWarmupRunning()) {
+			teleportWarmupTask = getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(getPlugin(), new TeleportWarmupTimerTask(this), 0, 20);
+			if (teleportWarmupTask == -1)
+				plugin.sendErrorMsg("Could not schedule teleport warmup loop.");
+		} else if (!on && isHealthRegenRunning()) {
+			getPlugin().getServer().getScheduler().cancelTask(teleportWarmupTask);
+			teleportWarmupTask = -1;
+		}
+        setChanged();
+        notifyObservers(TOGGLE_TELEPORT_WARMUP);
+    }
 	
 	public boolean isMobRemovalRunning() {
 		return mobRemoveTask != -1;
@@ -128,6 +134,10 @@ public class TownyUniverse extends TownyObject {
 		return healthRegenTask != -1;
 		//return healthRegenTimer != null;
 	}
+
+    public boolean isTeleportWarmupRunning() {
+        return teleportWarmupTask != -1;
+    }
 
 	public void onLogin(Player player) throws AlreadyRegisteredException, NotRegisteredException {
 		Resident resident;
@@ -165,6 +175,8 @@ public class TownyUniverse extends TownyObject {
 		
 		// Setup the chat prefix/suffix
 		plugin.setDisplayName(player);
+        setChanged();
+        notifyObservers(PLAYER_LOGIN);
 	}
 
 	public void onLogout(Player player) {
@@ -174,6 +186,8 @@ public class TownyUniverse extends TownyObject {
 			getDataSource().saveResident(resident);
 		} catch (NotRegisteredException e) {
 		}
+        setChanged();
+        notifyObservers(PLAYER_LOGOUT);
 	}
 	
 	/**
@@ -182,7 +196,7 @@ public class TownyUniverse extends TownyObject {
 	 * to the world's spawn location.
 	 * 
 	 * @param player
-	 * @param forceTeleport
+	 * @param 
 	 */
 	/*
 	public void townSpawn(Player player, boolean forceTeleport) {
@@ -228,6 +242,8 @@ public class TownyUniverse extends TownyObject {
 			throw new AlreadyRegisteredException("A resident with the name " + filteredName + " is already in use.");
 		
 		residents.put(filteredName.toLowerCase(), new Resident(filteredName));
+        setChanged();
+        notifyObservers(NEW_RESIDENT);
 	}
 
 	public void newTown(String name) throws AlreadyRegisteredException, NotRegisteredException {
@@ -242,6 +258,8 @@ public class TownyUniverse extends TownyObject {
 			throw new AlreadyRegisteredException("The town " + filteredName + " is already in use.");
 		
 		towns.put(filteredName.toLowerCase(), new Town(filteredName));
+        setChanged();
+        notifyObservers(NEW_TOWN);
 	}
 
 	public void newNation(String name) throws AlreadyRegisteredException, NotRegisteredException {
@@ -256,6 +274,8 @@ public class TownyUniverse extends TownyObject {
 			throw new AlreadyRegisteredException("The nation " + filteredName + " is already in use.");
 		
 		nations.put(filteredName.toLowerCase(), new Nation(filteredName));
+        setChanged();
+        notifyObservers(NEW_NATION);
 	}
 
 	public void newWorld(String name) throws AlreadyRegisteredException, NotRegisteredException {
@@ -270,6 +290,8 @@ public class TownyUniverse extends TownyObject {
 			throw new AlreadyRegisteredException("The world " + filteredName + " is already in use.");
 		
 		worlds.put(filteredName.toLowerCase(), new TownyWorld(filteredName));
+        setChanged();
+        notifyObservers(NEW_WORLD);
 	}
 	
 	public String checkAndFilterName(String name) throws InvalidNameException {
@@ -332,7 +354,9 @@ public class TownyUniverse extends TownyObject {
 		getDataSource().saveTown(town);
 		getDataSource().saveTownList();
 		getDataSource().saveWorld(town.getWorld());
-		
+
+		setChanged();
+        notifyObservers(RENAME_TOWN);
 	}
 	
 	public void renameNation(Nation nation, String newName) throws AlreadyRegisteredException, NotRegisteredException {
@@ -396,12 +420,17 @@ public class TownyUniverse extends TownyObject {
 		for (Nation toCheck : toSaveNation)
 			getDataSource().saveNation(toCheck);		
 		
-		
+		setChanged();
+        notifyObservers(RENAME_NATION);
 	}
 
 	public Resident getResident(String name) throws NotRegisteredException {
 		Resident resident = residents.get(name.toLowerCase());
-		if (resident == null) {
+		if (resident == null)
+			throw new NotRegisteredException(name + " is not registered.");
+		
+		/*
+		{
 			// Attempt to load the resident and fix the files.
 			
 			try {
@@ -418,6 +447,7 @@ public class TownyUniverse extends TownyObject {
 			
 			//
 		}
+		*/
 		return resident;
 	}
 
@@ -447,7 +477,7 @@ public class TownyUniverse extends TownyObject {
 	public void sendMessage(Player player, String[] lines) {
 		for (String line : lines) {
 			player.sendMessage(line);
-			plugin.log("[send Message] " + player.getName() + ": " + line);
+			//plugin.log("[send Message] " + player.getName() + ": " + line);
 		}
 	}
 
@@ -715,8 +745,10 @@ public class TownyUniverse extends TownyObject {
 					getRootFolder() + FileMgmt.fileSeparator() + "settings" + FileMgmt.fileSeparator() + "town-levels.csv",
 					getRootFolder() + FileMgmt.fileSeparator() + "settings" + FileMgmt.fileSeparator() + "nation-levels.csv"});
 					*/
-			TownySettings.loadConfig(getRootFolder() + FileMgmt.fileSeparator() + "settings" + FileMgmt.fileSeparator() + "config.yml", "/plugin.yml");
+			//TownySettings.loadConfig(getRootFolder() + FileMgmt.fileSeparator() + "settings" + FileMgmt.fileSeparator() + "config.yml", "/plugin.yml");
+            TownySettings.loadConfig(getRootFolder() + FileMgmt.fileSeparator() + "settings" + FileMgmt.fileSeparator() + "config.yml", plugin.getVersion());
 			TownySettings.loadLanguage(getRootFolder() + FileMgmt.fileSeparator() + "settings", "/english.yml");
+            //TownySettings.loadPermissions(getRootFolder() + FileMgmt.fileSeparator() + "settings", "/permissions.yml");
 			//TownySettings.loadTownLevelConfig(getRootFolder() + FileMgmt.fileSeparator() + "settings" + FileMgmt.fileSeparator() + "town-levels.csv");
 			//TownySettings.loadNationLevelConfig(getRootFolder() + FileMgmt.fileSeparator() + "settings" + FileMgmt.fileSeparator() + "nation-levels.csv");
 		} catch (FileNotFoundException e) {
@@ -726,6 +758,9 @@ public class TownyUniverse extends TownyObject {
 			e.printStackTrace();
 			return false;
 		}
+		
+		// Setup any defaults before we load the database.
+		Coord.setCellSize(TownySettings.getTownBlockSize());
 		
 		System.out.println("[Towny] Database: [Load] " + TownySettings.getLoadDatabase() + " [Save] " + TownySettings.getSaveDatabase());
 		if (!loadDatabase(TownySettings.getLoadDatabase())) {
@@ -852,6 +887,8 @@ public class TownyUniverse extends TownyObject {
 	public void collectNationTaxes() throws IConomyException {
 		for (Nation nation : new ArrayList<Nation>(nations.values()))
 			collectNationTaxes(nation);
+        setChanged();
+        notifyObservers(COLLECTED_NATION_TAX);
 	}
 
 	public void collectNationTaxes(Nation nation) throws IConomyException {
@@ -876,10 +913,12 @@ public class TownyUniverse extends TownyObject {
 
 	public void collectTownTaxes() throws IConomyException {
 		for (Town town : new ArrayList<Town>(towns.values()))
-			collectTownTaxe(town);
+			collectTownTaxes(town);
+        setChanged();
+        notifyObservers(COLLECTED_TONW_TAX);
 	}
 
-	public void collectTownTaxe(Town town) throws IConomyException {
+	public void collectTownTaxes(Town town) throws IConomyException {
 		//Resident Tax
 		if (town.getTaxes() > 0)
 			for (Resident resident : new ArrayList<Resident>(town.getResidents()))
@@ -916,48 +955,60 @@ public class TownyUniverse extends TownyObject {
 				
 		
 		//Plot Tax
-		if (town.getPlotTax() > 0) {
+		if (town.getPlotTax() > 0 || town.getCommercialPlotTax() > 0) {
 			Hashtable<Resident,Integer> townPlots = new Hashtable<Resident,Integer>();
+            Hashtable<Resident,Double> townTaxes = new Hashtable<Resident,Double>();
 			for (TownBlock townBlock : new ArrayList<TownBlock>(town.getTownBlocks())) {
 				if (!townBlock.hasResident())
 					continue;
 				try {
 					Resident resident = townBlock.getResident();
-					if (town.isMayor(resident) || town.hasAssistant(resident))
+					if (town.isMayor(resident) || town.hasAssistant(resident)) {
 						continue;
-					if (!resident.pay(town.getPlotTax(), town)) {
-						sendTownMessage(town,  String.format(TownySettings.getLangString("msg_couldnt_pay_plot_taxes"), resident));
-						townBlock.setResident(null);
-						getDataSource().saveResident(resident);
-						getDataSource().saveWorld(townBlock.getWorld());
-					} else
-						townPlots.put(resident, (townPlots.containsKey(resident) ? townPlots.get(resident) : 0) + 1);
+                    }
+                    if (!resident.pay(townBlock.getType().getTax(town), town)) {
+                        sendTownMessage(town,  String.format(TownySettings.getLangString("msg_couldnt_pay_plot_taxes"), resident));
+                        townBlock.setResident(null);
+                        getDataSource().saveResident(resident);
+                        getDataSource().saveWorld(townBlock.getWorld());
+                    } else {
+                        townPlots.put(resident, (townPlots.containsKey(resident) ? townPlots.get(resident) : 0) + 1);
+                        townTaxes.put(resident, (townTaxes.containsKey(resident) ? townTaxes.get(resident) : 0) +
+                                townBlock.getType().getTax(town));
+                    }
 				} catch (NotRegisteredException e) {
 				}
 			}
-			for (Resident resident : townPlots.keySet())
+			for (Resident resident : townPlots.keySet()) {
 				try {
 					int numPlots = townPlots.get(resident);
-					int totalCost = town.getPlotTax() * numPlots;
+					double totalCost = townTaxes.get(resident);
 					sendResidentMessage(resident, String.format(TownySettings.getLangString("msg_payed_plot_cost"), totalCost, numPlots, town.getName()));
 				} catch (TownyException e) {
 				}
+            }
 		}
 	}
 
 	public void startWarEvent() {
 		this.warEvent = new War(plugin, TownySettings.getWarTimeWarningDelay());
+        setChanged();
+        notifyObservers(WAR_START);
 	}
 	
 	public void endWarEvent() {
 		if (isWarTime())
 			warEvent.toggleEnd();
 		// Automatically makes warEvent null
+        setChanged();
+        notifyObservers(WAR_END);
 	}
 	
 	public void clearWarEvent() {
 		getWarEvent().cancelTasks(getPlugin().getServer().getScheduler());
 		setWarEvent(null);
+        setChanged();
+        notifyObservers(WAR_CLEARED);
 	}
 	
 	//TODO: throw error if null
@@ -967,6 +1018,8 @@ public class TownyUniverse extends TownyObject {
 
 	public void setWarEvent(War warEvent) {
 		this.warEvent = warEvent;
+        setChanged();
+        notifyObservers(WAR_SET);
 	}
 	
 	public Towny getPlugin() {
@@ -1017,6 +1070,9 @@ public class TownyUniverse extends TownyObject {
 		for (Town town : toSave)
 			getDataSource().saveTown(town);
 		getDataSource().saveNationList();
+
+        setChanged();
+        notifyObservers(REMOVE_NATION);
 	}
 
 	////////////////////////////////////////////
@@ -1056,6 +1112,9 @@ public class TownyUniverse extends TownyObject {
 
 		getDataSource().saveTownList();
 		getDataSource().saveWorld(world);
+
+        setChanged();
+        notifyObservers(REMOVE_TOWN);
 	}
 
 	public void removeResident(Resident resident) {
@@ -1090,6 +1149,8 @@ public class TownyUniverse extends TownyObject {
 		//residents.remove(name.toLowerCase());
 		//plugin.deleteCache(name);
 		//getDataSource().saveResidentList();
+        setChanged();
+        notifyObservers(REMOVE_RESIDENT);
 	}
 	
 	
@@ -1156,6 +1217,9 @@ public class TownyUniverse extends TownyObject {
 			getDataSource().saveResident(resident);
 		if (town != null)
 			getDataSource().saveTown(town);
+
+        setChanged();
+        notifyObservers(REMOVE_TOWN_BLOCK);
 	}
 	
 	public void removeTownBlocks(Town town) {
@@ -1170,6 +1234,9 @@ public class TownyUniverse extends TownyObject {
 					removeTown(town);
 					sendGlobalMessage(town.getName() + TownySettings.getLangString("msg_bankrupt_town"));
 				}
+
+        setChanged();
+        notifyObservers(UPKEEP_TOWN);
 	}
 	
 	public void collectNationCosts() throws IConomyException {
@@ -1190,7 +1257,9 @@ public class TownyUniverse extends TownyObject {
 					sendNationMessage(nation, TownySettings.getLangString("msg_nation_not_neutral"));
 				}
 		}
-		
+
+        setChanged();
+        notifyObservers(UPKEEP_NATION);
 	}
 	
 	public List<TownBlock> getAllTownBlocks() {
@@ -1265,5 +1334,20 @@ public class TownyUniverse extends TownyObject {
 				}
 		}
 		return invited;
-	}	
+	}
+
+    public void requestTeleport(Player player, Town town) {
+        try {
+            TeleportWarmupTimerTask.requestTeleport(getResident(player.getName().toLowerCase()), town);
+        } catch (TownyException x) {
+            plugin.sendErrorMsg(player, x.getError());
+        }
+
+        setChanged();
+        notifyObservers(TELEPORT_REQUEST);
+    }
+    
+    public void abortTeleportRequest(Resident resident) {
+    	TeleportWarmupTimerTask.abortTeleportRequest(resident);
+    }
 }

@@ -3,6 +3,8 @@ package com.palmergames.bukkit.towny.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.InvalidNameException;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -98,7 +100,7 @@ public class NationCommand implements CommandExecutor  {
 	}
 	
 	public void parseNationCommand(Player player, String[] split) {
-		String nationCom = TownySettings.getFirstCommand(TownySettings.getNationCommands());
+		String nationCom = "/nation";
 		
 		if (split.length == 0)
 			try {
@@ -920,14 +922,25 @@ public class NationCommand implements CommandExecutor  {
 							plugin.sendErrorMsg(player, String.format(TownySettings.getLangString("msg_err_not_same_nation"), resident.getName()));
 							return;
 						}
-						resident.setTitle(StringMgmt.join(StringMgmt.remArgs(split, 2)) + " ");
+						split = StringMgmt.remArgs(split, 2);
+						if (StringMgmt.join(split).length() > TownySettings.getMaxTitleLength()) {
+							plugin.sendErrorMsg(player, TownySettings.getLangString("msg_err_input_too_long"));
+							return;
+						}
+							
+						String title = plugin.getTownyUniverse().checkAndFilterName(StringMgmt.join(split));
+						resident.setTitle(title + " ");
 						plugin.getTownyUniverse().getDataSource().saveResident(resident);
 						
 						if (resident.hasTitle())
-						plugin.getTownyUniverse().sendNationMessage(nation, String.format(TownySettings.getLangString("msg_set_title"), resident.getName(), resident.getTitle()));
-
+							plugin.getTownyUniverse().sendNationMessage(nation, String.format(TownySettings.getLangString("msg_set_title"), resident.getName(), resident.getTitle()));
+						else
+							plugin.getTownyUniverse().sendNationMessage(nation, String.format(TownySettings.getLangString("msg_clear_title_surname"), "Title", resident.getName()));
+						
 					} catch (NotRegisteredException e) {
 						plugin.sendErrorMsg(player, e.getError());
+					} catch (InvalidNameException e) {
+						plugin.sendErrorMsg(player, e.getMessage());
 					}
 
 			} else if (split[0].equalsIgnoreCase("surname")) {
@@ -946,14 +959,25 @@ public class NationCommand implements CommandExecutor  {
 							plugin.sendErrorMsg(player, String.format(TownySettings.getLangString("msg_err_not_same_nation"), resident.getName()));
 							return;
 						}
-						resident.setSurname(" " + StringMgmt.join(StringMgmt.remArgs(split, 2)));
+						split = StringMgmt.remArgs(split, 2);
+						if (StringMgmt.join(split).length() > TownySettings.getMaxTitleLength()) {
+							plugin.sendErrorMsg(player, TownySettings.getLangString("msg_err_input_too_long"));
+							return;
+						}
+						
+						String surname = plugin.getTownyUniverse().checkAndFilterName(StringMgmt.join(split));
+						resident.setSurname(" " + surname);
 						plugin.getTownyUniverse().getDataSource().saveResident(resident);
 						
 						if (resident.hasSurname())
-						plugin.getTownyUniverse().sendNationMessage(nation, String.format(TownySettings.getLangString("msg_set_surname"), resident.getName(), resident.getSurname()));
-
+							plugin.getTownyUniverse().sendNationMessage(nation, String.format(TownySettings.getLangString("msg_set_surname"), resident.getName(), resident.getSurname()));
+						else
+							plugin.getTownyUniverse().sendNationMessage(nation, String.format(TownySettings.getLangString("msg_clear_title_surname"), "Surname", resident.getName()));
+							
 					} catch (NotRegisteredException e) {
 						plugin.sendErrorMsg(player, e.getError());
+					} catch (InvalidNameException e) {
+						plugin.sendErrorMsg(player, e.getMessage());
 					}
 
 			} else {

@@ -5,15 +5,9 @@ import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
@@ -55,18 +49,17 @@ public class TownyEntityListener extends EntityListener {
 		Entity attacker = null;
 		Entity defender = null;
 
-		
-		if (event instanceof EntityDamageByProjectileEvent) {
-			//plugin.sendMsg("EntityDamageByProjectileEvent");
-			EntityDamageByProjectileEvent entityEvent = (EntityDamageByProjectileEvent)event;
-			attacker = (entityEvent.getProjectile()).getShooter();
-			defender = entityEvent.getEntity();
-			
-		} else if (event instanceof EntityDamageByEntityEvent) {
+        if (event instanceof EntityDamageByEntityEvent) {
 			//plugin.sendMsg("EntityDamageByEntityEvent");
 			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent)event;
-			attacker = entityEvent.getDamager();
-			defender = entityEvent.getEntity();
+            if (entityEvent.getDamager() instanceof Projectile) {
+                Projectile projectile = (Projectile)entityEvent.getDamager();
+                attacker = projectile.getShooter();
+                defender = entityEvent.getEntity();
+            } else {
+                attacker = entityEvent.getDamager();
+                defender = entityEvent.getEntity();
+            }
 		}
 				
 		if (attacker != null) {	

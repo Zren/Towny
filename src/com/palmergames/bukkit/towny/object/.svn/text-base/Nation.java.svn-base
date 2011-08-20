@@ -17,7 +17,7 @@ public class Nation extends TownyIConomyObject implements ResidentList {
 	private List<Nation> allies = new ArrayList<Nation>();
 	private List<Nation> enemies = new ArrayList<Nation>();
 	private Town capital;
-	private int taxes;
+	private double taxes;
 	private boolean neutral = false;
 
 	public Nation(String name) {
@@ -278,11 +278,11 @@ public class Nation extends TownyIConomyObject implements ResidentList {
 				}
 	}
 
-	public void setTaxes(int taxes) {
+	public void setTaxes(double taxes) {
 		this.taxes = taxes;
 	}
 
-	public int getTaxes() {
+	public double getTaxes() {
 		return taxes;
 	}
 

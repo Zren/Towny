@@ -337,7 +337,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 				line = kvFile.get("plotPrice");
 				if (line != null)
 					try {
-						town.setPlotPrice(Integer.parseInt(line));
+						town.setPlotPrice(Double.parseDouble(line));
 					} catch (Exception e) {
 						town.setPlotPrice(0);
 					}
@@ -353,7 +353,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 				line = kvFile.get("taxes");
 				if (line != null)
 					try {
-						town.setTaxes(Integer.parseInt(line));
+						town.setTaxes(Double.parseDouble(line));
 					} catch (Exception e) {
 						town.setTaxes(0);
 					}
@@ -361,9 +361,25 @@ public class TownyFlatFileSource extends TownyDataSource {
 				line = kvFile.get("plotTax");
 				if (line != null)
 					try {
-						town.setPlotTax(Integer.parseInt(line));
+						town.setPlotTax(Double.parseDouble(line));
 					} catch (Exception e) {
 						town.setPlotTax(0);
+					}
+
+                line = kvFile.get("commercialPlotPirce");
+				if (line != null)
+					try {
+						town.setCommercialPlotPrice(Double.parseDouble(line));
+					} catch (Exception e) {
+						town.setCommercialPlotPrice(0);
+					}
+
+                line = kvFile.get("commercialPlotTax");
+				if (line != null)
+					try {
+						town.setCommercialPlotTax(Double.parseDouble(line));
+					} catch (Exception e) {
+						town.setCommercialPlotTax(0);
 					}
 
 				line = kvFile.get("pvp");
@@ -530,9 +546,9 @@ public class TownyFlatFileSource extends TownyDataSource {
 				line = kvFile.get("taxes");
 				if (line != null)
 					try {
-						nation.setTaxes(Integer.parseInt(line));
+						nation.setTaxes(Double.parseDouble(line));
 					} catch (Exception e) {
-						nation.setTaxes(0);
+						nation.setTaxes(0.0);
 					}
 					
 				line = kvFile.get("neutral");
@@ -756,9 +772,9 @@ public class TownyFlatFileSource extends TownyDataSource {
 					if (tokens.length >= 5)
 						try {
 							if (tokens[4].trim() != "true")
-								townblock.setForSale(Integer.parseInt(tokens[4]));
+								townblock.setPlotPrice(Double.parseDouble(tokens[4]));
 							else
-								townblock.setForSale(town.getPlotPrice());
+								townblock.setPlotPrice(town.getPlotPrice());
 
 						} catch (Exception e) {
 						}
@@ -908,11 +924,15 @@ public class TownyFlatFileSource extends TownyDataSource {
 			// Bonus Blocks
 			fout.write("bonusBlocks=" + Integer.toString(town.getBonusBlocks()) + newLine);
 			// Taxes
-			fout.write("taxes=" + Integer.toString(town.getTaxes()) + newLine);
+			fout.write("taxes=" + Double.toString(town.getTaxes()) + newLine);
 			// Plot Price
-			fout.write("plotPrice=" + Integer.toString(town.getPlotPrice()) + newLine);
+			fout.write("plotPrice=" + Double.toString(town.getPlotPrice()) + newLine);
 			// Plot Tax
-			fout.write("plotTax=" + Integer.toString(town.getPlotTax()) + newLine);
+			fout.write("plotTax=" + Double.toString(town.getPlotTax()) + newLine);
+            // Commercial Plot Price
+            fout.write("commercialPlotPrice=" + Double.toString(town.getCommercialPlotPrice()) + newLine);
+            // Commercial Tax
+            fout.write("commercialPlotTax=" + Double.toString(town.getCommercialPlotTax()) + newLine);
 			// Upkeep
 			fout.write("hasUpkeep=" + Boolean.toString(town.hasUpkeep()) + newLine);
 			// PVP
@@ -981,7 +1001,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 				fout.write(enemyNation.getName() + ",");
 			fout.write(newLine);
 			// Taxes
-			fout.write("taxes=" + Integer.toString(nation.getTaxes()) + newLine);
+			fout.write("taxes=" + Double.toString(nation.getTaxes()) + newLine);
 			// Neutral
 			fout.write("neutral=" + Boolean.toString(nation.isNeutral()) + newLine);
 
@@ -1070,7 +1090,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 	 * Long.toString(townblock.getZ()); line += ","; if (townblock.hasTown())
 	 * line += townblock.getTown().getName(); line += ","; if
 	 * (townblock.hasResident()) line += townblock.getResident().getName(); line
-	 * += "," + Boolean.toString(townblock.isForSale()); fout.write(line +
+	 * += "," + Boolean.toString(townblock.getPlotPrice()); fout.write(line +
 	 * newLine); } fout.close(); return true; } catch (Exception e) {
 	 * System.out.println("[Towny] Loading Error: Exception while saving town blocks list file");
 	 * e.printStackTrace();
@@ -1095,6 +1115,15 @@ public class TownyFlatFileSource extends TownyDataSource {
 			try {
 				TownyWorld world = universe.getWorld(split[0]);
 				for (String s : split[1].split(";")) {
+                    String blockTypeData = null;
+                    int indexOfType = s.indexOf("[");
+                    if (indexOfType != -1) {
+                        int endIndexOfType = s.indexOf("]");
+                        if (endIndexOfType != -1) {
+                            blockTypeData = s.substring(indexOfType + 1, endIndexOfType);
+                        }
+                        s = s.substring(endIndexOfType + 1);
+                    }
 					String[] tokens = s.split(",");
 					if (tokens.length < 2)
 						continue;
@@ -1113,13 +1142,18 @@ public class TownyFlatFileSource extends TownyDataSource {
 
 						if (resident != null && townblock.hasTown())
 							townblock.setResident(resident);
-						
+
+                        if (blockTypeData != null) {
+                            utilLoadTownBlockTypeData(townblock, blockTypeData);
+                        }
+
 						//if present set the plot price
-						if (tokens.length >= 3)
-							if (tokens[2].trim() != "true")
-								townblock.setForSale(Integer.parseInt(tokens[2]));
+						if (tokens.length >= 3) {
+							if (tokens[2] == "true")
+								townblock.setPlotPrice(town.getPlotPrice());
 							else
-								townblock.setForSale(town.getPlotPrice());
+								townblock.setPlotPrice(Double.parseDouble(tokens[2]));
+                        }
 						
 					} catch (NumberFormatException e) {
 					} catch (NotRegisteredException e) {
@@ -1130,6 +1164,10 @@ public class TownyFlatFileSource extends TownyDataSource {
 			}
 		}
 	}
+
+    public void utilLoadTownBlockTypeData(TownBlock townBlock, String data) {
+        townBlock.setType(Integer.valueOf(data));
+    }
 
 	public String utilSaveTownBlocks(List<TownBlock> townBlocks) {
 		HashMap<TownyWorld, ArrayList<TownBlock>> worlds = new HashMap<TownyWorld, ArrayList<TownBlock>>();
@@ -1146,7 +1184,7 @@ public class TownyFlatFileSource extends TownyDataSource {
 		for (TownyWorld world : worlds.keySet()) {
 			out += world.getName() + ":";
 			for (TownBlock townBlock : worlds.get(world))
-				out += townBlock.getX() + "," + townBlock.getZ() + (townBlock.isForSale() != -1 ? "," + townBlock.isForSale() : "") + ";";
+				out += "[" + townBlock.getType().getId() + "]" + townBlock.getX() + "," + townBlock.getZ() +  "," + townBlock.getPlotPrice() + ";";
 			out += "|";
 		}
 
@@ -1156,6 +1194,13 @@ public class TownyFlatFileSource extends TownyDataSource {
 	@Override
 	public void deleteResident(Resident resident) {
 		File file = new File(getResidentFilename(resident));
+		if (file.exists())
+			file.delete();
+	}
+	
+	@Override
+	public void deleteFile(String fileName) {
+		File file = new File(fileName);
 		if (file.exists())
 			file.delete();
 	}

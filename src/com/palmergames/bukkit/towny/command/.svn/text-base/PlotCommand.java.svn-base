@@ -3,6 +3,7 @@ package com.palmergames.bukkit.towny.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.palmergames.bukkit.towny.object.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,12 +15,6 @@ import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyException;
 import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.Coord;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownBlock;
-import com.palmergames.bukkit.towny.object.TownyWorld;
-import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.util.StringMgmt;
@@ -36,12 +31,13 @@ public class PlotCommand implements CommandExecutor  {
 	
 	static {
 		output.add(ChatTools.formatTitle("/plot"));
-		output.add(ChatTools.formatCommand(TownySettings.getLangString("res_sing"), "/plot claim", "",TownySettings.getLangString("msg_block_claim")));
-		output.add(ChatTools.formatCommand(TownySettings.getLangString("res_sing") + "/Mayor", "/plot notforsale", "", TownySettings.getLangString("msg_plot_nfs")));
-		output.add(ChatTools.formatCommand(TownySettings.getLangString("res_sing") + "/Mayor", "/plot forsale [$]", "", TownySettings.getLangString("msg_plot_fs")));
+		output.add(ChatTools.formatCommand(TownySettings.getLangString("res_sing"), "/plot claim", "", TownySettings.getLangString("msg_block_claim")));
+		output.add(ChatTools.formatCommand(TownySettings.getLangString("res_sing") + "/" + TownySettings.getLangString("mayor_sing"), "/plot notforsale", "", TownySettings.getLangString("msg_plot_nfs")));
+		output.add(ChatTools.formatCommand(TownySettings.getLangString("res_sing") + "/" + TownySettings.getLangString("mayor_sing"), "/plot forsale [$]", "", TownySettings.getLangString("msg_plot_fs")));
+        output.add(ChatTools.formatCommand(TownySettings.getLangString("res_sing") + "/" + TownySettings.getLangString("mayor_sing"), "/plot set ...", "", TownySettings.getLangString("msg_plot_fs")));
 		output.add(TownySettings.getLangString("msg_nfs_abr"));
 	}
-	
+
 	public PlotCommand(Towny instance) {
 		plugin = instance;
 	}	
@@ -115,10 +111,20 @@ public class PlotCommand implements CommandExecutor  {
 				} else if (split[0].equalsIgnoreCase("forsale") || split[0].equalsIgnoreCase("fs")) {
 					WorldCoord worldCoord = new WorldCoord(world, Coord.parseCoord(player));
 					if (split.length > 1)
-						setPlotForSale(resident, worldCoord, Integer.parseInt(split[1]));
+						setPlotForSale(resident, worldCoord, Double.parseDouble(split[1]));
 					else
 						setPlotForSale(resident, worldCoord, worldCoord.getTownBlock().getTown().getPlotPrice());
-				}
+				} else if (split[0].equalsIgnoreCase("set")) {
+                    if (split.length > 1) {
+                        WorldCoord worldCoord = new WorldCoord(world, Coord.parseCoord(player));
+                        setPlotType(resident, worldCoord, split[1]);
+                        player.sendMessage(String.format(TownySettings.getLangString("msg_plot_set_type"),split[1]));
+
+                    } else {
+                        player.sendMessage(ChatTools.formatCommand("", "/plot set", "reset", ""));
+                        player.sendMessage(ChatTools.formatCommand("", "/plot set", "shop", ""));
+                    }
+                }
 			} catch (TownyException x) {
 				plugin.sendErrorMsg(player, x.getError());
 			} catch (IConomyException x) {
@@ -140,35 +146,35 @@ public class PlotCommand implements CommandExecutor  {
 
 				try {
 					Resident owner = townBlock.getResident();
-					if (townBlock.isForSale() != -1) {
-						if (TownySettings.isUsingIConomy() && !resident.pay(townBlock.isForSale(), owner))
+					if (townBlock.getPlotPrice() != -1) {
+						if (TownySettings.isUsingIConomy() && !resident.pay(townBlock.getPlotPrice(), owner))
 							throw new TownyException(TownySettings.getLangString("msg_no_money_purchase_plot"));
 						if (resident.getTownBlocks().size() + 1 > TownySettings.getMaxPlotsPerResident())
 							throw new TownyException(String.format(TownySettings.getLangString("msg_no_money_purchase_plot"), TownySettings.getMaxPlotsPerResident()));
 						
-						plugin.getTownyUniverse().sendTownMessage(town, TownySettings.getBuyResidentPlotMsg(resident.getName(), owner.getName(), townBlock.isForSale()));
-						townBlock.setForSale(-1);
+						plugin.getTownyUniverse().sendTownMessage(town, TownySettings.getBuyResidentPlotMsg(resident.getName(), owner.getName(), townBlock.getPlotPrice()));
+						townBlock.setPlotPrice(-1);
 						townBlock.setResident(resident);
 						plugin.getTownyUniverse().getDataSource().saveResident(owner);
 						return true;
 					} else if (town.isMayor(resident) || town.hasAssistant(resident)) {
-						if (TownySettings.isUsingIConomy() && !town.pay(town.getPlotPrice(), owner))
+						if (TownySettings.isUsingIConomy() && !town.pay(townBlock.getPlotPrice(), owner))
 							throw new TownyException(TownySettings.getLangString("msg_town_no_money_purchase_plot"));
 						
-						plugin.getTownyUniverse().sendTownMessage(town, TownySettings.getBuyResidentPlotMsg(town.getName(), owner.getName(), town.getPlotPrice()));
+						plugin.getTownyUniverse().sendTownMessage(town, TownySettings.getBuyResidentPlotMsg(town.getName(), owner.getName(), townBlock.getPlotPrice()));
 						townBlock.setResident(null);
-						townBlock.setForSale(-1);
+						townBlock.setPlotPrice(-1);
 						return true;
 					} else
 						throw new AlreadyRegisteredException(String.format(TownySettings.getLangString("msg_already_claimed"), owner.getName()));
 				} catch (NotRegisteredException e) {
-					if (townBlock.isForSale() == -1)
+					if (townBlock.getPlotPrice() == -1)
 						throw new TownyException(TownySettings.getLangString("msg_err_plot_nfs"));
 					
-					if (TownySettings.isUsingIConomy() && !resident.pay(town.getPlotPrice(), town))
+					if (TownySettings.isUsingIConomy() && !resident.pay(townBlock.getPlotPrice(), town))
 						throw new TownyException(TownySettings.getLangString("msg_no_money_purchase_plot"));
 					
-					townBlock.setForSale(-1);
+					townBlock.setPlotPrice(-1);
 					townBlock.setResident(resident);
 					return true;
 				}
@@ -188,7 +194,7 @@ public class PlotCommand implements CommandExecutor  {
 			Resident owner = townBlock.getResident();
 			if (resident == owner || force) {
 				townBlock.setResident(null);
-				townBlock.setForSale(townBlock.getTown().getPlotPrice());
+				townBlock.setPlotPrice(townBlock.getTown().getPlotPrice());
 				plugin.getTownyUniverse().getDataSource().saveResident(resident);
 				return true;
 			} else
@@ -197,8 +203,27 @@ public class PlotCommand implements CommandExecutor  {
 			throw new TownyException(TownySettings.getLangString("msg_not_own_place"));
 		}
 	}
-	
-	public void setPlotForSale(Resident resident, WorldCoord worldCoord, int forSale) throws TownyException {
+
+    public void setPlotType(Resident resident, WorldCoord worldCoord, String type) throws TownyException {
+        if (resident.hasTown())
+			try {
+				TownBlock townBlock = worldCoord.getTownBlock();
+				Town town = townBlock.getTown();
+				if (resident.getTown() != town)
+					throw new TownyException(TownySettings.getLangString("msg_err_not_part_town"));
+
+				if (town.isMayor(resident) || town.hasAssistant(resident))
+					townBlock.setType(type);
+				else
+                    throw new TownyException(TownySettings.getLangString("msg_not_mayor_ass"));
+			} catch (NotRegisteredException e) {
+				throw new TownyException(TownySettings.getLangString("msg_err_not_part_town"));
+			}
+		else
+			throw new TownyException(TownySettings.getLangString("msg_err_must_belong_town"));
+    }
+
+	public void setPlotForSale(Resident resident, WorldCoord worldCoord, double forSale) throws TownyException {
 		if (resident.hasTown())
 			try {
 				TownBlock townBlock = worldCoord.getTownBlock();
@@ -207,13 +232,13 @@ public class PlotCommand implements CommandExecutor  {
 					throw new TownyException(TownySettings.getLangString("msg_err_not_part_town"));
 
 				if (town.isMayor(resident) || town.hasAssistant(resident))
-					townBlock.setForSale(forSale);
+					townBlock.setPlotPrice(forSale);
 				else
 					try {
 						Resident owner = townBlock.getResident();
 						if (resident != owner)
 							throw new AlreadyRegisteredException(TownySettings.getLangString("msg_not_own_area"));
-						townBlock.setForSale(forSale);
+						townBlock.setPlotPrice(forSale);
 					} catch (NotRegisteredException e) {
 						throw new TownyException(TownySettings.getLangString("msg_not_own_area"));
 					}

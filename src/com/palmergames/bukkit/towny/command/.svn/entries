@@ -2,13 +2,13 @@
 
 dir
 372
-http://svn.codespot.com/a/eclipselabs.org/towny/trunk/Towny/src/com/palmergames/bukkit/towny/command
+http://svn.codespot.com/a/eclipselabs.org/towny/branches/towny_dev/src/com/palmergames/bukkit/towny/command
 http://svn.codespot.com/a/eclipselabs.org/towny
 
 
 
-2011-08-10T19:58:55.705795Z
-312
+2011-08-19T21:13:45.175873Z
+371
 steve_p@blueyonder.co.uk
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2011-08-20T21:52:07.690120Z
-b600fd4681317597a8b1a8ba6237d1da
-2011-08-10T19:58:55.705795Z
-312
+2011-08-20T22:21:27.093400Z
+84fbcc081c7016760f09df53e0f5d76f
+2011-08-19T09:12:53.252763Z
+362
 steve_p@blueyonder.co.uk
 
 
@@ -58,7 +58,7 @@ steve_p@blueyonder.co.uk
 
 
 
-23714
+23713
 
 TownCommand.java
 file
@@ -66,10 +66,10 @@ file
 
 
 
-2011-08-20T21:52:07.737121Z
-28773e85b329f76394a8e31f2cb0f027
-2011-08-10T19:58:55.705795Z
-312
+2011-08-20T22:21:27.186402Z
+fbbc36f93cd5c8c4aa14270dd6b933fe
+2011-08-19T19:49:02.584642Z
+367
 steve_p@blueyonder.co.uk
 
 
@@ -92,7 +92,7 @@ steve_p@blueyonder.co.uk
 
 
 
-62483
+65848
 
 TownChatCommand.java
 file
@@ -100,10 +100,10 @@ file
 
 
 
-2011-08-20T21:52:07.748121Z
-aa4995b2e2ec92f14d7bc10dfc1e8014
-2011-08-10T19:58:55.705795Z
-312
+2011-08-20T22:21:27.197402Z
+5d0149771ae25b42c792e2054d6bcbde
+2011-08-13T01:02:23.028292Z
+327
 steve_p@blueyonder.co.uk
 
 
@@ -126,7 +126,7 @@ steve_p@blueyonder.co.uk
 
 
 
-1859
+1856
 
 TownyWorldCommand.java
 file
@@ -134,10 +134,10 @@ file
 
 
 
-2011-08-20T21:52:07.768122Z
+2011-08-20T22:21:27.226403Z
 85133e0ef048a6487b2a4e1583a19d4c
-2011-08-10T19:58:55.705795Z
-312
+2011-08-05T22:14:45.530365Z
+283
 steve_p@blueyonder.co.uk
 
 
@@ -168,10 +168,10 @@ file
 
 
 
-2011-08-20T21:52:07.811123Z
-06a1fd96ca2ee0250f7e1bac6abeb0c4
-2011-08-10T19:58:55.705795Z
-312
+2011-08-20T22:21:27.326406Z
+8a8fd7420ce059fb880629c3d311f5f6
+2011-08-17T11:50:20.391860Z
+351
 steve_p@blueyonder.co.uk
 
 
@@ -194,7 +194,7 @@ steve_p@blueyonder.co.uk
 
 
 
-40554
+41706
 
 NationChatCommand.java
 file
@@ -202,10 +202,10 @@ file
 
 
 
-2011-08-20T21:52:07.820123Z
-c1765f114cd6529b1ee181aeb7c3fa94
-2011-08-10T19:58:55.705795Z
-312
+2011-08-20T22:21:27.339406Z
+932a410d43f703e5d498d7eef077b41a
+2011-08-13T01:02:23.028292Z
+327
 steve_p@blueyonder.co.uk
 
 
@@ -228,7 +228,7 @@ steve_p@blueyonder.co.uk
 
 
 
-3006
+3003
 
 TownyAdminCommand.java
 file
@@ -236,10 +236,10 @@ file
 
 
 
-2011-08-20T21:52:07.842123Z
-3041994262398860de3881240c8aff16
-2011-08-10T19:58:55.705795Z
-312
+2011-08-20T22:21:27.361406Z
+365105b96fba8cbe975c59d5a427d8be
+2011-08-19T09:12:53.252763Z
+362
 steve_p@blueyonder.co.uk
 
 
@@ -262,7 +262,7 @@ steve_p@blueyonder.co.uk
 
 
 
-22665
+22925
 
 ResidentCommand.java
 file
@@ -270,10 +270,10 @@ file
 
 
 
-2011-08-20T21:52:07.863124Z
+2011-08-20T22:21:27.392407Z
 7f63fc33af2b637a2335d409e4a856dd
-2011-08-10T19:58:55.705795Z
-312
+2011-08-05T22:14:45.530365Z
+283
 steve_p@blueyonder.co.uk
 
 
@@ -304,10 +304,10 @@ file
 
 
 
-2011-08-20T21:52:07.880124Z
-4b2e3705c6367eb228fbc7cd54232080
-2011-08-10T19:58:55.705795Z
-312
+2011-08-20T22:21:27.451409Z
+3b2b1957b8cd9217b319df9af90278f3
+2011-08-19T21:13:45.175873Z
+371
 steve_p@blueyonder.co.uk
 
 
@@ -330,5 +330,5 @@ steve_p@blueyonder.co.uk
 
 
 
-9990
+11494
 
