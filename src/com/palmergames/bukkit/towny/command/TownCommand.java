@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.palmergames.bukkit.towny.object.*;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,25 +11,36 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import ca.xshade.bukkit.questioner.Questioner;
+import ca.xshade.questionmanager.Option;
+import ca.xshade.questionmanager.Question;
+
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.Teleport;
 import com.earth2me.essentials.User;
 import com.iConomy.iConomy;
-
-import ca.xshade.bukkit.questioner.Questioner;
 import com.palmergames.bukkit.towny.AlreadyRegisteredException;
+import com.palmergames.bukkit.towny.EmptyTownException;
 import com.palmergames.bukkit.towny.IConomyException;
 import com.palmergames.bukkit.towny.NotRegisteredException;
-import com.palmergames.bukkit.towny.EmptyTownException;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyException;
 import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.towny.object.Coord;
+import com.palmergames.bukkit.towny.object.Nation;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.object.TownBlockOwner;
+import com.palmergames.bukkit.towny.object.TownyIConomyObject;
+import com.palmergames.bukkit.towny.object.TownyPermission;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+import com.palmergames.bukkit.towny.object.TownyWorld;
+import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.questioner.JoinTownTask;
 import com.palmergames.bukkit.towny.questioner.ResidentTownQuestionTask;
 import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.bukkit.util.Colors;
-import ca.xshade.questionmanager.Option;
-import ca.xshade.questionmanager.Question;
 import com.palmergames.util.StringMgmt;
 
 /**
@@ -1406,15 +1416,15 @@ public class TownCommand implements CommandExecutor  {
 			} catch (NumberFormatException e) {
 				if (args.length > 1) {
 					if (args[0].equalsIgnoreCase("rect")) {
-						out = selectWorldCoordAreaRect(owner, pos, StringMgmt.remFirstArg(split));
+						out = selectWorldCoordAreaRect(owner, pos, StringMgmt.remFirstArg(args));
 					} else if (args[0].equalsIgnoreCase("circle")) {
-						out = selectWorldCoordAreaCircle(owner, pos, StringMgmt.remFirstArg(split));
+						out = selectWorldCoordAreaCircle(owner, pos, StringMgmt.remFirstArg(args));
 					} else {
 						//TODO: Some output?
 					}
 				} else {
 					// Treat as rect to serve for backwards capability.
-					out = selectWorldCoordAreaRect(owner, pos, StringMgmt.remFirstArg(split));
+					out = selectWorldCoordAreaRect(owner, pos, StringMgmt.remFirstArg(args));
 				}
 			}
 		}
