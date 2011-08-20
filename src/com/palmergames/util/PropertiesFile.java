@@ -83,6 +83,7 @@ public final class PropertiesFile {
      * @throws Exception If the properties file doesn't exist.
      */
     
+	@SuppressWarnings("unchecked")
 	public Map<String, String> returnMap() throws Exception {
         return (Map<String, String>) props.clone();
     }

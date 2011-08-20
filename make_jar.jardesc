@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/Towny.jar"/>
+    <options buildIfNeeded="true" compress="false" descriptionLocation="/Towny-SVN/make_jar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="/Towny/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="false" exportJavaFiles="false" exportOutputFolder="true">
+        <file path="/Towny-SVN/src/english.yml"/>
+        <file path="/Towny-SVN/.project"/>
+        <file path="/Towny-SVN/src/ChangeLog.txt"/>
+        <file path="/Towny-SVN/.classpath"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{ResidentTownQuestionTask.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{JoinNationTask.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.blockqueue"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.war"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny"/>
+        <file path="/Towny-SVN/src/ToDo.txt"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{TownQuestionTask.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.wallgen"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.event"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.config"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{JoinTownTask.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.db"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{ResidentQuestionTask.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{ResidentNationQuestionTask.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames"/>
+        <file path="/Towny-SVN/src/plugin.yml"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{TownyQuestionTask.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util"/>
+    </selectedElements>
+</jardesc>

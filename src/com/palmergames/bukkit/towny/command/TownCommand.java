@@ -1400,7 +1400,7 @@ public class TownCommand implements CommandExecutor  {
 		return false;
 	}
 	
-		public static List<WorldCoord> selectWorldCoordArea(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
+	public static List<WorldCoord> selectWorldCoordArea(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
 		List<WorldCoord> out = new ArrayList<WorldCoord>();
 		
 		if (args.length == 0) {
@@ -1410,9 +1410,8 @@ public class TownCommand implements CommandExecutor  {
 			else
 				throw new TownyException(TownySettings.getLangString("msg_not_claimable"));
 		} else {
-			int r;
 			try {
-				r = Integer.parseInt(args[0]);
+				Integer.parseInt(args[0]);
 			} catch (NumberFormatException e) {
 				if (args.length > 1) {
 					if (args[0].equalsIgnoreCase("rect")) {
@@ -1449,7 +1448,7 @@ public class TownCommand implements CommandExecutor  {
 						throw new TownyException(TownySettings.getLangString("msg_err_area_auto"));
 				} else {
 					try {
-						r = Integer.parseInt(args[1]);
+						r = Integer.parseInt(args[0]);
 					} catch (NumberFormatException e) {
 						throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
 					}	
@@ -1484,13 +1483,13 @@ public class TownCommand implements CommandExecutor  {
 						throw new TownyException(TownySettings.getLangString("msg_err_area_auto"));
 				} else {
 					try {
-						r = Integer.parseInt(args[1]);
+						r = Integer.parseInt(args[0]);
 					} catch (NumberFormatException e) {
 						throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
 					}	
 				}
-				for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++)
-					for (int x = pos.getX() - r; x <= pos.getX() + r; x++)
+				for (int z = -r; z <= r; z++)
+					for (int x = -r; x <= r; x++)
 						if (x*x+z*z <= r*r)
 							out.add(new WorldCoord(pos.getWorld(), pos.getX()+x, pos.getZ()+z));
 			} else {
