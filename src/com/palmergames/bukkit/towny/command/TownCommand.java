@@ -1226,8 +1226,8 @@ public class TownCommand implements CommandExecutor  {
 			player.sendMessage(ChatTools.formatTitle("/town claim"));
 			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town claim", "", TownySettings.getLangString("msg_block_claim")));
 			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town claim", "outpost", TownySettings.getLangString("mayor_help_3")));
-			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town claim", "[radius]", TownySettings.getLangString("mayor_help_4")));
-			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town claim", "auto", TownySettings.getLangString("mayor_help_5")));
+			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town claim", "[circle/rect] [radius]", TownySettings.getLangString("mayor_help_4")));
+			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town claim", "[circle/rect] auto", TownySettings.getLangString("mayor_help_5")));
 		} else {
 			Resident resident;
 			Town town;
@@ -1390,20 +1390,44 @@ public class TownCommand implements CommandExecutor  {
 		return false;
 	}
 	
-	public static List<WorldCoord> selectWorldCoordArea(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
+		public static List<WorldCoord> selectWorldCoordArea(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
 		List<WorldCoord> out = new ArrayList<WorldCoord>();
 		
 		if (args.length == 0) {
-			
 			// claim with no sub command entered so attempt selection of one plot
 			if (pos.getWorld().isClaimable())
 				out.add(pos);
 			else
 				throw new TownyException(TownySettings.getLangString("msg_not_claimable"));
 		} else {
-			 int r;
+			int r;
+			try {
+				r = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				if (args.length > 1) {
+					if (args[0].equalsIgnoreCase("rect")) {
+						out = selectWorldCoordAreaRect(owner, pos, StringMgmt.remFirstArg(split));
+					} else if (args[0].equalsIgnoreCase("circle")) {
+						out = selectWorldCoordAreaCircle(owner, pos, StringMgmt.remFirstArg(split));
+					} else {
+						//TODO: Some output?
+					}
+				} else {
+					// Treat as rect to serve for backwards capability.
+					out = selectWorldCoordAreaRect(owner, pos, StringMgmt.remFirstArg(split));
+				}
+			}
+		}
+		
+		return out;
+	}
+	
+	public static List<WorldCoord> selectWorldCoordAreaRect(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
+		List<WorldCoord> out = new ArrayList<WorldCoord>();
+		if (pos.getWorld().isClaimable()) {
+			if (args.length > 0) {
+				int r;
 				if (args[0].equalsIgnoreCase("auto")) {
-					
 					// Attempt to select outwards until no town blocks remain
 					if (owner instanceof Town) {
 						Town town = (Town)owner;
@@ -1412,24 +1436,57 @@ public class TownCommand implements CommandExecutor  {
 						while (available - Math.pow((r + 1) * 2 - 1, 2) >= 0)
 							r += 1;
 					} else
-						throw new TownyException(TownySettings.getLangString("msg_err_rect_auto"));
+						throw new TownyException(TownySettings.getLangString("msg_err_area_auto"));
 				} else {
-					
-					// if a value was given attempt to select a radius of plots
 					try {
-						r = Integer.parseInt(args[0]);
+						r = Integer.parseInt(args[1]);
 					} catch (NumberFormatException e) {
 						throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
-					}
+					}	
 				}
-				
 				r -= 1;
-				
 				for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++)
 					for (int x = pos.getX() - r; x <= pos.getX() + r; x++)
-						if (pos.getWorld().isClaimable())
-							out.add(new WorldCoord(pos.getWorld(), x, z));	
+						out.add(new WorldCoord(pos.getWorld(), x, z));
+			} else {
+				throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
 			}
+		}
+
+		return out;
+	}
+	
+	public static List<WorldCoord> selectWorldCoordAreaCircle(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
+		List<WorldCoord> out = new ArrayList<WorldCoord>();
+		if (pos.getWorld().isClaimable()) {
+			if (args.length > 0) {
+				int r;
+				if (args[0].equalsIgnoreCase("auto")) {
+					// Attempt to select outwards until no town blocks remain
+					if (owner instanceof Town) {
+						Town town = (Town)owner;
+						int available = TownySettings.getMaxTownBlocks(town) - town.getTownBlocks().size();
+						r = 0;
+						if (available > 0) // Since: 0 - ceil(Pi * 0^2) >= 0 is a true statement.
+							while (available - Math.ceil(Math.PI * r * r) >= 0)
+								r += 1;
+					} else
+						throw new TownyException(TownySettings.getLangString("msg_err_area_auto"));
+				} else {
+					try {
+						r = Integer.parseInt(args[1]);
+					} catch (NumberFormatException e) {
+						throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
+					}	
+				}
+				for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++)
+					for (int x = pos.getX() - r; x <= pos.getX() + r; x++)
+						if (x*x+z*z <= r*r)
+							out.add(new WorldCoord(pos.getWorld(), pos.getX()+x, pos.getZ()+z));
+			} else {
+				throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
+			}
+		}
 
 		return out;
 	}

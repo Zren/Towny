@@ -428,3 +428,4 @@ v0.74.1:
     - Towny is now an observable object.  This allows other plugins to observe events that happen in Towny.
     - Towny now abbreviates it's residents lists when displayed, for easier reading.
     - Better formatting for times in the config eg. 1d6h20s.
+    - Added ability to claim in a circle. /town claim circle [radius], and /town claim circle auto.
