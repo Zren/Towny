@@ -11,22 +11,18 @@ import org.bukkit.entity.Player;
 import com.palmergames.bukkit.towny.IConomyException;
 import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.TownyException;
+import com.palmergames.bukkit.towny.TownyAsciiMap;
 import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.Coord;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.ResidentList;
 import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownBlockOwner;
 import com.palmergames.bukkit.towny.object.TownyIConomyObject;
 import com.palmergames.bukkit.towny.object.TownyObject;
-import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.bukkit.util.Colors;
-import com.palmergames.bukkit.util.Compass;
 import com.palmergames.util.KeyValue;
 import com.palmergames.util.KeyValueTable;
 import com.palmergames.util.StringMgmt;
@@ -117,9 +113,12 @@ public class TownyCommand implements CommandExecutor {
 		else if (split[0].equalsIgnoreCase("?") || split[0].equalsIgnoreCase("help"))
 			for (String line : towny_help)
 				player.sendMessage(Colors.strip(line));
-		else if (split[0].equalsIgnoreCase("map"))
-			showMap(player);
-		else if (split[0].equalsIgnoreCase("prices")){
+		else if (split[0].equalsIgnoreCase("map")) {
+			if (split.length > 1 && split[1].equalsIgnoreCase("big"))
+				TownyAsciiMap.generateAndSend(plugin, player, 18);
+			else
+				showMap(player);
+		} else if (split[0].equalsIgnoreCase("prices")){
 			Town town = null;
 			if (split.length > 1){
 				try {
@@ -272,167 +271,8 @@ public class TownyCommand implements CommandExecutor {
 	 * 
 	 * @param player
 	 */
-
 	public static void showMap(Player player) {
-
-		boolean hasTown = false;
-		Resident resident;
-		int lineCount = 0;
-
-		try {
-			resident = plugin.getTownyUniverse().getResident(player.getName());
-			if (resident.hasTown())
-				hasTown = true;
-		} catch (TownyException x) {
-			plugin.sendErrorMsg(player, x.getError());
-			return;
-		}
-
-		TownyWorld world;
-		try {
-			world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
-		} catch (NotRegisteredException e1) {
-			plugin.sendErrorMsg(player, "You are not in a registered world.");
-			return;
-		}
-		if (!world.isUsingTowny()) {
-			plugin.sendErrorMsg(player, "This world is not using towny.");
-			return;
-		}
-		Coord pos = Coord.parseCoord(plugin.getCache(player).getLastLocation());
-
-		player.sendMessage(ChatTools.formatTitle("Towny Map " + Colors.White + "(" + pos.toString() + ")"));
-
-		String[][] townyMap = new String[27][7];
-		int x, y = 0;
-		for (int tby = pos.getZ() - 13; tby <= pos.getZ() + 13; tby++) {
-			x = 0;
-			for (int tbx = pos.getX() - 3; tbx <= pos.getX() + 3; tbx++) {
-				try {
-					TownBlock townblock = world.getTownBlock(tbx, tby);
-					//TODO: possibly claim outside of towns
-					if (!townblock.hasTown())
-						throw new TownyException();
-					if (x == 3 && y == 13)
-						// location
-						townyMap[y][x] = Colors.Gold;
-					else if (hasTown) {
-						if (resident.getTown() == townblock.getTown()) {
-							// own town
-							townyMap[y][x] = Colors.LightGreen;
-							try {
-								if (resident == townblock.getResident())
-									//own plot
-									townyMap[y][x] = Colors.Yellow;
-							} catch(NotRegisteredException e) {
-							}
-						} else if (resident.hasNation()) {
-							if (resident.getTown().getNation().hasTown(townblock.getTown()))
-								// towns
-								townyMap[y][x] = Colors.Green;
-							else if (townblock.getTown().hasNation()) {
-								Nation nation = resident.getTown().getNation();
-								if (nation.hasAlly(townblock.getTown().getNation()))
-									townyMap[y][x] = Colors.Green;
-								else if (nation.hasEnemy(townblock.getTown().getNation()))
-									// towns
-									townyMap[y][x] = Colors.Red;
-								else
-									townyMap[y][x] = Colors.White;
-							} else
-								townyMap[y][x] = Colors.White;
-						} else
-							townyMap[y][x] = Colors.White;
-					} else
-						townyMap[y][x] = Colors.White;
-
-					// Registered town block
-					if (townblock.getPlotPrice() != -1)
-						townyMap[y][x] += "$";
-					else if (townblock.isHomeBlock())
-						townyMap[y][x] += "H";
-					else
-						townyMap[y][x] += "+";
-				} catch (TownyException e) {
-					if (x == 3 && y == 13)
-						townyMap[y][x] = Colors.Gold;
-					else
-						townyMap[y][x] = Colors.Gray;
-
-					// Unregistered town block
-					townyMap[y][x] += "-";
-				}
-				x++;
-			}
-			y++;
-		}
-
-		Compass.Point dir = Compass.getCompassPointForDirection(player.getLocation().getYaw());
-		
-		String[] compass = {
-				Colors.Black + "  -----  ",
-				Colors.Black + "  -" + (dir == Compass.Point.NW ? Colors.Gold + "\\" : "-")
-				+ (dir == Compass.Point.N ? Colors.Gold : Colors.White) + "N"
-				+ (dir == Compass.Point.NE ? Colors.Gold + "/" + Colors.Black : Colors.Black + "-") + "-  ",
-				Colors.Black + "  -" + (dir == Compass.Point.W ? Colors.Gold + "W" : Colors.White + "W") + Colors.LightGray + "+"
-				+ (dir == Compass.Point.E ? Colors.Gold : Colors.White) + "E" + Colors.Black  + "-  ",
-				Colors.Black + "  -" + (dir == Compass.Point.SW ? Colors.Gold + "/" : "-")
-				+ (dir == Compass.Point.S ? Colors.Gold : Colors.White) + "S"
-				+ (dir == Compass.Point.SE ? Colors.Gold + "\\" + Colors.Black : Colors.Black + "-") + "-  "};
-
-		String[] help = {
-				"  " + Colors.Gray + "-" + Colors.LightGray + " = Unclaimed",
-				"  " + Colors.White + "+" + Colors.LightGray + " = Claimed",
-				"  " + Colors.White + "$" + Colors.LightGray + " = For sale",
-				"  " + Colors.LightGreen + "+" + Colors.LightGray + " = Your town",
-				"  " + Colors.Yellow + "+" + Colors.LightGray + " = Your plot",
-				"  " + Colors.Green + "+" + Colors.LightGray + " = Ally",
-				"  " + Colors.Red + "+" + Colors.LightGray + " = Enemy"
-		};
-		
-		String line;
-		// Variables have been rotated to fit N/S/E/W properly
-		for (int my = 0; my < 7; my++) {
-			line = compass[0];
-			if (lineCount < compass.length)
-				line = compass[lineCount];
-
-			for (int mx = 26; mx >= 0; mx--)
-				line += townyMap[mx][my];
-			
-			if (lineCount < help.length)
-				line += help[lineCount];
-			
-			player.sendMessage(line);
-			lineCount++;
-			
-		}
-		//Print the help at the bottom (moved back to the right side)
-		/*
-		lineCount=0;
-		for(int i=0;i<2;i++)
-		{
-			line = "";
-			line += help[lineCount];
-			line += help[lineCount+1];
-			line += help[lineCount+2];
-			player.sendMessage(line);
-			lineCount+=3;
-		}
-		line=help[6];
-		player.sendMessage(line);
-		*/
-		
-		// Current town block data
-		try {
-			TownBlock townblock = world.getTownBlock(pos);
-			plugin.sendMsg(player, ("Town: " + (townblock.hasTown() ? townblock.getTown().getName() : "None") + " : "
-					+ "Owner: " + (townblock.hasResident() ? townblock.getResident().getName() : "None")));
-		} catch (TownyException e) {
-			//plugin.sendErrorMsg(player, e.getError());
-			// Send a blank line instead of an error, to keep the map position tidy.
-			player.sendMessage ("");
-		}
+		TownyAsciiMap.generateAndSend(plugin, player, 7);
 	}
 	
 	/**
