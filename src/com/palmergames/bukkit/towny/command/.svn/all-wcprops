@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 97
-/a/eclipselabs.org/towny/!svn/ver/371/branches/towny_dev/src/com/palmergames/bukkit/towny/command
+/a/eclipselabs.org/towny/!svn/ver/380/branches/towny_dev/src/com/palmergames/bukkit/towny/command
 END
 TownyCommand.java
 K 25
@@ -13,7 +13,7 @@ TownCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 114
-/a/eclipselabs.org/towny/!svn/ver/367/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownCommand.java
+/a/eclipselabs.org/towny/!svn/ver/375/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownCommand.java
 END
 TownChatCommand.java
 K 25
@@ -55,5 +55,5 @@ PlotCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 114
-/a/eclipselabs.org/towny/!svn/ver/371/branches/towny_dev/src/com/palmergames/bukkit/towny/command/PlotCommand.java
+/a/eclipselabs.org/towny/!svn/ver/380/branches/towny_dev/src/com/palmergames/bukkit/towny/command/PlotCommand.java
 END

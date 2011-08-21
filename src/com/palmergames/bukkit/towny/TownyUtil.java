@@ -109,6 +109,18 @@ public class TownyUtil {
 		return out;
 	}
 	
+	public static List<WorldCoord> filterTownOwnedBlocks(List<WorldCoord> selection) {
+		List<WorldCoord> out = new ArrayList<WorldCoord>();
+		for (WorldCoord worldCoord : selection)
+			try {
+				if (!worldCoord.getTownBlock().hasTown())
+					out.add(worldCoord);
+			} catch (NotRegisteredException e) {
+				out.add(worldCoord);
+			}
+		return out;
+	}
+	
 	public static List<WorldCoord> filterOwnedBlocks(TownBlockOwner owner, List<WorldCoord> selection) {
 		List<WorldCoord> out = new ArrayList<WorldCoord>();
 		for (WorldCoord worldCoord : selection)

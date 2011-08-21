@@ -166,7 +166,7 @@ public class TownCommand implements CommandExecutor  {
                 }
 				
 				double travelCost;
-				if (resident.getTown() == town)
+				if (resident.hasTown() && resident.getTown() == town)
 					travelCost = TownySettings.getTownSpawnTravelPrice();
 				else
 					travelCost = TownySettings.getTownPublicSpawnTravelPrice();
@@ -178,7 +178,7 @@ public class TownCommand implements CommandExecutor  {
 				//essentials tests
 				boolean notUsingESS = false;
 				
-				if (TownySettings.isUsingEssentials()) {
+				if (TownySettings.isUsingEssentials() && !isTownyAdmin) {
 					Plugin handle = plugin.getServer().getPluginManager().getPlugin("Essentials");
 					if (!handle.equals(null)) {
 						
@@ -227,6 +227,7 @@ public class TownCommand implements CommandExecutor  {
 				
 			} catch (TownyException e) {
 				plugin.sendErrorMsg(player, e.getMessage());
+				//e.printStackTrace();
 			} catch (IConomyException e) {
 				plugin.sendErrorMsg(player, e.getMessage());
 			}
@@ -647,7 +648,7 @@ public class TownCommand implements CommandExecutor  {
 						throw new TownyException(TownySettings.getLangString("msg_too_close"));
 					
 					if (TownySettings.getMaxDistanceBetweenHomeblocks() > 0)
-						if (world.getMinDistanceFromOtherTowns(coord, resident.getTown()) > TownySettings.getMaxDistanceBetweenHomeblocks())
+						if ((world.getMinDistanceFromOtherTowns(coord, resident.getTown()) > TownySettings.getMaxDistanceBetweenHomeblocks()) && world.hasTowns())
 							throw new TownyException(TownySettings.getLangString("msg_too_far"));
 					
 					townBlock = plugin.getTownyUniverse().getWorld(player.getWorld().getName()).getTownBlock(coord);
@@ -716,7 +717,7 @@ public class TownCommand implements CommandExecutor  {
 				throw new TownyException(TownySettings.getLangString("msg_too_close"));
 			
 			if (TownySettings.getMaxDistanceBetweenHomeblocks() > 0)
-				if (world.getMinDistanceFromOtherTowns(key) > TownySettings.getMaxDistanceBetweenHomeblocks())
+				if ((world.getMinDistanceFromOtherTowns(key) > TownySettings.getMaxDistanceBetweenHomeblocks()) && world.hasTowns())
 					throw new TownyException(TownySettings.getLangString("msg_too_far"));
 
 			if (TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getNewTownPrice()))

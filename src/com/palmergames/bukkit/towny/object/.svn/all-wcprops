@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 96
-/a/eclipselabs.org/towny/!svn/ver/372/branches/towny_dev/src/com/palmergames/bukkit/towny/object
+/a/eclipselabs.org/towny/!svn/ver/373/branches/towny_dev/src/com/palmergames/bukkit/towny/object
 END
 TownyUniverse.java
 K 25
@@ -79,7 +79,7 @@ TownyWorld.java
 K 25
 svn:wc:ra_dav:version-url
 V 112
-/a/eclipselabs.org/towny/!svn/ver/327/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownyWorld.java
+/a/eclipselabs.org/towny/!svn/ver/373/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownyWorld.java
 END
 Nation.java
 K 25

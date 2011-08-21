@@ -38,6 +38,10 @@ public class TownyWorld extends TownyObject {
 	public List<Town> getTowns() {
 		return towns;
 	}
+	
+	public boolean hasTowns() {
+		return !towns.isEmpty();
+	}
 
 	public boolean hasTown(String name) {
 		for (Town town : towns)

@@ -145,9 +145,19 @@ public class PlotCommand implements CommandExecutor  {
 					}
 				} else if (split[0].equalsIgnoreCase("forsale") || split[0].equalsIgnoreCase("fs")) {
 					WorldCoord pos = new WorldCoord(world, Coord.parseCoord(player));
+					double plotPrice = 0;
+					switch (pos.getTownBlock().getType().ordinal()) {
 					
+					case 0:
+						plotPrice = pos.getTownBlock().getTown().getPlotPrice();
+						break;
+					case 1:
+						plotPrice = pos.getTownBlock().getTown().getCommercialPlotPrice();
+						break;							
+					}
+
 					if (split.length > 1) {
-						double plotPrice;
+						
 						int areaSelectPivot = TownyUtil.getAreaSelectPivot(split);
 						List<WorldCoord> selection;
 						if (areaSelectPivot >= 0) {
@@ -172,15 +182,13 @@ public class PlotCommand implements CommandExecutor  {
 								player.sendMessage(String.format(TownySettings.getLangString("msg_error_must_be_num")));
 								return;
 							}
-						} else {
-							plotPrice = pos.getTownBlock().getTown().getPlotPrice();
 						}
 						
 						for (WorldCoord worldCoord : selection) {
 							setPlotForSale(resident, worldCoord, plotPrice);
 						}
 					} else {
-						setPlotForSale(resident, pos, pos.getTownBlock().getTown().getPlotPrice());
+						setPlotForSale(resident, pos, plotPrice);
 					}
 				} else if (split[0].equalsIgnoreCase("set")) {
                     if (split.length > 1) {

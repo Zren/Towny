@@ -177,7 +177,7 @@ public class TownCommand implements CommandExecutor  {
                 }
 				
 				double travelCost;
-				if (resident.getTown() == town)
+				if (resident.hasTown() && resident.getTown() == town)
 					travelCost = TownySettings.getTownSpawnTravelPrice();
 				else
 					travelCost = TownySettings.getTownPublicSpawnTravelPrice();
@@ -189,7 +189,7 @@ public class TownCommand implements CommandExecutor  {
 				//essentials tests
 				boolean notUsingESS = false;
 				
-				if (TownySettings.isUsingEssentials()) {
+				if (TownySettings.isUsingEssentials() && !isTownyAdmin) {
 					Plugin handle = plugin.getServer().getPluginManager().getPlugin("Essentials");
 					if (!handle.equals(null)) {
 						
@@ -238,6 +238,7 @@ public class TownCommand implements CommandExecutor  {
 				
 			} catch (TownyException e) {
 				plugin.sendErrorMsg(player, e.getMessage());
+				//e.printStackTrace();
 			} catch (IConomyException e) {
 				plugin.sendErrorMsg(player, e.getMessage());
 			}
@@ -658,7 +659,7 @@ public class TownCommand implements CommandExecutor  {
 						throw new TownyException(TownySettings.getLangString("msg_too_close"));
 					
 					if (TownySettings.getMaxDistanceBetweenHomeblocks() > 0)
-						if (world.getMinDistanceFromOtherTowns(coord, resident.getTown()) > TownySettings.getMaxDistanceBetweenHomeblocks())
+						if ((world.getMinDistanceFromOtherTowns(coord, resident.getTown()) > TownySettings.getMaxDistanceBetweenHomeblocks()) && world.hasTowns())
 							throw new TownyException(TownySettings.getLangString("msg_too_far"));
 					
 					townBlock = plugin.getTownyUniverse().getWorld(player.getWorld().getName()).getTownBlock(coord);
@@ -727,7 +728,7 @@ public class TownCommand implements CommandExecutor  {
 				throw new TownyException(TownySettings.getLangString("msg_too_close"));
 			
 			if (TownySettings.getMaxDistanceBetweenHomeblocks() > 0)
-				if (world.getMinDistanceFromOtherTowns(key) > TownySettings.getMaxDistanceBetweenHomeblocks())
+				if ((world.getMinDistanceFromOtherTowns(key) > TownySettings.getMaxDistanceBetweenHomeblocks()) && world.hasTowns())
 					throw new TownyException(TownySettings.getLangString("msg_too_far"));
 
 			if (TownySettings.isUsingIConomy() && !resident.pay(TownySettings.getNewTownPrice()))
@@ -1278,7 +1279,7 @@ public class TownCommand implements CommandExecutor  {
 				}
 				
 				plugin.sendDebugMsg("townClaim: Pre-Filter Selection " + Arrays.toString(selection.toArray(new WorldCoord[0])));
-				selection = removeTownOwnedBlocks(selection);
+				selection = TownyUtil.filterTownOwnedBlocks(selection);
 				plugin.sendDebugMsg("townClaim: Post-Filter Selection " + Arrays.toString(selection.toArray(new WorldCoord[0])));
 				checkIfSelectionIsValid(town, selection, attachedToEdge, blockCost, false);
 				
@@ -1310,7 +1311,7 @@ public class TownCommand implements CommandExecutor  {
 		if (split.length == 1 && split[0].equalsIgnoreCase("?")) {
 			player.sendMessage(ChatTools.formatTitle("/town unclaim"));
 			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town unclaim", "", TownySettings.getLangString("mayor_help_6")));
-			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town unclaim", "[radius]", TownySettings.getLangString("mayor_help_7")));
+			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town unclaim", "[circle/rect] [radius]", TownySettings.getLangString("mayor_help_7")));
 			player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town unclaim", "all", TownySettings.getLangString("mayor_help_8")));
 		} else {
 			Resident resident;
@@ -1349,17 +1350,6 @@ public class TownCommand implements CommandExecutor  {
 		}
 	}
 	
-	public static List<WorldCoord> removeTownOwnedBlocks(List<WorldCoord> selection) {
-		List<WorldCoord> out = new ArrayList<WorldCoord>();
-		for (WorldCoord worldCoord : selection)
-			try {
-				if (!worldCoord.getTownBlock().hasTown())
-					out.add(worldCoord);
-			} catch (NotRegisteredException e) {
-				out.add(worldCoord);
-			}
-		return out;
-	}
 	
 	
 	
@@ -1391,8 +1381,6 @@ public class TownCommand implements CommandExecutor  {
 			System.out.println("false");
 		return false;
 	}
-	
-	
 	
 	public static void checkIfSelectionIsValid(TownBlockOwner owner, List<WorldCoord> selection, boolean attachedToEdge, double blockCost, boolean force) throws TownyException {
 		if (force)

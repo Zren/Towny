@@ -113,12 +113,12 @@ public class TownyCommand implements CommandExecutor {
 		else if (split[0].equalsIgnoreCase("?") || split[0].equalsIgnoreCase("help"))
 			for (String line : towny_help)
 				player.sendMessage(Colors.strip(line));
-		else if (split[0].equalsIgnoreCase("map")) {
+		else if (split[0].equalsIgnoreCase("map"))
 			if (split.length > 1 && split[1].equalsIgnoreCase("big"))
 				TownyAsciiMap.generateAndSend(plugin, player, 18);
 			else
 				showMap(player);
-		} else if (split[0].equalsIgnoreCase("prices")){
+		else if (split[0].equalsIgnoreCase("prices")){
 			Town town = null;
 			if (split.length > 1){
 				try {
@@ -271,6 +271,7 @@ public class TownyCommand implements CommandExecutor {
 	 * 
 	 * @param player
 	 */
+
 	public static void showMap(Player player) {
 		TownyAsciiMap.generateAndSend(plugin, player, 7);
 	}

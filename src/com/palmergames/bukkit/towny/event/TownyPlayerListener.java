@@ -65,7 +65,8 @@ public class TownyPlayerListener extends PlayerListener {
 		
 		// Remove from teleport queue (if exists)
 		try {
-			plugin.getTownyUniverse().abortTeleportRequest(plugin.getTownyUniverse().getResident(event.getPlayer().getName().toLowerCase()));
+			if (plugin.getTownyUniverse().isTeleportWarmupRunning())
+				plugin.getTownyUniverse().abortTeleportRequest(plugin.getTownyUniverse().getResident(event.getPlayer().getName().toLowerCase()));
 		} catch (NotRegisteredException e) {
 		}
 		

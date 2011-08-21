@@ -50,7 +50,7 @@ public class TeleportWarmupTimerTask extends TownyTimerTask {
     }
 
     public static void abortTeleportRequest(Resident resident) {
-    	if (teleportQueue.contains(resident))
-    		teleportQueue.remove(resident);
+    		if (resident != null && teleportQueue.contains(resident))
+    			teleportQueue.remove(resident);
     }
 }

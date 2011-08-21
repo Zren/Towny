@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 60
-/a/eclipselabs.org/towny/!svn/ver/372/branches/towny_dev/src
+/a/eclipselabs.org/towny/!svn/ver/380/branches/towny_dev/src
 END
 ToDo.txt
 K 25
@@ -13,7 +13,7 @@ ChangeLog.txt
 K 25
 svn:wc:ra_dav:version-url
 V 74
-/a/eclipselabs.org/towny/!svn/ver/366/branches/towny_dev/src/ChangeLog.txt
+/a/eclipselabs.org/towny/!svn/ver/377/branches/towny_dev/src/ChangeLog.txt
 END
 english.yml
 K 25

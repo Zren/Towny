@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 95
-/a/eclipselabs.org/towny/!svn/ver/370/branches/towny_dev/src/com/palmergames/bukkit/towny/event
+/a/eclipselabs.org/towny/!svn/ver/376/branches/towny_dev/src/com/palmergames/bukkit/towny/event
 END
 TownyBlockListener.java
 K 25
@@ -13,7 +13,7 @@ TownyPlayerListener.java
 K 25
 svn:wc:ra_dav:version-url
 V 120
-/a/eclipselabs.org/towny/!svn/ver/370/branches/towny_dev/src/com/palmergames/bukkit/towny/event/TownyPlayerListener.java
+/a/eclipselabs.org/towny/!svn/ver/376/branches/towny_dev/src/com/palmergames/bukkit/towny/event/TownyPlayerListener.java
 END
 TownyEntityListener.java
 K 25

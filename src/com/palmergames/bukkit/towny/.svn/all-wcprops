@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 89
-/a/eclipselabs.org/towny/!svn/ver/372/branches/towny_dev/src/com/palmergames/bukkit/towny
+/a/eclipselabs.org/towny/!svn/ver/380/branches/towny_dev/src/com/palmergames/bukkit/towny
 END
 TownyException.java
 K 25
@@ -13,7 +13,7 @@ TownySettings.java
 K 25
 svn:wc:ra_dav:version-url
 V 108
-/a/eclipselabs.org/towny/!svn/ver/366/branches/towny_dev/src/com/palmergames/bukkit/towny/TownySettings.java
+/a/eclipselabs.org/towny/!svn/ver/378/branches/towny_dev/src/com/palmergames/bukkit/towny/TownySettings.java
 END
 Election.java
 K 25
@@ -55,7 +55,7 @@ TeleportWarmupTimerTask.java
 K 25
 svn:wc:ra_dav:version-url
 V 118
-/a/eclipselabs.org/towny/!svn/ver/348/branches/towny_dev/src/com/palmergames/bukkit/towny/TeleportWarmupTimerTask.java
+/a/eclipselabs.org/towny/!svn/ver/376/branches/towny_dev/src/com/palmergames/bukkit/towny/TeleportWarmupTimerTask.java
 END
 PlayerCache.java
 K 25
