@@ -6,7 +6,7 @@ import java.util.List;
  * Useful functions related to strings, or arrays of them.
  * 
  * @author Shade (Chris H)
- * @version 1.3
+ * @version 1.4
  */
 
 public class StringMgmt {
@@ -52,6 +52,22 @@ public class StringMgmt {
 		else {
 			String[] newSplit = new String[arr.length - startFromIndex];
 			System.arraycopy(arr, startFromIndex, newSplit, 0, arr.length - startFromIndex);
+			return newSplit;
+		}
+	}
+	
+	public static String[] subArray(String[] arr, int start, int end) {
+		//assert start > end;
+		//assert start >= 0;
+		//assert end < args.length;
+		if (arr.length == 0)
+			return arr;
+		else if (end < start)
+			return new String[0];
+		else {
+			int length = end - start;
+			String[] newSplit = new String[length];
+			System.arraycopy(arr, start, newSplit, 0, length);
 			return newSplit;
 		}
 	}

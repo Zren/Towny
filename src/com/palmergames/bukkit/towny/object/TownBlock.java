@@ -94,6 +94,10 @@ public class TownBlock {
 	public double getPlotPrice() {
 		return plotPrice;
 	}
+	
+	public boolean isForSale() {
+		return getPlotPrice() != -1.0;
+	}
 
     public TownBlockType getType() {
         return type;

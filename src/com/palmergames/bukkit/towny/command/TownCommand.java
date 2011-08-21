@@ -26,6 +26,7 @@ import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyException;
 import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.towny.TownyUtil;
 import com.palmergames.bukkit.towny.object.Coord;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -1272,7 +1273,7 @@ public class TownCommand implements CommandExecutor  {
 					} else
 						throw new TownyException(TownySettings.getLangString("msg_outpost_disable"));
 				} else {
-					selection = selectWorldCoordArea(town, new WorldCoord(world, Coord.parseCoord(plugin.getCache(player).getLastLocation())), split);
+					selection = TownyUtil.selectWorldCoordArea(town, new WorldCoord(world, Coord.parseCoord(plugin.getCache(player).getLastLocation())), split);
 					blockCost = TownySettings.getClaimPrice();
 				}
 				
@@ -1330,8 +1331,8 @@ public class TownCommand implements CommandExecutor  {
 				if (split.length == 1 && split[0].equalsIgnoreCase("all"))
 					townUnclaimAll(town);
 				else {
-					selection = selectWorldCoordArea(town, new WorldCoord(world, Coord.parseCoord(plugin.getCache(player).getLastLocation())), split);
-					selection = filterOwnedBlocks(town, selection);
+					selection = TownyUtil.selectWorldCoordArea(town, new WorldCoord(world, Coord.parseCoord(plugin.getCache(player).getLastLocation())), split);
+					selection = TownyUtil.filterOwnedBlocks(town, selection);
 					
 					for (WorldCoord worldCoord : selection)
 						townUnclaim(town, worldCoord, false);
@@ -1360,16 +1361,7 @@ public class TownCommand implements CommandExecutor  {
 		return out;
 	}
 	
-	public static List<WorldCoord> filterOwnedBlocks(TownBlockOwner owner, List<WorldCoord> selection) {
-		List<WorldCoord> out = new ArrayList<WorldCoord>();
-		for (WorldCoord worldCoord : selection)
-			try {
-				if (worldCoord.getTownBlock().isOwner(owner))
-					out.add(worldCoord);
-			} catch (NotRegisteredException e) {
-			}
-		return out;
-	}
+	
 	
 	public static boolean isEdgeBlock(TownBlockOwner owner, List<WorldCoord> worldCoords) {
 		// TODO: Better algorithm that doesn't duplicates checks.
@@ -1400,105 +1392,7 @@ public class TownCommand implements CommandExecutor  {
 		return false;
 	}
 	
-	public static List<WorldCoord> selectWorldCoordArea(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
-		List<WorldCoord> out = new ArrayList<WorldCoord>();
-		
-		if (args.length == 0) {
-			// claim with no sub command entered so attempt selection of one plot
-			if (pos.getWorld().isClaimable())
-				out.add(pos);
-			else
-				throw new TownyException(TownySettings.getLangString("msg_not_claimable"));
-		} else {
-			try {
-				Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				if (args.length > 1) {
-					if (args[0].equalsIgnoreCase("rect")) {
-						out = selectWorldCoordAreaRect(owner, pos, StringMgmt.remFirstArg(args));
-					} else if (args[0].equalsIgnoreCase("circle")) {
-						out = selectWorldCoordAreaCircle(owner, pos, StringMgmt.remFirstArg(args));
-					} else {
-						//TODO: Some output?
-					}
-				} else {
-					// Treat as rect to serve for backwards capability.
-					out = selectWorldCoordAreaRect(owner, pos, StringMgmt.remFirstArg(args));
-				}
-			}
-		}
-		
-		return out;
-	}
 	
-	public static List<WorldCoord> selectWorldCoordAreaRect(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
-		List<WorldCoord> out = new ArrayList<WorldCoord>();
-		if (pos.getWorld().isClaimable()) {
-			if (args.length > 0) {
-				int r;
-				if (args[0].equalsIgnoreCase("auto")) {
-					// Attempt to select outwards until no town blocks remain
-					if (owner instanceof Town) {
-						Town town = (Town)owner;
-						int available = TownySettings.getMaxTownBlocks(town) - town.getTownBlocks().size();
-						r = 0;
-						while (available - Math.pow((r + 1) * 2 - 1, 2) >= 0)
-							r += 1;
-					} else
-						throw new TownyException(TownySettings.getLangString("msg_err_area_auto"));
-				} else {
-					try {
-						r = Integer.parseInt(args[0]);
-					} catch (NumberFormatException e) {
-						throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
-					}	
-				}
-				r -= 1;
-				for (int z = pos.getZ() - r; z <= pos.getZ() + r; z++)
-					for (int x = pos.getX() - r; x <= pos.getX() + r; x++)
-						out.add(new WorldCoord(pos.getWorld(), x, z));
-			} else {
-				throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
-			}
-		}
-
-		return out;
-	}
-	
-	public static List<WorldCoord> selectWorldCoordAreaCircle(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
-		List<WorldCoord> out = new ArrayList<WorldCoord>();
-		if (pos.getWorld().isClaimable()) {
-			if (args.length > 0) {
-				int r;
-				if (args[0].equalsIgnoreCase("auto")) {
-					// Attempt to select outwards until no town blocks remain
-					if (owner instanceof Town) {
-						Town town = (Town)owner;
-						int available = TownySettings.getMaxTownBlocks(town) - town.getTownBlocks().size();
-						r = 0;
-						if (available > 0) // Since: 0 - ceil(Pi * 0^2) >= 0 is a true statement.
-							while (available - Math.ceil(Math.PI * r * r) >= 0)
-								r += 1;
-					} else
-						throw new TownyException(TownySettings.getLangString("msg_err_area_auto"));
-				} else {
-					try {
-						r = Integer.parseInt(args[0]);
-					} catch (NumberFormatException e) {
-						throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
-					}	
-				}
-				for (int z = -r; z <= r; z++)
-					for (int x = -r; x <= r; x++)
-						if (x*x+z*z <= r*r)
-							out.add(new WorldCoord(pos.getWorld(), pos.getX()+x, pos.getZ()+z));
-			} else {
-				throw new TownyException(TownySettings.getLangString("msg_err_invalid_radius"));
-			}
-		}
-
-		return out;
-	}
 	
 	public static void checkIfSelectionIsValid(TownBlockOwner owner, List<WorldCoord> selection, boolean attachedToEdge, double blockCost, boolean force) throws TownyException {
 		if (force)
