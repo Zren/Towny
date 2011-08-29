@@ -1,95 +1,95 @@
 K 25
 svn:wc:ra_dav:version-url
-V 89
-/a/eclipselabs.org/towny/!svn/ver/403/trunk/Towny/src/com/palmergames/bukkit/towny/object
+V 96
+/a/eclipselabs.org/towny/!svn/ver/389/branches/towny_dev/src/com/palmergames/bukkit/towny/object
 END
 TownyUniverse.java
 K 25
 svn:wc:ra_dav:version-url
-V 108
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownyUniverse.java
+V 115
+/a/eclipselabs.org/towny/!svn/ver/388/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownyUniverse.java
 END
 TownBlock.java
 K 25
 svn:wc:ra_dav:version-url
-V 104
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownBlock.java
+V 111
+/a/eclipselabs.org/towny/!svn/ver/381/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownBlock.java
 END
 TownBlockType.java
 K 25
 svn:wc:ra_dav:version-url
-V 108
-/a/eclipselabs.org/towny/!svn/ver/403/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownBlockType.java
+V 115
+/a/eclipselabs.org/towny/!svn/ver/372/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownBlockType.java
 END
 TownyIConomyObject.java
 K 25
 svn:wc:ra_dav:version-url
-V 113
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownyIConomyObject.java
+V 120
+/a/eclipselabs.org/towny/!svn/ver/385/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownyIConomyObject.java
 END
 Coord.java
 K 25
 svn:wc:ra_dav:version-url
-V 100
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/bukkit/towny/object/Coord.java
+V 107
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/bukkit/towny/object/Coord.java
 END
 TownyObject.java
 K 25
 svn:wc:ra_dav:version-url
-V 106
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownyObject.java
+V 113
+/a/eclipselabs.org/towny/!svn/ver/364/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownyObject.java
 END
 ResidentList.java
 K 25
 svn:wc:ra_dav:version-url
-V 107
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/bukkit/towny/object/ResidentList.java
+V 114
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/bukkit/towny/object/ResidentList.java
 END
 Resident.java
 K 25
 svn:wc:ra_dav:version-url
-V 103
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/Resident.java
+V 110
+/a/eclipselabs.org/towny/!svn/ver/337/branches/towny_dev/src/com/palmergames/bukkit/towny/object/Resident.java
 END
 TownBlockOwner.java
 K 25
 svn:wc:ra_dav:version-url
-V 109
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownBlockOwner.java
+V 116
+/a/eclipselabs.org/towny/!svn/ver/387/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownBlockOwner.java
 END
 WorldCoord.java
 K 25
 svn:wc:ra_dav:version-url
-V 105
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/bukkit/towny/object/WorldCoord.java
+V 112
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/bukkit/towny/object/WorldCoord.java
 END
 TownyObservableType.java
 K 25
 svn:wc:ra_dav:version-url
-V 114
-/a/eclipselabs.org/towny/!svn/ver/403/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownyObservableType.java
+V 121
+/a/eclipselabs.org/towny/!svn/ver/364/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownyObservableType.java
 END
 Town.java
 K 25
 svn:wc:ra_dav:version-url
-V 99
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/Town.java
+V 106
+/a/eclipselabs.org/towny/!svn/ver/389/branches/towny_dev/src/com/palmergames/bukkit/towny/object/Town.java
 END
 TownyWorld.java
 K 25
 svn:wc:ra_dav:version-url
-V 105
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownyWorld.java
+V 112
+/a/eclipselabs.org/towny/!svn/ver/373/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownyWorld.java
 END
 Nation.java
 K 25
 svn:wc:ra_dav:version-url
-V 101
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/object/Nation.java
+V 108
+/a/eclipselabs.org/towny/!svn/ver/389/branches/towny_dev/src/com/palmergames/bukkit/towny/object/Nation.java
 END
 TownyPermission.java
 K 25
 svn:wc:ra_dav:version-url
-V 110
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/bukkit/towny/object/TownyPermission.java
+V 117
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/bukkit/towny/object/TownyPermission.java
 END

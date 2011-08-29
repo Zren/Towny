@@ -1,5 +1,5 @@
 ﻿name: Towny
-version: 0.06
+version: 0.07
 language: english
 author: ElgarL
 website:
@@ -324,6 +324,7 @@ msg_err_cant_afford_tp: '&bCannot afford to teleport to your town''s spawn.'
 msg_err_plot_nfs: '&cThis plot is not for sale.'
 msg_err_not_part_town: '&cSelected area is not part of your town.'
 msg_err_not_attached_edge: '&cSelected area not attached to edge.'
+msg_err_empty_area_selection: '&cSelected area contains no valid plots.'
 msg_err_not_enough_blocks: '&cNot enough available town blocks to claim this selection.'
 msg_err_cant_afford_blocks: '&cTown cannot afford to claim %s town blocks costing %s'
 msg_err_not_in_town_claim: '&cYou must belong to a town in order to claim plots.'

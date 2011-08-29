@@ -2,13 +2,13 @@
 
 dir
 416
-http://svn.codespot.com/a/eclipselabs.org/towny/trunk/Towny/src
+http://svn.codespot.com/a/eclipselabs.org/towny/branches/towny_dev/src
 http://svn.codespot.com/a/eclipselabs.org/towny
 
 
 
-2011-08-28T10:47:01.334063Z
-413
+2011-08-29T15:36:55.441046Z
+416
 steve_p@blueyonder.co.uk
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2011-08-29T23:10:09.424092Z
+2011-08-29T23:09:59.929845Z
 45e29d2a699b3b1ec49a3f87b30b7fad
-2011-07-06T17:15:21.685113Z
-2
-steve_p@blueyonder.co.uk
+2011-08-18T23:59:00.150727Z
+360
+farachan@gmail.com
 
 
 
@@ -66,10 +66,10 @@ file
 
 
 
-2011-08-29T23:10:09.440092Z
-407daf90603c9047129ced021c0559c0
-2011-08-28T10:47:01.334063Z
-413
+2011-08-29T23:09:59.943845Z
+5cf6c86c46506232ab3cde218c125983
+2011-08-29T15:36:55.441046Z
+416
 steve_p@blueyonder.co.uk
 
 
@@ -92,7 +92,7 @@ steve_p@blueyonder.co.uk
 
 
 
-32284
+32470
 
 english.yml
 file
@@ -100,10 +100,10 @@ file
 
 
 
-2011-08-29T23:10:09.447092Z
-e22125b24ae56f3a60cc6c3283516644
-2011-08-27T04:08:23.575892Z
-402
+2011-08-29T23:09:59.950846Z
+91bf69b0593560ea040af6a41da5fdc8
+2011-08-29T15:36:55.441046Z
+416
 steve_p@blueyonder.co.uk
 
 
@@ -126,7 +126,7 @@ steve_p@blueyonder.co.uk
 
 
 
-17067
+17140
 
 com
 dir
@@ -137,10 +137,10 @@ file
 
 
 
-2011-08-29T23:10:09.454093Z
-75e51bc8d560573f3e3ad01c06a999a2
-2011-08-28T10:47:01.334063Z
-413
+2011-08-29T23:09:59.987847Z
+a38ab93e0a4b56476b86afa39890cff8
+2011-08-28T19:12:20.400266Z
+415
 steve_p@blueyonder.co.uk
 
 
