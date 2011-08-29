@@ -292,9 +292,9 @@ public class TownySettings {
         // if the file is not found it will load the default from resource
         public static void loadLanguage (String filepath, String defaultRes) throws IOException {               
                 
-                String defaultName = filepath + FileMgmt.fileSeparator() + getString("language", defaultRes);
+            	String defaultName = filepath + FileMgmt.fileSeparator() + getString(ConfigNodes.LANGUAGE.getRoot(), defaultRes);
                 
-                File file = FileMgmt.unpackLanguageFile(defaultName, defaultRes);
+            	File file = FileMgmt.unpackLanguageFile(defaultName, defaultRes);
                 if (file != null) {
                                 
                         // read the (language).yml into memory
@@ -324,7 +324,7 @@ public class TownySettings {
         }
 
     public static Boolean getBoolean(ConfigNodes node) {
-        return config.getBoolean(node.getRoot().toLowerCase(), Boolean.parseBoolean(node.getDefault()));
+        return Boolean.parseBoolean(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
     }
     /*
         public static Boolean getBoolean(String root){
@@ -333,7 +333,7 @@ public class TownySettings {
     */
 
     private static Double getDouble(ConfigNodes node) {
-        return config.getDouble(node.getRoot().toLowerCase(), Double.parseDouble(node.getDefault()));
+        return Double.parseDouble(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
     }
     /*
     private static Double getDouble(String root){
@@ -342,7 +342,7 @@ public class TownySettings {
     */
 
     private static Integer getInt(ConfigNodes node) {
-        return config.getInt(node.getRoot().toLowerCase(), Integer.parseInt(node.getDefault()));
+        return Integer.parseInt(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
     }
     /*
     private static Integer getInt(String root){

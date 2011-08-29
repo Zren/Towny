@@ -1,11 +1,9 @@
 package com.palmergames.util;
 
 import java.io.BufferedReader;
-//import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-//import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +15,7 @@ import java.io.Writer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.palmergames.util.FileMgmt;
+import com.palmergames.bukkit.config.ConfigNodes;
 
 public class FileMgmt {
 	public static void checkFolders(String[] folders) {
@@ -78,12 +76,13 @@ public class FileMgmt {
 		
 		// open a handle to yml file
 		File file = new File(filePath);
-		//if(file.exists())
-		//	return file;
+		if((file.exists()) && (!filePath.contains(ConfigNodes.LANGUAGE.getDefault())))
+			return file;
 		
 		String resString;
 		
 		// create the file as it doesn't exist
+		// or we are replacing english.yml
 		try {
 			checkFiles(new String[]{
 					filePath});

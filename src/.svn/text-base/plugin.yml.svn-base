@@ -1,0 +1,109 @@
+﻿name: Towny
+main: com.palmergames.bukkit.towny.Towny
+version: 0.75.1
+author: Shade, Modified by FuzzeWuzze. Forked by ElgarL
+website: http://code.google.com/a/eclipselabs.org/p/towny/
+description: >
+    Resident-Town-Nation heirarchy combined with a grid based
+    protection system. Including a war event.
+
+depends: [MultiVerse,Multiverse-Core]
+
+############################################################
+# +------------------------------------------------------+ #
+# |                   Towny commands                     | #
+# +------------------------------------------------------+ #
+############################################################
+
+commands:
+    towny:
+        aliases: []
+    nation:
+        aliases: [n, nat]
+    nationchat:
+        aliases: [nc]
+    townchat:
+        aliases: [tc]
+    plot:
+        aliases: []
+    resident:
+        aliases: [res, p, player]
+    town:
+        aliases: [t]
+    townyadmin:
+        aliases: [ta]
+    townyworld:
+        aliases: [tw]
+
+############################################################
+# +------------------------------------------------------+ #
+# |                     Permissions                      | #
+# +------------------------------------------------------+ #
+############################################################
+
+permissions:
+    towny.admin:
+        description: User is able to use /townyadmin, as well as the ability to build/destroy anywhere. User is also able to make towns or nations when set to admin only.
+        default: op
+        children:
+            towny.town.*: true
+            towny.nation.new: true
+            towny.wild.*: true
+            towny.spawntp: true
+            towny.publicspawntp: true
+            towny.cheat.bypass: true
+    towny.cheat.bypass:
+        description: Disables the anti cheat code for players with this node.
+        default: op
+    towny.top:
+        description: User has access to the "/towny top" commands.
+        default: true
+    towny.town.*:
+        description: User can create a town and claim land.
+        default: op
+        children:
+            towny.town.new: true
+            towny.town.claim: true
+            towny.town.resident: true
+            towny.town.plot: true
+    towny.town.resident:
+        description: User is permitted to join towns.
+        default: true
+    towny.town.new:
+        description: User is able to create a town
+        default: true
+    towny.town.claim:
+        description: User is able to expand with /towny claim
+        default: true
+    towny.town.plot:
+        description: User is able to purchase and own town plots.
+        default: true
+    towny.nation.new:
+        description: User is able to create a nation
+        default: true
+    towny.wild.*:
+        description: User can build/destroy in wild.
+        default: op
+        children:
+            towny.wild.build: true
+            towny.wild.switch: true
+            towny.wild.destroy: true
+            towny.wild.item_use: true
+    towny.wild.build:
+        description: User can build in wild.
+        default: false
+    towny.wild.destroy:
+        description: User can destroy in wild.
+        default: false
+    towny.wild.switch:
+        description: User can switch in wild.
+        default: false
+    towny.wild.item_use:
+        description: User can use use items in wild. 
+        default: false
+    towny.spawntp:
+        description: User can use /town spawn when on in config.
+        default: true
+    towny.publicspawntp:
+        description: User can use /town spawn <town> when on in config.
+        default: true

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/war
+END
+WarSpoils.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/bukkit/towny/war/WarSpoils.java
+END
+War.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/bukkit/towny/war/War.java
+END
+StartWarTimerTask.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/bukkit/towny/war/StartWarTimerTask.java
+END
+WarTimerTask.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/bukkit/towny/war/WarTimerTask.java
+END
