@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.iConomy.iConomy;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -13,8 +14,6 @@ import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.util.StringMgmt;
-
-import com.iConomy.*;
 
 //TODO: Make static
 //TODO: pull names from the config
@@ -90,11 +89,12 @@ public class TownyFormatter {
                 } catch (NullPointerException e) {
                 }
 
-                // Town Size: 0 / 16 [Bonus: 0] [Home: 33,44]
+                // Town Size: 0 / 16 [Bought: 0/48] [Bonus: 0] [Home: 33,44]
                 try {
                         out.add(Colors.Green
                                         + "Town Size: " + Colors.LightGreen + town.getTownBlocks().size() + " / " + TownySettings.getMaxTownBlocks(town)
-                                        + Colors.LightBlue + " [Bonus: " + town.getBonusBlocks() + "]"
+                                        + (TownySettings.isSellingBonusBlocks() ? Colors.LightBlue + " [Bought: " + town.getPurchasedBlocks() + "/" + TownySettings.getMaxPurchedBlocks() + "]" : "")
+                                        + (town.getBonusBlocks() > 0 ? Colors.LightBlue + " [Bonus: " + town.getBonusBlocks() + "]" : "")
                                         + (town.isPublic() ? Colors.LightGray + " [Home: " + (town.hasHomeBlock() ? town.getHomeBlock().getCoord().toString() : "None") + "]" : ""));
                 } catch (TownyException e) {
                 }

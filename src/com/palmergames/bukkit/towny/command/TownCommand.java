@@ -27,6 +27,7 @@ import com.palmergames.bukkit.towny.IConomyException;
 import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyException;
+import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.TownyUtil;
 import com.palmergames.bukkit.towny.object.Coord;
@@ -256,7 +257,7 @@ public class TownCommand implements CommandExecutor  {
                                         plugin.sendErrorMsg(player, TownySettings.getLangString("msg_error_must_be_int"));
                                 }
                         else
-                                plugin.sendErrorMsg(player, String.format(TownySettings.getLangString("msg_must_specify_amnt"), "/town"));
+                                plugin.sendErrorMsg(player, String.format(TownySettings.getLangString("msg_must_specify_amnt"), "/town withdraw"));
                 } else if (split[0].equalsIgnoreCase("deposit")) {
                         if (split.length == 2)
                                 try {
@@ -265,14 +266,16 @@ public class TownCommand implements CommandExecutor  {
                                         plugin.sendErrorMsg(player, TownySettings.getLangString("msg_error_must_be_int"));
                                 }
                         else
-                                plugin.sendErrorMsg(player, String.format(TownySettings.getLangString("msg_must_specify_amnt"), "/town"));
+                                plugin.sendErrorMsg(player, String.format(TownySettings.getLangString("msg_must_specify_amnt"), "/town deposit"));
                 } else {
                         String[] newSplit = StringMgmt.remFirstArg(split);
                         
                         if (split[0].equalsIgnoreCase("set"))
                                 townSet(player, newSplit);
+                        else if (split[0].equalsIgnoreCase("buy"))
+                            	townBuy(player, newSplit);
                         else if (split[0].equalsIgnoreCase("toggle"))
-                                townToggle(player, newSplit);
+                            	townToggle(player, newSplit);
                         else  if (split[0].equalsIgnoreCase("mayor"))
                                 townMayor(player, newSplit);
                         else if (split[0].equalsIgnoreCase("assistant"))
@@ -378,6 +381,7 @@ public class TownCommand implements CommandExecutor  {
                 player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town", "[add/kick] " + TownySettings.getLangString("res_2") + " .. []", TownySettings.getLangString("res_6")));
                 player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town", "[add+/kick+] " + TownySettings.getLangString("res_2"), TownySettings.getLangString("res_7")));
                 player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town", "set [] .. []", "'/town set' " + TownySettings.getLangString("res_5")));
+                player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town", "buy [] .. []", "'/town buy' " + TownySettings.getLangString("res_5")));
                 player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town", "toggle", ""));
                 player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town", "assistant [add/remove] [player]", TownySettings.getLangString("res_6")));
                 player.sendMessage(ChatTools.formatCommand(TownySettings.getLangString("mayor_sing"), "/town", "assistant [add+/remove+] [player]", TownySettings.getLangString("res_7")));
@@ -708,6 +712,90 @@ public class TownCommand implements CommandExecutor  {
                         plugin.getTownyUniverse().getDataSource().saveTown(town);
                 }
         }
+        
+        public void townBuy(Player player, String[] split) {
+            if (split.length == 0) {
+                player.sendMessage(ChatTools.formatTitle("/town buy"));
+                if (TownySettings.isSellingBonusBlocks()) {
+                	String line = Colors.Yellow + "[Purchased Bonus] "
+	                    + Colors.Green + "Cost: " + Colors.LightGreen + "%s"
+	                    + Colors.Gray + " | "
+	                    + Colors.Green + "Max: " + Colors.LightGreen + "%d";
+                    player.sendMessage(String.format(line, TownyFormatter.formatMoney(TownySettings.getPurchasedBonusBlocksCost()), TownySettings.getMaxPurchedBlocks()));
+                    player.sendMessage(ChatTools.formatCommand("", "/town buy", "bonus [n]", ""));
+                } else {
+                	// Temp placeholder.
+                	player.sendMessage("Nothing for sale right now.");
+                }
+            } else {
+                Resident resident;
+                Town town;
+                try {
+                    resident = plugin.getTownyUniverse().getResident(player.getName());
+                    town = resident.getTown();
+                    if (!resident.isMayor())
+                        if (!town.hasAssistant(resident))
+                            throw new TownyException(TownySettings.getLangString("msg_not_mayor_ass"));
+                } catch (TownyException x) {
+                    plugin.sendErrorMsg(player, x.getError());
+                    return;
+                }
+                try {
+	                if (split[0].equalsIgnoreCase("bonus")) {
+	                	if (split.length == 2) {
+	                        try {
+	                        	int bought = townBuyBonusTownBlocks(town, Integer.parseInt(split[1]));
+	                        	double cost = bought * TownySettings.getPurchasedBonusBlocksCost();
+	                        	plugin.sendMsg(player, String.format(TownySettings.getLangString("msg_buy"), bought, "bonus town blocks", TownyFormatter.formatMoney(cost)));
+	                        } catch (NumberFormatException e) {
+	                        	throw new TownyException(TownySettings.getLangString("msg_error_must_be_int"));
+	                        }
+	                	} else {
+	                        throw new TownyException(String.format(TownySettings.getLangString("msg_must_specify_amnt"), "/town buy bonus"));
+	                    }
+	                }
+	
+	                plugin.getTownyUniverse().getDataSource().saveTown(town);
+                } catch (TownyException x) {
+                	plugin.sendErrorMsg(player, x.getError());
+                }
+            }
+        }
+        /**
+         * Town buys bonus blocks after checking the configured maximum. 
+         * @param town
+         * @param inputN
+         * @return The number of purchased bonus blocks.
+         * @throws TownyException
+         */
+    	public static int townBuyBonusTownBlocks(Town town, int inputN) throws TownyException {
+    		if (inputN < 0)
+    			throw new TownyException(TownySettings.getLangString("msg_err_negative"));
+    		
+    		int current = town.getPurchasedBlocks();
+    		
+    		int n;
+    		if (current + inputN > TownySettings.getMaxPurchedBlocks()) {
+    			n = TownySettings.getMaxPurchedBlocks() - current;
+    		} else {
+    			n = current + inputN;
+    		}
+    		
+    		if (n == 0)
+    			return n;
+    		
+    		try {
+    			double cost = n * TownySettings.getPurchasedBonusBlocksCost();
+                if (TownySettings.isUsingIConomy() && !town.pay(cost))
+                	throw new TownyException(String.format(TownySettings.getLangString("msg_no_funds_to_buy"), n, "bonus town blocks", cost + TownyIConomyObject.getIConomyCurrency()));
+    	    } catch (IConomyException e1) {
+                throw new TownyException("Iconomy Error");
+    	    }
+    	    
+    		town.addPurchasedBlocks(n);
+    		
+    		return n;
+    	}
         
         /**
          * Create a new town. Command: /town new [town] *[mayor]
@@ -1305,7 +1393,7 @@ public class TownCommand implements CommandExecutor  {
                                 try {
                                         double cost = blockCost * selection.size();
                                         if (TownySettings.isUsingIConomy() && !town.pay(cost))
-                                                throw new TownyException(String.format(TownySettings.getLangString("msg_no_funds_claim"), selection.size(), cost) + TownyIConomyObject.getIConomyCurrency());
+                                                throw new TownyException(String.format(TownySettings.getLangString("msg_no_funds_claim"), selection.size(), cost + TownyIConomyObject.getIConomyCurrency()));
                                 } catch (IConomyException e1) {
                                         throw new TownyException("Iconomy Error");
                                 }

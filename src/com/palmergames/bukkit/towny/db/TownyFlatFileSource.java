@@ -337,6 +337,14 @@ public class TownyFlatFileSource extends TownyDataSource {
 					} catch (Exception e) {
 						town.setBonusBlocks(0);
 					}
+					
+				line = kvFile.get("purchasedBlocks");
+				if (line != null)
+					try {
+						town.setPurchasedBlocks(Integer.parseInt(line));
+					} catch (Exception e) {
+						town.setPurchasedBlocks(0);
+					}
 
 				line = kvFile.get("plotPrice");
 				if (line != null)
@@ -933,6 +941,8 @@ public class TownyFlatFileSource extends TownyDataSource {
 			fout.write("protectionStatus=" + town.getPermissions().toString() + newLine);
 			// Bonus Blocks
 			fout.write("bonusBlocks=" + Integer.toString(town.getBonusBlocks()) + newLine);
+			// Purchased Blocks
+			fout.write("purchasedBlocks=" + Integer.toString(town.getPurchasedBlocks()) + newLine);
 			// Taxes
 			fout.write("taxes=" + Double.toString(town.getTaxes()) + newLine);
 			// Plot Price

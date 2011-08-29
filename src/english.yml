@@ -1,5 +1,5 @@
 ﻿name: Towny
-version: 0.07
+version: 0.08
 language: english
 author: ElgarL
 website:
@@ -136,6 +136,7 @@ msg_plot_fs: 'Put this area up for auction.'
 
 for_sale: '[For Sale: %s]'
 
+msg_buy: '&bBought %d %s for %s.'
 msg_buy_resident_plot: '&b%s bought %s''s plot for %s!'
 msg_couldnt_pay_taxes: '&b%s couldn''t pay taxes and was kicked from the %s.'
 msg_couldnt_pay_plot_taxes: '&b%s couldn''t pay taxes and lost ownership of a plot.'
@@ -207,6 +208,7 @@ msg_no_money_purchase_plot: '&cYou don''t have enough money to purchase this plo
 msg_town_no_money_purchase_plot: '&cThe town doesn''t have enough money to purchase back this plot.'
 msg_no_funds_new_town: '&c%s can''t afford to settle a new town here.'
 msg_no_funds_claim: '&cTown cannot afford to claim %s  town blocks costing %s. Add more money into the town bank.'
+msg_no_funds_to_buy: '&cTown cannot afford to buy %s %s costing %s. Add more money into the town bank.'
 msg_annexed_area: '&2Annexed area %s'
 msg_max_plot_own: '&cYou cannot own more than %s plots.'
 msg_no_funds_new_nation: '&cThe town can''t afford to start a new nation.'
@@ -270,7 +272,7 @@ msg_set_use_towny_off: '&cThis world is exempt of all towny interactions.'
 
 msg_error_must_be_int: '&bAmount must be an integer.'
 msg_error_must_be_num: '&bAmount must be a number.'
-msg_must_specify_amnt: '&bMust specify amount. Eg: %s withdraw 54'
+msg_must_specify_amnt: '&bMust specify amount. Eg: %s 54'
 msg_town_set_tax: '&b%s has set the daily resident tax at %s'
 msg_town_set_plottax: '&b%s has set the daily tax of plots at %s'
 msg_town_set_plotprice: '&b%s has set the price of plots at %s'
@@ -324,7 +326,6 @@ msg_err_cant_afford_tp: '&bCannot afford to teleport to your town''s spawn.'
 msg_err_plot_nfs: '&cThis plot is not for sale.'
 msg_err_not_part_town: '&cSelected area is not part of your town.'
 msg_err_not_attached_edge: '&cSelected area not attached to edge.'
-msg_err_empty_area_selection: '&cSelected area contains no valid plots.'
 msg_err_not_enough_blocks: '&cNot enough available town blocks to claim this selection.'
 msg_err_cant_afford_blocks: '&cTown cannot afford to claim %s town blocks costing %s'
 msg_err_not_in_town_claim: '&cYou must belong to a town in order to claim plots.'
@@ -351,6 +352,7 @@ msg_err_already_nation: '&cTarget town already belongs to a nation.'
 msg_err_invalid_property: '&cInvalid %s property.'
 msg_err_not_supported: '&cNot yet supported.'
 msg_err_invalid_input: '&cInvalid input. Use %s'
+msg_err_negative: '&cInput cannot be negative.'
 msg_err_input_too_long: '&cInput too long.'
 msg_err_invalid_choice: '&cInvalid choice'
 msg_err_invalid_sub: '&cInvalid sub command.'
