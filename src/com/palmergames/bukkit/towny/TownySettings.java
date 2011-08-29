@@ -2,10 +2,19 @@ package com.palmergames.bukkit.towny;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
 
 import com.palmergames.bukkit.config.CommentedConfiguration;
 import com.palmergames.bukkit.config.ConfigNodes;
@@ -19,10 +28,6 @@ import com.palmergames.bukkit.towny.object.TownyPermission.PermLevel;
 import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.util.TimeTools;
 import com.palmergames.util.FileMgmt;
-//import com.palmergames.util.StringMgmt;
-
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
 
 
 public class TownySettings {
@@ -287,10 +292,9 @@ public class TownySettings {
         // if the file is not found it will load the default from resource
         public static void loadLanguage (String filepath, String defaultRes) throws IOException {               
                 
-                String defaultName = filepath + FileMgmt.fileSeparator() + getString(ConfigNodes.LANGUAGE.getRoot(), defaultRes);
-
-                File file = FileMgmt.unpackLanguageFile(defaultName, defaultRes);
+                String defaultName = filepath + FileMgmt.fileSeparator() + getString("language", defaultRes);
                 
+                File file = FileMgmt.unpackLanguageFile(defaultName, defaultRes);
                 if (file != null) {
                                 
                         // read the (language).yml into memory
@@ -320,7 +324,7 @@ public class TownySettings {
         }
 
     public static Boolean getBoolean(ConfigNodes node) {
-        return Boolean.parseBoolean(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
+        return config.getBoolean(node.getRoot().toLowerCase(), Boolean.parseBoolean(node.getDefault()));
     }
     /*
         public static Boolean getBoolean(String root){
@@ -329,7 +333,7 @@ public class TownySettings {
     */
 
     private static Double getDouble(ConfigNodes node) {
-        return Double.parseDouble(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
+        return config.getDouble(node.getRoot().toLowerCase(), Double.parseDouble(node.getDefault()));
     }
     /*
     private static Double getDouble(String root){
@@ -338,7 +342,7 @@ public class TownySettings {
     */
 
     private static Integer getInt(ConfigNodes node) {
-        return Integer.parseInt(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
+        return config.getInt(node.getRoot().toLowerCase(), Integer.parseInt(node.getDefault()));
     }
     /*
     private static Integer getInt(String root){
@@ -903,11 +907,15 @@ public class TownySettings {
         */
 
         public static int getMaxTownBlocks(Town town) {
-                int ratio = getTownBlockRatio();
-                if (ratio == 0)
-                        return town.getBonusBlocks() + (Integer)getTownLevel(town).get(TownySettings.TownLevel.TOWN_BLOCK_LIMIT);
-                else
-                        return town.getBonusBlocks() + town.getNumResidents()*ratio;
+			int ratio = getTownBlockRatio();
+			int n = town.getBonusBlocks() + town.getPurchasedBlocks();
+			
+			if (ratio == 0)
+				n += (Integer)getTownLevel(town).get(TownySettings.TownLevel.TOWN_BLOCK_LIMIT);
+			else
+				n += town.getNumResidents() * ratio;
+			
+			return n;
         }
 
     public static int getTownBlockRatio() {
@@ -1098,6 +1106,18 @@ public class TownySettings {
                 return getInt(ConfigNodes.TOWN_LIMIT);
         }
         
+        public static int getMaxPurchedBlocks() {
+        	return getInt(ConfigNodes.TOWN_MAX_PURCHASED_BLOCKS);
+        }
+        
+        public static boolean isSellingBonusBlocks() {
+        	return getMaxPurchedBlocks() != 0;
+        }
+        
+        public static double getPurchasedBonusBlocksCost() {
+            return getDouble(ConfigNodes.ECO_PRICE_PURCHASED_BONUS_TOWNBLOCK);
+        }
+        
         public static double getNationNeutralityCost() {
                 return getDouble(ConfigNodes.ECO_PRICE_NATION_NEUTRALITY);
         }
@@ -1275,7 +1295,6 @@ public class TownySettings {
         public static String getFlatFileBackupType() {
                 return getString(ConfigNodes.PLUGIN_FLATFILE_BACKUP);
         }
-        
 
         public static boolean isForcingPvP() {
                 return getBoolean(ConfigNodes.NWS_FORCE_PVP_ON);
