@@ -411,7 +411,7 @@ v0.74.0:
     - townLevels and nationLevels are now full YAML nodes for easy editing (commit by dumptruckman).
     - Pistons can now only operate between similarly owned townblocks or wild areas (No piston griefing).
     - You can now block the use of '/town spawn' if you are in certain zones (unclaimed 'wilderness', Neutral towns and Enemy towns).
-v0.74.1:
+v0.75.0:
     - Added sanity checking to prevent colour codes in titles and surnames, and a notification message when a title/surname is cleared.
     - Removed console spam from 'send message'.
     - Disabled the use of '/town new' and '/town claim' in worlds where Towny is disabled.
@@ -437,3 +437,24 @@ v0.74.1:
       '/town set shopprice $$' - Set the towns default price on shop plots.
       '/town set shoptax $$'   - Set the town tax rate on shop plots.
                                  (a shop plot is charged an extra tax on top of any plot taxes.)
+    - Added /towny map big, which fills the entire chatbox (after pressing t) with the map.
+    - Expanded commands:
+      '/plot [claim/unclaim/nfs] [circle/rect] [radius]'
+      '/plot fs within [circle/rect] [radius]'
+      '/plot fs [$] within [circle/rect] [radius]'
+    - Commands still accepted
+      '/plot claim [radius]'
+      '/plot fs'
+      '/plot fs [$]'
+    - Paintings can no longer be placed in the wilderness if the player doesn't have the correct permissions.
+    - All /townyworld commands are now accessable via the console. Append a suffix of the world name to any command other than '?' and 'list'. eg. '/tw toggle fire world_nether'.
+    - Added new Tags for Towns and Nations. If these are set they will be used instead of the full names in chat.
+      '/town set tag [upto 4 characters]'
+      '/nation set tag [upto 4 characters]
+    - Fixed nations losing Enemies and Allies during a reload.
+    - It is now possible to use '/town spawn' when in boats and minecarts. You will leave the vehicle where it is when you teleport.
+v0.75.1:
+    - Fixed config reading so it works!
+v0.75.2:
+    - Fixed deleting foreign language files at startup.
+    - Added missing entry from english.yml - msg_err_empty_area_selection: '&cSelected area contains no valid plots.'

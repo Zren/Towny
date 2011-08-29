@@ -44,6 +44,10 @@ public class StringMgmt {
 		return remArgs(arr, 1);
 	}
 	
+	public static String[] remLastArg(String[] arr) {
+		return subArray(arr, 0, arr.length-1);
+	}
+	
 	public static String[] remArgs(String[] arr, int startFromIndex) {
 		if (arr.length == 0)
 			return arr;

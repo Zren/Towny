@@ -50,8 +50,8 @@
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{ResidentNationQuestionTask.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyPermission.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{TownyAdminCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyObject.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyObservableType.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyObject.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util{Compass.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{TownyQuestionTask.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TownyFormatter.java"/>

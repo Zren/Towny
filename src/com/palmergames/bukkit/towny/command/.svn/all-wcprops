@@ -1,19 +1,19 @@
 K 25
 svn:wc:ra_dav:version-url
 V 97
-/a/eclipselabs.org/towny/!svn/ver/380/branches/towny_dev/src/com/palmergames/bukkit/towny/command
+/a/eclipselabs.org/towny/!svn/ver/399/branches/towny_dev/src/com/palmergames/bukkit/towny/command
 END
 TownyCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 115
-/a/eclipselabs.org/towny/!svn/ver/362/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownyCommand.java
+/a/eclipselabs.org/towny/!svn/ver/387/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownyCommand.java
 END
 TownCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 114
-/a/eclipselabs.org/towny/!svn/ver/375/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownCommand.java
+/a/eclipselabs.org/towny/!svn/ver/399/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownCommand.java
 END
 TownChatCommand.java
 K 25
@@ -25,13 +25,13 @@ TownyWorldCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 120
-/a/eclipselabs.org/towny/!svn/ver/283/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownyWorldCommand.java
+/a/eclipselabs.org/towny/!svn/ver/388/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownyWorldCommand.java
 END
 NationCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 116
-/a/eclipselabs.org/towny/!svn/ver/351/branches/towny_dev/src/com/palmergames/bukkit/towny/command/NationCommand.java
+/a/eclipselabs.org/towny/!svn/ver/390/branches/towny_dev/src/com/palmergames/bukkit/towny/command/NationCommand.java
 END
 NationChatCommand.java
 K 25
@@ -43,17 +43,17 @@ TownyAdminCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 120
-/a/eclipselabs.org/towny/!svn/ver/362/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownyAdminCommand.java
+/a/eclipselabs.org/towny/!svn/ver/392/branches/towny_dev/src/com/palmergames/bukkit/towny/command/TownyAdminCommand.java
 END
 ResidentCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 118
-/a/eclipselabs.org/towny/!svn/ver/283/branches/towny_dev/src/com/palmergames/bukkit/towny/command/ResidentCommand.java
+/a/eclipselabs.org/towny/!svn/ver/385/branches/towny_dev/src/com/palmergames/bukkit/towny/command/ResidentCommand.java
 END
 PlotCommand.java
 K 25
 svn:wc:ra_dav:version-url
 V 114
-/a/eclipselabs.org/towny/!svn/ver/380/branches/towny_dev/src/com/palmergames/bukkit/towny/command/PlotCommand.java
+/a/eclipselabs.org/towny/!svn/ver/387/branches/towny_dev/src/com/palmergames/bukkit/towny/command/PlotCommand.java
 END

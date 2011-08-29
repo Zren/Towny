@@ -13,7 +13,7 @@ public class TimeTools {
     public static long secondsFromDhms(String dhms) {
         int seconds = 0, minutes = 0, hours = 0, days = 0;
         if (dhms.contains("d")) {
-            hours = Integer.parseInt(dhms.split("d")[0].replaceAll(" ", ""));
+            days = Integer.parseInt(dhms.split("d")[0].replaceAll(" ", ""));
             if (dhms.contains("h") || dhms.contains("m") || dhms.contains("s")) {
                 dhms = dhms.split("d")[1];
             }

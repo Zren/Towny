@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 92
-/a/eclipselabs.org/towny/!svn/ver/362/branches/towny_dev/src/com/palmergames/bukkit/towny/db
+/a/eclipselabs.org/towny/!svn/ver/397/branches/towny_dev/src/com/palmergames/bukkit/towny/db
 END
 TownyHModFlatFileSource.java
 K 25
@@ -13,7 +13,7 @@ TownyFlatFileSource.java
 K 25
 svn:wc:ra_dav:version-url
 V 117
-/a/eclipselabs.org/towny/!svn/ver/362/branches/towny_dev/src/com/palmergames/bukkit/towny/db/TownyFlatFileSource.java
+/a/eclipselabs.org/towny/!svn/ver/397/branches/towny_dev/src/com/palmergames/bukkit/towny/db/TownyFlatFileSource.java
 END
 TownySQLTown.java
 K 25
