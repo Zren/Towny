@@ -11,9 +11,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.iConomy.iConomy;
-
 import ca.xshade.bukkit.questioner.Questioner;
+import ca.xshade.questionmanager.Option;
+import ca.xshade.questionmanager.Question;
+
+import com.iConomy.iConomy;
 import com.palmergames.bukkit.towny.AlreadyRegisteredException;
 import com.palmergames.bukkit.towny.EmptyNationException;
 import com.palmergames.bukkit.towny.IConomyException;
@@ -21,6 +23,7 @@ import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyException;
 import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.towny.TownyUtil;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -30,8 +33,6 @@ import com.palmergames.bukkit.towny.questioner.JoinNationTask;
 import com.palmergames.bukkit.towny.questioner.ResidentNationQuestionTask;
 import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.bukkit.util.Colors;
-import ca.xshade.questionmanager.Option;
-import ca.xshade.questionmanager.Question;
 import com.palmergames.util.StringMgmt;
 
 /**
@@ -116,7 +117,16 @@ public class NationCommand implements CommandExecutor  {
                                 player.sendMessage(line);
                 else if (split[0].equalsIgnoreCase("list"))
                         listNations(player);
-                else if (split[0].equalsIgnoreCase("new")) {
+                else if (split[0].equalsIgnoreCase("online")) {
+					try {
+						Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+						Town town = resident.getTown();
+						Nation nation = town.getNation();
+						plugin.getTownyUniverse().sendMessage(player, TownyUtil.getFormattedOnlineResidents(plugin, TownySettings.getLangString("msg_town_online"), nation));
+					} catch (NotRegisteredException x) {
+						plugin.sendErrorMsg(player, TownySettings.getLangString("msg_err_dont_belong_nation"));
+					}
+                } else if (split[0].equalsIgnoreCase("new")) {
                         // TODO: Make an overloaded function
                         // newNation(Player,String,Town)
                         if (split.length == 1)

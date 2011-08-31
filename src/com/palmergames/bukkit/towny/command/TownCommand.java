@@ -108,7 +108,15 @@ public class TownCommand implements CommandExecutor  {
                         showTownStatusHere(player);
                 else if (split[0].equalsIgnoreCase("list"))
                         listTowns(player);
-                else if (split[0].equalsIgnoreCase("new")) {
+                else if (split[0].equalsIgnoreCase("online")) {
+					try {
+						Resident resident = plugin.getTownyUniverse().getResident(player.getName());
+						Town town = resident.getTown();
+						plugin.getTownyUniverse().sendMessage(player, TownyUtil.getFormattedOnlineResidents(plugin, TownySettings.getLangString("msg_town_online"), town));
+					} catch (NotRegisteredException x) {
+						plugin.sendErrorMsg(player, TownySettings.getLangString("msg_err_dont_belong_town"));
+					}
+                } else if (split[0].equalsIgnoreCase("new")) {
                         if (split.length == 1)
                                 plugin.sendErrorMsg(player, TownySettings.getLangString("msg_specify_name"));
                         else if (split.length == 2)

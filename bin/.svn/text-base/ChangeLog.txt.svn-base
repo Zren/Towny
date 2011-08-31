@@ -455,3 +455,10 @@ v0.75.0:
     - It is now possible to use '/town spawn' when in boats and minecarts. You will leave the vehicle where it is when you teleport.
 v0.75.1:
     - Fixed config reading so it works!
+v0.75.3:
+    - Fixed deleting foreign language files at startup.
+    - Added missing entry from english.yml - msg_err_empty_area_selection: '&cSelected area contains no valid plots.'
+    - Fixed error on using '/town claim auto'.
+    - Fixed a refactoring error which affected towny top commands.
+    - Fixed the shutdown of the Teleport warmup timer on restarts.
+    - Fixed enabling Devmode, debug and reading integers from the config.

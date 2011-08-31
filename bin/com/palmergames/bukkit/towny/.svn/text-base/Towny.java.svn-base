@@ -263,7 +263,7 @@ public class Towny extends JavaPlugin {
                 townyUniverse.toggleDailyTimer(false);
                 townyUniverse.toggleMobRemoval(false);
                 townyUniverse.toggleHealthRegen(false);
-        townyUniverse.toggleTeleportWarmup(false);
+                townyUniverse.toggleTeleportWarmup(false);
                 
                 playerCache.clear();
                 playerMode.clear();
@@ -299,7 +299,7 @@ public class Towny extends JavaPlugin {
                 townyUniverse.toggleDailyTimer(false);
                 townyUniverse.toggleMobRemoval(false);
                 townyUniverse.toggleHealthRegen(false);
-        townyUniverse.toggleTeleportWarmup(false);
+                townyUniverse.toggleTeleportWarmup(false);
                 
                 /*
                 if (TownySettings.isForcingPvP() || TownySettings.isForcingExplosions() || TownySettings.isForcingMonsters())
@@ -318,7 +318,7 @@ public class Towny extends JavaPlugin {
                 townyUniverse.toggleDailyTimer(true);
                 townyUniverse.toggleMobRemoval(true);
                 townyUniverse.toggleHealthRegen(TownySettings.hasHealthRegen());
-        townyUniverse.toggleTeleportWarmup(TownySettings.getTeleportWarmupTime() > 0);
+                townyUniverse.toggleTeleportWarmup(TownySettings.getTeleportWarmupTime() > 0);
                 updateCache();
         }
 

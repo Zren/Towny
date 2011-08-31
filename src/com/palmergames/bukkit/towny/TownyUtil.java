@@ -3,12 +3,22 @@ package com.palmergames.bukkit.towny;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.entity.Player;
+
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.ResidentList;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlockOwner;
 import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.util.ChatTools;
+import com.palmergames.bukkit.util.Colors;
 import com.palmergames.util.StringMgmt;
 
 public class TownyUtil {
+	
+	/*
+	 * World Coordinate filters 
+	 */
 	public static List<WorldCoord> selectWorldCoordArea(TownBlockOwner owner, WorldCoord pos, String[] args) throws TownyException {
 		List<WorldCoord> out = new ArrayList<WorldCoord>();
 		
@@ -166,12 +176,47 @@ public class TownyUtil {
 	}
 	
 	
-
+	/**
+	 * Get the index of the pivot "within" to split the area selection command from the rest.
+	 * @param args
+	 * @return index of "within" or -1 if it doesn't exist.
+	 */
 	public static int getAreaSelectPivot(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("within"))
 				return i;
 		}
 		return -1;
+	}
+	
+	public static List<Resident> getOnlineResidents(Towny plugin, ResidentList residentList) {
+		List<Resident> onlineResidents = new ArrayList<Resident>();
+		for (Player player : plugin.getServer().getOnlinePlayers()) {
+			for (Resident resident : residentList.getResidents()) {
+				if (resident.getName().equalsIgnoreCase(player.getName()))
+					onlineResidents.add(resident);
+			}
+		}
+		
+		return onlineResidents;
+	}
+	
+	/* 1 = Description
+	 * 2 = Count
+	 * 
+	 * Colours:
+	 * 3 = Description and :
+	 * 4 = Count
+	 * 5 = Colour for the start of the list
+	 */
+	public static final String residentListPrefixFormat = "%3$s%1$s %4$s[%2$d]%3$s:%5$s ";
+	
+	public static List<String> getFormattedOnlineResidents(Towny plugin, String prefix, ResidentList residentList) {
+		List<Resident> onlineResidents = getOnlineResidents(plugin, residentList);
+		return ChatTools.listArr(getFormattedNames(plugin, onlineResidents), String.format(residentListPrefixFormat, prefix, onlineResidents.size(), Colors.Green, Colors.LightGreen, Colors.White));
+	}
+	
+	public static String[] getFormattedNames(Towny plugin, List<Resident> residentList) {
+		return plugin.getTownyUniverse().getFormatter().getFormattedNames(residentList.toArray(new Resident[0]));
 	}
 }

@@ -187,6 +187,9 @@ msg_invited_join_nation: '&b%s invited %s to the nation.'
 msg_deny_invite: '&b%s denied your invite.'
 msg_invited: '&bYou''ve been invited to join %s.'
 
+msg_town_online: 'Online in Town'
+msg_nation_online: 'Online in Nation'
+
 msg_allied_nations: '&b%s allied with the nations %s.'
 msg_broke_alliance: '&b%s broke their alliance with the nations %s.'
 msg_enemy_nations: '&b%s developed a hatred for the nations %s.'

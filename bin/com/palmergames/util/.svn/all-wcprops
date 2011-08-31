@@ -1,59 +1,59 @@
 K 25
 svn:wc:ra_dav:version-url
-V 74
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/util
+V 81
+/a/eclipselabs.org/towny/!svn/ver/418/branches/towny_dev/src/com/palmergames/util
 END
 JavaUtil.java
 K 25
 svn:wc:ra_dav:version-url
-V 88
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/util/JavaUtil.java
+V 95
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/util/JavaUtil.java
 END
 TimeMgmt.java
 K 25
 svn:wc:ra_dav:version-url
-V 88
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/util/TimeMgmt.java
+V 95
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/util/TimeMgmt.java
 END
 MemMgmt.java
 K 25
 svn:wc:ra_dav:version-url
-V 87
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/util/MemMgmt.java
+V 94
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/util/MemMgmt.java
 END
 FileMgmt.java
 K 25
 svn:wc:ra_dav:version-url
-V 88
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/util/FileMgmt.java
+V 95
+/a/eclipselabs.org/towny/!svn/ver/415/branches/towny_dev/src/com/palmergames/util/FileMgmt.java
 END
 Sorting.java
 K 25
 svn:wc:ra_dav:version-url
-V 87
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/util/Sorting.java
+V 94
+/a/eclipselabs.org/towny/!svn/ver/418/branches/towny_dev/src/com/palmergames/util/Sorting.java
 END
 KeyValueFile.java
 K 25
 svn:wc:ra_dav:version-url
-V 92
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/util/KeyValueFile.java
+V 99
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/util/KeyValueFile.java
 END
 KeyValue.java
 K 25
 svn:wc:ra_dav:version-url
-V 88
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/util/KeyValue.java
+V 95
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/util/KeyValue.java
 END
 StringMgmt.java
 K 25
 svn:wc:ra_dav:version-url
-V 90
-/a/eclipselabs.org/towny/!svn/ver/402/trunk/Towny/src/com/palmergames/util/StringMgmt.java
+V 97
+/a/eclipselabs.org/towny/!svn/ver/388/branches/towny_dev/src/com/palmergames/util/StringMgmt.java
 END
 KeyValueTable.java
 K 25
 svn:wc:ra_dav:version-url
-V 93
-/a/eclipselabs.org/towny/!svn/ver/312/trunk/Towny/src/com/palmergames/util/KeyValueTable.java
+V 100
+/a/eclipselabs.org/towny/!svn/ver/277/branches/towny_dev/src/com/palmergames/util/KeyValueTable.java
 END

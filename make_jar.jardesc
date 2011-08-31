@@ -50,8 +50,8 @@
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{ResidentNationQuestionTask.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyPermission.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{TownyAdminCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyObservableType.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyObject.java"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyObservableType.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util{Compass.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{TownyQuestionTask.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TownyFormatter.java"/>
@@ -59,8 +59,8 @@
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{StringMgmt.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{KeyValueTable.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.war{WarTimerTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{FileMgmt.java"/>
         <file path="/Towny-SVN/src/english.yml"/>
+        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{FileMgmt.java"/>
         <file path="/Towny-SVN/.project"/>
         <file path="/Towny-SVN/src/ChangeLog.txt"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.blockqueue{BlockJob.java"/>
@@ -68,7 +68,6 @@
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{PlayerCache.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{JoinNationTask.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{KeyValue.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{PropertiesFile.java"/>
         <file path="/Towny-SVN/src/ToDo.txt"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TownySettings.java"/>
         <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{JavaUtil.java"/>
