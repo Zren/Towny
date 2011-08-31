@@ -287,9 +287,10 @@ public class TownySettings {
         // if the file is not found it will load the default from resource
         public static void loadLanguage (String filepath, String defaultRes) throws IOException {               
                 
-                String defaultName = filepath + FileMgmt.fileSeparator() + getString("language", defaultRes);
-                
+                String defaultName = filepath + FileMgmt.fileSeparator() + getString(ConfigNodes.LANGUAGE.getRoot(), defaultRes);
+
                 File file = FileMgmt.unpackLanguageFile(defaultName, defaultRes);
+                
                 if (file != null) {
                                 
                         // read the (language).yml into memory
@@ -318,8 +319,8 @@ public class TownySettings {
                 return str.replaceAll("&", "\u00A7");
         }
 
-    public static Boolean getBoolean(ConfigNodes node) {
-        return config.getBoolean(node.getRoot().toLowerCase(), Boolean.parseBoolean(node.getDefault()));
+    public static boolean getBoolean(ConfigNodes node) {
+        return Boolean.parseBoolean(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
     }
     /*
         public static Boolean getBoolean(String root){
@@ -327,8 +328,8 @@ public class TownySettings {
     }
     */
 
-    private static Double getDouble(ConfigNodes node) {
-        return config.getDouble(node.getRoot().toLowerCase(), Double.parseDouble(node.getDefault()));
+    private static double getDouble(ConfigNodes node) {
+        return Double.parseDouble(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
     }
     /*
     private static Double getDouble(String root){
@@ -336,8 +337,8 @@ public class TownySettings {
     }
     */
 
-    private static Integer getInt(ConfigNodes node) {
-        return config.getInt(node.getRoot().toLowerCase(), Integer.parseInt(node.getDefault()));
+    private static int getInt(ConfigNodes node) {
+        return Integer.parseInt(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
     }
     /*
     private static Integer getInt(String root){
@@ -345,7 +346,7 @@ public class TownySettings {
     }
     */
 
-    private static Long getLong(ConfigNodes node) {
+    private static long getLong(ConfigNodes node) {
         return Long.parseLong(getString(node));
     }
     
@@ -1216,7 +1217,7 @@ public class TownySettings {
         }
 
     public static void setDevMode(boolean choice) {
-        setProperty(ConfigNodes.PLUGIN_DEV_MODE_DEV_NAME.getRoot(), choice);
+        setProperty(ConfigNodes.PLUGIN_DEV_MODE_ENABLE.getRoot(), choice);
     }
 
     public static String getDevName() {

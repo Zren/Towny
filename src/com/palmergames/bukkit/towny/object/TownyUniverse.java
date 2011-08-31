@@ -38,7 +38,7 @@ public class TownyUniverse extends TownyObject {
         private int dailyTask = -1;
         private int mobRemoveTask = -1;
         private int healthRegenTask = -1;
-    private int teleportWarmupTask = -1;
+        private int teleportWarmupTask = -1;
         private War warEvent;
         private String rootFolder;
         
@@ -107,18 +107,18 @@ public class TownyUniverse extends TownyObject {
         notifyObservers(TOGGLE_HEALTH_REGEN);
         }
 
-    public void toggleTeleportWarmup(boolean on) {
-        if (on && !isTeleportWarmupRunning()) {
-                        teleportWarmupTask = getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(getPlugin(), new TeleportWarmupTimerTask(this), 0, 20);
-                        if (teleportWarmupTask == -1)
-                                plugin.sendErrorMsg("Could not schedule teleport warmup loop.");
-                } else if (!on && isHealthRegenRunning()) {
-                        getPlugin().getServer().getScheduler().cancelTask(teleportWarmupTask);
-                        teleportWarmupTask = -1;
-                }
-        setChanged();
-        notifyObservers(TOGGLE_TELEPORT_WARMUP);
-    }
+	    public void toggleTeleportWarmup(boolean on) {
+	        	if (on && !isTeleportWarmupRunning()) {
+	                    teleportWarmupTask = getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(getPlugin(), new TeleportWarmupTimerTask(this), 0, 20);
+	                    if (teleportWarmupTask == -1)
+	                            plugin.sendErrorMsg("Could not schedule teleport warmup loop.");
+	            } else if (!on && isTeleportWarmupRunning()) {
+	                    getPlugin().getServer().getScheduler().cancelTask(teleportWarmupTask);
+	                    teleportWarmupTask = -1;
+	            }
+	        setChanged();
+	        notifyObservers(TOGGLE_TELEPORT_WARMUP);
+	    }
         
         public boolean isMobRemovalRunning() {
                 return mobRemoveTask != -1;

@@ -474,7 +474,7 @@ public class TownyAdminCommand implements CommandExecutor  {
                 else if (split[0].equalsIgnoreCase("debug"))
                         try {
                                 choice = !TownySettings.getDebug();
-                                TownySettings.setDevMode(choice);
+                                TownySettings.setDebug(choice);
                                 plugin.sendMsg(player, "Debug Mode " + (choice ? Colors.Green + "Enabled" : Colors.Red + "Disabled"));
                         } catch (Exception e) {
                                 plugin.sendErrorMsg(player, TownySettings.getLangString("msg_err_invalid_choice"));
