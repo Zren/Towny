@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import com.palmergames.bukkit.towny.object.Coord;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
 
 public class PlayerCache {
 	private WorldCoord lastTownBlock;
@@ -16,6 +17,7 @@ public class PlayerCache {
 
 	public PlayerCache(TownyWorld world, Player player) {
 		this(new WorldCoord(world, Coord.parseCoord(player)));
+		setLastLocation(player.getLocation());
 	}
 	
 	public PlayerCache(WorldCoord lastTownBlock) {
@@ -34,6 +36,41 @@ public class PlayerCache {
 
 	public WorldCoord getLastTownBlock() {
 		return lastTownBlock;
+	}
+	
+	public boolean getCachePermission(ActionType action) throws NullPointerException {
+		
+		switch(action){
+		
+		case BUILD: // BUILD
+			if (buildPermission == null)
+				throw new NullPointerException();
+			else
+				return buildPermission;
+			
+		case DESTROY: // DESTROY
+			if (destroyPermission == null)
+				throw new NullPointerException();
+			else
+				return destroyPermission;			
+			
+		case SWITCH: // SWITCH
+			if (switchPermission == null)
+				throw new NullPointerException();
+			else
+				return switchPermission;			
+			
+		case ITEM_USE: // ITEM_USE
+			if (itemUsePermission == null)
+				throw new NullPointerException();
+			else
+				return itemUsePermission;
+			
+		default:
+			throw new NullPointerException();
+			
+		}
+		
 	}
 
 	public void setBuildPermission(boolean buildPermission) {
@@ -93,6 +130,7 @@ public class PlayerCache {
 		OFF_WORLD, // In a world untouched by towny.
 		ADMIN,
 		UNCLAIMED_ZONE,
+		LOCKED,
 		WARZONE,
 		OUTSIDER,
 		PLOT_OWNER,
@@ -100,7 +138,8 @@ public class PlayerCache {
 		PLOT_ALLY,
 		TOWN_OWNER,
 		TOWN_RESIDENT,
-		TOWN_ALLY
+		TOWN_ALLY,
+		ENEMY
 	};
 	
 	private TownBlockStatus townBlockStatus = TownBlockStatus.UNKOWN;

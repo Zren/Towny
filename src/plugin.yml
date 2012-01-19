@@ -1,13 +1,13 @@
 ﻿name: Towny
 main: com.palmergames.bukkit.towny.Towny
-version: 0.75.3.12
+version: 0.78.0.12
 author: Shade, Modified by FuzzeWuzze. Forked by ElgarL
 website: http://code.google.com/a/eclipselabs.org/p/towny/
 description: >
     Resident-Town-Nation heirarchy combined with a grid based
     protection system. Including a war event.
 
-depends: [MultiVerse,Multiverse-Core]
+softdepend: [MultiVerse,Multiverse-Core,XcraftGate]
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -20,10 +20,6 @@ commands:
         aliases: []
     nation:
         aliases: [n, nat]
-    nationchat:
-        aliases: [nc]
-    townchat:
-        aliases: [tc]
     plot:
         aliases: []
     resident:
@@ -46,49 +42,131 @@ permissions:
         description: User is able to use /townyadmin, as well as the ability to build/destroy anywhere. User is also able to make towns or nations when set to admin only.
         default: op
         children:
+            towny.chat.*: true
             towny.town.*: true
-            towny.nation.new: true
+            towny.nation.*: true
             towny.wild.*: true
-            towny.spawntp: true
-            towny.publicspawntp: true
+            towny.claimed.*: true
             towny.cheat.bypass: true
     towny.cheat.bypass:
         description: Disables the anti cheat code for players with this node.
         default: op
     towny.top:
         description: User has access to the "/towny top" commands.
-        default: true
+        default: false
     towny.town.*:
-        description: User can create a town and claim land.
+        description: User can access all town commands.
         default: op
         children:
+            towny.chat.town: true
             towny.town.new: true
+            towny.town.delete: true
+            towny.town.rename: true
             towny.town.claim: true
             towny.town.resident: true
             towny.town.plot: true
+            towny.town.plottype: true
+            towny.town.spawn.*: true
+            towny.town.toggle.*: true
+    towny.town.spawn.*:
+        description: Grants all Spawn travel nodes
+        default: op
+        children:
+            towny.town.spawn.town: true
+            towny.town.spawn.nation: true
+            towny.town.spawn.ally: true
+            towny.town.spawn.public: true
+    towny.town.spawn.town:
+        description: User is permitted to use /town spawn.
+        default: false
+    towny.town.spawn.nation:
+        description: Ability to spawn to other towns within your nation.
+        default: false
+    towny.town.spawn.ally:
+        description: Ability to spawn to towns in nations allied with yours.
+        default: false
+    towny.town.spawn.public:
+        description: Ability to spawn to unaffilated public towns.
+        default: false
+    towny.town.toggle.*:
+        description: User can access all town toggle commands (if a mayor or assistant).
+        default: op
+        children:
+            towny.town.toggle.pvp: true
+            towny.town.toggle.public: true
+            towny.town.toggle.explosions: true
+            towny.town.toggle.fire: true
+            towny.town.toggle.mobs: true
+    towny.nation.*:
+        description: User has access to all nation commands.
+        default: op
+        children:
+            towny.chat.nation: true
+            towny.nation.new: true
+            towny.nation.delete: true
+            towny.nation.rename: true
+            towny.nation.grant-titles: true
     towny.town.resident:
         description: User is permitted to join towns.
-        default: true
+        default: false
     towny.town.new:
         description: User is able to create a town
-        default: true
+        default: false
+    towny.town.delete:
+        description: User is able to delete their town
+        default: false
+    towny.town.rename:
+        description: User is able to rename their town
+        default: false
     towny.town.claim:
         description: User is able to expand with /towny claim
-        default: true
+        default: false
+        children:
+            towny.town.claim.outpost: true
     towny.town.plot:
         description: User is able to purchase and own town plots.
-        default: true
+        default: false
+    towny.town.plottype:
+        description: User is able to alter plot types on plots they own.
+        default: false
+    towny.town.toggle.pvp:
+        description: If a mayor or assistant, the user is able to toggle pvp on/off in their town.
+        default: false
+    towny.town.toggle.public:
+        description: If a mayor or assistant, the user is able to toggle public on/off in their town.
+        default: false
+    towny.town.toggle.explosions:
+        description: If a mayor or assistant, the user is able to toggle explosions on/off in their town.
+        default: false
+    towny.town.toggle.fire:
+        description: If a mayor or assistant, the user is able to toggle fire on/off in their town.
+        default: false
+    towny.town.toggle.mobs:
+        description: If a mayor or assistant, the user is able to toggle mobs on/off in their town.
+        default: false
     towny.nation.new:
         description: User is able to create a nation
-        default: true
+        default: false
+    towny.nation.delete:
+        description: User is able to delete their nation
+        default: false
+    towny.nation.rename:
+        description: User is able to rename their nation
+        default: false
+    towny.nation.grant-titles:
+        description: User is able to set titles and surnames for their nation members
+        default: false
+        
     towny.wild.*:
-        description: User can build/destroy in wild.
+        description: User can build/destroy/switch/item_use in wild.
         default: op
         children:
             towny.wild.build: true
             towny.wild.switch: true
             towny.wild.destroy: true
             towny.wild.item_use: true
+            towny.wild.block.*: true
+            
     towny.wild.build:
         description: User can build in wild.
         default: false
@@ -101,9 +179,118 @@ permissions:
     towny.wild.item_use:
         description: User can use use items in wild. 
         default: false
-    towny.spawntp:
-        description: User can use /town spawn when on in config.
+        
+    towny.wild.block.*:
+        description: User is able to edit specified/all block types in the wild.
+        default: op
+        children:
+            towny.wild.Block.*.build: true
+            towny.wild.block.*.destroy: true
+            towny.wild.block.*.switch: true
+            towny.wild.block.*.item_use: true 
+            
+    towny.wild.block.*.build:
+        description: User can build specified/all block types in the wild.
+        default: false
+    towny.wild.block.*.destroy:
+        description: User can break specified/all block types in the wild.
+        default: false
+    towny.wild.block.*.switch:
+        description: User can switch specified/all block types in the wild.
+        default: false
+    towny.wild.block.*.item_use:
+        description: User can use specified/all block types in the wild.
+        default: false
+        
+    towny.claimed.*:
+        description: User can build/destroy/switch/item_use in all towns.
+        default: op
+        children:
+            towny.claimed.build: true
+            towny.claimed.switch: true
+            towny.claimed.destroy: true
+            towny.claimed.item_use: true
+            towny.claimed.alltown.block.*: true
+            
+    towny.claimed.build:
+        description: User can build in all towns.
+        default: false
+    towny.claimed.destroy:
+        description: User can destroy in all towns.
+        default: false
+    towny.claimed.switch:
+        description: User can switch in all towns.
+        default: false
+    towny.claimed.item_use:
+        description: User can use use items in all towns. 
+        default: false
+        
+    towny.claimed.alltown.block.*:
+        description: User is able to edit specified/all block types in all towns.
+        default: op
+        children:
+            towny.claimed.alltown.Block.*.build: true
+            towny.claimed.alltown.block.*.destroy: true
+            towny.claimed.alltown.block.*.switch: true
+            towny.claimed.alltown.block.*.item_use: true
+            
+    towny.claimed.alltown.block.*.build:
+        description: User can build specified/all block types in all towns.
+        default: false
+    towny.claimed.alltown.block.*.destroy:
+        description: User can break specified/all block types in all towns.
+        default: false
+    towny.claimed.alltown.block.*.switch:
+        description: User can switch specified/all block types in all towns.
+        default: false
+    towny.claimed.alltown.block.*.item_use:
+        description: User can use specified/all block types in all towns.
+        default: false
+            
+    towny.claimed.owntown.block.*:
+        description: User is able to edit specified/all block types in their own town.
+        default: op
+        children:
+            towny.claimed.owntown.Block.*.build: true
+            towny.claimed.owntown.block.*.destroy: true
+            towny.claimed.owntown.block.*.switch: true
+            towny.claimed.owntown.block.*.item_use: true 
+            
+    towny.claimed.owntown.block.*.build:
+        description: User can build specified/all block types in their own town.
+        default: false
+    towny.claimed.owntown.block.*.destroy:
+        description: User can break specified/all block types in their own town.
+        default: false
+    towny.claimed.owntown.block.*.switch:
+        description: User can switch specified/all block types in their own town.
+        default: false
+    towny.claimed.owntown.block.*.item_use:
+        description: User can use specified/all block types in their own town.
+        default: false
+            
+    towny.chat.*:
+        description: User is able to use all chat channels.
+        default: op
+        children:
+            towny.chat.admin: true
+            towny.chat.mod: true
+            towny.chat.town: true
+            towny.chat.nation: true
+            towny.chat.global: true
+    towny.chat.admin:
+        description: User is able to talk in the admin channel
+        default: false
+    towny.chat.mod:
+        description: User is able to talk in the mod channel
+        default: false
+    towny.chat.town:
+        description: User is able to talk in the town channel
+        default: false
+    towny.chat.nation:
+        description: User is able to talk in the nation channel
+        default: false
+    towny.chat.global:
+        description: User is able to talk in the nation channel
         default: true
-    towny.publicspawntp:
-        description: User can use /town spawn <town> when on in config.
-        default: true
+        

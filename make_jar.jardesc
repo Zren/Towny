@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/Towny.jar"/>
-    <options buildIfNeeded="true" compress="false" descriptionLocation="/Towny-SVN/make_jar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <jar path="C:/Users/Admin/Desktop/Compiled/Towny.jar"/>
+    <options buildIfNeeded="true" compress="false" descriptionLocation="/Towny (Git)/make_jar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="true" manifestLocation="/Towny/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
@@ -11,97 +11,6 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="false" exportJavaFiles="false" exportOutputFolder="true">
-        <file path="/Towny-SVN/.classpath"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.wallgen{Walled.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{Coord.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{ResidentTownQuestionTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyUniverse.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownBlock.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.event{TownyEntityMonitorListener.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.db{TownySQLTown.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.war{WarSpoils.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TownyTimerTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{EmptyTownException.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.war{StartWarTimerTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{EmptyNationException.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util{ChatTools.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.event{TownyWorldListener.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{HealthRegenTimerTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{NationCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{Election.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{TownQuestionTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownBlockOwner.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util{MinecraftTools.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.wallgen{Wall.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.event{TownyBlockListener.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{TownyCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.blockqueue{BlockQueue.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownBlockType.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{NationChatCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{JoinTownTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.event{TownyPlayerLowListener.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{TownyWorldCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{MobRemovalTimerTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{AlreadyRegisteredException.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{ResidentQuestionTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.blockqueue{BlockWork.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TownyException.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{IConomyException.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{ResidentNationQuestionTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyPermission.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{TownyAdminCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyObject.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyObservableType.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util{Compass.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{TownyQuestionTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TownyFormatter.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{NotRegisteredException.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{StringMgmt.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{KeyValueTable.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.war{WarTimerTask.java"/>
-        <file path="/Towny-SVN/src/english.yml"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{FileMgmt.java"/>
-        <file path="/Towny-SVN/.project"/>
-        <file path="/Towny-SVN/src/ChangeLog.txt"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.blockqueue{BlockJob.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyIConomyObject.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{PlayerCache.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.questioner{JoinNationTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{KeyValue.java"/>
-        <file path="/Towny-SVN/src/ToDo.txt"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TownySettings.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{JavaUtil.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{Town.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{TownyWorld.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util{ServerBroadCastTimerTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.config{ConfigNodes.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.db{TownyFlatFileSource.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{TownChatCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{DailyTimerTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.war{War.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util{Colors.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{TimeMgmt.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{ResidentCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{WorldCoord.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{Towny.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{Nation.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{PlotCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{Sorting.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{MemMgmt.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{ResidentList.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TownyLogFormatter.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.event{TownyEntityListener.java"/>
-        <file path="/Towny-SVN/src/plugin.yml"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.object{Resident.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny{TeleportWarmupTimerTask.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.blockqueue{BlockWorker.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.util{KeyValueFile.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.config{CommentedConfiguration.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.event{TownyPlayerListener.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.util{TimeTools.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.command{TownCommand.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.db{TownyDataSource.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.wallgen{WallSection.java"/>
-        <javaElement handleIdentifier="=Towny-SVN/src&lt;com.palmergames.bukkit.towny.db{TownyHModFlatFileSource.java"/>
+        <javaElement handleIdentifier="=Towny \(Git)/src"/>
     </selectedElements>
 </jardesc>

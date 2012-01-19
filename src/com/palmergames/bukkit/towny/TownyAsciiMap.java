@@ -6,6 +6,8 @@ import com.palmergames.bukkit.towny.object.Coord;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.object.TownBlockType;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.bukkit.util.Colors;
@@ -44,23 +46,23 @@ public class TownyAsciiMap {
 		boolean hasTown = false;
 		Resident resident;
 		try {
-			resident = plugin.getTownyUniverse().getResident(player.getName());
+			resident = TownyUniverse.getDataSource().getResident(player.getName());
 			if (resident.hasTown())
 				hasTown = true;
 		} catch (TownyException x) {
-			plugin.sendErrorMsg(player, x.getError());
+			TownyMessaging.sendErrorMsg(player, x.getMessage());
 			return;
 		}
 
 		TownyWorld world;
 		try {
-			world = plugin.getTownyUniverse().getWorld(player.getWorld().getName());
+			world = TownyUniverse.getDataSource().getWorld(player.getWorld().getName());
 		} catch (NotRegisteredException e1) {
-			plugin.sendErrorMsg(player, "You are not in a registered world.");
+			TownyMessaging.sendErrorMsg(player, "You are not in a registered world.");
 			return;
 		}
 		if (!world.isUsingTowny()) {
-			plugin.sendErrorMsg(player, "This world is not using towny.");
+			TownyMessaging.sendErrorMsg(player, "This world is not using towny.");
 			return;
 		}
 		Coord pos = Coord.parseCoord(plugin.getCache(player).getLastLocation());
@@ -69,11 +71,11 @@ public class TownyAsciiMap {
 		int halfLineHeight = lineHeight / 2;
 		String[][] townyMap = new String[lineWidth][lineHeight];
 		int x, y = 0;
-		for (int tby = pos.getZ() - halfLineWidth; tby <= pos.getZ() + (lineWidth-halfLineWidth-1); tby++) {
+		for (int tby = pos.getX() + (lineWidth-halfLineWidth-1); tby >= pos.getX() - halfLineWidth; tby--) {
 			x = 0;
-			for (int tbx = pos.getX() - halfLineHeight; tbx <= pos.getX() + (lineHeight-halfLineHeight-1); tbx++) {
+			for (int tbx = pos.getZ() - halfLineHeight; tbx <= pos.getZ() + (lineHeight-halfLineHeight-1); tbx++) {
 				try {
-					TownBlock townblock = world.getTownBlock(tbx, tby);
+					TownBlock townblock = world.getTownBlock(tby, tbx);
 					//TODO: possibly claim outside of towns
 					if (!townblock.hasTown())
 						throw new TownyException();
@@ -111,12 +113,15 @@ public class TownyAsciiMap {
 						townyMap[y][x] = Colors.White;
 
 					// Registered town block
-					if (townblock.getPlotPrice() != -1)
+					if (townblock.getPlotPrice() != -1) {
+						// override the colour if it's a shop plot for sale
+						if (townblock.getType().equals(TownBlockType.COMMERCIAL))
+							townyMap[y][x] = Colors.Blue;
 						townyMap[y][x] += "$";
-					else if (townblock.isHomeBlock())
+					} else if (townblock.isHomeBlock())
 						townyMap[y][x] += "H";
 					else
-						townyMap[y][x] += "+";
+						townyMap[y][x] += townblock.getType().getAsciiMapKey();
 				} catch (TownyException e) {
 					if (x == halfLineHeight && y == halfLineWidth)
 						townyMap[y][x] = Colors.Gold;
@@ -156,7 +161,7 @@ public class TownyAsciiMap {
 		// Current town block data
 		try {
 			TownBlock townblock = world.getTownBlock(pos);
-			plugin.sendMsg(player, ("Town: " + (townblock.hasTown() ? townblock.getTown().getName() : "None") + " : "
+			TownyMessaging.sendMsg(player, ("Town: " + (townblock.hasTown() ? townblock.getTown().getName() : "None") + " : "
 					+ "Owner: " + (townblock.hasResident() ? townblock.getResident().getName() : "None")));
 		} catch (TownyException e) {
 			//plugin.sendErrorMsg(player, e.getError());

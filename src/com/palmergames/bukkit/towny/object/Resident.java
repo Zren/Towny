@@ -4,25 +4,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.ChunkSnapshot;
+
 import com.palmergames.bukkit.towny.*;
 
 public class Resident extends TownBlockOwner {
 	private List<Resident> friends = new ArrayList<Resident>();
+	private List<ChunkSnapshot> regenUndo = new ArrayList<ChunkSnapshot>();
 	private Town town;
 	private long lastOnline, registered;
 	private boolean isNPC = false;
 	private String title, surname;
     private long teleportRequestTime;
     private Town teleportDestination;
+    private double teleportCost;
+    private String chatFormattedName;
 
 	public Resident(String name) {
+		setChatFormattedName(name);
 		setName(name);
 		setTitle("");
 		setSurname("");
 		permissions.loadDefault(this);
         teleportRequestTime = -1;
+        teleportCost = 0.0;
 	}
-
+	
 	public void setLastOnline(long lastOnline) {
 		this.lastOnline = lastOnline;
 	}
@@ -43,6 +50,7 @@ public class Resident extends TownBlockOwner {
 		if (title.matches(" "))
 			title = "";
 		this.title = title;
+		setChangedName(true);
 	}
 
 	public String getTitle() {
@@ -57,6 +65,7 @@ public class Resident extends TownBlockOwner {
 		if (surname.matches(" "))
 			surname = "";
 		this.surname = surname;
+		setChangedName(true);
 	}
 
 	public String getSurname() {
@@ -147,7 +156,7 @@ public class Resident extends TownBlockOwner {
 
 	public void clear() throws EmptyTownException {
 		removeAllFriends();
-		setLastOnline(0);
+		//setLastOnline(0);
 		
 		if (hasTown())
 			try {
@@ -200,4 +209,48 @@ public class Resident extends TownBlockOwner {
     public boolean hasRequestedTeleport() {
         return teleportRequestTime != -1;
     }
+    
+    public void setTeleportCost(double cost) {
+        teleportCost = cost;
+    }
+    public double getTeleportCost() {
+        return teleportCost;
+    }
+
+	/**
+	 * @return the chatFormattedName
+	 */
+	public String getChatFormattedName() {
+		return chatFormattedName;
+	}
+
+	/**
+	 * @param chatFormattedName the chatFormattedName to set
+	 */
+	public void setChatFormattedName(String chatFormattedName) {
+		this.chatFormattedName = chatFormattedName;
+		setChangedName(false);
+	}
+	
+	/**
+	 * Push a snapshot to the Undo queue
+	 * 
+	 * @param snapshot
+	 */
+	public void addUndo(ChunkSnapshot snapshot) {
+		if (regenUndo.size() == 5)
+			regenUndo.remove(0);
+		regenUndo.add(snapshot);
+	}
+	
+	public void regenUndo () {
+		if (regenUndo.size() > 0) {
+			ChunkSnapshot snapshot = regenUndo.get(regenUndo.size()-1);
+			regenUndo.remove(snapshot);
+			
+			TownyRegenAPI.regenUndo(snapshot, this);
+			
+		}
+	}
+
 }

@@ -8,6 +8,7 @@ public class TownyPermission {
 	public boolean residentBuild, residentDestroy, residentSwitch, residentItemUse,
 		outsiderBuild, outsiderDestroy, outsiderSwitch, outsiderItemUse,
 		allyBuild, allyDestroy, allySwitch, allyItemUse;
+	public boolean pvp, fire, explosion, mobs;
 
 	public TownyPermission() {
 		reset();
@@ -30,10 +31,18 @@ public class TownyPermission {
 		allyDestroy = b;
 		allySwitch = b;
 		allyItemUse = b;
+		
+		pvp = b;
+		fire = b;
+		explosion = b;
+		mobs = b;
 	}
 
 	public void set(String s, boolean b) {
-		if (s.equalsIgnoreCase("residentBuild"))
+		
+		if (s.equalsIgnoreCase("denyAll"))
+			reset();
+		else if (s.equalsIgnoreCase("residentBuild"))
 			residentBuild = b;
 		else if (s.equalsIgnoreCase("residentDestroy"))
 			residentDestroy = b;
@@ -41,7 +50,6 @@ public class TownyPermission {
 			residentSwitch = b;
 		else if (s.equalsIgnoreCase("residentItemUse"))
 			residentItemUse = b;
-		
 		else if (s.equalsIgnoreCase("outsiderBuild"))
 			outsiderBuild = b;
 		else if (s.equalsIgnoreCase("outsiderDestroy"))
@@ -50,7 +58,6 @@ public class TownyPermission {
 			outsiderSwitch = b;
 		else if (s.equalsIgnoreCase("outsiderItemUse"))
 			outsiderItemUse = b;
-		
 		else if (s.equalsIgnoreCase("allyBuild"))
 			allyBuild = b;
 		else if (s.equalsIgnoreCase("allyDestroy"))
@@ -59,6 +66,14 @@ public class TownyPermission {
 			allySwitch = b;
 		else if (s.equalsIgnoreCase("allyItemUse"))
 			allyItemUse = b;
+		else if (s.equalsIgnoreCase("pvp"))
+			pvp = b;
+		else if (s.equalsIgnoreCase("fire"))
+			fire = b;
+		else if (s.equalsIgnoreCase("explosion"))
+			explosion = b;
+		else if (s.equalsIgnoreCase("mobs"))
+			mobs = b;
 	}
 
 	public void load(String s) {
@@ -79,7 +94,6 @@ public class TownyPermission {
 			out += (out.length() > 0 ? "," : "") + "residentSwitch";
 		if (residentItemUse)
 			out += (out.length() > 0 ? "," : "") + "residentItemUse";
-		
 		if (outsiderBuild)
 			out += (out.length() > 0 ? "," : "") + "outsiderBuild";
 		if (outsiderDestroy)
@@ -88,7 +102,6 @@ public class TownyPermission {
 			out += (out.length() > 0 ? "," : "") + "outsiderSwitch";
 		if (outsiderItemUse)
 			out += (out.length() > 0 ? "," : "") + "outsiderItemUse";
-		
 		if (allyBuild)
 			out += (out.length() > 0 ? "," : "") + "allyBuild";
 		if (allyDestroy)
@@ -97,7 +110,14 @@ public class TownyPermission {
 			out += (out.length() > 0 ? "," : "") + "allySwitch";
 		if (allyItemUse)
 			out += (out.length() > 0 ? "," : "") + "allyItemUse";
-		
+		if (pvp)
+			out += (out.length() > 0 ? "," : "") + "pvp";
+		if (fire)
+			out += (out.length() > 0 ? "," : "") + "fire";
+		if (explosion)
+			out += (out.length() > 0 ? "," : "") + "explosion";
+		if (mobs)
+			out += (out.length() > 0 ? "," : "") + "mobs";
 		if (out.length() == 0)
 			out += "denyAll"; // Make the token not empty
 		return out;
@@ -126,7 +146,7 @@ public class TownyPermission {
 		}
 	};
 	
-	public boolean getResident(ActionType type) {
+	public boolean getResidentPerm(ActionType type) {
 		switch (type) {
 			case BUILD: return residentBuild;
 			case DESTROY: return residentDestroy;
@@ -136,7 +156,7 @@ public class TownyPermission {
 		}
 	}
 	
-	public boolean getOutsider(ActionType type) {
+	public boolean getOutsiderPerm(ActionType type) {
 		switch (type) {
 			case BUILD: return outsiderBuild;
 			case DESTROY: return outsiderDestroy;
@@ -146,7 +166,7 @@ public class TownyPermission {
 		}
 	}
 	
-	public boolean getAlly(ActionType type) {
+	public boolean getAllyPerm(ActionType type) {
 		switch (type) {
 			case BUILD: return allyBuild;
 			case DESTROY: return allyDestroy;
@@ -156,7 +176,7 @@ public class TownyPermission {
 		}
 	}
 	
-	public static boolean getUnclaimedZone(ActionType type, TownyWorld world) {
+	public static boolean getUnclaimedZonePerm(ActionType type, TownyWorld world) {
 		switch (type) {
 			case BUILD: return world.getUnclaimedZoneBuild();
 			case DESTROY: return world.getUnclaimedZoneDestroy();
@@ -189,15 +209,34 @@ public class TownyPermission {
 	public void loadDefault(TownBlockOwner owner) {
 		residentBuild = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.BUILD);
 		residentDestroy = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.DESTROY);
-		residentSwitch = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.ITEM_USE);
-		residentItemUse = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.SWITCH);
+		residentSwitch = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.SWITCH);
+		residentItemUse = TownySettings.getDefaultPermission(owner, PermLevel.RESIDENT, ActionType.ITEM_USE);
 		allyBuild = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.BUILD);
 		allyDestroy = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.DESTROY);
-		allySwitch = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.ITEM_USE);
-		allyItemUse = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.SWITCH);
+		allySwitch = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.SWITCH);
+		allyItemUse = TownySettings.getDefaultPermission(owner, PermLevel.ALLY, ActionType.ITEM_USE);
 		outsiderBuild = TownySettings.getDefaultPermission(owner, PermLevel.OUTSIDER, ActionType.BUILD);
 		outsiderDestroy = TownySettings.getDefaultPermission(owner, PermLevel.OUTSIDER, ActionType.DESTROY);
 		outsiderItemUse = TownySettings.getDefaultPermission(owner, PermLevel.OUTSIDER, ActionType.ITEM_USE);
 		outsiderSwitch = TownySettings.getDefaultPermission(owner, PermLevel.OUTSIDER, ActionType.SWITCH);
+		/*
+		pvp = owner.getPermissions().pvp;
+		fire = owner.getPermissions().fire;
+		explosion = owner.getPermissions().explosion;
+		mobs = owner.getPermissions().mobs;
+		*/
+		
+		if (owner instanceof Town) {
+			pvp = TownySettings.getPermFlag_Town_Default_PVP();
+			fire = TownySettings.getPermFlag_Town_Default_FIRE();
+			explosion = TownySettings.getPermFlag_Town_Default_Explosion();
+			mobs = TownySettings.getPermFlag_Town_Default_Mobs();
+		} else {
+			pvp = owner.getPermissions().pvp;
+			fire = owner.getPermissions().fire;
+			explosion = owner.getPermissions().explosion;
+			mobs = owner.getPermissions().mobs;
+		}
+		
 	}
 }

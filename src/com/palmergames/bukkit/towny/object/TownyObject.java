@@ -5,13 +5,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 
+import com.palmergames.bukkit.towny.TownyFormatter;
+
 public abstract class TownyObject extends Observable {
 	private String name;
+	private boolean isChangedName = true;
 
 	public void setName(String name) {
         setChanged();
         notifyObservers(TownyObservableType.OBJECT_NAME);
 		this.name = name;
+		setChangedName(true);
 	}
 
 	public String getName() {
@@ -38,5 +42,23 @@ public abstract class TownyObject extends Observable {
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	public String getFormattedName() {
+		return TownyFormatter.getFormattedName(this);
+	}
+	
+	/**
+	 * @return the isChangedName
+	 */
+	public boolean isChangedName() {
+		return isChangedName;
+	}
+
+	/**
+	 * @param isChangedName the isChangedName to set
+	 */
+	public void setChangedName(boolean isChangedName) {
+		this.isChangedName = isChangedName;
 	}
 }
