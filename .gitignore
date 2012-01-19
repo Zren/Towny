@@ -1,0 +1,35 @@
+/make_jar.jardesc
+/lib
+
+# Eclipse stuff
+/.classpath
+/.project
+/.settings
+*.jardesc
+
+# netbeans
+/nbproject
+
+# we use maven!
+/build.xml
+
+# maven
+/target
+
+# vim
+.*.sw[a-p]
+
+# various other potential build files
+/build
+/bin
+/dist
+/manifest.mf
+
+# Mac filesystem dust
+/.DS_Store
+
+# intellij
+*.iml
+*.ipr
+*.iws
+.idea/
