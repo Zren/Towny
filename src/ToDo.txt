@@ -71,9 +71,9 @@ Bugs:
 	Charged death_price multiple times when you die.
 		http://forums.bukkit.org/threads/sec-fun-info-towny-v0-54-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-29#post-138787
 		http://forums.bukkit.org/threads/sec-fun-info-towny-v0-54-resident-town-nation-hierarchy-grid-based-protection-531.3358/page-30#post-145146
-	Kick from town (due to taxes), owned plots go up for sale. When re-added, plot is no longer for sale. Dude
+	Kick from town (due to taxes), owned plots go up for sale. When re-added, plot is no longer for sale.
 	
 		
 	
-	Narlges
+	
 

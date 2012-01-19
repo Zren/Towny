@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.bukkit.World;
+
 import com.palmergames.bukkit.towny.AlreadyRegisteredException;
 import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -57,9 +60,23 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 	
 	@Override
 	public boolean loadWorldList() {
-		plugin.sendDebugMsg("Loading World List");
-		if (plugin != null)
-			return loadServerWorldsList();
+		TownyMessaging.sendDebugMsg("Loading World List");
+		if (plugin != null) {
+			sendDebugMsg("Loading Server World List");
+			for (World world : plugin.getServer().getWorlds())
+				try {
+					//String[] split = world.getName().split("/");
+					//String worldName = split[split.length-1];
+					//universe.newWorld(worldName);
+					newWorld(world.getName());
+				} catch (AlreadyRegisteredException e) {
+					e.printStackTrace();
+				} catch (NotRegisteredException e) {
+					e.printStackTrace();
+				}
+			return true;
+		}
+
 		return false;
 	}
 
@@ -71,7 +88,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 		String[] tokens;
 		
 		//Default world is the first one loaded
-		TownyWorld world = universe.getWorlds().toArray(new TownyWorld[0])[0];
+		TownyWorld world = getWorlds().toArray(new TownyWorld[0])[0];
 		
 		try {
 			BufferedReader fin = new BufferedReader(new FileReader(rootFolder + dataFolder + "/townblocks.csv"));
@@ -79,7 +96,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 				tokens = line.split(",");
 				if (tokens.length >= 4)
 					try {
-						Town town = universe.getTown(tokens[2]);
+						Town town = getTown(tokens[2]);
 					
 					
 						int x = Integer.parseInt(tokens[0]);
@@ -95,7 +112,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 							townblock.setTown(town);
 
 						try {
-							townblock.setResident(universe.getResident(tokens[3]));
+							townblock.setResident(getResident(tokens[3]));
 						} catch (NotRegisteredException e) {
 						}
 					} catch (NumberFormatException e) {
@@ -135,13 +152,13 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 				
 				line = kvFile.get("town");
 				if (line != null)
-					resident.setTown(universe.getTown(line));
+					resident.setTown(getTown(line));
 
 				line = kvFile.get("friends");
 				if (line != null) {
 					String[] tokens = line.split(",");
 					for (String token : tokens) {
-						Resident friend = universe.getResident(token);
+						Resident friend = getResident(token);
 						if (friend != null)
 							resident.addFriend(friend);
 					}
@@ -173,7 +190,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 				if (line != null) {
 					tokens = line.split(",");
 					for (String token : tokens) {
-						Resident resident = universe.getResident(token);
+						Resident resident = getResident(token);
 						if (resident != null)
 							town.addResident(resident);
 					}
@@ -181,13 +198,13 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 
 				line = kvFile.get("mayor");
 				if (line != null)
-					town.setMayor(universe.getResident(line));
+					town.setMayor(getResident(line));
 
 				line = kvFile.get("assistants");
 				if (line != null) {
 					tokens = line.split(",");
 					for (String token : tokens) {
-						Resident assistant = universe.getResident(token);
+						Resident assistant = getResident(token);
 						if (assistant != null)
 							town.addAssistant(assistant);
 					}
@@ -201,6 +218,14 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 						town.setBonusBlocks(Integer.parseInt(line));
 					} catch (Exception e) {
 						town.setBonusBlocks(0);
+					}
+				
+				line = kvFile.get("purchasedBlocks");
+				if (line != null)
+					try {
+						town.setPurchasedBlocks(Integer.parseInt(line));
+					} catch (Exception e) {
+						town.setPurchasedBlocks(0);
 					}
 
 				line = kvFile.get("plotPrice");
@@ -285,20 +310,20 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 				if (line != null) {
 					tokens = line.split(",");
 					for (String token : tokens) {
-						Town town = universe.getTown(token);
+						Town town = getTown(token);
 						if (town != null)
 							nation.addTown(town);
 					}
 				}
 
 				line = kvFile.get("capital");
-				nation.setCapital(universe.getTown(line));
+				nation.setCapital(getTown(line));
 
 				line = kvFile.get("assistants");
 				if (line != null) {
 					tokens = line.split(",");
 					for (String token : tokens) {
-						Resident assistant = universe.getResident(token);
+						Resident assistant = getResident(token);
 						if (assistant != null)
 							nation.addAssistant(assistant);
 					}
@@ -308,7 +333,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 				if (line != null) {
 					tokens = line.split(",");
 					for (String token : tokens) {
-						Nation friend = universe.getNation(token);
+						Nation friend = getNation(token);
 						if (friend != null)
 							nation.setAliegeance("ally", friend);
 					}
@@ -318,7 +343,7 @@ public class TownyHModFlatFileSource extends TownyFlatFileSource {
 				if (line != null) {
 					tokens = line.split(",");
 					for (String token : tokens) {
-						Nation enemy = universe.getNation(token);
+						Nation enemy = getNation(token);
 						if (enemy != null)
 							nation.setAliegeance("enemy", enemy);
 					}

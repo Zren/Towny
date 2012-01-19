@@ -14,12 +14,18 @@ public class TownBlock {
     private TownBlockType type;
 	private int x, z;
 	private double plotPrice = -1;
+	private boolean locked = false;
+	
+	//Plot level permissions
+    protected TownyPermission permissions = new TownyPermission();
+    protected boolean isChanged;
 
 	public TownBlock(int x, int z, TownyWorld world) {
 		this.x = x;
 		this.z = z;
 		this.setWorld(world);
         this.type = TownBlockType.RESIDENTIAL;
+        isChanged = false;
 	}
 
 	public void setTown(Town town) {
@@ -98,13 +104,71 @@ public class TownBlock {
 	public boolean isForSale() {
 		return getPlotPrice() != -1.0;
 	}
+	
+    public void setPermissions(String line) {
+        //permissions.reset(); not needed, already done in permissions.load()
+        permissions.load(line);
+    }
 
-    public TownBlockType getType() {
+    public TownyPermission getPermissions() {
+        return permissions;
+    }
+
+    /**
+     * Have the permissions been manually changed.
+     * 
+	 * @return the isChanged
+	 */
+	public boolean isChanged() {
+		return isChanged;
+	}
+
+	/**
+	 * Flag the permissions as changed.
+	 * 
+	 * @param isChanged the isChanged to set
+	 */
+	public void setChanged(boolean isChanged) {
+		this.isChanged = isChanged;
+	}
+
+	public TownBlockType getType() {
         return type;
     }
 
     public void setType(TownBlockType type) {
+    	if (type != this.type)
+    		this.permissions.reset();
         this.type = type;
+
+        // Custom plot settings here
+        switch(type) {
+        case RESIDENTIAL:
+        	if (this.hasResident()) {
+        		setPermissions(this.resident.permissions.toString());
+        	} else {
+        		setPermissions(this.town.permissions.toString());
+        	}
+        	break;
+        case COMMERCIAL:
+        	setPermissions("residentSwitch,allySwitch,outsiderSwitch");
+        	break;
+        case ARENA:
+        	setPermissions("pvp");
+        	break;
+        case EMBASSY:
+        	if (this.hasResident())
+        		setPermissions(this.resident.permissions.toString());
+        	else
+        		setPermissions(this.town.permissions.toString());
+        	break;
+        case WILDS:
+        	setPermissions("denyAll");
+        	break;
+        case SPLEEF:
+        	setPermissions("denyAll");
+        	break;
+        }
     }
 
     public void setType(int typeId) {
@@ -151,6 +215,22 @@ public class TownBlock {
 		return new WorldCoord(world, x, z);
 	}
 
+	/**
+	 * Is the TownBlock locked
+	 * 
+	 * @return the locked
+	 */
+	public boolean isLocked() {
+		return locked;
+	}
+
+	/**
+	 * @param locked is the to locked to set
+	 */
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+
 	public void setWorld(TownyWorld world) {
 		this.world = world;
 	}
@@ -180,5 +260,9 @@ public class TownBlock {
 	@Override
 	public String toString() {
 		return getWorld().getName() + " ("+getCoord()+")";
+	}
+	
+	public boolean isWarZone() {
+		return getWorld().isWarZone(getCoord());
 	}
 }
