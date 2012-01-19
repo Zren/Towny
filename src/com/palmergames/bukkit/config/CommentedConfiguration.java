@@ -1,33 +1,59 @@
 package com.palmergames.bukkit.config;
 
 import com.palmergames.util.FileMgmt;
-import org.bukkit.util.config.Configuration;
+
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
 /**
  * @author dumptruckman
  */
-public class CommentedConfiguration extends Configuration {
+public class CommentedConfiguration extends YamlConfiguration {
 
     private HashMap<String, String> comments;
     private File file;
-
-    
+   
 
     public CommentedConfiguration(File file) {
-        super(file);
+        super();
+        //this.load(file);
         comments = new HashMap<String, String>();
         this.file = file;
     }
+    
+    public boolean load() {
+    	
+    	boolean loaded = true;
+    	
+    	try {
+			this.load(file);
+		} catch (FileNotFoundException e) {
+			loaded = false;
+		} catch (IOException e) {
+			loaded = false;
+		} catch (InvalidConfigurationException e) {
+			loaded = false;
+		}
+    	
+    	return loaded;
+    }
 
-    @Override
     public boolean save() {
+    	
+    	boolean saved = true;
+    	
         // Save the config just like normal
-        boolean saved = super.save();
-
+    	try {
+    		super.save(file);
+    	} catch (Exception e) {
+    		saved = false;
+    	}
+       
         // if there's comments to add and it saved fine, we need to add comments
         if (!comments.isEmpty() && saved) {
             // String array of each line in the config file
@@ -40,6 +66,8 @@ public class CommentedConfiguration extends Configuration {
             String currentPath = "";
             // This tells if the specified path has already been commented
             boolean commentedPath = false;
+            // This flags if the line is a node or unknown text.
+            boolean node = false;
             // The depth of the path. (number of words separated by periods - 1)
             int depth = 0;
 
@@ -47,6 +75,12 @@ public class CommentedConfiguration extends Configuration {
             for (String line : yamlContents) {
                 // If the line is a node (and not something like a list value)
                 if (line.contains(": ") || (line.length() > 1 && line.charAt(line.length() - 1) == ':')) {
+                	
+                	// This is a new node so we need to mark it for commenting (if there are comments)
+                    commentedPath = false;
+                    // This is a node so flag it as one
+                    node = true;
+                    
                     // Grab the index of the end of the node name
                     int index = 0;
                     index = line.indexOf(": ");
@@ -66,14 +100,14 @@ public class CommentedConfiguration extends Configuration {
                                 break;
                             }
                         }
-                        // Find out if the current depth (whitespace * 4) is greater/lesser/equal to the previous depth
-                        if (whiteSpace / 4 > depth) {
+                        // Find out if the current depth (whitespace * 2) is greater/lesser/equal to the previous depth
+                        if (whiteSpace / 2 > depth) {
                             // Path is deeper.  Add a . and the node name
                             currentPath += "." + line.substring(whiteSpace, index);
                             depth++;
-                        } else if (whiteSpace / 4 < depth) {
-                            // Path is shallower, calculate current depth from whitespace (whitespace / 4) and subtract that many levels from the currentPath
-                            int newDepth = whiteSpace / 4;
+                        } else if (whiteSpace / 2 < depth) {
+                            // Path is shallower, calculate current depth from whitespace (whitespace / 2) and subtract that many levels from the currentPath
+                            int newDepth = whiteSpace / 2;
                             for (int i = 0; i < depth - newDepth; i++) {
                                 currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")), "");
                             }
@@ -106,24 +140,40 @@ public class CommentedConfiguration extends Configuration {
                             currentPath += line.substring(whiteSpace, index);
 
                         }
-                        // This is a new node so we need to mark it for commenting (if there are comments)
-                        commentedPath = false;
+                        
                     }
-                }
-
-                String comment = "";
-                if (!commentedPath) {
-                    // If there's a comment for the current path, retrieve it and flag that path as already commented
-                    comment = comments.get(currentPath);
-                    commentedPath = true;
-                }
-                if (comment != null) {
-                    // Add the comment to the beginning of the current line
-                    line = comment + System.getProperty("line.separator") + line;
+                    
+                } else
+                	node = false;
+                
+                if (node) {
+                	String comment = null;
+	                if (!commentedPath) {
+	                    // If there's a comment for the current path, retrieve it and flag that path as already commented
+	                    comment = comments.get(currentPath);
+	                }
+	                if (comment != null) {
+	                    // Add the comment to the beginning of the current line
+	                    line = comment + System.getProperty("line.separator") + line + System.getProperty("line.separator");
+	                    comment = null;
+	                    commentedPath = true;
+	                } else {
+	                	// Add a new line as it is a node, but has no comment
+	                	line += System.getProperty("line.separator");
+	                }
                 }
                 // Add the (modified) line to the total config String
-                newContents += line + System.getProperty("line.separator");
+                newContents += line + ((!node) ? System.getProperty("line.separator"):"");
+                
+                
             }
+            /*
+             * Due to a bukkit bug we need to strip any extra new lines from the
+             * beginning of this file, else they will multiply.
+             */
+            while (newContents.startsWith(System.getProperty("line.separator")))
+            	newContents = newContents.replaceFirst(System.getProperty("line.separator"), "");
+            
             try {
                 // Write the string to the config file
                 FileMgmt.stringToFile(newContents, file);
@@ -131,7 +181,6 @@ public class CommentedConfiguration extends Configuration {
                 saved = false;
             }
         }
-
         return saved;
     }
 
@@ -145,7 +194,7 @@ public class CommentedConfiguration extends Configuration {
         String leadingSpaces = "";
         for (int n = 0; n < path.length(); n++) {
             if (path.charAt(n) == '.') {
-                leadingSpaces += "    ";
+                leadingSpaces += "  ";
             }
         }
         for (String line : commentLines) {

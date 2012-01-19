@@ -1,11 +1,9 @@
 package com.palmergames.util;
 
 import java.io.BufferedReader;
-//import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-//import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,11 +12,11 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import com.palmergames.bukkit.config.ConfigNodes;
-import com.palmergames.util.FileMgmt;
 
 public class FileMgmt {
 	public static void checkFolders(String[] folders) {
@@ -51,15 +49,21 @@ public class FileMgmt {
 			String[] children = sourceLocation.list();
 			for (int i=0; i<children.length; i++)
 				copyDirectory(new File(sourceLocation, children[i]), new File(targetLocation, children[i]));
-		} else {      
-			InputStream in = new FileInputStream(sourceLocation);
+		} else {
 			OutputStream out = new FileOutputStream(targetLocation);
-			// Copy the bits from in stream to out stream.
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0)
-				out.write(buf, 0, len);
-			in.close();
+			try {
+				InputStream in = new FileInputStream(sourceLocation);
+				// Copy the bits from in stream to out stream.
+				byte[] buf = new byte[1024];
+				int len;
+				while ((len = in.read(buf)) > 0)
+					out.write(buf, 0, len);
+				in.close();
+				out.close();
+			} catch (IOException ex) {
+				// failed to access file.
+				System.out.println("Error: Could not access: " + sourceLocation);
+			}
 			out.close();
 		}
 	}
@@ -75,37 +79,41 @@ public class FileMgmt {
         return file;
     }
 
-	public static File unpackLanguageFile(String filePath, String defaultRes) {
+	public static File unpackLanguageFile(String filePath, String resource, String defaultRes) {
 		
 		// open a handle to yml file
 		File file = new File(filePath);
-		if((file.exists()) && (!filePath.contains(ConfigNodes.LANGUAGE.getDefault())))
+		
+		if((file.exists()) && (!filePath.contains(FileMgmt.fileSeparator() + resource)))
 			return file;
 		
 		String resString;
 		
-		// create the file as it doesn't exist
-		// or we are replacing english.yml
+		/*
+		 *  create the file as it doesn't exist,
+		 *  or it's the default file
+		 *  so refresh just in case.
+		 */
 		try {
-			checkFiles(new String[]{
-					filePath});
+			checkFiles(new String[]{filePath});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		// file didn't exist so we need to populate a new one
+		// Populate a new file
 		try {
-			resString = convertStreamToString(defaultRes);
-			if (resString != null) {
-	    		// Save the string to file (*.yml)
-	    		try {
-		    		FileMgmt.stringToFile(resString, filePath);
-	    		} catch (IOException e) {
-	    			e.printStackTrace();
-	    		}
-	    	}
+			resString = convertStreamToString("/" + resource);
+			FileMgmt.stringToFile(resString, filePath);
+
 		} catch (IOException e) {
-			e.printStackTrace();
+			// No resource file found
+			try {
+				resString = convertStreamToString("/" + defaultRes);
+				FileMgmt.stringToFile(resString, filePath);
+			} catch (IOException e1) {
+				// Default resource not found
+				e1.printStackTrace();
+			}
 		}
 			
 		return file;
@@ -120,7 +128,7 @@ public class FileMgmt {
 	        char[] buffer = new char[1024];
 	        try {
 	            Reader reader = new BufferedReader(
-	                    new InputStreamReader(is, "UTF-8"));
+	                    new InputStreamReader(is, "US-ASCII")); //should be UTF-8
 	            int n;
 	            while ((n = reader.read(buffer)) != -1) {
 	                writer.write(buffer, 0, n);
@@ -129,7 +137,12 @@ public class FileMgmt {
 			{
 			    System.out.println("Exception ");
 			} finally {
-	            is.close();
+				try {
+					is.close();
+				} catch (NullPointerException e) {
+					//Failed to open a stream
+					throw new IOException();
+				}
 	        }
 	        return writer.toString();
 	    } else {        
@@ -173,9 +186,19 @@ public class FileMgmt {
     }
 	
 	//writes a string to a file making all newline codes platform specific
-	public static boolean stringToFile(String source, String FileName) throws IOException {
+	public static boolean stringToFile(String source, String FileName) {
 		
-		return stringToFile(source, new File(FileName));
+		if (source != null) {
+    		// Save the string to file (*.yml)
+    		try {
+    			return stringToFile(source, new File(FileName));
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+    	}
+		
+		return false;
+
 	}
 
     /**
@@ -255,5 +278,103 @@ public class FileMgmt {
 			}
 		}
 	}
+	
+	/**
+	 * Delete file, or if path represents a directory, recursively
+	 * delete it's contents beforehand.
+	 */
+    public static void deleteFile(File file) {
+        if (file.isDirectory()) {
+        	File[] children = file.listFiles();
+        	if (children != null) {
+        		for (File child : children)
+        			deleteFile(child);
+        	}
+        	children = file.listFiles();
+        	if (children == null || children.length == 0) {
+        		if (!file.delete())
+        			System.out.println("Error: Could not delete folder: " + file.getPath());
+        	}
+        } else if (file.isFile()) {
+    		if (!file.delete())
+    			System.out.println("Error: Could not delete file: " + file.getPath());
+        }
+    }
+    
+    /**
+     * Delete child files/folders of backupsDir with a filename ending
+     * in milliseconds that is older than deleteAfter milliseconds in age.
+     */
+    public static void deleteOldBackups(File backupsDir, long deleteAfter) {
+    	TreeSet<Long> deleted = new TreeSet<Long>();
+    	if (backupsDir.isDirectory()) {
+    		File[] children = backupsDir.listFiles();
+        	if (children != null) {
+        		for (File child : children) {
+        			try {
+        				String filename = child.getName();
+        				if (child.isFile()) {
+        					if (filename.contains("."))
+        						filename = filename.split("\\.")[0];
+        				}
+        				String[] tokens = filename.split(" ");
+        				String lastToken = tokens[tokens.length-1];
+        				long timeMade = Long.parseLong(lastToken);
+        				
+        				if (timeMade >= 0) {
+        					long age = System.currentTimeMillis() - timeMade;
+        					if (age >= deleteAfter) {
+        						deleteFile(child);
+        						deleted.add(age);
+        					}
+        				}
+        			} catch (Exception e) {
+        				// Ignore file as it doesn't follow the backup format.
+        			}
+        		}
+        	}
+    	}
+    	
+    	if (deleted.size() > 0) {
+    		System.out.println(String.format("[Towny] Deleting %d Old Backups (%s).", deleted.size(), 
+    				(deleted.size() > 1
+    						? String.format("%d-%d days old", TimeUnit.MILLISECONDS.toDays(deleted.first()), TimeUnit.MILLISECONDS.toDays(deleted.last()))
+    						: String.format("%d days old", TimeUnit.MILLISECONDS.toDays(deleted.first()))
+    						)));
+    	} 
+    }
+    
+    public static void deleteUnusedFiles(File residentDir, Set<String> fileNames) {
+    	
+    	int count = 0;
+    	
+    	if (residentDir.isDirectory()) {
+    		File[] children = residentDir.listFiles();
+        	if (children != null) {
+        		for (File child : children) {
+        			try {
+        				String filename = child.getName();
+        				if (child.isFile()) {
+        					if (filename.contains(".txt"))
+        						filename = filename.split("\\.txt")[0];
+        					
+        					// Delete the file if there is no matching resident.
+            				if (!fileNames.contains(filename.toLowerCase())) {
+            					deleteFile(child);
+            					count ++;
+            				}
+        				}
 
+        			} catch (Exception e) {
+        				// Ignore file
+        			}
+        		}
+        		
+        		if (count > 0) {
+        			System.out.println(String.format("[Towny] Deleted %d old files.", count));
+        		}
+        	}
+    	}
+    	
+    }
 }

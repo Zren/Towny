@@ -455,10 +455,656 @@ v0.75.0:
     - It is now possible to use '/town spawn' when in boats and minecarts. You will leave the vehicle where it is when you teleport.
 v0.75.1:
     - Fixed config reading so it works!
-v0.75.3:
+v0.75.2:
     - Fixed deleting foreign language files at startup.
     - Added missing entry from english.yml - msg_err_empty_area_selection: '&cSelected area contains no valid plots.'
     - Fixed error on using '/town claim auto'.
     - Fixed a refactoring error which affected towny top commands.
+v0.76.0:
+    - Added Town Buy command. Is defaulted to be empty. Currently only has ability to buy bonus blocks up until a set limit.
+      '/town buy'
+      '/town buy bonus [n]'
+    - [Bonus: 0] is now hidden from the status when the town has no bonus blocks.
+    - Added: [Bought: 0/max] to /town.
     - Fixed the shutdown of the Teleport warmup timer on restarts.
     - Fixed enabling Devmode, debug and reading integers from the config.
+    - Added town bank caps and a toggle to enable/disable withdrawls from town banks (prevent players hiding money in towns on PVP worlds) - thanks phrstbrn
+    - New command '/townyadmin toggle withdraw'.
+    - Added two new commands to see who's online
+      '/town online'
+      '/nation online'
+    - Fix for deleted residents in friend lists causing errors upon deletion, and the same error with nation deletion and enemy/ally lists.
+    - Prevent sticky pistons pulling blocks across plot boundaries (if different owners).
+    - Fix for getLastLocation() needing to throw a NullPointerException. The players location is now set upon creation of the cache.
+    - Added a Maxplots permissions node. If a group doesn't have this node or the node is set to -1 Towny will default back to the max_plots_per_resident in config.
+      Setting max_plots_per_resident to -1 with no permission node, or a node set to -1 will allow infinite plots.
+      
+      Eg usage:
+
+		groups:
+		  Default:
+		    default: true
+		    permissions:
+		    - general.spawn
+		    inheritance: []
+		    info:
+		      prefix: ''
+		      build: true
+		      suffix: ''
+		      towny_maxplots: 1
+		  Admins:
+		    default: false
+		    permissions:
+		    - '*'
+		    inheritance:
+		    info:
+		      prefix: ''
+		      build: true
+		      suffix: ''
+		      towny_maxplots: -1
+		      
+    - Fixed old resident deletion for the new config system using seconds instead of milliseconds.
+    - Towny now correctly defaults to Bukkits Permissions if using_permissions is set to false in the config.
+    - Added XcraftGate to the plugin.yml as a recognised multiworld plugin.
+    - Added a new unclaim_delete under Plot management in global_town_settings. This will delete any items listed when a town unclaims a plot or a town is deleted.
+v0.76.1.0:
+    - Fixed error with '/town buy' granting the wrong number of blocks.
+    - Fixed converting seconds to milliseconds for mobremoval and new day timers.
+    - Fixed an error when using '/town claim #'.
+    - Fixed an error with '/town claim auto' (I broke it fixing the above command).
+    - Explosions in the nether caused by using beds are now blocked if a town is there and set to block explosions. However, the fires it generates can not be blocked.
+    - Added (Online) to title Resident Status
+    - Added Neutral in Nation status.
+    - Moved /nation set neutral [on/off] to /nation toggle neutral
+    - Added plot regeneration.
+      When a town plot is unclaimed (by a player or through upkeep) it will slowly begin to revert to a pre town state.
+      Blocks will slowly change back to whatever blocks we're present at the moment the town block was claimed.
+      You can configure certain block types you don't want restored to prevent players exploiting regen for diamond ores.
+      Block types to not restore are configured in block_ignore in the worlds txt file data/worlds/worldname.txt
+    - Added a block deletion function to remove specified blocks when a town block becomes unclaimed.
+      This is useful for removing Lockette/Deadbolt signs on doors and chests.
+      Block types to remove are configured in unclaim_delete in the worlds txt file data/worlds/worldname.txt
+    - Removed the commands '/town add+' and '/town kick+'. Use '/town add' and '/town kick'.
+    - Removed + commands from '/town assistant [.add/remove]'.
+    - Fixed when players are added to the default town they are unable to use '/town leave'.
+    - Town data files should now be correctly deleted (moved to the deleted folder) upon removal.
+    - Added a max_tax_amount and max_tax_percent to the config for towns. Defaults to 1000 and 25% respetively.
+      Which one is used depends on how the town is taxing; flat rate or by percentage.
+    - Fixed Town and Nation tags size limit.
+    - Titles and surnames can now contain spaces.
+    - Fixed default Bukkit Permissions to deny instead of allow.
+    - Fixed last timer for deleting old residents.
+    - Added a new setting 'regen_delay'.
+      This setting is in seconds. It will allow players to break protected blocks in the wild and towns, even if they dont have permission.
+      The blocks will drop no loot and will regenerate after the specified time.
+      Defaults to 0 (disabled).
+    - Added Nation bank caps and moved the settings to the economy section.
+    - Moved daily tax settings to the economy section of the config.
+    - Tidy of economy settings (WARNING - be sure to check the values after upgrading).
+    - Added a broadcast if a Nation is disbanded due to a town deletion.
+    - Fixed '/xxx claim auto' commands for town and resident.
+    - Fixed '/plot unclaim xx' command. Now errors if it's an invalid entry.
+    - Minor alterations to english.yml
+    - No more sneak jump to avoid the cheat protection.
+    - Fixed resetting tags using '/town set tag '.
+    - Plot regen should now correctly restore different types of leaves/wood etc.
+    - Added a new Default new world setting (wild_revert_on_mob_explosion). When enabled this will replace blocks destroyed by creature explosions in the wild.
+    - Fixed a 'TickNextTick list out of synch' error on a new day.
+    - Fixed overwriting custom language files (no, really this time).
+    - Towny will now clean up it's backup folder. Default time to keep backups is 90 days (configurable in config).
+    - Fixed default switch and item use permissions for ally and outsider.
+    - Finally fixed the elusive error when getLastLocation() throws a NullPointerException.
+    - Fixed an infinite loop when a player uses a fly hack over void.
+    - Added support for Register 2.0 (Register.jar) - Supports iConomy5, iConomy6, EssentialsEco, BOSEconomy.
+      (https://github.com/iConomy/Register/tree/master/dist)
+    - Towny will no longer cause an exception if users attempt to use iConomy 6 instead of 5.01 natively.
+    - Added some new permission nodes.
+    
+      - towny.town.delete : player can delete their town
+      - towny.town.rename : player can rename their town
+      - towny.town.toggle.* : User has access to all town toggle commands (if a mayor or assistant).
+      - towny.town.toggle.pvp : If a mayor or assistant, the user is able to toggle pvp on/off in their town.
+      - towny.town.toggle.public : If a mayor or assistant....
+      - towny.town.toggle.explosions : If a mayor or assistant....
+      - towny.town.toggle.fire : If a mayor or assistant....
+      - towny.town.toggle.mobs :  If a mayor or assistant....
+      - towny.nation.delete : player can delete their nation
+      - towny.nation.rename : player can rename their nation
+      - towny.nation.grant-titles : King can set nation members titles and surnames '/nation set [title/surname]'.
+      - towny.nation.* : Grants all Nation permission nodes.
+      
+    - Added 'towny time' : Displays the time until a new day is scheduled.
+    - Players can no longer attack another players tamed wolf if in a non PVP area (can attack own).
+    - Added new API functions
+      TownyUniverse.getTownBlock(location)
+      TownyUniverse.getCachePermission(player,location,action)
+    - Towny will now check the Craftbukkit version and disable itself if it's too old.
+v0.76.1.1:
+    - Fixed economy errors when using register and iCo6.
+    - Fixed an error caused by players setting a town or nation bank cap as a double (now accepts 0.0).
+v0.76.1.2:
+    - Added sanity checking on values pulled from the config.yml.
+    - Updated a few nation commands to report the command format insted of throwing errors.
+v0.76.1.3:
+    - Tidied Startup log data
+    - Fixed Wild permissions.
+v0.76.1.4:
+    - Refactored '/town spawn' with new config options for when the target town is part of your nation,
+      or an allied nation. Each can have their own cost and has their own permission.
+    - Town spawn permissions have been changed to:
+    
+      - towny.town.spawn.* : Grants all Spawn travel nodes
+      - towny.town.spawn.town : Ability to spawn to your own town.
+      - towny.town.spawn.nation : Ability to spawn to other towns in your nation.
+      - towny.town.spawn.ally : Ability to spawn to towns in nations allied with yours.
+      - towny.town.spawn.public : Ability to spawn to unaffilated public towns.
+v0.76.1.5:
+    - Added missing permission nodes to support...
+      - towny.wild.*
+v0.76.1.6:
+    - Fixed a bug preventing players placing fences if they are admins.
+v0.76.1.7:
+	- Adjusted wilderness permissions
+	  Towny will first check for permisison nodes.
+	  If no permissions are found the wild_ignore list is checked.
+	  If none of the above give permissions the worlds Wilderness zone settings are checked.
+	- Enabled use of the following commands for admins while still using permissions.
+	  '/townyworld set usedefault'
+	  '/townyworld set wildperm'
+	  '/townyworld set wildperm [build,destroy,switch,ItemUse]'
+	  '/townyworld set wildignore xx,xx,xx'
+	  '/townyworld set wildname Wildy'
+	- Added a fix for tags in data files crashing towny on load.
+v0.76.1.8:
+	- Fixed town spawns to correctly follow config and permissions settings.
+v0.76.1.9:
+	- Fixed NullPointerException generated by onPlayerInteractEvent.
+	- Fixed message when setting Town tags to not say nation.
+	- Fixed '/nation deposit' error message.
+	- Added handling of World initialization to fix a bug when creating new worlds with Multiverse.
+v0.76.1.10:
+	- Permit residents not in town to use public spawns again.
+	- Corrected permissions node checking to match those in the config for spawn travel.
+v0.76.1.11:
+	- Removed a lot of debug spam from permission checking.
+v0.76.1.12:
+	- Fix for a possible error on shutdown with active warzones.
+	- Fix so players can only attack other towns IF the correct number of players are online on BOTH sides.
+	- If your town/nation is attacked with warflags the attackers will automatically be set as enemies (allows you to attack back).
+	- Fixed renaming a town when it's also a capitol failing to update the nation.
+	- Removed dependency on Bukkit to report the world list at startup (it's not always complete).
+v0.76.1.13:
+	- Fixed a startup error on fresh installs.
+v0.76.1.14:
+	- Towns which have unclaimed their HomeBlock (or all TownBlocks) no longer corrupt the data files on a shutdown.
+	- Towns are now able to move worlds by moving their homeblock to that world.
+	- Fixed Account creation for towns and nations when using BOSEconomy.
+	- Towny now uses the correct currency type (coins/dollars) as defined in your Eco plugin.
+v0.76.1.15:
+	- Added '/town set tag clear' and '/nation set tag clear' to reset tags.
+	- Titles and surnames are now reset if the player is not in a nation.
+v0.76.1.16:
+	- Added '/plot clear' for mayors.
+	  If a plot is owned by the town (not a resident) the mayor can stand in the plot and type this command to remove all block types as specified in mayor_plotblock_delete.
+	  This setting is per world so transfers to the world data files at startup.
+v0.76.1.17:
+	- Added upkeep charging based upon the number of town plots (town_plotbased_upkeep) - thanks to phex
+	- Slight reorgnise of TownyUniverse (if you hook towny be sure your functions have not moved).
+	- Changed the daily timer to a set time each day. Configure new_day_time to set when you want taxes to be collected.
+	  eg. 15h30m would attempt to collect taxes at 3:30pm.
+v0.76.1.18:
+	- Returned the setting day_interval so you can configure the length of a day.
+	  If you set a day length of 12 hours (12h), taxes will be collected on a 12 hourly cycle, instead of a 24 hour one.
+	  new_day_time should be set to less than the day_interval, but it will default to the same, if it's incorrectly set.
+v0.76.1.19:
+	 - Fixed an error in fetching the resident on new cache creation (caused by code reorganising).
+v0.76.2.0:
+	- Release
+v0.76.2.1:
+	- Fixed an error when not using a currency type with Essentials Eco.
+v0.76.2.2:
+	- Force load the destination chunk when teleporting. Attempt to prevent the falling through the world bug.
+	- If wild_revert_on_mob_explosion is enabled, the explosions no longer drop any blocks.
+	- Simplfied Plugin interfacing for Economy plugins to a single setting of using_economy.
+	  Towny will first attempt to use Register.jar. If it's not present
+	  it will fall back to the legacy support for iConomy 5.01.
+v0.76.2.3:
+	- Added a Permission handler to towny so it will now support GroupManager, PEX, bPermissions, Permissions 2/3 + (bridges) and Bukkit Perms.
+	- Admins can now pick, choose and modify which notifications are shown when a player walks from plot to plot. Check the new section 'Town Notifications' in the config.
+	- Town notifications now show a money formatted price.
+v0.76.2.4:
+	- Fixed '/town new' and '/nation new' to properly follow the settings in config if permissions are disabled.
+	- If not using Eco, Towny will no longer error when deleting/renaming towns/nations, or upon a new day.
+v0.76.2.5:
+	- When using SuperPerms you can now use the following nodes with towny.
+	  prefix.prefixhere
+	  suffix.suffixhere
+	  towny_maxplots.x (with x being a number eg towny_maxplots.2)
+	- Town spawn cost now outputs correctly formatted by the settings in your economy plugin.
+v0.76.2.6:
+	- Fixed modplayername in chat format generating duplicate entries.
+	- Optimized Towny chat so it no longer performs lots of wasteful string parsing on every message.
+v0.76.2.7:
+	- Added a seperate thread for Town Claim to relieve the lag caused by Chunk snapshot generation.
+	- Towny World commands are now admin only again.
+v0.76.2.8:
+	- Fixed a world bug where Plot revert was following wild revent instead of it's own setting.
+	- Requires CraftBukkit 1302 as a minimum, to clear memory leaks.
+	- Added access from console for '/ta givebonus', and expanded to allow a town or a player to give the bonus to.
+	  (bonus given to the player is directly transfered to the town)
+v0.76.2.9:
+	- Towny now zero's economy accounts upon removal of resident/town/nation, to allow the account deletion.
+	- Pistons can now push between town owned townblocks.
+	- Fixed town spawn when not using any permissiosn plugins.
+v0.76.2.10:
+	- Update for Bukkit 1317's new YamlConfiguration.
+v0.76.3.0:
+	- Release.
+v0.76.3.1:
+	- Fixed overwriting of config.yml.
+v0.76.3.2:
+	- Code change due to PEX changing .has() to static (PEX 1.15).
+	- Animals in towns can now only be killed by residents of that town. Unless PVP is enabled.
+v0.76.3.3:
+	- TownBlocks reposessed by the Mayor/Assistants now correctly remove the block from the Residents data files.
+	- Added Plot level permissions and commands to control them.
+	  '/plot perm' displays the current plots permissions.
+	  '/plot set perm [on/off] or [resident/friend/ally/outsider] [build/destroy/switch/itemuse] [on/off]'
+	- Added 23 and 107 to Switch Id's (Dispenser and Fence Gate).
+	- Changed saving of engligh.yml to ansi until bukkit fix their utf-8 support.
+V0.76.3.4:
+	- Added 57 (diamond block), 22 (lazuli block), 41 (gold block), 42 (iron block) to plot_management.revert_on_unclaim.block_ignore.
+	- Removed redundant code in '/ta unclaim' for clearing a resident data. It's already handled in TownyUniverse.
+	- Fixed TownClaim/unclaim thread not correctly selecting the town when the command was issued by an admin.
+	- Towny will now kick players who use hacked clients and join with no name, rather than crash.
+	- Moved all Towny messaging to it's own class. Depreciated old methods in TownyUniverse.
+	- All '/ta' commands are now accessable ingame and at the console, excluding '/ta town/nation name add' for console.
+	- Fixed an error with the new bukkit config failing to set a value (debug/devmode etc)
+	- Temporary fix for prefixes not being updated in Towny when a player changes permissions groups etc.
+v0.76.3.5:
+	- Revert the PEX change as they reverted their change of .has() for release.
+v0.76.3.6:
+	- Added Embassy plots. These may be leased by anyone, so long as they belong to a town (they don't have to be a member of the plot owning town).
+	- New commands:-
+	  '/plot set embassy'
+	  '/town set embassyprice $' - Sets the default price for Embassy plots (can be overridden by '/plot fs $')
+	  '/town set embassytax $'   - This is charged on top of the towns normal plot tax.
+	- Changed response when setting resident/plot/town perms to be more readable.
+v0.76.3.7:
+	- Fixed '/town claim' which I broke when fixing admin unclaim.
+v0.76.3.8:
+	- When claiming/unclaiming groups of TownBlocks the message will no longer spam up your screen with the plot list.
+	- Embassy plots now show up on the map as 'E'.
+	- Threaded plot claim/unclaim to eliminate lag on LARGE claims.
+	- plot claiming now supports the all suffix (/plot unclaim all).'
+	- Capped claiming by radius to 1000 TownBlocks.
+v0.76.3.9:
+	- Reduced default plots per resident to 8, instead of 16 (town_block_ratio).
+	- Added settings for Questioner accept/deny so server admins can change the default commands to accept or deny invites.
+	- Added Arena plots. These plots default to PVP enabled, and can not have PVP disabled.
+	- Added plot toggle commands...
+	  '/plot toggle pvp'
+	  '/plot toggle fire'
+	  '/plot toggle explosion'
+	  '/plot toggle mobs'
+v0.76.3.10:
+	- Arena plots now ignore Friendly fire settings.
+	- Town Health Regen is now disabled in Arean plots.
+v0.76.3.11:
+	- Added protection from Enderman griefing (if town mobs are off).
+	- Added unclaimed_zone_enderman_protect to prevent endermen moving blocks in the wild.
+	- Entity Attack Permissions: Always allow attacks in Warzones and enemy towns, regardless of town or world PvP settings.
+	- Warzones now have their own block permissions (block/switch/item use/fire/explosion). Explosions can also be configured to allow damage, but prevent block breaks.
+	- Warzones will now no longer follow world or town pvp settings (they are always PvP).
+	- Changed EcoObject function pay(n, collector) -> payTo
+	- Added reason argument for all eco functions. Will be put in money log along with transaction details.
+	- logs folder is now placed in backups.
+	- Debug now has it's own log file when it's turned on.
+	- Towny/logs/money.csv is in the format 'timestamp,reason,obj,amount,collector'. In the case that there is no collector or obj, [Server] is entered. towny-war-spoils is shown as '[Server] towny-war-spoils'.
+	- Town and Nation economy accounts are now restricted to 32 characters in length.
+v0.76.3.12:
+	- Possible fix for Essentials teleport refusing to engage and towny defaulting to it's own timer.
+	- Moved all chat handling to a seperate jar (TownyChat.jar).
+	  TownyChat is a Fully functional chat manager. If it's enabled it will handle all chat and supports custom chat channels.
+	  This new system supports total customization of chat.
+	  It supports custom chat channels, with access control via permission nodes.
+	  Current channels are:-
+	    /tc (town chat) permission node: towny.chat.town
+	    /nc (nation chat) permission node: towny.chat.nation
+	    /a (admin chat) permission node: towny.chat.admin
+	    /m (moderators chat) permission node: towny.chat.mod
+	  TownyChat also supports other chat plugins (herochat, iChat etc). To use another chat plugin with Towny...
+	    Set modify_chat.enable : false
+	    Then add any of the towny tags into your chat plugins format line.
+v0.77.0.0:
+	- Release.
+v0.77.0.1:
+	- Fixed resident colour in config.
+	- Fixed creation of the logs folder for new installs causing an error at startup.
+	- Added..
+	  {townformatted} - Displays town name if a member of a town (using tag_format.town).
+      {nationformatted} - Displays nation name if a member of a nation (using tag_format.nation).
+    - Changed {townyfullnames} to {townyformatted}.
+    - Fixed an error on town loading caused by the new plot level permissions.
+v0.77.0.2:
+	- Towny now accepts worlds with spaces in their names.
+	- Added a 'wilds' plot type. This type allows mayors to set the plot to wilds and it follows wilderness build/break rules for residents only.
+	  Handy for adding a protection zones arround a town where residents can farm tree's and plant sapplings.
+v0.77.0.3:
+	- changed modify_chat.format to modify_chat.Chat_format so it will force an upgrade of the chat format for those having trouble with copy/paste.
+	- Fixed Arena plots so they properly allow PVP.
+	- Towny cheat protection no longer opperates in worlds where towny is disabled.
+	- Fixed an error displaying the mayor error message when he attempts to leave town.
+	- Fixed Switch permissions allowing users to open chests with certain items in hand.
+v0.77.0.4:
+	- You can no longer add your own nation as an enemy/ally.
+	- Extra parsing when loading comma delimited lines to prevent badly edited or empty elements causing issues.
+	- Only plot owners/mayors and assistants can now use plot toggle.
+	- Removed 'msg_not_town' from english.yml as it's not longer used.
+	- Fixed '/res delete <name>' and made it admin only.
+	  Command will remove all traces of the resident (including deleting the residents data file).
+	- Towny now supports the Essentials Cooldown and delay.
+	- When using the Towny teleport delay, aborted teleports now refund the money.
+	- Added '/townyadmin purge x', where x is a number of days.
+	  Removes all residents who havn't logged in for X amount of days.
+v0.77.0.5:
+	- The notification when entering a town will now show if the town has PVP enabled.
+	- Plot PVP settings will now cause a notification if you move between plots with different settings.
+v0.77.0.6:
+	- Fixed ConcurrentModificationException in utilSaveTownBlocks.
+	- added new commands...
+	  '/town set perm reset' - resets all town owned (non resident) plots to the towns default permissions.
+	  '/plot set perm reset' - resets all plots owned by you to their default permissions.
+	- Fixed 'plot claim/unclaim' to set correct plot permissions based upon plot type.
+v0.77.0.7:
+	- Added temporary support for Beta 1.9 builds.
+v0.77.1.0:
+	- Release.
+v0.77.1.1:
+	- Fix for PEX world based prefix/suffix.
+	- Moved resident purging to it's own thread.
+	- Towny will now remove any unused resident/town/nation files after it performs it's backup.
+v0.77.1.2:
+	- Fixed reading/saving of coma delimited lists (eg switch_ids).
+	  These can now be set to be empty, so long as you edit it to read (switch_ids: '').
+	- Town block notifications will now correctly reflect the worlds Forced PVP status.
+v0.77.1.3:
+	- Fixed revert_on_unclaim.block_ignore. It wasn't being written to the config so was being ignored.
+	- Players joining with spaces in their names (hacked clients) will no longer kill Towny.
+	- Prevent locked files causing a corrupt backup.
+v0.77.1.4:
+	- Fixed TownyWorld commands to only be available for admins or at console.
+	- Fixed '/plot set perm reset' and '/town set perm reset'.
+	- Added a permission node 'towny.town.plottype' (User is able to alter plot types on plots they own).
+	- Fixed Nation command to correctly check 'towny.nation.grant-titles' instead of towny.nation.titles'.
+	- Added daily upkeep to the '/town' and '/nation' outputs.
+v0.77.1.5:
+	- Active players now checks if a player is online, rather than only their last logged on time.
+	- Towny backup now correctly shuts down the loggers before backing up (no more corrupt/locked files).
+	- Towny now correctly removes economy accounts upon deletion of the resident/town/nation, instead of setting it to zero.
+	- Added auto modes for chat.
+	  Type '/tc' to set town chat mode. All text typed from then on will be sent to town chat.
+	  While in a chat mode you can still talk in other channels by using the channel commands eg. '/nc hi'.
+	  While in a chat mode you can talk in global chat with '/g text here'.
+	  to clear all chat modes '/g'.
+	- Added a new permission node for global chat ('/g') of 'towny.chat.global'.
+	- added {worldname} as a chat tag entry.
+v0.77.1.6:
+	- Fix residents accounts being wiped when a town is deleted.
+	- Rotated the Towny compass to reflect the sun setting in the west.
+	- Added 'delete_economy_account' so admins can control whether Towny will delete the economy account when it deletes the resident.
+v0.77.1.7:
+	- '/plot claim' can again be used by mayors to recaim plots (which are not for sale) for the town.
+v0.77.1.8:
+	- Fixed missing dependency when using '/towny top money all'.
+v0.77.1.9:
+	- Added minimum distance checks on outpost claims 'min_distance_from_town_homeblock'.
+	- Players are now able to create towns/nations if permissions are disabled 'using_permissions : false'.
+	- Updated permission nodes in config.yml.
+	- Added a new entry in 'Default Town/Plot flags' so admins can configure the defaults for pvp,fire,explosions and mob spawns.
+	- Added new settings in 'Default new world settings' for fire, explosions and enderman pickup/place. Admins can now configure settings per world for the wilderness.
+	- Adjusted world PVP so it only affects the wilderness. You can now disable PVP in the wilderness yet allow it in towns (enabled town pvp overrides plot pvp).
+v0.77.1.10:
+	- Fixed War plot damage messages to correctly display.
+	- Fixed War timers so you can once again start wars with '/townyadmin toggle war'.
+	- Added a new toggle so you can disable block damage during a war event (allow_block_griefing).
+	- Adjusted Towny cheat protection so it will not affect players in creative mode.
+	- Fixed loading of allies for nations.
+	- Fixed typo for towny.cheat.bypass in new permission node code.
+v0.77.1.11:
+	- Explosion regen now fills the hole from the bottom up (No more bouncing loot).
+	- Prevented 'plot fs $' from using negative values.
+	- Rotated 'towny map' so north is at the top again.
+	- Added new plot type identifiers on the towny map.
+	  W - Wilds
+	  C - Commercial/Shop
+	  A - Arena
+	  (shop plots which are for sale will show up as a blue $)
+v0.77.1.12:
+	- You can now set default modes via permissions. To set a group/user to default to town chat and have the map as they walk...
+	  If using GroupManager...
+	    add an Info node to the group/user towny_default_modes: 'tc,map'
+	  If using PEX...
+	    add an Options node for towny_default_modes: 'tc,map'
+	  If using any other perms system (not guaranteed to work)
+	    add a permission node - towny_default_modes.tc,map
+v0.77.1.13:
+	- Added thrown potions to the PVP protection tests (not fully implemented in Bukkit yet).
+	- '/townyadmin town/nation' command is now useable at the console.
+v0.77.1.14:
+	- If using GM this version requires latest Dev GroupManager 1.7.5+ for all features to work fully.
+	- Implemented new GM event system.
+	- '/g' global chat mode now applies chat formatting again.
+	- Implemented PEX events.
+V0.77.1.15:
+	- Fixed Null return from getPlayerPermissionStringNode when using PEX.
+	- '/town set perm reset' and '/res set perm reset' now correctly update the plot data files.
+v0.77.1.16:
+	- '/plot perm' on a town owned plot now correctly shows R for resident instead of F for friend.
+	- Fixed World settings for Explosions.
+	- Permissions are now correctly read from the plot rather than the town. Town level permisisons are defaults and changes propogate with '/town set perm reset'.
+	- You can no longer add town assistants who are not members of your town.
+	- Added a new command '/resident tax'.
+	  Shows the total taxes a player will have to pay at the next new day.
+v0.77.1.17:
+	- Fix for bPermissions removing it's .has() function.
+v0.77.1.18:
+	- Allow killing of mobs in the wilderness for worlds with PVP disabled.
+v0.77.1.19:
+	- Changed wild permission nodes to accept negation after '*'. You can now use wild perms as a whitelist and blacklist.
+	  If using GroupManager or any system which accepts wildcards...
+	    to use as a whitelist, use the existing...
+	      towny.wild.block.{id}.*
+	    to use as a blacklist...
+	      towny.wild.*
+	      -towny.wild.block.{id}.*
+v0.77.1.20:
+	- Fixed towny.wild.block.{id}... to allow overriding of Admin permissions.
+	- Fixed a typo on towny.town.toggle.explosions
+	- Mayors and assistants can once again change the plot type on resident owned plots.
+v0.77.1.21:
+	- Fixed world loading of the force town mobs setting.
+	- Fixed wild perms for non admins.
+v0.77.1.22:
+	- Fix for bPerms and super perms not supporting wildcards.
+	- Wild block ignore permissions no longer fall back to world settings, if set to use a permissions provider.
+v0.77.1.23:
+	- Removed spammy wilderness action messages.
+v0.77.1.24:
+	- Added comments to World data files.
+	- Extended default wild regen setting to 20 seconds.
+	- Added a german translation file Set to german in config.
+	- Fixed processing of GM/PEX events.
+v0.77.1.25:
+	- Allow op to override in all permissions.
+v0.77.1.26:
+	- When loading data files assistants will only be added to the town if they are also a resident (no more errors).
+	- Mayors of other towns can no longer perform '/plot set perm reset' in your town.
+	- Fixed '/town claim auto'... again.
+	- Fixed a NullPointerException in SetDefaultModes task caused by another plugin kicking a player at login.
+	- New functions allowing Townychat to observe Essentials mute and ignore functions.
+v0.77.1.27:
+	- Added a kick function to '/townyadmin town <name> kick []..[]'.
+	- Monsters killed in an arena plot no longer drop any loot.
+	- refactoring of some code.
+	- Minimum version of CraftBukkit updated to 1597.
+v0.77.1.28:
+	- Fix default Town PVP/FIRE/EXPLOSION/MOB settings.
+	- Setting town perms now propogate to any townBlock which have not been manually altered.
+	- Setting plot perms will flag that plot as altered so it will not longer update with the towns perms.
+	- Performing '/town set perm reset' will propogate all permission changes to town owned plots, and reset any changed flags.
+	- Performing '/res set perm reset' will propogate all permission changes to that residents owned plots, and reset any changed flags.
+	- Added CraftIRC support to TownyChat.
+	
+	  Add a channel tag of 'admin' to the
+	  receiving channel in the craftIRC config.
+	  
+	  Disable Auto paths and add the following to the 'paths:' section
+
+	    - source: 'minecraft'
+	      target: 'admin'
+	      formatting:
+	        chat: '%message%'
+	      
+	    - source: 'admin'     # These are endpoint tags
+	      target: 'minecraft'    #
+	      formatting:
+	        chat: '%foreground%[%red%%ircPrefix%%sender%%foreground%] %message%'
+v0.77.1.29:
+	- '/Plot claim x' will no longer throw a Not Registered error when it selects plots outside the town.
+	- Improve file handle closing to prevent too many open file errors.
+	- chat modes can now be toggled on and off by repeating the channel command. Eg. '/tc' = on, '/tc' = off.
+v0.77.1.30:
+	- Fixed Painting place to once again observe plot permissions.
+	- Paintings are now protected against lightning and fireballs through plot/town and world explosion settings.
+	- Endermen can now pickup and place blocks agian in worlds where Towny is disabled.
+	- Towny health Regen will now trigger a EntityRegainHealthEvent to keep other plugins in sync (Heroes).
+	- Added a new 'public' setting in 'Town Claim/new defaults' to set the default public status of a town at creation.
+	- bukkit_version in the config now correctly updates for the minimum required CraftBukkit.
+	- Each world now supports seperate chat formatting, if enabled in the Towny config (per_world).
+	  Modify the channel formats in the worlds data file instead of in the config (plugins/towny/data/worlds).
+v0.77.1.31:
+	- friendly_fire now prevents allies from fighting in the wilderness as well as in town (excluding Arena plots).
+	- TownyChat now passes player chat to Dynmap.
+	- '/Plot claim' now correctly updates the data files with the plot owners permissions.
+v0.77.1.32:
+	- Denied switch use in the wild now generates a readable error message again.
+	- Wild block permissions now support wildcards. eg. towny.wild.block.*.build
+	- Added a new set of permissions for town overrides (ideal for moderators).
+	
+	  towny.claimed.* : User can build/destroy/switch/item_use in all towns.
+	  towny.claimed.build : User can build in all towns.
+	  towny.claimed.destroy : User can destroy in all towns.
+	  towny.claimed.switch : User can switch in all towns.
+	  towny.claimed.item_use : User can use use items in all towns. 
+	  
+	  towny.claimed.alltown.block.* : User is able to edit specified/all block types in all towns.
+	  towny.claimed.alltown.block.*.build
+	  towny.claimed.alltown.block.*.destroy
+	  towny.claimed.alltown.block.*.switch : User can switch specified/all block types in all towns.
+	  towny.claimed.alltown.block.*.item_use
+	  
+	  towny.claimed.owntown.block.* : User is able to edit specified/all block types in their own town.
+	  towny.claimed.owntown.block.*.build
+	  towny.claimed.owntown.block.*.destroy : (handy to allow clearing of snow '78')
+	  towny.claimed.owntown.block.*.switch
+	  towny.claimed.owntown.block.*.item_use
+	
+	- Added a new node 'towny.town.claim.outpost' to allow/block claiming of outposts via permissions.
+	  Will still require outposts to be enabled in the config.
+v0.77.1.33:
+	- Added a new taxing system where you can pay plot owners an income for each plot they own.
+	  Set a negative town upkeep and enable 'use_plot_payments'.
+	  At a new day the negative upkeep will be used to calculate the towns upkeep, but
+	  instead of taking it from the town, it will be divided between the plot owners.
+	  These funds are paid by the server, not the town.
+	- You can now disable the CraftBukkit version check if you wish to take a risk with untested builds (bypass_version_check).
+v0.78.0.0:
+	- Release.
+v0.78.0.1:
+	- Fix upkeep so it won't attempt to make payments of zero amounts.
+	- Added a regenerate command for admins '/townyworld regen' (not decided if this will stay yet).
+	  This command will regenerate the chunk the player is in using the current world seed.
+	  It will only work on FULL (16x16x128) chunks, and only if your default plot size is still set to 16.
+	  *BEWARE* ths command has no undo feature. Once issued there is no going back.
+	- Added '/plot toggle' to the plot help screen.
+	- Fixed the error report when Towny fails to perform a daily backup.
+	- Slight change to onLogin to try and stop 0kb resident file creation (suspect some other plugin is running in it's own thread kicking a player at the wrong time).
+	- Any residents who are corrupt/missing at startup will no longer prevent Towny loading. They will be removed and the files tidied up.
+	- Fixed saving of plot regens, so they will now resume after a server restart.
+v0.78.0.2:
+	- Added '/ta town {name} rename {newname}'
+	- Added '/ta nation {name} rename {newname}'
+	- Fixed '/towny prices' to correctly display your own towns prices (if you are a resident in a town).
+	- Rework of player death and death costs to trigger on a player death and not on damage (no more multiple charges).
+	  Players will be charged only when killed by another player, monster or trap like a dispenser firing arrows.
+	  Deaths from falling etc will not incur a cost.
+v0.78.0.3:
+	- Town explosion settings no longer override individual plot settings. They only control the town owned plots.
+	- Reworked claiming/unclaim to be threadsafe (no longer throws errors in NoLagg).
+	- When claiming new townBlocks and using PlotManagementRevert all new claims will be locked until the snapshot has been taken.
+	  Building/breaking in the plot will be disabled until the snapshot is finished.
+	- Fixed hook for bPermissions to work with bPerms v2.
+	- Fixed '/ta town {name} kick {player}'.
+v0.78.0.4:
+	- Allow ops all access rights when not using permissions.
+	- Removed a lot of New Day spam to cut down on the lag during the accounting.
+	- Major reorganization of code in advance of SQL support.
+	  Any plugins which hooked TownyUniverse to read data should find the same functions in TownyUniverse.getDataSource().
+	- Added group prefix support as well as player prefix for bPermissionsV2.
+v0.78.0.5:
+	- Fixed '/town spawn' when players have teleport disable toggled in essentials.
+	- Changed 'towny.town.claim' to default to false in superperms.
+	- Fixed Changing database types between load and save (new code).
+v0.78.0.6:
+	- Nations breaking an alliance will now result in the opposing nation removing the ally status too (they can retaliate).
+	- If another nation has you set as an enemy you can no longer set them as an ally to avoid conflict (PvP).
+	- Fixed NullPointerError when reading default modes using Perms 3.x.
+	- Added '/tw undo' with five levels of undo for the '/tw regen' command.
+	  The undo memory is for the last 5 regen actions and is persistant between logins (not server restarts).
+v0.78.0.7:
+	- If Towny fails to load it 'should' now lock everything into safe mode until it's fixed.
+	  No one will be able to do anything at all until the fault is cleared.
+v0.78.0.8:
+	- Fix for not being able to eat (caused in 0.78.0.7).
+v0.78.0.9:
+	- Towny no longer complains if you have an empty mob removal list ('').
+	- Added the ability to restrict channel ranges in TownyChat.
+	
+	  All custom channels (not town or nation) can now have an extra value
+	  appended to signify a range limit on chat.
+	  
+	  -1 = no limits
+	  0 = same world only
+	  any positive value = limited range in the same world.
+	  
+	  eg. - /g,,,towny.chat.global,-1
+	        or a local channel that covers 100 blocks range
+	        /l,&f[local],&f,towny.chat.local,100
+	        
+	- Added a 'spleef' plot type (for future development).
+	- Added a spam filter to TownyChat so players can only send one message every two seconds.
+	- Update players cache properly when teleporting, so '/town claim' etc get the right location if you then don't move.
+v0.78.0.10:
+	- Added a new mode '/towny spy', or '/res set mode spy'.
+	  This requires you have the permission node 'towny.chat.spy' and be using TownyChat.
+	  If you toggle this mode on you will be able to see all town/nation/global, and all custom channel chat.
+	- If a player doesn't have the 'towny.chat.global' permission node, any open chat will pass through for any other plugins to handle.
+v0.78.0.11:
+	- ***** BEFORE USING THIS VERSION BACKUP YOUR CHANNELS (from config) AS THEY WILL be WIPED *****
+	- Added a spanish translation.
+	- Fixed an error when trying to create a language file which doesn't exist (non english).
+	- Moved all chat code to TownyChat (chat formats are still in config and world files).
+	- All chat channels are now defined in their own file 'Channels.yml' found in the Towny/Settings folder.
+	- Range limits can now be applied to town and nation chat.
+	- You can create two identical channels, one with a range limit and one without. The player will use whichever they have permission for.
+	- towny_default_modes now uses the full chat channel name. To allow use of the default channel it would be towny_default_modes: 'general'
+	- Fixed up javadocs - http://palmergames.com/javadoc
+v0.78.0.12:
+	- Fixed typo in comments.
+	- Code cleanup: Plot Types AsciiMap Keys are now in the right class. More specific error messages. Refactored error class to use standard variable.
+	- Added option for town respawn to only happen when the player dies in the same world as the spawn point.
+	- Added option for a town to open it's gates and let players join without needing to be invited. /town join [town] (Console: town join [resident] [town]). (Open) is shown in the town's status as well as in '/town list'.
+	- New Lang: msg_err_already_in_town, msg_changed_open, msg_toggle_open_on_warning, msg_err_not_open
+v0.78.0.13:
+	- Refactored the plot command so that /plot claim in an open town will automatically join you to the town first.
