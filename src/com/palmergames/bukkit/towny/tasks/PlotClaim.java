@@ -114,6 +114,8 @@ public class PlotClaim extends Thread {
 		TownBlock townBlock;
 		Town town;
 		
+		TownyMessaging.sendMsg(player, String.format("1) %s", worldCoord.toString()));
+		
 		try {
 			townBlock = worldCoord.getTownBlock();
 			town = townBlock.getTown();
@@ -121,14 +123,20 @@ public class PlotClaim extends Thread {
 			throw new TownyException(TownySettings.getLangString("msg_err_not_part_town"));
 		}
 		
+		TownyMessaging.sendMsg(player, String.format("2) %s", worldCoord.toString()));
+		
 		if (!resident.hasTown() && town.isOpen()) {
 			// Town is open, so have the player join the town first.
 			TownCommand.townJoin(town, resident);
+			TownyMessaging.sendMsg(player, String.format("3) %s", worldCoord.toString()));
 		}
+		
+		TownyMessaging.sendMsg(player, String.format("4) %s", worldCoord.toString()));
 		
 		if (!resident.hasTown()) {
 			// Town is not open, or resident failed to join.
 			// You are thus needed to belong to a town in order to claim plots.
+			TownyMessaging.sendMsg(player, String.format("5) %s", worldCoord.toString()));
 			throw new TownyException(TownySettings.getLangString("msg_err_not_in_town_claim"));
 		} else {
 			// Resident is (now) in a town.
@@ -184,20 +192,20 @@ public class PlotClaim extends Thread {
 								
 				} catch (NotRegisteredException e) {
 					//Plot has no owner so it's the town selling it
-					
+					TownyMessaging.sendMsg(player, String.format("6) %s", worldCoord.toString()));
 					if (townBlock.getPlotPrice() == -1)
 							throw new TownyException(TownySettings.getLangString("msg_err_plot_nfs"));
-					
+					TownyMessaging.sendMsg(player, String.format("7) %s", worldCoord.toString()));
 					if (TownySettings.isUsingEconomy() && !resident.payTo(townBlock.getPlotPrice(), town, "Plot - Buy From Town"))
 							throw new TownyException(TownySettings.getLangString("msg_no_money_purchase_plot"));
-					
+					TownyMessaging.sendMsg(player, String.format("8) %s", worldCoord.toString()));
 					townBlock.setPlotPrice(-1);
 					townBlock.setResident(resident);
 					
 					// Set the plot permissions to mirror the new owners.
 					townBlock.setType(townBlock.getType());
 					TownyUniverse.getDataSource().saveTownBlock(townBlock);
-
+					TownyMessaging.sendMsg(player, String.format("9) %s", worldCoord.toString()));
 					return true;
 				}
 			} catch (NotRegisteredException e) {
