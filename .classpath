@@ -2,10 +2,14 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/Essentials.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/iConomy.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/Permissions.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/plugins/Questioner.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Admin/Desktop/Bukkit/Server/bukkit.jar"/>
+	<classpathentry kind="lib" path="lib/bpermissions.jar"/>
+	<classpathentry kind="lib" path="lib/Essentials.jar"/>
+	<classpathentry kind="lib" path="lib/EssentialsGroupManager.jar"/>
+	<classpathentry kind="lib" path="lib/iConomy.jar"/>
+	<classpathentry kind="lib" path="lib/Permissions.jar"/>
+	<classpathentry kind="lib" path="lib/PermissionsEx.jar"/>
+	<classpathentry kind="lib" path="lib/Questioner.jar"/>
+	<classpathentry kind="lib" path="lib/Register.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
