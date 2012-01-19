@@ -13,11 +13,15 @@ import com.palmergames.bukkit.towny.EmptyTownException;
 import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.TownyException;
 import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.wallgen.Wall;
+import com.palmergames.bukkit.wallgen.WallSection;
+import com.palmergames.bukkit.wallgen.Walled;
 
 
-public class Town extends TownBlockOwner implements ResidentList {
+public class Town extends TownBlockOwner implements Walled, ResidentList {
 	private List<Resident> residents = new ArrayList<Resident>();
 	private List<Resident> assistants = new ArrayList<Resident>();
+	private Wall wall = new Wall();
 	private Resident mayor;
 	private int bonusBlocks, purchasedBlocks;
 	private double taxes, plotTax, commercialPlotTax, embassyPlotTax,
@@ -570,6 +574,37 @@ public class Town extends TownBlockOwner implements ResidentList {
 
 	public double getEmbassyPlotPrice() {
 		return embassyPlotPrice;
+	}
+
+	@Override
+	public Wall getWall() {
+		return wall;
+	}
+
+	@Override
+	public List<WallSection> getWallSections() {
+		return getWall().getWallSections();
+	}
+
+	@Override
+	public void setWallSections(List<WallSection> wallSections) {
+		getWall().setWallSections(wallSections);
+
+	}
+
+	@Override
+	public boolean hasWallSection(WallSection wallSection) {
+		return getWall().hasWallSection(wallSection);
+	}
+
+	@Override
+	public void addWallSection(WallSection wallSection) {
+		getWall().addWallSection(wallSection);
+	}
+
+	@Override
+	public void removeWallSection(WallSection wallSection) {
+		getWall().removeWallSection(wallSection);
 	}
 
 	public boolean isHomeBlock(TownBlock townBlock) {

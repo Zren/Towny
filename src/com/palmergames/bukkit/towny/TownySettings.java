@@ -837,9 +837,33 @@ public class TownySettings {
 	public static String getUnclaimedZoneName() {
 		return getLangString("UNCLAIMED_ZONE_NAME");
 	}
+
+    public static String getModifyChatFormat() {
+        return getString(ConfigNodes.FILTERS_MODIFY_CHAT_FORMAT);
+    }
     
     public static int getMaxTitleLength() {
         return getInt(ConfigNodes.FILTERS_MODIFY_CHAT_MAX_LGTH);
+    }
+
+    public static boolean isUsingModifyChat() {
+        return getBoolean(ConfigNodes.FILTERS_MODIFY_CHAT_ENABLE);
+    }
+    
+    public static boolean isModifyChatPerWorld() {
+        return getBoolean(ConfigNodes.FILTERS_MODIFY_CHAT_PER_WORLD);
+    }
+
+    public static String getKingColour() {
+        return getString(ConfigNodes.FILTERS_COLOUR_KING);
+    }
+    
+    public static String getMayorColour() {
+        return getString(ConfigNodes.FILTERS_COLOUR_MAYOR);
+    }
+    
+    public static String getResidentColour() {
+        return getString(ConfigNodes.FILTERS_COLOUR_RESIDENT);
     }
     
     public static long getDeleteTime() {
@@ -1552,5 +1576,33 @@ public class TownySettings {
             e.printStackTrace();
             return false;
 		}
+	}
+	
+	public static String getChatTownNationTagFormat() {
+		return getString(ConfigNodes.FILTERS_MODIFY_CHAT_TAG_FORMAT_TOWN_NATION);
+	}
+	
+	public static String getChatWorldFormat() {
+		return getString(ConfigNodes.FILTERS_MODIFY_CHAT_TAG_FORMAT_WORLD);
+	}
+	
+	public static String getChatTownTagFormat() {
+		return getString(ConfigNodes.FILTERS_MODIFY_CHAT_TAG_FORMAT_TOWN);
+	}
+	
+	public static String getChatNationTagFormat() {
+		return getString(ConfigNodes.FILTERS_MODIFY_CHAT_TAG_FORMAT_NATION);
+	}
+	
+	public static String getChatTownChannelFormat() {
+		return getString(ConfigNodes.FILTERS_MODIFY_CHAT_CHANNEL_FORMAT_TOWN);
+	}
+	
+	public static String getChatNationChannelFormat() {
+		return getString(ConfigNodes.FILTERS_MODIFY_CHAT_CHANNEL_FORMAT_NATION);
+	}
+	
+	public static String getChatDefaultChannelFormat() {
+		return getString(ConfigNodes.FILTERS_MODIFY_CHAT_CHANNEL_FORMAT_DEFAULT);
 	}
 }

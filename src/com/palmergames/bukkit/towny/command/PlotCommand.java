@@ -96,11 +96,9 @@ public class PlotCommand implements CommandExecutor {
 		} else {
 			Resident resident;
 			TownyWorld world;
-			Town town;
 			try {
 				resident = TownyUniverse.getDataSource().getResident(player.getName());
 				world = TownyUniverse.getDataSource().getWorld(player.getWorld().getName());
-				town = resident.getTown();
 			} catch (TownyException x) {
 				TownyMessaging.sendErrorMsg(player, x.getMessage());
 				return;
@@ -142,7 +140,7 @@ public class PlotCommand implements CommandExecutor {
 							throw new TownyException(String.format(TownySettings.getLangString("msg_no_funds_claim"), selection.size(), TownyEconomyObject.getFormattedBalance(cost)));
 
 						// Start the claim task
-						new PlotClaim(plugin, player, resident, selection, true).start();
+						new PlotClaim(plugin, player, resident, selection, PlotClaim.Action.CLAIM).start();
 
 					} else {
 						player.sendMessage(TownySettings.getLangString("msg_err_empty_area_selection"));
@@ -154,7 +152,7 @@ public class PlotCommand implements CommandExecutor {
 
 					if (split.length == 2 && split[1].equalsIgnoreCase("all")) {
 						// Start the unclaim task
-						new PlotClaim(plugin, player, resident, null, false).start();
+						new PlotClaim(plugin, player, resident, null, PlotClaim.Action.UNCLAIM).start();
 
 					} else {
 						List<WorldCoord> selection = TownyUtil.selectWorldCoordArea(resident, new WorldCoord(world, Coord.parseCoord(player)), StringMgmt.remFirstArg(split));
@@ -163,7 +161,7 @@ public class PlotCommand implements CommandExecutor {
 						if (selection.size() > 0) {
 
 							// Start the unclaim task
-							new PlotClaim(plugin, player, resident, selection, false).start();
+							new PlotClaim(plugin, player, resident, selection, PlotClaim.Action.UNCLAIM).start();
 
 						} else {
 							player.sendMessage(TownySettings.getLangString("msg_err_empty_area_selection"));
@@ -206,8 +204,7 @@ public class PlotCommand implements CommandExecutor {
 		                            return;
 		                        }
 							} catch (NumberFormatException e) {
-								player.sendMessage(String.format(TownySettings.getLangString("msg_error_must_be_num")));
-								return;
+								throw new TownyException(String.format(TownySettings.getLangString("msg_error_must_be_num")));
 							}
 						}
 
@@ -227,17 +224,18 @@ public class PlotCommand implements CommandExecutor {
 					TownyMessaging.sendMessage(player, TownyFormatter.getStatus(townBlock));
 
 				} else if (split[0].equalsIgnoreCase("toggle")) {
-
 					TownBlock townBlock = new WorldCoord(world, Coord.parseCoord(player)).getTownBlock();
-					// Test we are allowed to work on this plot
-					plotTestOwner(resident, townBlock); //ignore the return as we are only checking for an exception
-					town = townBlock.getTown();
+					// Runs tests to make sure we are allowed to work on this plot.
+					// Ignore the returns as we are only checking for an exception
+					plotTestOwner(resident, townBlock); 
+					townBlock.getTown();
 
 					plotToggle(player, new WorldCoord(world, Coord.parseCoord(player)).getTownBlock(), StringMgmt.remFirstArg(split));
 
 				} else if (split[0].equalsIgnoreCase("set")) {
 
 					split = StringMgmt.remFirstArg(split);
+					Town town = resident.getTown();
 
 					if (split.length > 0) {
 						if (split[0].equalsIgnoreCase("perm")) {
@@ -278,15 +276,13 @@ public class PlotCommand implements CommandExecutor {
 					}
 				} else if (split[0].equalsIgnoreCase("clear")) {
 
-					if (!town.isMayor(resident)) {
-						player.sendMessage(TownySettings.getLangString("msg_not_mayor"));
-						return;
-					}
+					if (!resident.isMayor())
+						throw new TownyException(TownySettings.getLangString("msg_not_mayor"));
 
 					TownBlock townBlock = new WorldCoord(world, Coord.parseCoord(player)).getTownBlock();
 
 					if (townBlock != null) {
-						if (townBlock.isOwner(town) && (!townBlock.hasResident())) {
+						if (townBlock.isOwner(resident.getTown()) && (!townBlock.hasResident())) {
 							for (String material : world.getPlotManagementMayorDelete())
 								if (Material.matchMaterial(material) != null) {
 									plugin.getTownyUniverse().deleteTownBlockMaterial(townBlock, Material.getMaterial(material).getId());

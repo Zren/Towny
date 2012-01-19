@@ -8,28 +8,28 @@ public class PermissionEventEnums {
 
 	// GroupManager Event Enums
 	public enum GMUser_Action {
-        USER_PERMISSIONS_CHANGED,
+        //USER_PERMISSIONS_CHANGED,
         USER_INHERITANCE_CHANGED,
         USER_INFO_CHANGED,
         USER_GROUP_CHANGED,
         USER_SUBGROUP_CHANGED,
         USER_ADDED,
-        USER_REMOVED,
+        //USER_REMOVED,
     }
 	
 	public enum GMGroup_Action {
-        GROUP_PERMISSIONS_CHANGED,
+        //GROUP_PERMISSIONS_CHANGED,
         GROUP_INHERITANCE_CHANGED,
         GROUP_INFO_CHANGED,
-        GROUP_ADDED,
-        GROUP_REMOVED,
+        //GROUP_ADDED,
+        //GROUP_REMOVED,
     }
 	
 	public enum GMSystem_Action {
         RELOADED,
-        SAVED,
+        //SAVED,
         DEFAULT_GROUP_CHANGED,
-        VALIDATE_TOGGLE,
+        //VALIDATE_TOGGLE,
     }
 	
 	// PermissionsEX Event Enums
@@ -47,11 +47,11 @@ public class PermissionEventEnums {
     }
 	
 	public enum PEXSystem_Action {
-        BACKEND_CHANGED,
+        //BACKEND_CHANGED,
         RELOADED,
         WORLDINHERITANCE_CHANGED,
         DEFAULTGROUP_CHANGED,
-        DEBUGMODE_TOGGLE,
+        //DEBUGMODE_TOGGLE,
     }
 	
 	

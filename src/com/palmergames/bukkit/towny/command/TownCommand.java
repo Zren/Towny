@@ -1424,16 +1424,26 @@ public class TownCommand implements CommandExecutor  {
 	        			throw new Exception(String.format(TownySettings.getLangString("msg_err_not_open"), town.getFormattedName()));
 	        	}
 	        	
-	        	// Check if player is already in selected town (Pointless)
-	        	// Then add player to town.
-        		townAddResident(town, resident);
-        		
-        		// Resident was added successfully.
-    			TownyMessaging.sendTownMessage(town,  ChatTools.color(String.format(TownySettings.getLangString("msg_join_town"), resident.getName())));
+	        	townJoin(town, resident);
 	    		
         	} catch (Exception e) {
         		TownyMessaging.sendErrorMsg(sender, e.getMessage());
         	}
+        }
+        
+        /**
+         * Attempt to add resident to town, and send town message on success.
+         * @param town
+         * @param resident
+         * @throws AlreadyRegisteredException
+         */
+        public static void townJoin(Town town, Resident resident) throws AlreadyRegisteredException {
+        	// Check if player is already in selected town
+        	// Then add player to town.
+    		townAddResident(town, resident);
+    		
+    		// Resident was added successfully.
+			TownyMessaging.sendTownMessage(town,  ChatTools.color(String.format(TownySettings.getLangString("msg_join_town"), resident.getName())));
         }
         
         /**
