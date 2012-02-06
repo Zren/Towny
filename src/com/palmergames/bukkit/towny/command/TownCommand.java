@@ -64,14 +64,14 @@ public class TownCommand implements CommandExecutor  {
         private static final List<String> output = new ArrayList<String>();
         
         static {
-                output.add(ChatTools.formatTitle("/town"));
-                output.add(ChatTools.formatCommand("", "/town", "", TownySettings.getLangString("town_help_1")));
-                output.add(ChatTools.formatCommand("", "/town", "[town]", TownySettings.getLangString("town_help_3")));
-                output.add(ChatTools.formatCommand("", "/town", "here", TownySettings.getLangString("town_help_4")));
-                output.add(ChatTools.formatCommand("", "/town", "list", ""));
-                output.add(ChatTools.formatCommand("", "/town", "online", TownySettings.getLangString("town_help_10")));
-                output.add(ChatTools.formatCommand("", "/town", "leave", ""));
-                output.add(ChatTools.formatCommand("", "/town", "spawn", TownySettings.getLangString("town_help_5")));
+                output.add(ChatTools.formatTitle("/nation"));
+                output.add(ChatTools.formatCommand("", "/nation", "", TownySettings.getLangString("town_help_1")));
+                output.add(ChatTools.formatCommand("", "/nation", "[town]", TownySettings.getLangString("town_help_3")));
+                output.add(ChatTools.formatCommand("", "/nation", "here", TownySettings.getLangString("town_help_4")));
+                output.add(ChatTools.formatCommand("", "/nation", "list", ""));
+                output.add(ChatTools.formatCommand("", "/nation", "online", TownySettings.getLangString("town_help_10")));
+                output.add(ChatTools.formatCommand("", "/nation", "leave", ""));
+                output.add(ChatTools.formatCommand("", "/nation", "spawn", TownySettings.getLangString("town_help_5")));
                 if (!TownySettings.isTownCreationAdminOnly())
                         output.add(ChatTools.formatCommand("", "/town", "new [town]", TownySettings.getLangString("town_help_6")));
                 output.add(ChatTools.formatCommand(TownySettings.getLangString("admin_sing"), "/town", "new [town] " + TownySettings.getLangString("town_help_2"), TownySettings.getLangString("town_help_7")));
